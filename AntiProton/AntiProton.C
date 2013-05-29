@@ -96,6 +96,8 @@ int main(int argc, char* argv[]){
 	std::string prefix_Statistics="  [Statistics] ";
 	int Verbose_FileInfo = 10; //有哪些FileList,都有多少file
 	std::string prefix_FileInfo="  [FileInfo] ";
+	int Verbose_EffInfo = 15; //Efficiency info
+	std::string prefix_EffInfo="  [EffInfo] ";
 	int Verbose_EventInfo = 20; //每个event的基本流程
 	std::string prefix_EventInfoStart="    =>[EventInfo] ";
 	std::string prefix_EventInfo="      [EventInfo] ";
@@ -228,6 +230,35 @@ int main(int argc, char* argv[]){
 	int N3 = 0;
 
 	//=> for efficiency
+	int nbin_eff = 6;
+	double min_eff = 94;
+	double max_eff = 99;
+
+	double halfbin_eff = (max_eff-min_eff)/((double)nbin_eff-1)/2;
+	std::vector<int> mu_num;
+	std::vector<int> mu_num_pass;
+	std::vector<int> ap_num;
+	std::vector<int> ap_num_pass;
+	std::vector<double> mu_eff;
+	std::vector<double> ap_eff;
+	mu_eff.resize(nbin_eff);
+	mu_num.resize(nbin_eff);
+	mu_num_pass.resize(nbin_eff);
+	ap_eff.resize(nbin_eff);
+	ap_num.resize(nbin_eff);
+	ap_num_pass.resize(nbin_eff);
+	for ( int i = 0; i < nbin_eff; i++ ){
+		mu_eff[i] = 0;
+		mu_num[i] = 0;
+		mu_num_pass[i] = 0;
+		ap_eff[i] = 0;
+		ap_num[i] = 0;
+		ap_num_pass[i] = 0;
+	}
+
+	//=> threshold
+	double mu_thre = 0;
+	double ap_thre = 0;
 
 	//=======================================================================================================
 	//************READ THE FILES********************
@@ -259,38 +290,38 @@ int main(int argc, char* argv[]){
 	int evt_num;
 
 	int McTruth_nTracks;
-	std::vector<int> McTruth_pid;
-	std::vector<int> McTruth_tid;
-	std::vector<int> McTruth_ptid;
-	std::vector<double> McTruth_time;
-	std::vector<double> McTruth_px;
-	std::vector<double> McTruth_py;
-	std::vector<double> McTruth_pz;
-	std::vector<double> McTruth_e;
-	std::vector<double> McTruth_x;
-	std::vector<double> McTruth_y;
-	std::vector<double> McTruth_z;
-	std::vector<int> McTruth_charge;
-	std::vector<std::string> McTruth_particleName;
-	std::vector<std::string> McTruth_process;
-	std::vector<std::string> McTruth_volume;
+	std::vector<int> *McTruth_pid = 0;
+	std::vector<int> *McTruth_tid = 0;
+	std::vector<int> *McTruth_ptid = 0;
+	std::vector<double> *McTruth_time = 0;
+	std::vector<double> *McTruth_px = 0;
+	std::vector<double> *McTruth_py = 0;
+	std::vector<double> *McTruth_pz = 0;
+	std::vector<double> *McTruth_e = 0;
+	std::vector<double> *McTruth_x = 0;
+	std::vector<double> *McTruth_y = 0;
+	std::vector<double> *McTruth_z = 0;
+	std::vector<int> *McTruth_charge = 0;
+	std::vector<std::string> *McTruth_particleName = 0;
+	std::vector<std::string> *McTruth_process = 0;
+	std::vector<std::string> *McTruth_volume = 0;
 
 	int Monitor_nHits;
-	std::vector<double> Monitor_x;
-	std::vector<double> Monitor_y;
-	std::vector<double> Monitor_z;
-	std::vector<double> Monitor_t;
-	std::vector<double> Monitor_px;
-	std::vector<double> Monitor_py;
-	std::vector<double> Monitor_pz;
-	std::vector<double> Monitor_e;
-	std::vector<double> Monitor_edep;
-	std::vector<double> Monitor_stepL;
-	std::vector<int> Monitor_volID;
-	std::vector<std::string> Monitor_volName;
-	std::vector<int> Monitor_tid;
-	std::vector<int> Monitor_pid;
-	std::vector<int> Monitor_charge;
+	std::vector<double> *Monitor_x = 0;
+	std::vector<double> *Monitor_y = 0;
+	std::vector<double> *Monitor_z = 0;
+	std::vector<double> *Monitor_t = 0;
+	std::vector<double> *Monitor_px = 0;
+	std::vector<double> *Monitor_py = 0;
+	std::vector<double> *Monitor_pz = 0;
+	std::vector<double> *Monitor_e = 0;
+	std::vector<double> *Monitor_edep = 0;
+	std::vector<double> *Monitor_stepL = 0;
+	std::vector<int> *Monitor_volID = 0;
+	std::vector<std::string> *Monitor_volName = 0;
+	std::vector<int> *Monitor_tid = 0;
+	std::vector<int> *Monitor_pid = 0;
+	std::vector<int> *Monitor_charge = 0;
 
 	TBranch *bMcTruth_pid = 0;
 	TBranch *bMcTruth_tid = 0;
@@ -408,9 +439,68 @@ int main(int argc, char* argv[]){
 		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"Got Entry!"<<std::endl;
 
 		//=> Start the dirty work
+		// muon or anti_proton
+		int event_type = 0; // (1:anti_proton, 2: muon, 0: others)
+		if ( (*McTruth_pid)[0] == -2212 )
+			event_type = 1;
+		else if ( (*McTruth_pid)[0] == 13 )
+			event_type = 2;
+
+		// passed or not
+		bool passed = false;
+		for ( int ihit = 0; ihit < Monitor_nHits; ihit++ ){
+			if ( (*Monitor_volID)[ihit] == 1 && (*Monitor_tid)[ihit] == 1 ){
+				passed = true;
+				break;
+			}
+		}
+
+		// which bin
+		double pa = sqrt((*McTruth_px)[0]*(*McTruth_px)[0]+(*McTruth_py)[0]*(*McTruth_py)[0]+(*McTruth_pz)[0]*(*McTruth_pz)[0]);
+		int ibin = (int)((pa-min_eff)/halfbin_eff/2 + 0.5);
+		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"pz = "<<(*McTruth_pz)[0]<<", pa = "<<pa<<", ibin = "<<ibin<<std::endl;
+
+		// count
+		if ( event_type == 1 ){
+			ap_num[ibin]++;
+			if (passed) ap_num_pass[ibin]++;
+		}
+		else if ( event_type == 2 ){
+			mu_num[ibin]++;
+			if (passed) mu_num_pass[ibin]++;
+		}
 
 		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 	}/* end of loop in events*/
+	//=======================================================================================================
+	//************FOR EFFICIENCY**********************
+	for (int i = 0; i < nbin_eff; i++ ){
+		double pa = min_eff + i*halfbin_eff*2;
+		double mu_eff = mu_num[i]?(double)(mu_num_pass[i])/mu_num[i]:0;
+		double ap_eff = ap_num[i]?(double)(ap_num_pass[i])/ap_num[i]:0;
+		if ( mu_eff && !mu_thre ){
+			mu_thre = pa;
+			if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"mu_thre = "<<mu_thre<<"MeV, mu_eff = "<<mu_eff<<std::endl;
+		}
+		if ( ap_eff && !ap_thre ){
+			ap_thre = pa;
+			if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"ap_thre = "<<ap_thre<<"MeV, ap_eff = "<<ap_eff<<std::endl;
+		}
+		if ( (index_temp = get_TGraph("muon_rate_vs_pa")) != -1 ){
+			xForGraph[index_temp].push_back(pa);
+			yForGraph[index_temp].push_back(mu_eff);
+		}
+		if ( (index_temp = get_TGraph("rate_vs_pa")) != -1 ){
+			xForGraph[index_temp].push_back(pa);
+			yForGraph[index_temp].push_back(ap_eff);
+		}
+		if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"pa = "<<pa
+		                                                         <<", mu_num: "<<mu_num[i]
+		                                                         <<", mu_num_pass: "<<mu_num_pass[i]
+		                                                         <<", ap_num: "<<ap_num[i]
+		                                                         <<", ap_num_pass: "<<ap_num_pass[i]
+		                                                         <<std::endl;
+	}
 
 	//=======================================================================================================
 	//************WRITE AND OUTPUT********************
@@ -501,8 +591,9 @@ int main(int argc, char* argv[]){
 		int nCompare = compareForGraph[i];
 		if ( nCompare ) if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<nCompare<<" graphs to be compared"<<std::endl;
 		std::vector<double> yforgraph = yForGraph[i];
-		double xmax = 1;
-		//TODO: xmax should be calculated
+		std::vector<double> xforgraph = xForGraph[i];
+		double xmin = min_eff;
+		double xmax = max_eff;
 		double currentMaximum = *std::max_element(yforgraph.begin(),yforgraph.end());
 		for ( int j = 1; j <= nCompare; j++ ){
 			double maximum = *std::max_element(yForGraph[i+j].begin(),yForGraph[i+j].end());
@@ -516,7 +607,7 @@ int main(int argc, char* argv[]){
 		if ( ylogForGraph[i] ) gPad->SetLogy(1);
 		else gPad->SetLogy(0);
 		if ( xlogForGraph[i] ) aTGraph->GetXaxis()->SetLimits(1e-6,2*xmax);
-		else aTGraph->GetXaxis()->SetLimits(0.,1.05*xmax);
+		else aTGraph->GetXaxis()->SetLimits(0.95*xmin,1.05*xmax);
 		if ( ylogForGraph[i] ) aTGraph->GetYaxis()->SetRangeUser(1e-6,2*currentMaximum);
 		else aTGraph->GetYaxis()->SetRangeUser(0.,1.05*currentMaximum);
 		aTGraph->GetXaxis()->SetTitle(xNameForGraph[i]);

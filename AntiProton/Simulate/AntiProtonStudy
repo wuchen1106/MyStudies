@@ -1,0 +1,40 @@
+#this is for RPC
+#GEOCARDROOT       = geometry_CdcWire.txt
+#MAGFIELDCARDROOT  = MagField_default.txt
+#GENFILEROOT       = gen_RPC.txt
+#OUTCARDROOT       = output_CdcWire.txt
+#GEOCARDROOT       = geometry_CdcWire.txt
+GEOCARDROOT       = geometry_AntiProtonStudy.txt
+MAGFIELDCARDROOT  = MagField_none.txt
+GENFILEROOT       = gen_AntiProtonStudy.txt
+OUTCARDROOT       = output_AntiProtonStudy.txt
+
+##geometry preset
+#detector_configure
+#
+##magnet field (uniform file)
+#magField_configure
+#
+##generator
+#gen_configure
+#
+#verbose
+verbose_configure_setCut
+setCut.mac
+#
+##output
+#output_configure
+
+#verbose
+verbose_configure_antiproton
+setAntiProtonStudy_antiproton.mac
+
+
+#verbose
+verbose_configure_ap025mm
+setAntiProtonStudy_025mm.mac
+
+#run
+run_configure_ap025mm
+1
+12500
