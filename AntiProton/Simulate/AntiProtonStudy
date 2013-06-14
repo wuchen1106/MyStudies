@@ -19,8 +19,8 @@ OUTCARDROOT       = output_AntiProtonStudy.txt
 #gen_configure
 #
 #verbose
-verbose_configure_setCut
-setCut.mac
+#verbose_configure_setCut
+#setCut.mac
 #
 ##output
 #output_configure
@@ -31,10 +31,10 @@ setAntiProtonStudy_antiproton.mac
 
 
 #verbose
-verbose_configure_ap025mm
-setAntiProtonStudy_025mm.mac
+verbose_configure_ap02mm
+setAntiProtonStudy_02mm.mac
 
 #run
-run_configure_ap025mm
+run_configure_ap02mm
 1
-12500
+1250

@@ -539,8 +539,8 @@ int main(int argc, char* argv[]){
 		else gPad->SetLogx(0);
 		if ( ylogForH1D[i] ) gPad->SetLogy(1);
 		else gPad->SetLogy(0);
-		if ( xlogForH1D[i] ) vecH1D[i]->GetXaxis()->SetLimits(1e-6,2*xmax);
-		else vecH1D[i]->GetXaxis()->SetLimits(0.,1.05*xmax);
+		if ( xlogForH1D[i] ) vecH1D[i]->GetXaxis()->SetRangeUser(1e-6,2*xmax);
+		else vecH1D[i]->GetXaxis()->SetRangeUser(0.,1.05*xmax);
 		if ( ylogForH1D[i] ) vecH1D[i]->GetYaxis()->SetRangeUser(1e-6,2*currentMaximum);
 		else vecH1D[i]->GetYaxis()->SetRangeUser(0.,1.05*currentMaximum);
 		vecH1D[i]->SetMarkerStyle(markerForH1D[i]);
@@ -606,8 +606,8 @@ int main(int argc, char* argv[]){
 		else gPad->SetLogx(0);
 		if ( ylogForGraph[i] ) gPad->SetLogy(1);
 		else gPad->SetLogy(0);
-		if ( xlogForGraph[i] ) aTGraph->GetXaxis()->SetLimits(1e-6,2*xmax);
-		else aTGraph->GetXaxis()->SetLimits(0.95*xmin,1.05*xmax);
+		if ( xlogForGraph[i] ) aTGraph->GetXaxis()->SetRangeUser(1e-6,2*xmax);
+		else aTGraph->GetXaxis()->SetRangeUser(0.95*xmin,1.05*xmax);
 		if ( ylogForGraph[i] ) aTGraph->GetYaxis()->SetRangeUser(1e-6,2*currentMaximum);
 		else aTGraph->GetYaxis()->SetRangeUser(0.,1.05*currentMaximum);
 		aTGraph->GetXaxis()->SetTitle(xNameForGraph[i]);
