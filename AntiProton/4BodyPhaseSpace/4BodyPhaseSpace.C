@@ -18,10 +18,12 @@
 #include "TGraph.h"
 #include "Math/DistFunc.h"
 #include "TVector3.h"
+#include "TGenPhaseSpace.h"
 
 char m_workMode[128];
 int verbose = 0;
 int nEventsLimit = 0;
+int printModule = 1;
 
 std::vector<TString> nameForH2D;
 std::vector<TString> titleForH2D;
@@ -38,6 +40,8 @@ std::vector<TH2D*>   vecH2D;
 std::vector<TString> nameForH1D;
 std::vector<TString> titleForH1D;
 std::vector<int> compareForH1D;
+std::vector<double> minxForH1D;
+std::vector<double> minyForH1D;
 std::vector<int> xlogForH1D;
 std::vector<int> ylogForH1D;
 std::vector<int> colorForH1D;
@@ -53,6 +57,9 @@ std::vector<TH1D*>   vecH1D;
 std::vector<TString> nameForGraph;
 std::vector<TString> titleForGraph;
 std::vector<int> compareForGraph;
+std::vector<double> minxForGraph;
+std::vector<double> maxxForGraph;
+std::vector<double> minyForGraph;
 std::vector<int> xlogForGraph;
 std::vector<int> ylogForGraph;
 std::vector<int> colorForGraph;
@@ -63,8 +70,8 @@ std::vector<TString> yNameForGraph;
 std::vector<std::vector<double> > xForGraph;
 std::vector<std::vector<double> > yForGraph;
 
-TH2D* get_TH2D(std::string name);
-TH1D* get_TH1D(std::string name);
+int get_TH2D(std::string name);
+int get_TH1D(std::string name);
 int get_TGraph(std::string name);
 bool ISEMPTY(std::string content);
 void seperate_string(std::string line, std::vector<std::string> &strs, const char sep );
@@ -83,7 +90,7 @@ int main(int argc, char* argv[]){
 	//}
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hv:n:m:"))!=-1){
+	while((result=getopt(argc,argv,"hv:n:m:p:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -97,6 +104,10 @@ int main(int argc, char* argv[]){
 			case 'n':
 				nEventsLimit = atoi(optarg);
 				printf("nEvent limit: %d\n",nEventsLimit);
+				break;
+			case 'p':
+				printModule = atoi(optarg);
+				printf("printModule: %d\n",printModule);
 				break;
 			case '?':
 				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
@@ -137,8 +148,6 @@ int main(int argc, char* argv[]){
 
 	//=> About Histogram
 	std::string histList = "histList";
-	TH1D* TH1D_temp;
-	TH2D* TH2D_temp;
 	int index_temp;
 
 	//=>About Constant
@@ -150,7 +159,6 @@ int main(int argc, char* argv[]){
 
 	//=>About output
 	std::string OutputDir = "result/";
-
 
 	//=======================================================================================================
 	//************SET HISTOGRAMS********************
@@ -174,59 +182,67 @@ int main(int argc, char* argv[]){
 		if ( ISEMPTY(s_card) ) continue;
 		std::vector<std::string> segments;
 		seperate_string(s_card,segments,'|');
+		int iterator = 1;
 		if ( segments[0] == "TH1D" ){
-			nameForH1D.push_back(segments[1]);
-			titleForH1D.push_back(segments[2]);
-			xNameForH1D.push_back(segments[3]);
-			yNameForH1D.push_back(segments[4]);
-			bin1ForH1D.push_back(string2double(segments[5]));
-			left1ForH1D.push_back(string2double(segments[6]));
-			right1ForH1D.push_back(string2double(segments[7]));
-			colorForH1D.push_back(string2double(segments[8]));
-			compareForH1D.push_back(string2double(segments[9]));
-			xlogForH1D.push_back(string2double(segments[10]));
-			ylogForH1D.push_back(string2double(segments[11]));
-			markerForH1D.push_back(string2double(segments[12]));
-			drawOptForH1D.push_back(segments[13]);
+			if(iterator<segments.size()) nameForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) titleForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) xNameForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) yNameForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) bin1ForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) left1ForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) right1ForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) minxForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) minyForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) colorForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) compareForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) xlogForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) ylogForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) markerForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) drawOptForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 		}
 		else if ( segments[0] == "TH2D" ){
-			nameForH2D.push_back(segments[1]);
-			titleForH2D.push_back(segments[2]);
-			xNameForH2D.push_back(segments[3]);
-			yNameForH2D.push_back(segments[4]);
-			bin1ForH2D.push_back(string2double(segments[5]));
-			left1ForH2D.push_back(string2double(segments[6]));
-			right1ForH2D.push_back(string2double(segments[7]));
-			bin2ForH2D.push_back(string2double(segments[8]));
-			left2ForH2D.push_back(string2double(segments[9]));
-			right2ForH2D.push_back(string2double(segments[10]));
+			if(iterator<segments.size()) nameForH2D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) titleForH2D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) xNameForH2D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) yNameForH2D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) bin1ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) left1ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) right1ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) bin2ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) left2ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) right2ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 		}
 		else if ( segments[0] == "FILE" ){
-			DirNames.push_back(segments[1]);
-			if (segments[2]==""){
+			if(iterator<segments.size()) DirNames.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			std::string runname;
+			if(iterator<segments.size()) runname = "_"+segments[iterator++]; else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if (runname=="_"){
 				RunNames.push_back("");
 			}
 			else{
-				RunNames.push_back("_"+segments[2]);
+				RunNames.push_back(runname);
 			}
-			NCPU.push_back(string2double(segments[3]));
-			NJob.push_back(string2double(segments[4]));
+			if(iterator<segments.size()) NCPU.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) NJob.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 		}
 		else if ( segments[0] == "TGraph" ){
-			nameForGraph.push_back(segments[1]);
-			titleForGraph.push_back(segments[2]);
-			xNameForGraph.push_back(segments[3]);
-			yNameForGraph.push_back(segments[4]);
+			if(iterator<segments.size()) nameForGraph.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) titleForGraph.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) xNameForGraph.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) yNameForGraph.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			std::vector<double> avec;
 			xForGraph.push_back(avec);
 			std::vector<double> bvec;
 			yForGraph.push_back(bvec);
-			colorForGraph.push_back(string2double(segments[5]));
-			compareForGraph.push_back(string2double(segments[6]));
-			xlogForGraph.push_back(string2double(segments[7]));
-			ylogForGraph.push_back(string2double(segments[8]));
-			markerForGraph.push_back(string2double(segments[9]));
-			drawOptForGraph.push_back(segments[10]);
+			if(iterator<segments.size()) colorForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) compareForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) minxForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) maxxForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) minyForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) xlogForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) ylogForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) markerForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) drawOptForGraph.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			int i = nameForGraph.size() - 1;
 			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"Input vecGraph["<<i<<"]: "<<nameForGraph[i]<<", "<<titleForGraph[i]<<", "<<xNameForGraph[i]<<", "<<yNameForGraph[i]<<", Color="<<colorForGraph[i]<<", xlogSyle="<<xlogForGraph[i]<<", ylogSyle="<<ylogForGraph[i]<<", nCompare="<<compareForGraph[i]<<", markerStyle="<<markerForGraph[i]<<", drawOpt=\""<<drawOptForGraph[i]<<"\""<<std::endl;
 		}
@@ -257,13 +273,118 @@ int main(int argc, char* argv[]){
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
+	TLorentzVector target(0.,0.,0.,0.);
+	TLorentzVector beam(0.,0.,0.,0.);
+	target.SetVectM(TVector3(0.0, 0.0, 0.0), 0.9382723);
+	beam.SetVectM(TVector3(0.0, 0.0, 8.0), 0.9382723);
+	TLorentzVector W = beam + target;
+	//(Momentum, Energy units are Gev/C, GeV)
+	Double_t masses[4] = { 0.9382723, 0.9382723, 0.9382723, 0.9382723} ;
+
+	TGenPhaseSpace event;
+	event.SetDecay(W, 4, masses);
+	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"CMS: p=("<<W.Px()
+		                                                           <<", "<<W.Py()
+		                                                           <<", "<<W.Pz()
+		                                                           <<"), v=("<<W.BoostVector().X()
+		                                                           <<", "<<W.BoostVector().Y()
+		                                                           <<", "<<W.BoostVector().Z()
+		                                                           <<") E="<<W.E()
+	                                                               <<std::endl;
+
 	//loop in events
 	for( Long64_t iEvent = 0; iEvent < nEventsLimit; iEvent++ ){
 		N0++;
-		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
+		Double_t weight = event.Generate();
+		TLorentzVector *pDaughter1 = event.GetDecay(0);
+		TLorentzVector *pDaughter2 = event.GetDecay(1);
+		TLorentzVector *pDaughter3 = event.GetDecay(2);
+		TLorentzVector *pDaughter4 = event.GetDecay(3);
+		TLorentzVector pAllDaughters = *pDaughter1 + *pDaughter2 + *pDaughter3 + *pDaughter4;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  weight = "<<weight
+		                                                                                             <<", p("<<pAllDaughters.Px()
+		                                                                                             <<", "<<pAllDaughters.Py()
+		                                                                                             <<", "<<pAllDaughters.Pz()
+		                                                                                             <<"), E="<<pAllDaughters.E()
+		                                                                                             <<", p1("<<pDaughter1->Px()
+		                                                                                             <<", "<<pDaughter1->Py()
+		                                                                                             <<", "<<pDaughter1->Pz()
+		                                                                                             <<"), E1="<<pDaughter1->E()
+		                                                                                             <<", p2("<<pDaughter2->Px()
+		                                                                                             <<", "<<pDaughter2->Py()
+		                                                                                             <<", "<<pDaughter2->Pz()
+		                                                                                             <<"), E2="<<pDaughter2->E()
+		                                                                                             <<", p3("<<pDaughter3->Px()
+		                                                                                             <<", "<<pDaughter3->Py()
+		                                                                                             <<", "<<pDaughter3->Pz()
+		                                                                                             <<"), E3="<<pDaughter3->E()
+		                                                                                             <<", p4("<<pDaughter4->Px()
+		                                                                                             <<", "<<pDaughter4->Py()
+		                                                                                             <<", "<<pDaughter4->Pz()
+		                                                                                             <<"), E4="<<pDaughter4->E()
+		                                                                                             <<std::endl;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  CMS: p=("<<W.Px()
+																	                                 <<", "<<W.Py()
+																	                                 <<", "<<W.Pz()
+																	                                 <<"), v=("<<W.BoostVector().X()
+																	                                 <<", "<<W.BoostVector().Y()
+																	                                 <<", "<<W.BoostVector().Z()
+																	                                 <<") E="<<W.E()
+																	                                 <<std::endl;
+		if ( (index_temp = get_TH1D("pa")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
+		}
+		if ( (index_temp = get_TH1D("pt")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
+		}
+		if ( (index_temp = get_TH1D("pa_log")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
+		}
+		if ( (index_temp = get_TH1D("pt_log")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
+		}
+		pDaughter1->Boost(-W.BoostVector());
+		pDaughter2->Boost(-W.BoostVector());
+		pDaughter3->Boost(-W.BoostVector());
+		pDaughter4->Boost(-W.BoostVector());
+		pAllDaughters = *pDaughter1 + *pDaughter2 + *pDaughter3 + *pDaughter4;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  in CMS "
+		                                                                                             <<", p("<<pAllDaughters.Px()
+		                                                                                             <<", "<<pAllDaughters.Py()
+		                                                                                             <<", "<<pAllDaughters.Pz()
+		                                                                                             <<"), E="<<pAllDaughters.E()
+		                                                                                             <<", p1("<<pDaughter1->Px()
+		                                                                                             <<", "<<pDaughter1->Py()
+		                                                                                             <<", "<<pDaughter1->Pz()
+		                                                                                             <<"), E1="<<pDaughter1->E()
+		                                                                                             <<", p2("<<pDaughter2->Px()
+		                                                                                             <<", "<<pDaughter2->Py()
+		                                                                                             <<", "<<pDaughter2->Pz()
+		                                                                                             <<"), E2="<<pDaughter2->E()
+		                                                                                             <<", p3("<<pDaughter3->Px()
+		                                                                                             <<", "<<pDaughter3->Py()
+		                                                                                             <<", "<<pDaughter3->Pz()
+		                                                                                             <<"), E3="<<pDaughter3->E()
+		                                                                                             <<", p4("<<pDaughter4->Px()
+		                                                                                             <<", "<<pDaughter4->Py()
+		                                                                                             <<", "<<pDaughter4->Pz()
+		                                                                                             <<"), E4="<<pDaughter4->E()
+		                                                                                             <<std::endl;
+		if ( (index_temp = get_TH1D("paCMS")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
+		}
+		if ( (index_temp = get_TH1D("ptCMS")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
+		}
+		if ( (index_temp = get_TH1D("pa_logCMS")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
+		}
+		if ( (index_temp = get_TH1D("pt_logCMS")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
+		}
 
-
-		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 	}/* end of loop in events*/
 
 	//=======================================================================================================
@@ -299,16 +420,15 @@ int main(int argc, char* argv[]){
 				currentMaximum = maximum;
 			}
 		}
-		double xmax = vecH1D[i]->GetXaxis()->GetXmax();
 		if ( nCompare ) if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"  maximum y value is ("<<currentMaximum<<")"<<std::endl;
 		if ( xlogForH1D[i] ) gPad->SetLogx(1);
 		else gPad->SetLogx(0);
 		if ( ylogForH1D[i] ) gPad->SetLogy(1);
 		else gPad->SetLogy(0);
-		if ( xlogForH1D[i] ) vecH1D[i]->GetXaxis()->SetRangeUser(1e-6,2*xmax);
-		else vecH1D[i]->GetXaxis()->SetRangeUser(0.,1.05*xmax);
-		if ( ylogForH1D[i] ) vecH1D[i]->GetYaxis()->SetRangeUser(1e-6,2*currentMaximum);
-		else vecH1D[i]->GetYaxis()->SetRangeUser(0.,1.05*currentMaximum);
+		if ( xlogForH1D[i] ) vecH1D[i]->GetXaxis()->SetRangeUser(minxForH1D[i],right1ForH1D[i]);
+		else vecH1D[i]->GetXaxis()->SetRangeUser(left1ForH1D[i],right1ForH1D[i]);
+		if ( ylogForH1D[i] ) vecH1D[i]->GetYaxis()->SetRangeUser(minyForH1D[i],2*currentMaximum);
+		else vecH1D[i]->GetYaxis()->SetRangeUser(left1ForH1D[i],1.05*currentMaximum);
 		vecH1D[i]->SetMarkerStyle(markerForH1D[i]);
 		vecH1D[i]->SetMarkerColor(colorForH1D[i]);
 		vecH1D[i]->SetLineColor(colorForH1D[i]);
@@ -358,8 +478,6 @@ int main(int argc, char* argv[]){
 		if ( nCompare ) if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<nCompare<<" graphs to be compared"<<std::endl;
 		std::vector<double> yforgraph = yForGraph[i];
 		std::vector<double> xforgraph = xForGraph[i];
-		double xmin = min_eff;
-		double xmax = max_eff;
 		double currentMaximum = *std::max_element(yforgraph.begin(),yforgraph.end());
 		for ( int j = 1; j <= nCompare; j++ ){
 			double maximum = *std::max_element(yForGraph[i+j].begin(),yForGraph[i+j].end());
@@ -372,10 +490,10 @@ int main(int argc, char* argv[]){
 		else gPad->SetLogx(0);
 		if ( ylogForGraph[i] ) gPad->SetLogy(1);
 		else gPad->SetLogy(0);
-		if ( xlogForGraph[i] ) aTGraph->GetXaxis()->SetRangeUser(1e-6,2*xmax);
-		else aTGraph->GetXaxis()->SetRangeUser(0.95*xmin,1.05*xmax);
-		if ( ylogForGraph[i] ) aTGraph->GetYaxis()->SetRangeUser(1e-6,2*currentMaximum);
-		else aTGraph->GetYaxis()->SetRangeUser(0.,1.05*currentMaximum);
+		if ( xlogForGraph[i] ) aTGraph->GetXaxis()->SetRangeUser(minxForGraph[i],2*maxxForGraph[i]);
+		else aTGraph->GetXaxis()->SetRangeUser(minxForGraph[i],1.05*maxxForGraph[i]);
+		if ( ylogForGraph[i] ) aTGraph->GetYaxis()->SetRangeUser(minyForGraph[i],2*currentMaximum);
+		else aTGraph->GetYaxis()->SetRangeUser(minyForGraph[i],1.05*currentMaximum);
 		aTGraph->GetXaxis()->SetTitle(xNameForGraph[i]);
 		aTGraph->GetYaxis()->SetTitle(yNameForGraph[i]);
 		aTGraph->SetMarkerStyle(markerForGraph[i]);
@@ -418,20 +536,20 @@ int main(int argc, char* argv[]){
 	return 0;
 }
 
-TH2D* get_TH2D(std::string name){
+int get_TH2D(std::string name){
 	for ( int i = 0; i < vecH2D.size(); i++ ){
-		if ( nameForH2D[i] == name ) return vecH2D[i];
+		if ( nameForH2D[i] == name ) return i;
 	}
 	std::cout<<"###!!!In get_TH2D: CAN NOT FIND "<<name<<"!!!"<<std::endl;
-	return 0;
+	return -1;
 }
 
-TH1D* get_TH1D(std::string name){
+int get_TH1D(std::string name){
 	for ( int i = 0; i < vecH1D.size(); i++ ){
-		if ( nameForH1D[i] == name ) return vecH1D[i];
+		if ( nameForH1D[i] == name ) return i;
 	}
 	std::cout<<"###!!!In get_TH1D: CAN NOT FIND "<<name<<"!!!"<<std::endl;
-	return 0;
+	return -1;
 }
 
 int get_TGraph(std::string name){
@@ -460,6 +578,8 @@ void seperate_string(std::string line, std::vector<std::string> &strs, const cha
 	std::string token;
 	std::stringstream ss(line);
 	while(std::getline(ss, token, sep)){
+		token.erase(token.find_last_not_of('\t')+1);
+		token.erase(0,token.find_first_not_of('\t'));
 		token.erase(token.find_last_not_of(' ')+1);
 		token.erase(0,token.find_first_not_of(' '));
 		strs.push_back(token);
@@ -478,6 +598,7 @@ void init_args()
 	strcpy(m_workMode,"pr");
 	verbose = 0;
 	nEventsLimit = 0;
+	printModule = 100;
 }
 
 void print_usage(char* prog_name)
@@ -490,6 +611,8 @@ void print_usage(char* prog_name)
 	fprintf(stderr,"\t\t verbose level\n");
 	fprintf(stderr,"\t -n\n");
 	fprintf(stderr,"\t\t nEvent limit\n");
+	fprintf(stderr,"\t -p\n");
+	fprintf(stderr,"\t\t printModule\n");
 	fprintf(stderr,"\t -h\n");
 	fprintf(stderr,"\t\t Usage message.\n");
 	fprintf(stderr,"[example]\n");

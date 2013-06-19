@@ -11,3 +11,7 @@
 *.lai
 *.la
 *.a
+
+# Automatically generated files
+currentEvent.rndm
+currentRun.rndm

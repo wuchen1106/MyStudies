@@ -22,6 +22,7 @@
 char m_workMode[128];
 int verbose = 0;
 int nEventsLimit = 0;
+int printModule = 1;
 
 std::vector<TString> nameForH2D;
 std::vector<TString> titleForH2D;
@@ -38,6 +39,8 @@ std::vector<TH2D*>   vecH2D;
 std::vector<TString> nameForH1D;
 std::vector<TString> titleForH1D;
 std::vector<int> compareForH1D;
+std::vector<double> minxForH1D;
+std::vector<double> minyForH1D;
 std::vector<int> xlogForH1D;
 std::vector<int> ylogForH1D;
 std::vector<int> colorForH1D;
@@ -53,6 +56,9 @@ std::vector<TH1D*>   vecH1D;
 std::vector<TString> nameForGraph;
 std::vector<TString> titleForGraph;
 std::vector<int> compareForGraph;
+std::vector<double> minxForGraph;
+std::vector<double> maxxForGraph;
+std::vector<double> minyForGraph;
 std::vector<int> xlogForGraph;
 std::vector<int> ylogForGraph;
 std::vector<int> colorForGraph;
@@ -63,8 +69,8 @@ std::vector<TString> yNameForGraph;
 std::vector<std::vector<double> > xForGraph;
 std::vector<std::vector<double> > yForGraph;
 
-TH2D* get_TH2D(std::string name);
-TH1D* get_TH1D(std::string name);
+int get_TH2D(std::string name);
+int get_TH1D(std::string name);
 int get_TGraph(std::string name);
 bool ISEMPTY(std::string content);
 void seperate_string(std::string line, std::vector<std::string> &strs, const char sep );
@@ -83,7 +89,7 @@ int main(int argc, char* argv[]){
 	//}
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hv:n:m:"))!=-1){
+	while((result=getopt(argc,argv,"hv:n:m:p:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -97,6 +103,10 @@ int main(int argc, char* argv[]){
 			case 'n':
 				nEventsLimit = atoi(optarg);
 				printf("nEvent limit: %d\n",nEventsLimit);
+				break;
+			case 'p':
+				printModule = atoi(optarg);
+				printf("printModule: %d\n",printModule);
 				break;
 			case '?':
 				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
@@ -137,8 +147,6 @@ int main(int argc, char* argv[]){
 
 	//=> About Histogram
 	std::string histList = "histList";
-	TH1D* TH1D_temp;
-	TH2D* TH2D_temp;
 	int index_temp;
 
 	//=>About Constant
@@ -174,59 +182,68 @@ int main(int argc, char* argv[]){
 		if ( ISEMPTY(s_card) ) continue;
 		std::vector<std::string> segments;
 		seperate_string(s_card,segments,'|');
+		int iterator = 1;
+		std::cout<<"tag = \""<<segments[0]<<"\""<<std::endl;
 		if ( segments[0] == "TH1D" ){
-			nameForH1D.push_back(segments[1]);
-			titleForH1D.push_back(segments[2]);
-			xNameForH1D.push_back(segments[3]);
-			yNameForH1D.push_back(segments[4]);
-			bin1ForH1D.push_back(string2double(segments[5]));
-			left1ForH1D.push_back(string2double(segments[6]));
-			right1ForH1D.push_back(string2double(segments[7]));
-			colorForH1D.push_back(string2double(segments[8]));
-			compareForH1D.push_back(string2double(segments[9]));
-			xlogForH1D.push_back(string2double(segments[10]));
-			ylogForH1D.push_back(string2double(segments[11]));
-			markerForH1D.push_back(string2double(segments[12]));
-			drawOptForH1D.push_back(segments[13]);
+			if(iterator<segments.size()) nameForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) titleForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) xNameForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) yNameForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) bin1ForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) left1ForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) right1ForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) minxForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) minyForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) colorForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) compareForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) xlogForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) ylogForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) markerForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) drawOptForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 		}
 		else if ( segments[0] == "TH2D" ){
-			nameForH2D.push_back(segments[1]);
-			titleForH2D.push_back(segments[2]);
-			xNameForH2D.push_back(segments[3]);
-			yNameForH2D.push_back(segments[4]);
-			bin1ForH2D.push_back(string2double(segments[5]));
-			left1ForH2D.push_back(string2double(segments[6]));
-			right1ForH2D.push_back(string2double(segments[7]));
-			bin2ForH2D.push_back(string2double(segments[8]));
-			left2ForH2D.push_back(string2double(segments[9]));
-			right2ForH2D.push_back(string2double(segments[10]));
+			if(iterator<segments.size()) nameForH2D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) titleForH2D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) xNameForH2D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) yNameForH2D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) bin1ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) left1ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) right1ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) bin2ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) left2ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) right2ForH2D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 		}
 		else if ( segments[0] == "FILE" ){
-			DirNames.push_back(segments[1]);
-			if (segments[2]==""){
+			if(iterator<segments.size()) DirNames.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			std::string runname;
+			if(iterator<segments.size()) runname = "_"+segments[iterator++]; else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if (runname=="_"){
 				RunNames.push_back("");
 			}
 			else{
-				RunNames.push_back("_"+segments[2]);
+				RunNames.push_back(runname);
 			}
-			NCPU.push_back(string2double(segments[3]));
-			NJob.push_back(string2double(segments[4]));
+			if(iterator<segments.size()) NCPU.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) NJob.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 		}
 		else if ( segments[0] == "TGraph" ){
-			nameForGraph.push_back(segments[1]);
-			titleForGraph.push_back(segments[2]);
-			xNameForGraph.push_back(segments[3]);
-			yNameForGraph.push_back(segments[4]);
+			if(iterator<segments.size()) nameForGraph.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) titleForGraph.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) xNameForGraph.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) yNameForGraph.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			std::vector<double> avec;
 			xForGraph.push_back(avec);
 			std::vector<double> bvec;
 			yForGraph.push_back(bvec);
-			colorForGraph.push_back(string2double(segments[5]));
-			compareForGraph.push_back(string2double(segments[6]));
-			xlogForGraph.push_back(string2double(segments[7]));
-			ylogForGraph.push_back(string2double(segments[8]));
-			markerForGraph.push_back(string2double(segments[9]));
-			drawOptForGraph.push_back(segments[10]);
+			if(iterator<segments.size()) colorForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) compareForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) minxForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) maxxForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) minyForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) xlogForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) ylogForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) markerForGraph.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) drawOptForGraph.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			int i = nameForGraph.size() - 1;
 			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"Input vecGraph["<<i<<"]: "<<nameForGraph[i]<<", "<<titleForGraph[i]<<", "<<xNameForGraph[i]<<", "<<yNameForGraph[i]<<", Color="<<colorForGraph[i]<<", xlogSyle="<<xlogForGraph[i]<<", ylogSyle="<<ylogForGraph[i]<<", nCompare="<<compareForGraph[i]<<", markerStyle="<<markerForGraph[i]<<", drawOpt=\""<<drawOptForGraph[i]<<"\""<<std::endl;
 		}
@@ -256,8 +273,12 @@ int main(int argc, char* argv[]){
 
 	//=> for efficiency
 	int nbin_eff = 6;
-	double min_eff = 94;
-	double max_eff = 99;
+	double min_eff;
+	double max_eff;
+	if ( (index_temp = get_TGraph("rate_vs_pa")) != -1 ){
+		min_eff =	minxForGraph[index_temp];
+		max_eff =	maxxForGraph[index_temp];
+	}
 
 	double halfbin_eff = (max_eff-min_eff)/((double)nbin_eff-1)/2;
 	std::vector<int> mu_num;
@@ -422,9 +443,9 @@ int main(int argc, char* argv[]){
 	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
 	Long64_t nEvent = m_TChain->GetEntries();
 	//loop in events
-	for( Long64_t iEvent = 0; iEvent < (nEventsLimit?nEventsLimit:nEvent); iEvent++ ){
+	for( Long64_t iEvent = 0; iEvent < (nEventsLimit&&nEventsLimit<nEvent?nEventsLimit:nEvent); iEvent++ ){
 		N0++;
-		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
 
 		Long64_t tentry = m_TChain->LoadTree(iEvent);
 
@@ -461,10 +482,10 @@ int main(int argc, char* argv[]){
 		if(bMonitor_charge) bMonitor_charge->GetEntry(tentry);
 
 		m_TChain->GetEntry(iEvent);
-		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"Got Entry!"<<std::endl;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"Got Entry!"<<std::endl;
 
 		//=> Start the dirty work
-		if (m_workMode == "ab" ){
+		if (!strcmp(m_workMode,"ab")){
 			// muon or anti_proton
 			int event_type = 0; // (1:anti_proton, 2: muon, 0: others)
 			if ( (*McTruth_pid)[0] == -2212 )
@@ -484,7 +505,7 @@ int main(int argc, char* argv[]){
 			// which bin
 			double pa = sqrt((*McTruth_px)[0]*(*McTruth_px)[0]+(*McTruth_py)[0]*(*McTruth_py)[0]+(*McTruth_pz)[0]*(*McTruth_pz)[0]);
 			int ibin = (int)((pa-min_eff)/halfbin_eff/2 + 0.5);
-			if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"pz = "<<(*McTruth_pz)[0]<<", pa = "<<pa<<", ibin = "<<ibin<<std::endl;
+			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"pz = "<<(*McTruth_pz)[0]<<", pa = "<<pa<<", ibin = "<<ibin<<std::endl;
 
 			// count
 			if ( event_type == 1 ){
@@ -496,30 +517,39 @@ int main(int argc, char* argv[]){
 				if (passed) mu_num_pass[ibin]++;
 			}
 		}
-		else if (m_workMode == "pr"){
+		else if (!strcmp(m_workMode,"pr")){
+			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"  nTracks = "<<McTruth_nTracks<<std::endl;;
 			for ( int i = 0; i < McTruth_nTracks; i++ ){
 				if ((*McTruth_pid)[i] != -2212 ) continue;
 				double px = (*McTruth_px)[i];
 				double py = (*McTruth_py)[i];
 				double pz = (*McTruth_pz)[i];
 				double pt  = sqrt(px*px+py*py);
-				double theta = pz==0?0:atan(pt/pz);
-				if ( (index_temp = get_TGraph("ap_pt")) != -1 ){
-					vecH1D[index_temp]->Fill(pt);
+				double theta = (pz==0?0:atan(pt/pz));
+				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"    track["<<i<<"]:"
+				                                                                                         <<"  pt = "<<pt
+				                                                                                         <<", pz = "<<pz
+				                                                                                         <<", theta = "<<theta
+				                                                                                         <<std::endl;
+				if ( (index_temp = get_TH1D("ap_pt")) != -1 ){
+					vecH1D[index_temp]->Fill(pt/1000);
 				}
-				if ( (index_temp = get_TGraph("ap_pz")) != -1 ){
-					vecH1D[index_temp]->Fill(pz);
+				if ( (index_temp = get_TH1D("ap_pz")) != -1 ){
+					vecH1D[index_temp]->Fill(pz/1000);
 				}
-				if ( (index_temp = get_TGraph("ap_theta")) != -1 ){
+				if ( (index_temp = get_TH1D("ap_theta")) != -1 ){
 					vecH1D[index_temp]->Fill(theta);
 				}
 			}
 		}
+		else{
+			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"  work mode <"<<m_workMode<<"> does not match any known modes"<<std::endl;
+		}
 
-		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 	}/* end of loop in events*/
 	//=======================================================================================================
-	if (m_workMode == "ab"){
+	if (!strcmp(m_workMode,"ab")){
 		//************FOR EFFICIENCY**********************
 		for (int i = 0; i < nbin_eff; i++ ){
 			double pa = min_eff + i*halfbin_eff*2;
@@ -581,16 +611,15 @@ int main(int argc, char* argv[]){
 				currentMaximum = maximum;
 			}
 		}
-		double xmax = vecH1D[i]->GetXaxis()->GetXmax();
 		if ( nCompare ) if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"  maximum y value is ("<<currentMaximum<<")"<<std::endl;
 		if ( xlogForH1D[i] ) gPad->SetLogx(1);
 		else gPad->SetLogx(0);
 		if ( ylogForH1D[i] ) gPad->SetLogy(1);
 		else gPad->SetLogy(0);
-		if ( xlogForH1D[i] ) vecH1D[i]->GetXaxis()->SetRangeUser(1e-6,2*xmax);
-		else vecH1D[i]->GetXaxis()->SetRangeUser(0.,1.05*xmax);
-		if ( ylogForH1D[i] ) vecH1D[i]->GetYaxis()->SetRangeUser(1e-6,2*currentMaximum);
-		else vecH1D[i]->GetYaxis()->SetRangeUser(0.,1.05*currentMaximum);
+		if ( xlogForH1D[i] ) vecH1D[i]->GetXaxis()->SetRangeUser(minxForH1D[i],right1ForH1D[i]);
+		else vecH1D[i]->GetXaxis()->SetRangeUser(left1ForH1D[i],right1ForH1D[i]);
+		if ( ylogForH1D[i] ) vecH1D[i]->GetYaxis()->SetRangeUser(minyForH1D[i],2*currentMaximum);
+		else vecH1D[i]->GetYaxis()->SetRangeUser(left1ForH1D[i],1.05*currentMaximum);
 		vecH1D[i]->SetMarkerStyle(markerForH1D[i]);
 		vecH1D[i]->SetMarkerColor(colorForH1D[i]);
 		vecH1D[i]->SetLineColor(colorForH1D[i]);
@@ -640,8 +669,6 @@ int main(int argc, char* argv[]){
 		if ( nCompare ) if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<nCompare<<" graphs to be compared"<<std::endl;
 		std::vector<double> yforgraph = yForGraph[i];
 		std::vector<double> xforgraph = xForGraph[i];
-		double xmin = min_eff;
-		double xmax = max_eff;
 		double currentMaximum = *std::max_element(yforgraph.begin(),yforgraph.end());
 		for ( int j = 1; j <= nCompare; j++ ){
 			double maximum = *std::max_element(yForGraph[i+j].begin(),yForGraph[i+j].end());
@@ -654,10 +681,10 @@ int main(int argc, char* argv[]){
 		else gPad->SetLogx(0);
 		if ( ylogForGraph[i] ) gPad->SetLogy(1);
 		else gPad->SetLogy(0);
-		if ( xlogForGraph[i] ) aTGraph->GetXaxis()->SetRangeUser(1e-6,2*xmax);
-		else aTGraph->GetXaxis()->SetRangeUser(0.95*xmin,1.05*xmax);
-		if ( ylogForGraph[i] ) aTGraph->GetYaxis()->SetRangeUser(1e-6,2*currentMaximum);
-		else aTGraph->GetYaxis()->SetRangeUser(0.,1.05*currentMaximum);
+		if ( xlogForGraph[i] ) aTGraph->GetXaxis()->SetRangeUser(minxForGraph[i],2*maxxForGraph[i]);
+		else aTGraph->GetXaxis()->SetRangeUser(minxForGraph[i],1.05*maxxForGraph[i]);
+		if ( ylogForGraph[i] ) aTGraph->GetYaxis()->SetRangeUser(minyForGraph[i],2*currentMaximum);
+		else aTGraph->GetYaxis()->SetRangeUser(minyForGraph[i],1.05*currentMaximum);
 		aTGraph->GetXaxis()->SetTitle(xNameForGraph[i]);
 		aTGraph->GetYaxis()->SetTitle(yNameForGraph[i]);
 		aTGraph->SetMarkerStyle(markerForGraph[i]);
@@ -700,20 +727,20 @@ int main(int argc, char* argv[]){
 	return 0;
 }
 
-TH2D* get_TH2D(std::string name){
+int get_TH2D(std::string name){
 	for ( int i = 0; i < vecH2D.size(); i++ ){
-		if ( nameForH2D[i] == name ) return vecH2D[i];
+		if ( nameForH2D[i] == name ) return i;
 	}
 	std::cout<<"###!!!In get_TH2D: CAN NOT FIND "<<name<<"!!!"<<std::endl;
-	return 0;
+	return -1;
 }
 
-TH1D* get_TH1D(std::string name){
+int get_TH1D(std::string name){
 	for ( int i = 0; i < vecH1D.size(); i++ ){
-		if ( nameForH1D[i] == name ) return vecH1D[i];
+		if ( nameForH1D[i] == name ) return i;
 	}
 	std::cout<<"###!!!In get_TH1D: CAN NOT FIND "<<name<<"!!!"<<std::endl;
-	return 0;
+	return -1;
 }
 
 int get_TGraph(std::string name){
@@ -742,6 +769,8 @@ void seperate_string(std::string line, std::vector<std::string> &strs, const cha
 	std::string token;
 	std::stringstream ss(line);
 	while(std::getline(ss, token, sep)){
+		token.erase(token.find_last_not_of('\t')+1);
+		token.erase(0,token.find_first_not_of('\t'));
 		token.erase(token.find_last_not_of(' ')+1);
 		token.erase(0,token.find_first_not_of(' '));
 		strs.push_back(token);
@@ -760,6 +789,7 @@ void init_args()
 	strcpy(m_workMode,"pr");
 	verbose = 0;
 	nEventsLimit = 0;
+	printModule = 100;
 }
 
 void print_usage(char* prog_name)
@@ -772,6 +802,8 @@ void print_usage(char* prog_name)
 	fprintf(stderr,"\t\t verbose level\n");
 	fprintf(stderr,"\t -n\n");
 	fprintf(stderr,"\t\t nEvent limit\n");
+	fprintf(stderr,"\t -p\n");
+	fprintf(stderr,"\t\t printModule\n");
 	fprintf(stderr,"\t -h\n");
 	fprintf(stderr,"\t\t Usage message.\n");
 	fprintf(stderr,"[example]\n");
