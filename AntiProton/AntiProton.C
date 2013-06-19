@@ -532,10 +532,10 @@ int main(int argc, char* argv[]){
 				                                                                                         <<", theta = "<<theta
 				                                                                                         <<std::endl;
 				if ( (index_temp = get_TH1D("ap_pt")) != -1 ){
-					vecH1D[index_temp]->Fill(pt/1000);
+					vecH1D[index_temp]->Fill(pt);
 				}
 				if ( (index_temp = get_TH1D("ap_pz")) != -1 ){
-					vecH1D[index_temp]->Fill(pz/1000);
+					vecH1D[index_temp]->Fill(pz);
 				}
 				if ( (index_temp = get_TH1D("ap_theta")) != -1 ){
 					vecH1D[index_temp]->Fill(theta);
