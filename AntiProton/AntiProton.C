@@ -19,6 +19,10 @@
 #include "Math/DistFunc.h"
 #include "TVector3.h"
 
+char m_workMode[128];
+int verbose = 0;
+int nEventsLimit = 0;
+
 std::vector<TString> nameForH2D;
 std::vector<TString> titleForH2D;
 std::vector<TString> xNameForH2D;
@@ -63,28 +67,50 @@ TH2D* get_TH2D(std::string name);
 TH1D* get_TH1D(std::string name);
 int get_TGraph(std::string name);
 bool ISEMPTY(std::string content);
+void seperate_string(std::string line, std::vector<std::string> &strs, const char sep );
+double string2double(std::string str);
+void init_args();
+void print_usage(char* prog_name);
 
 int main(int argc, char* argv[]){
 	std::stringstream buff;
 
 	//=======================================
 	//*************read parameter**********
-	//=> About verbose
-	int verbose = 0;
-	//=> About Event limit
-	int nEventsLimit = 0;
-	if ( argc >= 2 ){
-		buff.str("");
-		buff.clear();
-		buff<<argv[1];
-		buff>>verbose;
-		if ( argc >= 3 ){
-			buff.str("");
-			buff.clear();
-			buff<<argv[2];
-			buff>>nEventsLimit;
+	//if (argc==1) {
+	//	print_usage(argv[0]);
+	//	return -1;
+	//}
+	init_args();
+	int result;
+	while((result=getopt(argc,argv,"hv:n:m:"))!=-1){
+		switch(result){
+			/* INPUTS */
+			case 'm':
+				strcpy(m_workMode,optarg);
+				printf("work mode: %s\n",m_workMode);
+				break;
+			case 'v':
+				verbose = atoi(optarg);
+				printf("verbose level: %d\n",verbose);
+				break;
+			case 'n':
+				nEventsLimit = atoi(optarg);
+				printf("nEvent limit: %d\n",nEventsLimit);
+				break;
+			case '?':
+				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
+				break;
+			case 'h':
+			default:
+				print_usage(argv[0]);
+				return 1;
 		}
 	}
+
+	//for (;optind<argc;optind++){
+	//	m_input_files.push_back(argv[optind]);
+	//}
 
 	//=======================================
 	//************Verbose Control***********
@@ -146,67 +172,66 @@ int main(int argc, char* argv[]){
 	// read histList
 	while(getline(fin_card,s_card)){
 		if ( ISEMPTY(s_card) ) continue;
-		buff.str("");
-		buff.clear();
-		buff<<s_card;
-		buff>>histtype;
-		if ( histtype == "TH1D" ){
-			buff>>histname>>histtitle>>histxName>>histyName>>histbin1>>histleft1>>histright1>>histcolor>>histcompare>>histlogx>>histlogy>>histmarker>>histdrawOpt;
-			nameForH1D.push_back(histname);
-			titleForH1D.push_back(histtitle);
-			xNameForH1D.push_back(histxName);
-			yNameForH1D.push_back(histyName);
-			bin1ForH1D.push_back(histbin1);
-			left1ForH1D.push_back(histleft1);
-			right1ForH1D.push_back(histright1);
-			colorForH1D.push_back(histcolor);
-			compareForH1D.push_back(histcompare);
-			xlogForH1D.push_back(histlogx);
-			ylogForH1D.push_back(histlogy);
-			markerForH1D.push_back(histmarker);
-			drawOptForH1D.push_back(histdrawOpt);
+		std::vector<std::string> segments;
+		seperate_string(s_card,segments,'|');
+		if ( segments[0] == "TH1D" ){
+			nameForH1D.push_back(segments[1]);
+			titleForH1D.push_back(segments[2]);
+			xNameForH1D.push_back(segments[3]);
+			yNameForH1D.push_back(segments[4]);
+			bin1ForH1D.push_back(string2double(segments[5]));
+			left1ForH1D.push_back(string2double(segments[6]));
+			right1ForH1D.push_back(string2double(segments[7]));
+			colorForH1D.push_back(string2double(segments[8]));
+			compareForH1D.push_back(string2double(segments[9]));
+			xlogForH1D.push_back(string2double(segments[10]));
+			ylogForH1D.push_back(string2double(segments[11]));
+			markerForH1D.push_back(string2double(segments[12]));
+			drawOptForH1D.push_back(segments[13]);
 		}
-		else if ( histtype == "TH2D" ){
-			buff>>histname>>histtitle>>histxName>>histyName>>histbin1>>histleft1>>histright1>>histbin2>>histleft2>>histright2;
-			nameForH2D.push_back(histname);
-			titleForH2D.push_back(histtitle);
-			xNameForH2D.push_back(histxName);
-			yNameForH2D.push_back(histyName);
-			bin1ForH2D.push_back(histbin1);
-			left1ForH2D.push_back(histleft1);
-			right1ForH2D.push_back(histright1);
-			bin2ForH2D.push_back(histbin2);
-			left2ForH2D.push_back(histleft2);
-			right2ForH2D.push_back(histright2);
+		else if ( segments[0] == "TH2D" ){
+			nameForH2D.push_back(segments[1]);
+			titleForH2D.push_back(segments[2]);
+			xNameForH2D.push_back(segments[3]);
+			yNameForH2D.push_back(segments[4]);
+			bin1ForH2D.push_back(string2double(segments[5]));
+			left1ForH2D.push_back(string2double(segments[6]));
+			right1ForH2D.push_back(string2double(segments[7]));
+			bin2ForH2D.push_back(string2double(segments[8]));
+			left2ForH2D.push_back(string2double(segments[9]));
+			right2ForH2D.push_back(string2double(segments[10]));
 		}
-		else if ( histtype == "FILE" ){
-			buff>>dirname>>runname>>nCPU>>njob;
-			DirNames.push_back(dirname);
-			RunNames.push_back(runname);
-			NCPU.push_back(nCPU);
-			NJob.push_back(njob);
+		else if ( segments[0] == "FILE" ){
+			DirNames.push_back(segments[1]);
+			if (segments[2]==""){
+				RunNames.push_back("");
+			}
+			else{
+				RunNames.push_back("_"+segments[2]);
+			}
+			NCPU.push_back(string2double(segments[3]));
+			NJob.push_back(string2double(segments[4]));
 		}
-		else if ( histtype == "TGraph" ){
-			buff>>histname>>histtitle>>histxName>>histyName>>histcolor>>histcompare>>histlogx>>histlogy>>histmarker>>histdrawOpt;
-			nameForGraph.push_back(histname);
-			titleForGraph.push_back(histtitle);
-			xNameForGraph.push_back(histxName);
-			yNameForGraph.push_back(histyName);
+		else if ( segments[0] == "TGraph" ){
+			nameForGraph.push_back(segments[1]);
+			titleForGraph.push_back(segments[2]);
+			xNameForGraph.push_back(segments[3]);
+			yNameForGraph.push_back(segments[4]);
 			std::vector<double> avec;
 			xForGraph.push_back(avec);
 			std::vector<double> bvec;
 			yForGraph.push_back(bvec);
-			colorForGraph.push_back(histcolor);
-			compareForGraph.push_back(histcompare);
-			xlogForGraph.push_back(histlogx);
-			ylogForGraph.push_back(histlogy);
-			markerForGraph.push_back(histmarker);
-			drawOptForGraph.push_back(histdrawOpt);
+			colorForGraph.push_back(string2double(segments[5]));
+			compareForGraph.push_back(string2double(segments[6]));
+			xlogForGraph.push_back(string2double(segments[7]));
+			ylogForGraph.push_back(string2double(segments[8]));
+			markerForGraph.push_back(string2double(segments[9]));
+			drawOptForGraph.push_back(segments[10]);
 			int i = nameForGraph.size() - 1;
 			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"Input vecGraph["<<i<<"]: "<<nameForGraph[i]<<", "<<titleForGraph[i]<<", "<<xNameForGraph[i]<<", "<<yNameForGraph[i]<<", Color="<<colorForGraph[i]<<", xlogSyle="<<xlogForGraph[i]<<", ylogSyle="<<ylogForGraph[i]<<", nCompare="<<compareForGraph[i]<<", markerStyle="<<markerForGraph[i]<<", drawOpt=\""<<drawOptForGraph[i]<<"\""<<std::endl;
 		}
 		else{
-			std::cout<<"Cannot recogonize this line: "<<buff.str()<<std::endl;
+			std::cout<<"Cannot recogonize this line: "<<s_card<<std::endl;
 			continue;
 		}
 	}
@@ -276,7 +301,7 @@ int main(int argc, char* argv[]){
 			for (int j = iStart; j < iStart + njob; j ++){
 				buff.str("");
 				buff.clear();
-				buff<<DirNames[iFile]<<"/"<<i<<"_job"<<j<<"_"<<RunNames[iFile]<<".raw";
+				buff<<DirNames[iFile]<<"/"<<i<<"_job"<<j<<RunNames[iFile]<<".raw";
 				m_TChain->Add(buff.str().c_str());
 			}
 		}
@@ -439,67 +464,90 @@ int main(int argc, char* argv[]){
 		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"Got Entry!"<<std::endl;
 
 		//=> Start the dirty work
-		// muon or anti_proton
-		int event_type = 0; // (1:anti_proton, 2: muon, 0: others)
-		if ( (*McTruth_pid)[0] == -2212 )
-			event_type = 1;
-		else if ( (*McTruth_pid)[0] == 13 )
-			event_type = 2;
+		if (m_workMode == "ab" ){
+			// muon or anti_proton
+			int event_type = 0; // (1:anti_proton, 2: muon, 0: others)
+			if ( (*McTruth_pid)[0] == -2212 )
+				event_type = 1;
+			else if ( (*McTruth_pid)[0] == 13 )
+				event_type = 2;
 
-		// passed or not
-		bool passed = false;
-		for ( int ihit = 0; ihit < Monitor_nHits; ihit++ ){
-			if ( (*Monitor_volID)[ihit] == 1 && (*Monitor_tid)[ihit] == 1 ){
-				passed = true;
-				break;
+			// passed or not
+			bool passed = false;
+			for ( int ihit = 0; ihit < Monitor_nHits; ihit++ ){
+				if ( (*Monitor_volID)[ihit] == 1 && (*Monitor_tid)[ihit] == 1 ){
+					passed = true;
+					break;
+				}
+			}
+
+			// which bin
+			double pa = sqrt((*McTruth_px)[0]*(*McTruth_px)[0]+(*McTruth_py)[0]*(*McTruth_py)[0]+(*McTruth_pz)[0]*(*McTruth_pz)[0]);
+			int ibin = (int)((pa-min_eff)/halfbin_eff/2 + 0.5);
+			if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"pz = "<<(*McTruth_pz)[0]<<", pa = "<<pa<<", ibin = "<<ibin<<std::endl;
+
+			// count
+			if ( event_type == 1 ){
+				ap_num[ibin]++;
+				if (passed) ap_num_pass[ibin]++;
+			}
+			else if ( event_type == 2 ){
+				mu_num[ibin]++;
+				if (passed) mu_num_pass[ibin]++;
 			}
 		}
-
-		// which bin
-		double pa = sqrt((*McTruth_px)[0]*(*McTruth_px)[0]+(*McTruth_py)[0]*(*McTruth_py)[0]+(*McTruth_pz)[0]*(*McTruth_pz)[0]);
-		int ibin = (int)((pa-min_eff)/halfbin_eff/2 + 0.5);
-		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"pz = "<<(*McTruth_pz)[0]<<", pa = "<<pa<<", ibin = "<<ibin<<std::endl;
-
-		// count
-		if ( event_type == 1 ){
-			ap_num[ibin]++;
-			if (passed) ap_num_pass[ibin]++;
-		}
-		else if ( event_type == 2 ){
-			mu_num[ibin]++;
-			if (passed) mu_num_pass[ibin]++;
+		else if (m_workMode == "pr"){
+			for ( int i = 0; i < McTruth_nTracks; i++ ){
+				if ((*McTruth_pid)[i] != -2212 ) continue;
+				double px = (*McTruth_px)[i];
+				double py = (*McTruth_py)[i];
+				double pz = (*McTruth_pz)[i];
+				double pt  = sqrt(px*px+py*py);
+				double theta = pz==0?0:atan(pt/pz);
+				if ( (index_temp = get_TGraph("ap_pt")) != -1 ){
+					vecH1D[index_temp]->Fill(pt);
+				}
+				if ( (index_temp = get_TGraph("ap_pz")) != -1 ){
+					vecH1D[index_temp]->Fill(pz);
+				}
+				if ( (index_temp = get_TGraph("ap_theta")) != -1 ){
+					vecH1D[index_temp]->Fill(theta);
+				}
+			}
 		}
 
 		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 	}/* end of loop in events*/
 	//=======================================================================================================
-	//************FOR EFFICIENCY**********************
-	for (int i = 0; i < nbin_eff; i++ ){
-		double pa = min_eff + i*halfbin_eff*2;
-		double mu_eff = mu_num[i]?(double)(mu_num_pass[i])/mu_num[i]:0;
-		double ap_eff = ap_num[i]?(double)(ap_num_pass[i])/ap_num[i]:0;
-		if ( mu_eff && !mu_thre ){
-			mu_thre = pa;
-			if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"mu_thre = "<<mu_thre<<"MeV, mu_eff = "<<mu_eff<<std::endl;
+	if (m_workMode == "ab"){
+		//************FOR EFFICIENCY**********************
+		for (int i = 0; i < nbin_eff; i++ ){
+			double pa = min_eff + i*halfbin_eff*2;
+			double mu_eff = mu_num[i]?(double)(mu_num_pass[i])/mu_num[i]:0;
+			double ap_eff = ap_num[i]?(double)(ap_num_pass[i])/ap_num[i]:0;
+			if ( mu_eff && !mu_thre ){
+				mu_thre = pa;
+				if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"mu_thre = "<<mu_thre<<"MeV, mu_eff = "<<mu_eff<<std::endl;
+			}
+			if ( ap_eff && !ap_thre ){
+				ap_thre = pa;
+				if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"ap_thre = "<<ap_thre<<"MeV, ap_eff = "<<ap_eff<<std::endl;
+			}
+			if ( (index_temp = get_TGraph("muon_rate_vs_pa")) != -1 ){
+				xForGraph[index_temp].push_back(pa);
+				yForGraph[index_temp].push_back(mu_eff);
+			}
+			if ( (index_temp = get_TGraph("rate_vs_pa")) != -1 ){
+				xForGraph[index_temp].push_back(pa);
+				yForGraph[index_temp].push_back(ap_eff);
+			}
+			if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"pa = "<<pa
+																															 <<", mu_num: "<<mu_num[i]
+																															 <<", mu_num_pass: "<<mu_num_pass[i]
+																															 <<", ap_num: "<<ap_num[i]
+																															 <<", ap_num_pass: "<<ap_num_pass[i]
+																															 <<std::endl;
 		}
-		if ( ap_eff && !ap_thre ){
-			ap_thre = pa;
-			if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"ap_thre = "<<ap_thre<<"MeV, ap_eff = "<<ap_eff<<std::endl;
-		}
-		if ( (index_temp = get_TGraph("muon_rate_vs_pa")) != -1 ){
-			xForGraph[index_temp].push_back(pa);
-			yForGraph[index_temp].push_back(mu_eff);
-		}
-		if ( (index_temp = get_TGraph("rate_vs_pa")) != -1 ){
-			xForGraph[index_temp].push_back(pa);
-			yForGraph[index_temp].push_back(ap_eff);
-		}
-		if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"pa = "<<pa
-		                                                         <<", mu_num: "<<mu_num[i]
-		                                                         <<", mu_num_pass: "<<mu_num_pass[i]
-		                                                         <<", ap_num: "<<ap_num[i]
-		                                                         <<", ap_num_pass: "<<ap_num_pass[i]
-		                                                         <<std::endl;
 	}
 
 	//=======================================================================================================
@@ -688,4 +736,44 @@ bool ISEMPTY(std::string content){
 		flag = true;
 	}
 	return flag;
+}
+
+void seperate_string(std::string line, std::vector<std::string> &strs, const char sep ){
+	std::string token;
+	std::stringstream ss(line);
+	while(std::getline(ss, token, sep)){
+		token.erase(token.find_last_not_of(' ')+1);
+		token.erase(0,token.find_first_not_of(' '));
+		strs.push_back(token);
+	}
+}
+
+double string2double(std::string str){
+	double val;
+	std::stringstream ss(str);
+	ss>>val;
+	return val;
+}
+
+void init_args()
+{
+	strcpy(m_workMode,"pr");
+	verbose = 0;
+	nEventsLimit = 0;
+}
+
+void print_usage(char* prog_name)
+{
+	fprintf(stderr,"Usage %s [options (args)] [input files]\n",prog_name);
+	fprintf(stderr,"[options]\n");
+	fprintf(stderr,"\t -m\n");
+	fprintf(stderr,"\t\t choose work mode: [pr(default), ab]\n");
+	fprintf(stderr,"\t -v\n");
+	fprintf(stderr,"\t\t verbose level\n");
+	fprintf(stderr,"\t -n\n");
+	fprintf(stderr,"\t\t nEvent limit\n");
+	fprintf(stderr,"\t -h\n");
+	fprintf(stderr,"\t\t Usage message.\n");
+	fprintf(stderr,"[example]\n");
+	fprintf(stderr,"\t\t%s -m ab -v 20 -n 100\n",prog_name);
 }
