@@ -301,6 +301,7 @@ int main(int argc, char* argv[]){
 		TLorentzVector *pDaughter2 = event.GetDecay(1);
 		TLorentzVector *pDaughter3 = event.GetDecay(2);
 		TLorentzVector *pDaughter4 = event.GetDecay(3);
+		TLorentzVector X = *pDaughter2 + *pDaughter3 + *pDaughter4;
 		TLorentzVector pAllDaughters = *pDaughter1 + *pDaughter2 + *pDaughter3 + *pDaughter4;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  weight = "<<weight
 		                                                                                             <<", p("<<pAllDaughters.Px()
@@ -332,6 +333,9 @@ int main(int argc, char* argv[]){
 																	                                 <<", "<<W.BoostVector().Z()
 																	                                 <<") E="<<W.E()
 																	                                 <<std::endl;
+		if ( (index_temp = get_TH1D("Mx")) != -1 ){
+			vecH1D[index_temp]->Fill(X.M(),weight);
+		}
 		if ( (index_temp = get_TH1D("pa")) != -1 ){
 			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
 		}
@@ -385,6 +389,9 @@ int main(int argc, char* argv[]){
 		}
 		if ( (index_temp = get_TH1D("ptCMS")) != -1 ){
 			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
+		}
+		if ( (index_temp = get_TH1D("ECMS")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->E(),weight);
 		}
 		if ( (index_temp = get_TH1D("pa_logCMS")) != -1 ){
 			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);

@@ -20,6 +20,9 @@
 #include "TVector3.h"
 #include "TGenPhaseSpace.h"
 
+#include "globals.hh"
+#include "Randomize.hh"
+
 char m_workMode[128];
 int verbose = 0;
 int nEventsLimit = 0;
@@ -81,6 +84,22 @@ void print_usage(char* prog_name);
 
 int main(int argc, char* argv[]){
 	std::stringstream buff;
+	//=======================================
+	//*************About Models**********
+	double pFermi_1 = 0.24;
+	double pFermi_2 = 0.8;
+	double vFermi_1 = 2e-2;
+	double vFermi_2 = 4.5e-4;
+	double pFermi_max = pFermi_2;
+
+	double k = 0.065;
+	double m = 9;
+	double a = 1.69;
+	double b = 1.38;
+	double c = 1.79;
+	double crosec_in = 1649; //mb
+	double MX = 2.814;
+	double Mp = 0.93957;
 
 	//=======================================
 	//*************read parameter**********
@@ -273,35 +292,58 @@ int main(int argc, char* argv[]){
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
-	TLorentzVector target(0.,0.,0.,0.);
 	TLorentzVector beam(0.,0.,0.,0.);
-	target.SetVectM(TVector3(0.0, 0.0, 0.0), 0.9382723);
 	beam.SetVectM(TVector3(0.0, 0.0, 8.0), 0.9382723);
-	TLorentzVector W = beam + target;
 	//(Momentum, Energy units are Gev/C, GeV)
 	Double_t masses[4] = { 0.9382723, 0.9382723, 0.9382723, 0.9382723} ;
 
 	TGenPhaseSpace event;
-	event.SetDecay(W, 4, masses);
-	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"CMS: p=("<<W.Px()
-		                                                           <<", "<<W.Py()
-		                                                           <<", "<<W.Pz()
-		                                                           <<"), v=("<<W.BoostVector().X()
-		                                                           <<", "<<W.BoostVector().Y()
-		                                                           <<", "<<W.BoostVector().Z()
-		                                                           <<") E="<<W.E()
-	                                                               <<std::endl;
 
 	//loop in events
 	for( Long64_t iEvent = 0; iEvent < nEventsLimit; iEvent++ ){
-		N0++;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
+		N0++;
+		// Generate a nucleon
+		double pFermi = G4UniformRand()*pFermi_max;
+		double weight1;
+		if ( pFermi < pFermi_1 ) weight1 = 1;
+		else {
+			weight1 = vFermi_1 + (pFermi - pFermi_1)/(pFermi_2 - pFermi_1)*(vFermi_2 - vFermi_1);
+		}
+		G4double dir_x = 0., dir_y = 0., dir_z = 0.;
+		G4bool dir_OK = false;
+		while( !dir_OK ){
+			dir_x=G4UniformRand()-0.5;
+			dir_y=G4UniformRand()-0.5;
+			dir_z=G4UniformRand()-0.5;
+			if ( dir_x*dir_x + dir_y*dir_y + dir_z*dir_z <= 0.025 && dir_x*dir_x + dir_y*dir_y + dir_z*dir_z != 0) dir_OK = true;
+		}
+		TVector3 dir_3Vec(dir_x, dir_y, dir_z);
+		dir_3Vec.SetMag(pFermi);
+
+		// Generate the collision
+		TLorentzVector target(0.,0.,0.,0.);
+		target.SetVectM(dir_3Vec, 0.9382723);
+		TLorentzVector W = beam + target;
+		event.SetDecay(W, 4, masses);
 		Double_t weight = event.Generate();
 		TLorentzVector *pDaughter1 = event.GetDecay(0);
 		TLorentzVector *pDaughter2 = event.GetDecay(1);
 		TLorentzVector *pDaughter3 = event.GetDecay(2);
 		TLorentzVector *pDaughter4 = event.GetDecay(3);
+		TLorentzVector X = *pDaughter2 + *pDaughter3 + *pDaughter4;
 		TLorentzVector pAllDaughters = *pDaughter1 + *pDaughter2 + *pDaughter3 + *pDaughter4;
+
+		// Calculate weight given by Tan Model
+		double Emax = (s - MX*MX + Mp*Mp)/2*sqrt(s);
+		double xR = pDaughter1->E()/Emax;
+		double pt = pDaughter1->Pt();
+		double fr = (1+24/s/s*exp(8*xR))*(a*exp(b*pt*pt)*exp(-c*xR));
+		double weight2 = crosec_in*k*pow(1-xR,m)*exp(-3*pt)*fr;
+
+		// Get the total weight
+		weight *= weight1 * weight2;
+
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  weight = "<<weight
 		                                                                                             <<", p("<<pAllDaughters.Px()
 		                                                                                             <<", "<<pAllDaughters.Py()
@@ -332,6 +374,10 @@ int main(int argc, char* argv[]){
 																	                                 <<", "<<W.BoostVector().Z()
 																	                                 <<") E="<<W.E()
 																	                                 <<std::endl;
+
+		if ( (index_temp = get_TH1D("Mx")) != -1 ){
+			vecH1D[index_temp]->Fill(X.M(),weight);
+		}
 		if ( (index_temp = get_TH1D("pa")) != -1 ){
 			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
 		}
@@ -385,6 +431,9 @@ int main(int argc, char* argv[]){
 		}
 		if ( (index_temp = get_TH1D("ptCMS")) != -1 ){
 			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
+		}
+		if ( (index_temp = get_TH1D("ECMS")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->E(),weight);
 		}
 		if ( (index_temp = get_TH1D("pa_logCMS")) != -1 ){
 			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
