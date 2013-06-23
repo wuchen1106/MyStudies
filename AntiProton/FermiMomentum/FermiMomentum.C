@@ -288,9 +288,12 @@ int main(int argc, char* argv[]){
 		double weight = 0;
 		if ( pFermi < pFermi_1 ) weight = 1;
 		else {
-			weight = vFermi_1 + (pFermi - pFermi_1)/(pFermi_2 - pFermi_1)*(vFermi_2 - vFermi_1);
+			weight = vFermi_1 * pow(vFermi_2/vFermi_1,(pFermi-pFermi_1)/(pFermi_2-pFermi_1));
 		}
 		if ( (index_temp = get_TH1D("h")) != -1 ){
+			vecH1D[index_temp]->SetBinContent(ibin,weight);
+		}
+		if ( (index_temp = get_TH1D("h_log")) != -1 ){
 			vecH1D[index_temp]->SetBinContent(ibin,weight);
 		}
 
