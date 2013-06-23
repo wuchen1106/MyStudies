@@ -391,6 +391,9 @@ int main(int argc, char* argv[]){
 		if ( (index_temp = get_TH1D("vz")) != -1 ){
 			vecH1D[index_temp]->Fill(pDaughter1->BoostVector().Z(),weight);
 		}
+		if ( (index_temp = get_TH1D("theta")) != -1 ){
+			vecH1D[index_temp]->Fill((pDaughter1->Theta())*180/PI,weight);
+		}
 		if ( (index_temp = get_TH1D("pa_log")) != -1 ){
 			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
 		}
@@ -660,7 +663,7 @@ void init_args()
 	strcpy(m_workMode,"pr");
 	verbose = 0;
 	nEventsLimit = 0;
-	printModule = 100;
+	printModule = 10000;
 }
 
 void print_usage(char* prog_name)

@@ -14,6 +14,7 @@
   TH1D | pt                        | 4 body phase space in LS          | p_{t}(GeV/c)            | count         | 120 | 0     | 1     | 1e-6 | 1  | 1 | 0 | 0  | 0  | 20   | 
   TH1D | pa                        | 4 body phase space in LS          | p_{a}(GeV/c)            | count         | 120 | 0     | 5     | 1e-6 | 1  | 1 | 0 | 0  | 0  | 20   | 
   TH1D | vz                        | 4 body phase space in LS          | v_{z}(GeV/c)            | count         | 120 | -1    | 1     | 1e-6 | 1  | 1 | 0 | 0  | 0  | 20   | 
+  TH1D | theta                     | 4 body phase space in LS          | #theta(degree)          | count         | 120 | 0     | 180   | 1e-6 | 1  | 1 | 0 | 0  | 0  | 20   | 
   TH1D | pt_log                    | 4 body phase space in LS          | p_{t}(GeV/c)            | count         | 120 | 0     | 1     | 1e-6 | 1  | 1 | 0 | 0  | 1  | 20   | 
   TH1D | pa_log                    | 4 body phase space in LS          | p_{a}(GeV/c)            | count         | 120 | 0     | 5     | 1e-6 | 1  | 1 | 0 | 0  | 1  | 20   | 
   TH1D | vz_log                    | 4 body phase space in LS          | v_{z}(GeV/c)            | count         | 120 | -1    | 1     | 1e-6 | 1  | 1 | 0 | 0  | 1  | 20   | 
