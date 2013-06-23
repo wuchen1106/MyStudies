@@ -86,12 +86,6 @@ int main(int argc, char* argv[]){
 	std::stringstream buff;
 	//=======================================
 	//*************About Models**********
-	double pFermi_1 = 0.24;
-	double pFermi_2 = 0.8;
-	double vFermi_1 = 2e-2;
-	double vFermi_2 = 4.5e-4;
-	double pFermi_max = pFermi_2;
-
 	double k = 0.065;
 	double m = 9;
 	double a = 1.69;
@@ -290,6 +284,21 @@ int main(int argc, char* argv[]){
 	int N3 = 0;
 
 	//=======================================================================================================
+	//************Get Fermi Momentum Distribution histogram********************
+	std::string FN_FM = "../FermiMomentum/result/output.root";
+	std::string HN_FM = "h";
+	TFile* fp_FM = new TFile(FN_FM.c_str());
+	if (fp_FM==NULL) {
+		std::cout<<"ERROR: Can not find file: "<<FN_FM<<"!!!"<<std::endl;
+		return -1;
+	}
+	TH1D* h_FM = (TH1D*)fp_FM->Get(HN_FM.c_str());
+	if(h_FM==NULL){
+		std::cout<<"ERROR: Can not find histogram \""<<HN_FM<<"\"in file : "<<FN_FM<<"!!!"<<std::endl;
+		return -1;
+	}
+
+	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
 	TLorentzVector beam(0.,0.,0.,0.);
@@ -304,12 +313,7 @@ int main(int argc, char* argv[]){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
 		N0++;
 		// Generate a nucleon
-		double pFermi = G4UniformRand()*pFermi_max;
-		double weight1;
-		if ( pFermi < pFermi_1 ) weight1 = 1;
-		else {
-			weight1 = vFermi_1 + (pFermi - pFermi_1)/(pFermi_2 - pFermi_1)*(vFermi_2 - vFermi_1);
-		}
+		double pFermi = h_FM->GetRandom();
 		G4double dir_x = 0., dir_y = 0., dir_z = 0.;
 		G4bool dir_OK = false;
 		while( !dir_OK ){
@@ -342,7 +346,7 @@ int main(int argc, char* argv[]){
 		double weight2 = crosec_in*k*pow(1-xR,m)*exp(-3*pt)*fr;
 
 		// Get the total weight
-		weight *= weight1 * weight2;
+		weight *=  weight2;
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  weight = "<<weight
 		                                                                                             <<", p("<<pAllDaughters.Px()
