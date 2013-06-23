@@ -18,15 +18,9 @@
 #include "TGraph.h"
 #include "Math/DistFunc.h"
 #include "TVector3.h"
-#include "TGenPhaseSpace.h"
-
-#include "globals.hh"
-#include "Randomize.hh"
 
 char m_workMode[128];
 int verbose = 0;
-int nEventsLimit = 0;
-int printModule = 1;
 
 std::vector<TString> nameForH2D;
 std::vector<TString> titleForH2D;
@@ -90,16 +84,6 @@ int main(int argc, char* argv[]){
 	double pFermi_2 = 0.8;
 	double vFermi_1 = 2e-2;
 	double vFermi_2 = 4.5e-4;
-	double pFermi_max = pFermi_2;
-
-	double k = 0.065;
-	double m = 9;
-	double a = 1.69;
-	double b = 1.38;
-	double c = 1.79;
-	double crosec_in = 1649; //mb
-	double MX = 2.814;
-	double Mp = 0.93957;
 
 	//=======================================
 	//*************read parameter**********
@@ -109,7 +93,7 @@ int main(int argc, char* argv[]){
 	//}
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hv:n:m:p:"))!=-1){
+	while((result=getopt(argc,argv,"hv:m:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -119,14 +103,6 @@ int main(int argc, char* argv[]){
 			case 'v':
 				verbose = atoi(optarg);
 				printf("verbose level: %d\n",verbose);
-				break;
-			case 'n':
-				nEventsLimit = atoi(optarg);
-				printf("nEvent limit: %d\n",nEventsLimit);
-				break;
-			case 'p':
-				printModule = atoi(optarg);
-				printf("printModule: %d\n",printModule);
 				break;
 			case '?':
 				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
@@ -292,157 +268,33 @@ int main(int argc, char* argv[]){
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
-	TLorentzVector beam(0.,0.,0.,0.);
-	beam.SetVectM(TVector3(0.0, 0.0, 8.0), 0.9382723);
-	//(Momentum, Energy units are Gev/C, GeV)
-	Double_t masses[4] = { 0.9382723, 0.9382723, 0.9382723, 0.9382723} ;
-
-	TGenPhaseSpace event;
 
 	//loop in events
-	for( Long64_t iEvent = 0; iEvent < nEventsLimit; iEvent++ ){
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
+	int nbin = 120;
+	if ( (index_temp = get_TH1D("h")) != -1 ){
+		nbin = bin1ForH1D[index_temp];
+	}
+	for( int ibin = 1; ibin <= nbin; ibin++ ){
+		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfoStart<<"In Event "<<ibin<<std::endl;
 		N0++;
 		// Generate a nucleon
-		double pFermi = G4UniformRand()*pFermi_max;
-		double weight1;
-		if ( pFermi < pFermi_1 ) weight1 = 1;
+		double pFermi_left = 0;
+		double pFermi_right = pFermi_2;
+		if ( (index_temp = get_TH1D("h")) != -1 ){
+			pFermi_left = left1ForH1D[index_temp];
+			pFermi_right = right1ForH1D[index_temp];
+		}
+		double pFermi = pFermi_left + (pFermi_right-pFermi_left)*(ibin-1)/((double)nbin);
+		double weight = 0;
+		if ( pFermi < pFermi_1 ) weight = 1;
 		else {
-			weight1 = vFermi_1 + (pFermi - pFermi_1)/(pFermi_2 - pFermi_1)*(vFermi_2 - vFermi_1);
+			weight = vFermi_1 + (pFermi - pFermi_1)/(pFermi_2 - pFermi_1)*(vFermi_2 - vFermi_1);
 		}
-		G4double dir_x = 0., dir_y = 0., dir_z = 0.;
-		G4bool dir_OK = false;
-		while( !dir_OK ){
-			dir_x=G4UniformRand()-0.5;
-			dir_y=G4UniformRand()-0.5;
-			dir_z=G4UniformRand()-0.5;
-			if ( dir_x*dir_x + dir_y*dir_y + dir_z*dir_z <= 0.025 && dir_x*dir_x + dir_y*dir_y + dir_z*dir_z != 0) dir_OK = true;
-		}
-		TVector3 dir_3Vec(dir_x, dir_y, dir_z);
-		dir_3Vec.SetMag(pFermi);
-
-		// Generate the collision
-		TLorentzVector target(0.,0.,0.,0.);
-		target.SetVectM(dir_3Vec, 0.9382723);
-		TLorentzVector W = beam + target;
-		event.SetDecay(W, 4, masses);
-		Double_t weight = event.Generate();
-		TLorentzVector *pDaughter1 = event.GetDecay(0);
-		TLorentzVector *pDaughter2 = event.GetDecay(1);
-		TLorentzVector *pDaughter3 = event.GetDecay(2);
-		TLorentzVector *pDaughter4 = event.GetDecay(3);
-		TLorentzVector X = *pDaughter2 + *pDaughter3 + *pDaughter4;
-		TLorentzVector pAllDaughters = *pDaughter1 + *pDaughter2 + *pDaughter3 + *pDaughter4;
-
-		// Calculate weight given by Tan Model
-		double Emax = (s - MX*MX + Mp*Mp)/2*sqrt(s);
-		double xR = pDaughter1->E()/Emax;
-		double pt = pDaughter1->Pt();
-		double fr = (1+24/s/s*exp(8*xR))*(a*exp(b*pt*pt)*exp(-c*xR));
-		double weight2 = crosec_in*k*pow(1-xR,m)*exp(-3*pt)*fr;
-
-		// Get the total weight
-		weight *= weight1 * weight2;
-
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  weight = "<<weight
-		                                                                                             <<", p("<<pAllDaughters.Px()
-		                                                                                             <<", "<<pAllDaughters.Py()
-		                                                                                             <<", "<<pAllDaughters.Pz()
-		                                                                                             <<"), E="<<pAllDaughters.E()
-		                                                                                             <<", p1("<<pDaughter1->Px()
-		                                                                                             <<", "<<pDaughter1->Py()
-		                                                                                             <<", "<<pDaughter1->Pz()
-		                                                                                             <<"), E1="<<pDaughter1->E()
-		                                                                                             <<", p2("<<pDaughter2->Px()
-		                                                                                             <<", "<<pDaughter2->Py()
-		                                                                                             <<", "<<pDaughter2->Pz()
-		                                                                                             <<"), E2="<<pDaughter2->E()
-		                                                                                             <<", p3("<<pDaughter3->Px()
-		                                                                                             <<", "<<pDaughter3->Py()
-		                                                                                             <<", "<<pDaughter3->Pz()
-		                                                                                             <<"), E3="<<pDaughter3->E()
-		                                                                                             <<", p4("<<pDaughter4->Px()
-		                                                                                             <<", "<<pDaughter4->Py()
-		                                                                                             <<", "<<pDaughter4->Pz()
-		                                                                                             <<"), E4="<<pDaughter4->E()
-		                                                                                             <<std::endl;
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  CMS: p=("<<W.Px()
-																	                                 <<", "<<W.Py()
-																	                                 <<", "<<W.Pz()
-																	                                 <<"), v=("<<W.BoostVector().X()
-																	                                 <<", "<<W.BoostVector().Y()
-																	                                 <<", "<<W.BoostVector().Z()
-																	                                 <<") E="<<W.E()
-																	                                 <<std::endl;
-
-		if ( (index_temp = get_TH1D("Mx")) != -1 ){
-			vecH1D[index_temp]->Fill(X.M(),weight);
-		}
-		if ( (index_temp = get_TH1D("pa")) != -1 ){
-			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
-		}
-		if ( (index_temp = get_TH1D("pt")) != -1 ){
-			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
-		}
-		if ( (index_temp = get_TH1D("vz")) != -1 ){
-			vecH1D[index_temp]->Fill(pDaughter1->BoostVector().Z(),weight);
-		}
-		if ( (index_temp = get_TH1D("pa_log")) != -1 ){
-			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
-		}
-		if ( (index_temp = get_TH1D("pt_log")) != -1 ){
-			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
-		}
-		if ( (index_temp = get_TH1D("vz_log")) != -1 ){
-			vecH1D[index_temp]->Fill(pDaughter1->BoostVector().Z(),weight);
-		}
-		pDaughter1->Boost(-W.BoostVector());
-		pDaughter2->Boost(-W.BoostVector());
-		pDaughter3->Boost(-W.BoostVector());
-		pDaughter4->Boost(-W.BoostVector());
-		pAllDaughters = *pDaughter1 + *pDaughter2 + *pDaughter3 + *pDaughter4;
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  in CMS "
-		                                                                                             <<", p("<<pAllDaughters.Px()
-		                                                                                             <<", "<<pAllDaughters.Py()
-		                                                                                             <<", "<<pAllDaughters.Pz()
-		                                                                                             <<"), E="<<pAllDaughters.E()
-		                                                                                             <<", p1("<<pDaughter1->Px()
-		                                                                                             <<", "<<pDaughter1->Py()
-		                                                                                             <<", "<<pDaughter1->Pz()
-		                                                                                             <<"), E1="<<pDaughter1->E()
-		                                                                                             <<", p2("<<pDaughter2->Px()
-		                                                                                             <<", "<<pDaughter2->Py()
-		                                                                                             <<", "<<pDaughter2->Pz()
-		                                                                                             <<"), E2="<<pDaughter2->E()
-		                                                                                             <<", p3("<<pDaughter3->Px()
-		                                                                                             <<", "<<pDaughter3->Py()
-		                                                                                             <<", "<<pDaughter3->Pz()
-		                                                                                             <<"), E3="<<pDaughter3->E()
-		                                                                                             <<", p4("<<pDaughter4->Px()
-		                                                                                             <<", "<<pDaughter4->Py()
-		                                                                                             <<", "<<pDaughter4->Pz()
-		                                                                                             <<"), E4="<<pDaughter4->E()
-		                                                                                             <<std::endl;
-		if ( (index_temp = get_TH1D("thetaCMS")) != -1 ){
-			vecH1D[index_temp]->Fill(cos(pDaughter1->Theta()),weight);
-		}
-		if ( (index_temp = get_TH1D("paCMS")) != -1 ){
-			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
-		}
-		if ( (index_temp = get_TH1D("ptCMS")) != -1 ){
-			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
-		}
-		if ( (index_temp = get_TH1D("ECMS")) != -1 ){
-			vecH1D[index_temp]->Fill(pDaughter1->E(),weight);
-		}
-		if ( (index_temp = get_TH1D("pa_logCMS")) != -1 ){
-			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
-		}
-		if ( (index_temp = get_TH1D("pt_logCMS")) != -1 ){
-			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
+		if ( (index_temp = get_TH1D("h")) != -1 ){
+			vecH1D[index_temp]->SetBinContent(ibin,weight);
 		}
 
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
+		if (verbose >= Verbose_EventInfo ) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 	}/* end of loop in events*/
 
 	//=======================================================================================================
@@ -655,8 +507,6 @@ void init_args()
 {
 	strcpy(m_workMode,"pr");
 	verbose = 0;
-	nEventsLimit = 0;
-	printModule = 100;
 }
 
 void print_usage(char* prog_name)
@@ -667,10 +517,6 @@ void print_usage(char* prog_name)
 	fprintf(stderr,"\t\t choose work mode: [pr(default), ab]\n");
 	fprintf(stderr,"\t -v\n");
 	fprintf(stderr,"\t\t verbose level\n");
-	fprintf(stderr,"\t -n\n");
-	fprintf(stderr,"\t\t nEvent limit\n");
-	fprintf(stderr,"\t -p\n");
-	fprintf(stderr,"\t\t printModule\n");
 	fprintf(stderr,"\t -h\n");
 	fprintf(stderr,"\t\t Usage message.\n");
 	fprintf(stderr,"[example]\n");
