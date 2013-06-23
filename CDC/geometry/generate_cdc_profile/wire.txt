@@ -1,0 +1,14 @@
+#general info
+#	checkoverlap
+	CellMaterial:              ChamberGas
+	MotherLogicalVolume:       CDCContainer
+	SensitiveDetector:         CdcSD
+	SDVolumeName:              CdcCell
+#	DigitizeModule:            CdcDigitizer
+#	DigitizeModule:            none
+
+#wire info
+	SignalWireMaterial:        Tungsten
+	FieldWireMaterial:         Aluminium
+	SignalWireRadius:          15  #micrometer
+	FieldWireRadius:           63  #micrometer

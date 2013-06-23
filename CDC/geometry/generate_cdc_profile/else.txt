@@ -1,0 +1,15 @@
+TotalIndent(mm):        205
+Thickness(mm):          20
+InnerRadius(mm):        502
+OuterRadius(mm):        806
+EndPlateMat:            Aluminium
+EndPlateColor:          0    0    1
+
+ChamberMat:             ChamberGas9010
+
+InnerThick(mm):         0.4
+OuterThick(mm):         10
+InnerCylinderMat:       CarbonFiber
+OuterCylinderMat:       Aluminium
+InnerCylinderColor:     199  205  250
+OuterCylinderColor:     199  205  250
