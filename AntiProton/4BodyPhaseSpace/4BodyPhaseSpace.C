@@ -20,6 +20,9 @@
 #include "TVector3.h"
 #include "TGenPhaseSpace.h"
 
+#include "globals.hh"
+#include "Randomize.hh"
+
 char m_workMode[128];
 int verbose = 0;
 int nEventsLimit = 0;
@@ -271,31 +274,52 @@ int main(int argc, char* argv[]){
 	int N3 = 0;
 
 	//=======================================================================================================
+	//************Get Fermi Momentum Distribution histogram********************
+	std::string FN_FM = "../FermiMomentum/result/output.root";
+	std::string HN_FM = "h";
+	TFile* fp_FM = new TFile(FN_FM.c_str());
+	if (fp_FM==NULL) {
+		std::cout<<"ERROR: Can not find file: "<<FN_FM<<"!!!"<<std::endl;
+		return -1;
+	}
+	TH1D* h_FM = (TH1D*)fp_FM->Get(HN_FM.c_str());
+	if(h_FM==NULL){
+		std::cout<<"ERROR: Can not find histogram \""<<HN_FM<<"\"in file : "<<FN_FM<<"!!!"<<std::endl;
+		return -1;
+	}
+
+	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
-	TLorentzVector target(0.,0.,0.,0.);
 	TLorentzVector beam(0.,0.,0.,0.);
-	target.SetVectM(TVector3(0.0, 0.0, 0.0), 0.9382723);
 	beam.SetVectM(TVector3(0.0, 0.0, 8.0), 0.9382723);
-	TLorentzVector W = beam + target;
 	//(Momentum, Energy units are Gev/C, GeV)
 	Double_t masses[4] = { 0.9382723, 0.9382723, 0.9382723, 0.9382723} ;
 
 	TGenPhaseSpace event;
-	event.SetDecay(W, 4, masses);
-	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"CMS: p=("<<W.Px()
-		                                                           <<", "<<W.Py()
-		                                                           <<", "<<W.Pz()
-		                                                           <<"), v=("<<W.BoostVector().X()
-		                                                           <<", "<<W.BoostVector().Y()
-		                                                           <<", "<<W.BoostVector().Z()
-		                                                           <<") E="<<W.E()
-	                                                               <<std::endl;
 
 	//loop in events
 	for( Long64_t iEvent = 0; iEvent < nEventsLimit; iEvent++ ){
-		N0++;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
+		N0++;
+		// Generate a nucleon
+		double pFermi = h_FM->GetRandom();
+		G4double dir_x = 0., dir_y = 0., dir_z = 0.;
+		G4bool dir_OK = false;
+		while( !dir_OK ){
+			dir_x=G4UniformRand()-0.5;
+			dir_y=G4UniformRand()-0.5;
+			dir_z=G4UniformRand()-0.5;
+			if ( dir_x*dir_x + dir_y*dir_y + dir_z*dir_z <= 0.025 && dir_x*dir_x + dir_y*dir_y + dir_z*dir_z != 0) dir_OK = true;
+		}
+		TVector3 dir_3Vec(dir_x, dir_y, dir_z);
+		dir_3Vec.SetMag(pFermi);
+
+		// Generate the collision
+		TLorentzVector target(0.,0.,0.,0.);
+		target.SetVectM(dir_3Vec, 0.9382723);
+		TLorentzVector W = beam + target;
+		event.SetDecay(W, 4, masses);
 		Double_t weight = event.Generate();
 		TLorentzVector *pDaughter1 = event.GetDecay(0);
 		TLorentzVector *pDaughter2 = event.GetDecay(1);
@@ -333,6 +357,7 @@ int main(int argc, char* argv[]){
 																	                                 <<", "<<W.BoostVector().Z()
 																	                                 <<") E="<<W.E()
 																	                                 <<std::endl;
+
 		if ( (index_temp = get_TH1D("Mx")) != -1 ){
 			vecH1D[index_temp]->Fill(X.M(),weight);
 		}
@@ -344,6 +369,9 @@ int main(int argc, char* argv[]){
 		}
 		if ( (index_temp = get_TH1D("vz")) != -1 ){
 			vecH1D[index_temp]->Fill(pDaughter1->BoostVector().Z(),weight);
+		}
+		if ( (index_temp = get_TH1D("theta")) != -1 ){
+			vecH1D[index_temp]->Fill((pDaughter1->Theta())*180/PI,weight);
 		}
 		if ( (index_temp = get_TH1D("pa_log")) != -1 ){
 			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
@@ -614,7 +642,7 @@ void init_args()
 	strcpy(m_workMode,"pr");
 	verbose = 0;
 	nEventsLimit = 0;
-	printModule = 100;
+	printModule = 10000;
 }
 
 void print_usage(char* prog_name)
