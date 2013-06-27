@@ -522,9 +522,9 @@ int main(int argc, char* argv[]){
 			for ( int i = 0; i < McTruth_nTracks; i++ ){
 				if ((*McTruth_pid)[i] != -2212 ) continue;
 				//if ((*McTruth_ptid)[i] != 1) continue;
-				double px = (*McTruth_px)[i];
-				double py = (*McTruth_py)[i];
-				double pz = (*McTruth_pz)[i];
+				double px = (*McTruth_px)[i]/1000.; // change to GeV
+				double py = (*McTruth_py)[i]/1000.; // change to GeV
+				double pz = (*McTruth_pz)[i]/1000.; // change to GeV
 				double pt  = sqrt(px*px+py*py);
 				double theta = (pz==0?0:atan(pt/pz));
 				double x = (*McTruth_x)[i];
