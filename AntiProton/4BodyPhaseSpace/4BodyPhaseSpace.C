@@ -28,6 +28,9 @@ int verbose = 0;
 int nEventsLimit = 0;
 int printModule = 1;
 
+std::vector<std::string> refFileName;
+std::vector<std::string> refHistName;
+
 std::vector<TString> nameForH2D;
 std::vector<TString> titleForH2D;
 std::vector<TString> xNameForH2D;
@@ -249,6 +252,10 @@ int main(int argc, char* argv[]){
 			int i = nameForGraph.size() - 1;
 			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"Input vecGraph["<<i<<"]: "<<nameForGraph[i]<<", "<<titleForGraph[i]<<", "<<xNameForGraph[i]<<", "<<yNameForGraph[i]<<", Color="<<colorForGraph[i]<<", xlogSyle="<<xlogForGraph[i]<<", ylogSyle="<<ylogForGraph[i]<<", nCompare="<<compareForGraph[i]<<", markerStyle="<<markerForGraph[i]<<", drawOpt=\""<<drawOptForGraph[i]<<"\""<<std::endl;
 		}
+		else if (segments[0] == "refTH1D"){
+			if(iterator<segments.size()) refFileName.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) refHistName.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+		}
 		else{
 			std::cout<<"Cannot recogonize this line: "<<s_card<<std::endl;
 			continue;
@@ -261,6 +268,25 @@ int main(int argc, char* argv[]){
 	}
 	for ( int i = 0; i < nameForH1D.size(); i++ ){
 		vecH1D.push_back(new TH1D(nameForH1D[i],titleForH1D[i],bin1ForH1D[i],left1ForH1D[i],right1ForH1D[i]) );
+	}
+	for ( int i = 0; i < refFileName.size(); i++ ){
+		TFile * fp_ref = new TFile(refFileName[i].c_str());
+		if (fp_ref==NULL) {
+			std::cout<<"ERROR: Can not find file: "<<refFileName[i]<<"!!!"<<std::endl;
+			return -1;
+		}
+		TH1D* h1_ref = (TH1D*)fp_ref->Get(refHistName[i].c_str());
+		if(h1_ref==NULL){
+			std::cout<<"ERROR: Can not find histogram \""<<refHistName[i]<<"\"in file : "<<refFileName[i]<<"!!!"<<std::endl;
+			return -1;
+		}
+		if ( (index_temp = get_TH1D(refHistName[i])) != -1 ){
+			vecH1D[index_temp]=h1_ref;
+		}
+		else{
+			std::cout<<"ERROR: Can not find histogram \""<<refHistName[i]<<"\"in vecH1D!!!"<<std::endl;
+			return -1;
+		}
 	}
 
 	//=======================================================================================================
@@ -292,7 +318,7 @@ int main(int argc, char* argv[]){
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
 	TLorentzVector beam(0.,0.,0.,0.);
-	beam.SetVectM(TVector3(0.0, 0.0, 8.0), 0.9382723);
+	beam.SetVectM(TVector3(0.0, 0.0, 12.5), 0.9382723);
 	//(Momentum, Energy units are Gev/C, GeV)
 	Double_t masses[4] = { 0.9382723, 0.9382723, 0.9382723, 0.9382723} ;
 

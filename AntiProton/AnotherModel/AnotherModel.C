@@ -18,19 +18,20 @@
 #include "TGraph.h"
 #include "Math/DistFunc.h"
 #include "TVector3.h"
+#include "TGenPhaseSpace.h"
+
+#include "globals.hh"
+#include "Randomize.hh"
 
 char m_workMode[128];
 int verbose = 0;
 int nEventsLimit = 0;
 int printModule = 1;
 
-std::vector<std::string> refFileName;
-std::vector<std::string> refHistName;
-
-std::vector<std::string> nameForH2D;
-std::vector<std::string> titleForH2D;
-std::vector<std::string> xNameForH2D;
-std::vector<std::string> yNameForH2D;
+std::vector<TString> nameForH2D;
+std::vector<TString> titleForH2D;
+std::vector<TString> xNameForH2D;
+std::vector<TString> yNameForH2D;
 std::vector<int>     bin1ForH2D;
 std::vector<double>  left1ForH2D;
 std::vector<double>  right1ForH2D;
@@ -39,8 +40,8 @@ std::vector<double>  left2ForH2D;
 std::vector<double>  right2ForH2D;
 std::vector<TH2D*>   vecH2D;
 
-std::vector<std::string> nameForH1D;
-std::vector<std::string> titleForH1D;
+std::vector<TString> nameForH1D;
+std::vector<TString> titleForH1D;
 std::vector<int> compareForH1D;
 std::vector<double> minxForH1D;
 std::vector<double> minyForH1D;
@@ -48,16 +49,16 @@ std::vector<int> xlogForH1D;
 std::vector<int> ylogForH1D;
 std::vector<int> colorForH1D;
 std::vector<int> markerForH1D;
-std::vector<std::string> drawOptForH1D;
-std::vector<std::string> xNameForH1D;
-std::vector<std::string> yNameForH1D;
+std::vector<TString> drawOptForH1D;
+std::vector<TString> xNameForH1D;
+std::vector<TString> yNameForH1D;
 std::vector<int>     bin1ForH1D;
 std::vector<double>  left1ForH1D;
 std::vector<double>  right1ForH1D;
 std::vector<TH1D*>   vecH1D;
 
-std::vector<std::string> nameForGraph;
-std::vector<std::string> titleForGraph;
+std::vector<TString> nameForGraph;
+std::vector<TString> titleForGraph;
 std::vector<int> compareForGraph;
 std::vector<double> minxForGraph;
 std::vector<double> maxxForGraph;
@@ -66,9 +67,9 @@ std::vector<int> xlogForGraph;
 std::vector<int> ylogForGraph;
 std::vector<int> colorForGraph;
 std::vector<int> markerForGraph;
-std::vector<std::string> drawOptForGraph;
-std::vector<std::string> xNameForGraph;
-std::vector<std::string> yNameForGraph;
+std::vector<TString> drawOptForGraph;
+std::vector<TString> xNameForGraph;
+std::vector<TString> yNameForGraph;
 std::vector<std::vector<double> > xForGraph;
 std::vector<std::vector<double> > yForGraph;
 
@@ -83,6 +84,16 @@ void print_usage(char* prog_name);
 
 int main(int argc, char* argv[]){
 	std::stringstream buff;
+	//=======================================
+	//*************About Models**********
+	double k = 0.065;
+	double m = 9;
+	double a = 1.69;
+	double b = 1.38;
+	double c = 1.79;
+	double crosec_in = 1649; //mb
+	double MX = 2.814;
+	double Mp = 0.93957;
 
 	//=======================================
 	//*************read parameter**********
@@ -162,7 +173,6 @@ int main(int argc, char* argv[]){
 	//=>About output
 	std::string OutputDir = "result/";
 
-
 	//=======================================================================================================
 	//************SET HISTOGRAMS********************
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
@@ -186,7 +196,6 @@ int main(int argc, char* argv[]){
 		std::vector<std::string> segments;
 		seperate_string(s_card,segments,'|');
 		int iterator = 1;
-		std::cout<<"tag = \""<<segments[0]<<"\""<<std::endl;
 		if ( segments[0] == "TH1D" ){
 			if(iterator<segments.size()) nameForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			if(iterator<segments.size()) titleForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
@@ -250,10 +259,6 @@ int main(int argc, char* argv[]){
 			int i = nameForGraph.size() - 1;
 			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"Input vecGraph["<<i<<"]: "<<nameForGraph[i]<<", "<<titleForGraph[i]<<", "<<xNameForGraph[i]<<", "<<yNameForGraph[i]<<", Color="<<colorForGraph[i]<<", xlogSyle="<<xlogForGraph[i]<<", ylogSyle="<<ylogForGraph[i]<<", nCompare="<<compareForGraph[i]<<", markerStyle="<<markerForGraph[i]<<", drawOpt=\""<<drawOptForGraph[i]<<"\""<<std::endl;
 		}
-		else if (segments[0] == "refTH1D"){
-			if(iterator<segments.size()) refFileName.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
-			if(iterator<segments.size()) refHistName.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
-		}
 		else{
 			std::cout<<"Cannot recogonize this line: "<<s_card<<std::endl;
 			continue;
@@ -262,29 +267,10 @@ int main(int argc, char* argv[]){
 
 	//=> Get histograms in
 	for ( int i = 0; i < nameForH2D.size(); i++ ){
-		vecH2D.push_back(new TH2D(nameForH2D[i].c_str(),titleForH2D[i].c_str(),bin1ForH2D[i],left1ForH2D[i],right1ForH2D[i],bin2ForH2D[i],left2ForH2D[i],right2ForH2D[i]) );
+		vecH2D.push_back(new TH2D(nameForH2D[i],titleForH2D[i],bin1ForH2D[i],left1ForH2D[i],right1ForH2D[i],bin2ForH2D[i],left2ForH2D[i],right2ForH2D[i]) );
 	}
 	for ( int i = 0; i < nameForH1D.size(); i++ ){
-		vecH1D.push_back(new TH1D(nameForH1D[i].c_str(),titleForH1D[i].c_str(),bin1ForH1D[i],left1ForH1D[i],right1ForH1D[i]) );
-	}
-	for ( int i = 0; i < refFileName.size(); i++ ){
-		TFile * fp_ref = new TFile(refFileName[i].c_str());
-		if (fp_ref==NULL) {
-			std::cout<<"ERROR: Can not find file: "<<refFileName[i]<<"!!!"<<std::endl;
-			return -1;
-		}
-		TH1D* h1_ref = (TH1D*)fp_ref->Get(refHistName[i].c_str());
-		if(h1_ref==NULL){
-			std::cout<<"ERROR: Can not find histogram \""<<refHistName[i]<<"\"in file : "<<refFileName[i]<<"!!!"<<std::endl;
-			return -1;
-		}
-		if ( (index_temp = get_TH1D(refHistName[i])) != -1 ){
-			vecH1D[index_temp]=h1_ref;
-		}
-		else{
-			std::cout<<"ERROR: Can not find histogram \""<<refHistName[i]<<"\"in vecH1D!!!"<<std::endl;
-			return -1;
-		}
+		vecH1D.push_back(new TH1D(nameForH1D[i],titleForH1D[i],bin1ForH1D[i],left1ForH1D[i],right1ForH1D[i]) );
 	}
 
 	//=======================================================================================================
@@ -297,325 +283,177 @@ int main(int argc, char* argv[]){
 	int N2 = 0;
 	int N3 = 0;
 
-	//=> for efficiency
-	int nbin_eff = 6;
-	double min_eff;
-	double max_eff;
-	if ( (index_temp = get_TGraph("rate_vs_pa")) != -1 ){
-		min_eff =	minxForGraph[index_temp];
-		max_eff =	maxxForGraph[index_temp];
-	}
-
-	double halfbin_eff = (max_eff-min_eff)/((double)nbin_eff-1)/2;
-	std::vector<int> mu_num;
-	std::vector<int> mu_num_pass;
-	std::vector<int> ap_num;
-	std::vector<int> ap_num_pass;
-	std::vector<double> mu_eff;
-	std::vector<double> ap_eff;
-	mu_eff.resize(nbin_eff);
-	mu_num.resize(nbin_eff);
-	mu_num_pass.resize(nbin_eff);
-	ap_eff.resize(nbin_eff);
-	ap_num.resize(nbin_eff);
-	ap_num_pass.resize(nbin_eff);
-	for ( int i = 0; i < nbin_eff; i++ ){
-		mu_eff[i] = 0;
-		mu_num[i] = 0;
-		mu_num_pass[i] = 0;
-		ap_eff[i] = 0;
-		ap_num[i] = 0;
-		ap_num_pass[i] = 0;
-	}
-
-	//=> threshold
-	double mu_thre = 0;
-	double ap_thre = 0;
-
 	//=======================================================================================================
-	//************READ THE FILES********************
-	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In READ THE FILES###"<<std::endl;
-	std::string TreeName = "tree";
-	TChain *m_TChain = new TChain(TreeName.c_str());
-
-	int iStart = 0;
-	int nBit = 2;
-	for ( int iFile = 0; iFile < DirNames.size(); iFile++ ){
-		int nCPU = NCPU[iFile];
-		int njob = NJob[iFile];
-		if ( verbose >= Verbose_FileInfo) std::cout<<prefix_FileInfo<<"FileList \""<<DirNames[iFile]<<"\" with runname = \""<<RunNames[iFile]<<"\" has "<<NJob[iFile]<<" jobs on "<<NCPU[iFile]<<" CPUs"<<std::endl;
-		for (int i = iStart; i < iStart + nCPU; i ++){
-			for (int j = iStart; j < iStart + njob; j ++){
-				buff.str("");
-				buff.clear();
-				buff<<DirNames[iFile]<<"/"<<i<<"_job"<<j<<RunNames[iFile]<<".raw";
-				m_TChain->Add(buff.str().c_str());
-			}
-		}
+	//************Get Fermi Momentum Distribution histogram********************
+	std::string FN_FM = "../FermiMomentum/result/output.root";
+	std::string HN_FM = "h";
+	TFile* fp_FM = new TFile(FN_FM.c_str());
+	if (fp_FM==NULL) {
+		std::cout<<"ERROR: Can not find file: "<<FN_FM<<"!!!"<<std::endl;
+		return -1;
 	}
-
-	//=======================================================================================================
-	//************SET BRANCHES********************
-	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET BRANCHES###"<<std::endl;
-	//=> Get all the stuffs in input file
-	int run_num;
-	int evt_num;
-
-	int McTruth_nTracks;
-	std::vector<int> *McTruth_pid = 0;
-	std::vector<int> *McTruth_tid = 0;
-	std::vector<int> *McTruth_ptid = 0;
-	std::vector<double> *McTruth_time = 0;
-	std::vector<double> *McTruth_px = 0;
-	std::vector<double> *McTruth_py = 0;
-	std::vector<double> *McTruth_pz = 0;
-	std::vector<double> *McTruth_e = 0;
-	std::vector<double> *McTruth_x = 0;
-	std::vector<double> *McTruth_y = 0;
-	std::vector<double> *McTruth_z = 0;
-	std::vector<int> *McTruth_charge = 0;
-	std::vector<std::string> *McTruth_particleName = 0;
-	std::vector<std::string> *McTruth_process = 0;
-	std::vector<std::string> *McTruth_volume = 0;
-
-	int Monitor_nHits;
-	std::vector<double> *Monitor_x = 0;
-	std::vector<double> *Monitor_y = 0;
-	std::vector<double> *Monitor_z = 0;
-	std::vector<double> *Monitor_t = 0;
-	std::vector<double> *Monitor_px = 0;
-	std::vector<double> *Monitor_py = 0;
-	std::vector<double> *Monitor_pz = 0;
-	std::vector<double> *Monitor_e = 0;
-	std::vector<double> *Monitor_edep = 0;
-	std::vector<double> *Monitor_stepL = 0;
-	std::vector<int> *Monitor_volID = 0;
-	std::vector<std::string> *Monitor_volName = 0;
-	std::vector<int> *Monitor_tid = 0;
-	std::vector<int> *Monitor_pid = 0;
-	std::vector<int> *Monitor_charge = 0;
-
-	TBranch *bMcTruth_pid = 0;
-	TBranch *bMcTruth_tid = 0;
-	TBranch *bMcTruth_ptid = 0;
-	TBranch *bMcTruth_time = 0;
-	TBranch *bMcTruth_px = 0;
-	TBranch *bMcTruth_py = 0;
-	TBranch *bMcTruth_pz = 0;
-	TBranch *bMcTruth_e = 0;
-	TBranch *bMcTruth_x = 0;
-	TBranch *bMcTruth_y = 0;
-	TBranch *bMcTruth_z = 0;
-	TBranch *bMcTruth_charge = 0;
-	TBranch *bMcTruth_particleName = 0;
-	TBranch *bMcTruth_process = 0;
-	TBranch *bMcTruth_volume = 0;
-
-	TBranch *bMonitor_x = 0;
-	TBranch *bMonitor_y = 0;
-	TBranch *bMonitor_z = 0;
-	TBranch *bMonitor_t = 0;
-	TBranch *bMonitor_px = 0;
-	TBranch *bMonitor_py = 0;
-	TBranch *bMonitor_pz = 0;
-	TBranch *bMonitor_e = 0;
-	TBranch *bMonitor_edep = 0;
-	TBranch *bMonitor_stepL = 0;
-	TBranch *bMonitor_volID = 0;
-	TBranch *bMonitor_volName = 0;
-	TBranch *bMonitor_tid = 0;
-	TBranch *bMonitor_pid = 0;
-	TBranch *bMonitor_charge = 0;
-
-	m_TChain->SetBranchAddress("run_num", &run_num);
-	m_TChain->SetBranchAddress("evt_num", &evt_num);
-
-	m_TChain->SetBranchAddress("McTruth_nTracks", &McTruth_nTracks);
-	m_TChain->SetBranchAddress("McTruth_pid", &McTruth_pid, &bMcTruth_pid);
-	m_TChain->SetBranchAddress("McTruth_tid", &McTruth_tid, &bMcTruth_tid);
-	m_TChain->SetBranchAddress("McTruth_ptid", &McTruth_ptid, &bMcTruth_ptid);
-	m_TChain->SetBranchAddress("McTruth_time", &McTruth_time, &bMcTruth_time);
-	m_TChain->SetBranchAddress("McTruth_px", &McTruth_px, &bMcTruth_px);
-	m_TChain->SetBranchAddress("McTruth_py", &McTruth_py, &bMcTruth_py);
-	m_TChain->SetBranchAddress("McTruth_pz", &McTruth_pz, &bMcTruth_pz);
-	m_TChain->SetBranchAddress("McTruth_e", &McTruth_e, &bMcTruth_e);
-	m_TChain->SetBranchAddress("McTruth_x", &McTruth_x, &bMcTruth_x);
-	m_TChain->SetBranchAddress("McTruth_y", &McTruth_y, &bMcTruth_y);
-	m_TChain->SetBranchAddress("McTruth_z", &McTruth_z, &bMcTruth_z);
-	m_TChain->SetBranchAddress("McTruth_charge", &McTruth_charge, &bMcTruth_charge);
-	m_TChain->SetBranchAddress("McTruth_particleName", &McTruth_particleName, &bMcTruth_particleName);
-	m_TChain->SetBranchAddress("McTruth_process", &McTruth_process, &bMcTruth_process);
-	m_TChain->SetBranchAddress("McTruth_volume", &McTruth_volume, &bMcTruth_volume);
-
-	m_TChain->SetBranchAddress("Monitor_nHits", &Monitor_nHits);
-	m_TChain->SetBranchAddress("Monitor_x", &Monitor_x, &bMonitor_x);
-	m_TChain->SetBranchAddress("Monitor_y", &Monitor_y, &bMonitor_y);
-	m_TChain->SetBranchAddress("Monitor_z", &Monitor_z, &bMonitor_z);
-	m_TChain->SetBranchAddress("Monitor_t", &Monitor_t, &bMonitor_t);
-	m_TChain->SetBranchAddress("Monitor_px", &Monitor_px, &bMonitor_px);
-	m_TChain->SetBranchAddress("Monitor_py", &Monitor_py, &bMonitor_py);
-	m_TChain->SetBranchAddress("Monitor_pz", &Monitor_pz, &bMonitor_pz);
-	m_TChain->SetBranchAddress("Monitor_e", &Monitor_e, &bMonitor_e);
-	m_TChain->SetBranchAddress("Monitor_edep", &Monitor_edep, &bMonitor_edep);
-	m_TChain->SetBranchAddress("Monitor_stepL", &Monitor_stepL, &bMonitor_stepL);
-	m_TChain->SetBranchAddress("Monitor_volID", &Monitor_volID, &bMonitor_volID);
-	m_TChain->SetBranchAddress("Monitor_volName", &Monitor_volName, &bMonitor_volName);
-	m_TChain->SetBranchAddress("Monitor_tid", &Monitor_tid, &bMonitor_tid);
-	m_TChain->SetBranchAddress("Monitor_pid", &Monitor_pid, &bMonitor_pid);
-	m_TChain->SetBranchAddress("Monitor_charge", &Monitor_charge, &bMonitor_charge);
+	TH1D* h_FM = (TH1D*)fp_FM->Get(HN_FM.c_str());
+	if(h_FM==NULL){
+		std::cout<<"ERROR: Can not find histogram \""<<HN_FM<<"\"in file : "<<FN_FM<<"!!!"<<std::endl;
+		return -1;
+	}
 
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
-	Long64_t nEvent = m_TChain->GetEntries();
+	TLorentzVector beam(0.,0.,0.,0.);
+	beam.SetVectM(TVector3(0.0, 0.0, 12.5), 0.9382723);
+	//(Momentum, Energy units are Gev/C, GeV)
+	Double_t masses[4] = { 0.9382723, 0.9382723, 0.9382723, 0.9382723} ;
+
+	TGenPhaseSpace event;
+
 	//loop in events
-	for( Long64_t iEvent = 0; iEvent < (nEventsLimit&&nEventsLimit<nEvent?nEventsLimit:nEvent); iEvent++ ){
-		N0++;
+	for( Long64_t iEvent = 0; iEvent < nEventsLimit; iEvent++ ){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
-
-		Long64_t tentry = m_TChain->LoadTree(iEvent);
-
-		if(bMcTruth_pid) bMcTruth_pid->GetEntry(tentry);
-		if(bMcTruth_tid) bMcTruth_tid->GetEntry(tentry);
-		if(bMcTruth_ptid) bMcTruth_ptid->GetEntry(tentry);
-		if(bMcTruth_time) bMcTruth_time->GetEntry(tentry);
-		if(bMcTruth_px) bMcTruth_px->GetEntry(tentry);
-		if(bMcTruth_py) bMcTruth_py->GetEntry(tentry);
-		if(bMcTruth_pz) bMcTruth_pz->GetEntry(tentry);
-		if(bMcTruth_e) bMcTruth_e->GetEntry(tentry);
-		if(bMcTruth_x) bMcTruth_x->GetEntry(tentry);
-		if(bMcTruth_y) bMcTruth_y->GetEntry(tentry);
-		if(bMcTruth_z) bMcTruth_z->GetEntry(tentry);
-		if(bMcTruth_charge) bMcTruth_charge->GetEntry(tentry);
-		if(bMcTruth_particleName) bMcTruth_particleName->GetEntry(tentry);
-		if(bMcTruth_process) bMcTruth_process->GetEntry(tentry);
-		if(bMcTruth_volume) bMcTruth_volume->GetEntry(tentry);
-
-		if(bMonitor_x) bMonitor_x->GetEntry(tentry);
-		if(bMonitor_y) bMonitor_y->GetEntry(tentry);
-		if(bMonitor_z) bMonitor_z->GetEntry(tentry);
-		if(bMonitor_t) bMonitor_t->GetEntry(tentry);
-		if(bMonitor_px) bMonitor_px->GetEntry(tentry);
-		if(bMonitor_py) bMonitor_py->GetEntry(tentry);
-		if(bMonitor_pz) bMonitor_pz->GetEntry(tentry);
-		if(bMonitor_e) bMonitor_e->GetEntry(tentry);
-		if(bMonitor_edep) bMonitor_edep->GetEntry(tentry);
-		if(bMonitor_stepL) bMonitor_stepL->GetEntry(tentry);
-		if(bMonitor_volID) bMonitor_volID->GetEntry(tentry);
-		if(bMonitor_volName) bMonitor_volName->GetEntry(tentry);
-		if(bMonitor_tid) bMonitor_tid->GetEntry(tentry);
-		if(bMonitor_pid) bMonitor_pid->GetEntry(tentry);
-		if(bMonitor_charge) bMonitor_charge->GetEntry(tentry);
-
-		m_TChain->GetEntry(iEvent);
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"Got Entry!"<<std::endl;
-
-		//=> Start the dirty work
-		if (!strcmp(m_workMode,"ab")){
-			// muon or anti_proton
-			int event_type = 0; // (1:anti_proton, 2: muon, 0: others)
-			if ( (*McTruth_pid)[0] == -2212 )
-				event_type = 1;
-			else if ( (*McTruth_pid)[0] == 13 )
-				event_type = 2;
-
-			// passed or not
-			bool passed = false;
-			for ( int ihit = 0; ihit < Monitor_nHits; ihit++ ){
-				if ( (*Monitor_volID)[ihit] == 1 && (*Monitor_tid)[ihit] == 1 ){
-					passed = true;
-					break;
-				}
-			}
-
-			// which bin
-			double pa = sqrt((*McTruth_px)[0]*(*McTruth_px)[0]+(*McTruth_py)[0]*(*McTruth_py)[0]+(*McTruth_pz)[0]*(*McTruth_pz)[0]);
-			int ibin = (int)((pa-min_eff)/halfbin_eff/2 + 0.5);
-			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"pz = "<<(*McTruth_pz)[0]<<", pa = "<<pa<<", ibin = "<<ibin<<std::endl;
-
-			// count
-			if ( event_type == 1 ){
-				ap_num[ibin]++;
-				if (passed) ap_num_pass[ibin]++;
-			}
-			else if ( event_type == 2 ){
-				mu_num[ibin]++;
-				if (passed) mu_num_pass[ibin]++;
-			}
+		N0++;
+		// Generate a nucleon
+		double pFermi = h_FM->GetRandom();
+		G4double dir_x = 0., dir_y = 0., dir_z = 0.;
+		G4bool dir_OK = false;
+		while( !dir_OK ){
+			dir_x=G4UniformRand()-0.5;
+			dir_y=G4UniformRand()-0.5;
+			dir_z=G4UniformRand()-0.5;
+			if ( dir_x*dir_x + dir_y*dir_y + dir_z*dir_z <= 0.025 && dir_x*dir_x + dir_y*dir_y + dir_z*dir_z != 0) dir_OK = true;
 		}
-		else if (!strcmp(m_workMode,"pr")){
-			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"  nTracks = "<<McTruth_nTracks<<std::endl;;
-			for ( int i = 0; i < McTruth_nTracks; i++ ){
-				if ((*McTruth_pid)[i] != -2212 ) continue;
-				//if ((*McTruth_ptid)[i] != 1) continue;
-				double px = (*McTruth_px)[i]/1000.; // Change to GeV
-				double py = (*McTruth_py)[i]/1000.; // Change to GeV
-				double pz = (*McTruth_pz)[i]/1000.; // Change to GeV
-				double pt  = sqrt(px*px+py*py);
-				double theta = (pz==0?0:atan(pt/pz));
-				double x = (*McTruth_x)[i];
-				double y = (*McTruth_y)[i];
-				double z = (*McTruth_z)[i];
-				double r = sqrt(x*x+y*y);
-				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"    track["<<i<<"]:"
-				                                                                                         <<"  pt = "<<pt
-				                                                                                         <<", pz = "<<pz
-				                                                                                         <<", theta = "<<theta
-				                                                                                         <<std::endl;
-				if ( (index_temp = get_TH1D("4PS_pt")) != -1 ){
-					vecH1D[index_temp]->Fill(pt);
-				}
-				if ( (index_temp = get_TH1D("4PS_pz")) != -1 ){
-					vecH1D[index_temp]->Fill(pz);
-				}
-				if ( (index_temp = get_TH1D("4PS_z")) != -1 ){
-					vecH1D[index_temp]->Fill(z);
-				}
-				if ( (index_temp = get_TH1D("4PS_r")) != -1 ){
-					vecH1D[index_temp]->Fill(r);
-				}
-				if ( (index_temp = get_TH1D("4PS_theta")) != -1 ){
-					vecH1D[index_temp]->Fill(theta);
-				}
-			}
+		TVector3 dir_3Vec(dir_x, dir_y, dir_z);
+		dir_3Vec.SetMag(pFermi);
+
+		// Generate the collision
+		TLorentzVector target(0.,0.,0.,0.);
+		target.SetVectM(dir_3Vec, 0.9382723);
+		TLorentzVector W = beam + target;
+		event.SetDecay(W, 4, masses);
+		Double_t weight = event.Generate();
+		TLorentzVector *pDaughter1 = event.GetDecay(0);
+		TLorentzVector *pDaughter2 = event.GetDecay(1);
+		TLorentzVector *pDaughter3 = event.GetDecay(2);
+		TLorentzVector *pDaughter4 = event.GetDecay(3);
+		TLorentzVector X = *pDaughter2 + *pDaughter3 + *pDaughter4;
+		TLorentzVector pAllDaughters = *pDaughter1 + *pDaughter2 + *pDaughter3 + *pDaughter4;
+
+		// Calculate weight given by Tan Model
+		double s = W.M2();
+		double Emax = (s - MX*MX + Mp*Mp)/2*sqrt(s);
+		double xR = pDaughter1->E()/Emax;
+		double pt = pDaughter1->Pt();
+		double fr = (1+24/s/s*exp(8*xR))*(a*exp(b*pt*pt)*exp(-c*xR));
+		double weight2 = crosec_in*k*pow(1-xR,m)*exp(-3*pt)*fr;
+
+		// Get the total weight
+		weight *=  weight2;
+
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  weight = "<<weight
+		                                                                                             <<", p("<<pAllDaughters.Px()
+		                                                                                             <<", "<<pAllDaughters.Py()
+		                                                                                             <<", "<<pAllDaughters.Pz()
+		                                                                                             <<"), E="<<pAllDaughters.E()
+		                                                                                             <<", p1("<<pDaughter1->Px()
+		                                                                                             <<", "<<pDaughter1->Py()
+		                                                                                             <<", "<<pDaughter1->Pz()
+		                                                                                             <<"), E1="<<pDaughter1->E()
+		                                                                                             <<", p2("<<pDaughter2->Px()
+		                                                                                             <<", "<<pDaughter2->Py()
+		                                                                                             <<", "<<pDaughter2->Pz()
+		                                                                                             <<"), E2="<<pDaughter2->E()
+		                                                                                             <<", p3("<<pDaughter3->Px()
+		                                                                                             <<", "<<pDaughter3->Py()
+		                                                                                             <<", "<<pDaughter3->Pz()
+		                                                                                             <<"), E3="<<pDaughter3->E()
+		                                                                                             <<", p4("<<pDaughter4->Px()
+		                                                                                             <<", "<<pDaughter4->Py()
+		                                                                                             <<", "<<pDaughter4->Pz()
+		                                                                                             <<"), E4="<<pDaughter4->E()
+		                                                                                             <<std::endl;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  CMS: p=("<<W.Px()
+																	                                 <<", "<<W.Py()
+																	                                 <<", "<<W.Pz()
+																	                                 <<"), v=("<<W.BoostVector().X()
+																	                                 <<", "<<W.BoostVector().Y()
+																	                                 <<", "<<W.BoostVector().Z()
+																	                                 <<") E="<<W.E()
+																	                                 <<std::endl;
+
+		if ( (index_temp = get_TH1D("Mx")) != -1 ){
+			vecH1D[index_temp]->Fill(X.M(),weight);
 		}
-		else{
-			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"  work mode <"<<m_workMode<<"> does not match any known modes"<<std::endl;
+		if ( (index_temp = get_TH1D("pa")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
+		}
+		if ( (index_temp = get_TH1D("pt")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
+		}
+		if ( (index_temp = get_TH1D("vz")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->BoostVector().Z(),weight);
+		}
+		if ( (index_temp = get_TH1D("theta")) != -1 ){
+			vecH1D[index_temp]->Fill((pDaughter1->Theta())*180/PI,weight);
+		}
+		if ( (index_temp = get_TH1D("pa_log")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
+		}
+		if ( (index_temp = get_TH1D("pt_log")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
+		}
+		if ( (index_temp = get_TH1D("vz_log")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->BoostVector().Z(),weight);
+		}
+		pDaughter1->Boost(-W.BoostVector());
+		pDaughter2->Boost(-W.BoostVector());
+		pDaughter3->Boost(-W.BoostVector());
+		pDaughter4->Boost(-W.BoostVector());
+		pAllDaughters = *pDaughter1 + *pDaughter2 + *pDaughter3 + *pDaughter4;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  in CMS "
+		                                                                                             <<", p("<<pAllDaughters.Px()
+		                                                                                             <<", "<<pAllDaughters.Py()
+		                                                                                             <<", "<<pAllDaughters.Pz()
+		                                                                                             <<"), E="<<pAllDaughters.E()
+		                                                                                             <<", p1("<<pDaughter1->Px()
+		                                                                                             <<", "<<pDaughter1->Py()
+		                                                                                             <<", "<<pDaughter1->Pz()
+		                                                                                             <<"), E1="<<pDaughter1->E()
+		                                                                                             <<", p2("<<pDaughter2->Px()
+		                                                                                             <<", "<<pDaughter2->Py()
+		                                                                                             <<", "<<pDaughter2->Pz()
+		                                                                                             <<"), E2="<<pDaughter2->E()
+		                                                                                             <<", p3("<<pDaughter3->Px()
+		                                                                                             <<", "<<pDaughter3->Py()
+		                                                                                             <<", "<<pDaughter3->Pz()
+		                                                                                             <<"), E3="<<pDaughter3->E()
+		                                                                                             <<", p4("<<pDaughter4->Px()
+		                                                                                             <<", "<<pDaughter4->Py()
+		                                                                                             <<", "<<pDaughter4->Pz()
+		                                                                                             <<"), E4="<<pDaughter4->E()
+		                                                                                             <<std::endl;
+		if ( (index_temp = get_TH1D("thetaCMS")) != -1 ){
+			vecH1D[index_temp]->Fill(cos(pDaughter1->Theta()),weight);
+		}
+		if ( (index_temp = get_TH1D("paCMS")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
+		}
+		if ( (index_temp = get_TH1D("ptCMS")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
+		}
+		if ( (index_temp = get_TH1D("ECMS")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->E(),weight);
+		}
+		if ( (index_temp = get_TH1D("pa_logCMS")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
+		}
+		if ( (index_temp = get_TH1D("pt_logCMS")) != -1 ){
+			vecH1D[index_temp]->Fill(pDaughter1->Pt(),weight);
 		}
 
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 	}/* end of loop in events*/
+
 	//=======================================================================================================
-	if (!strcmp(m_workMode,"ab")){
-		//************FOR EFFICIENCY**********************
-		for (int i = 0; i < nbin_eff; i++ ){
-			double pa = min_eff + i*halfbin_eff*2;
-			double mu_eff = mu_num[i]?(double)(mu_num_pass[i])/mu_num[i]:0;
-			double ap_eff = ap_num[i]?(double)(ap_num_pass[i])/ap_num[i]:0;
-			if ( mu_eff && !mu_thre ){
-				mu_thre = pa;
-				if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"mu_thre = "<<mu_thre<<"MeV, mu_eff = "<<mu_eff<<std::endl;
-			}
-			if ( ap_eff && !ap_thre ){
-				ap_thre = pa;
-				if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"ap_thre = "<<ap_thre<<"MeV, ap_eff = "<<ap_eff<<std::endl;
-			}
-			if ( (index_temp = get_TGraph("muon_rate_vs_pa")) != -1 ){
-				xForGraph[index_temp].push_back(pa);
-				yForGraph[index_temp].push_back(mu_eff);
-			}
-			if ( (index_temp = get_TGraph("rate_vs_pa")) != -1 ){
-				xForGraph[index_temp].push_back(pa);
-				yForGraph[index_temp].push_back(ap_eff);
-			}
-			if (verbose >= Verbose_EffInfo) std::cout<<prefix_EffInfo<<"pa = "<<pa
-																															 <<", mu_num: "<<mu_num[i]
-																															 <<", mu_num_pass: "<<mu_num_pass[i]
-																															 <<", ap_num: "<<ap_num[i]
-																															 <<", ap_num_pass: "<<ap_num_pass[i]
-																															 <<std::endl;
-		}
-	}
 
 	//=======================================================================================================
 	//************WRITE AND OUTPUT********************
@@ -637,8 +475,8 @@ int main(int argc, char* argv[]){
 	for ( int i = 0; i < vecH1D.size(); i++ ){
 		if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"Output vecH1D["<<i<<"]: "<<nameForH1D[i]<<", "<<titleForH1D[i]<<", "<<xNameForH1D[i]<<", "<<yNameForH1D[i]<<", "<<bin1ForH1D[i]<<", "<<left1ForH1D[i]<<", "<<right1ForH1D[i]<<", Color="<<colorForH1D[i]<<", xlogSyle="<<xlogForH1D[i]<<", ylogSyle="<<ylogForH1D[i]<<", nCompare="<<compareForH1D[i]<<", markerStyle="<<markerForH1D[i]<<", drawOpt=\""<<drawOptForH1D[i]<<"\""<<std::endl;
 		vecH1D[i]->SetLineColor(colorForH1D[i]);
-		std::string name = vecH1D[i]->GetName();
-		TCanvas* c = new TCanvas(name.c_str());
+		TString name = vecH1D[i]->GetName();
+		TCanvas* c = new TCanvas(name);
 		int nCompare = compareForH1D[i];
 		if ( nCompare ) if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<nCompare<<" histograms to be compared"<<std::endl;
 		double currentMaximum = vecH1D[i]->GetMaximum();
@@ -656,13 +494,13 @@ int main(int argc, char* argv[]){
 		if ( xlogForH1D[i] ) vecH1D[i]->GetXaxis()->SetRangeUser(minxForH1D[i],right1ForH1D[i]);
 		else vecH1D[i]->GetXaxis()->SetRangeUser(left1ForH1D[i],right1ForH1D[i]);
 		if ( ylogForH1D[i] ) vecH1D[i]->GetYaxis()->SetRangeUser(minyForH1D[i],2*currentMaximum);
-		else vecH1D[i]->GetYaxis()->SetRangeUser(minyForH1D[i],1.05*currentMaximum);
+		else vecH1D[i]->GetYaxis()->SetRangeUser(left1ForH1D[i],1.05*currentMaximum);
 		vecH1D[i]->SetMarkerStyle(markerForH1D[i]);
 		vecH1D[i]->SetMarkerColor(colorForH1D[i]);
 		vecH1D[i]->SetLineColor(colorForH1D[i]);
-		vecH1D[i]->GetXaxis()->SetTitle(xNameForH1D[i].c_str());
-		vecH1D[i]->GetYaxis()->SetTitle(yNameForH1D[i].c_str());
-		vecH1D[i]->Draw(drawOptForH1D[i].c_str());
+		vecH1D[i]->GetXaxis()->SetTitle(xNameForH1D[i]);
+		vecH1D[i]->GetYaxis()->SetTitle(yNameForH1D[i]);
+		vecH1D[i]->Draw(drawOptForH1D[i]);
 		vecH1D[i]->Write();
 		for ( int j = 0; j < nCompare; j++ ){
 			i++;
@@ -671,23 +509,23 @@ int main(int argc, char* argv[]){
 			vecH1D[i]->SetMarkerStyle(markerForH1D[i]);
 			vecH1D[i]->SetMarkerColor(colorForH1D[i]);
 			vecH1D[i]->SetLineColor(colorForH1D[i]);
-			std::string drawOpt = drawOptForH1D[i]+"SAME";
-			vecH1D[i]->Draw(drawOpt.c_str());
+			TString drawOpt = drawOptForH1D[i]+"SAME";
+			vecH1D[i]->Draw(drawOpt);
 		}
-		std::string fileName = OutputDir + name + ".pdf";
-		c->Print(fileName.c_str());
+		TString fileName = OutputDir + name + ".pdf";
+		c->Print(fileName);
 	}
 	gStyle->SetOptStat(0);
 	for ( int i = 0; i < vecH2D.size(); i++ ){
 		if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"Output vecH2D["<<i<<"]: "<<nameForH2D[i]<<", "<<titleForH2D[i]<<", "<<xNameForH2D[i]<<", "<<yNameForH2D[i]<<", "<<bin1ForH2D[i]<<", "<<left1ForH2D[i]<<", "<<right1ForH2D[i]<<", "<<bin2ForH2D[i]<<", "<<left2ForH2D[i]<<", "<<right2ForH2D[i]<<std::endl;
-		std::string name = vecH2D[i]->GetName();
-		TCanvas* c = new TCanvas(name.c_str());
-		vecH2D[i]->GetXaxis()->SetTitle(xNameForH2D[i].c_str());
-		vecH2D[i]->GetYaxis()->SetTitle(yNameForH2D[i].c_str());
+		TString name = vecH2D[i]->GetName();
+		TCanvas* c = new TCanvas(name);
+		vecH2D[i]->GetXaxis()->SetTitle(xNameForH2D[i]);
+		vecH2D[i]->GetYaxis()->SetTitle(yNameForH2D[i]);
 		vecH2D[i]->Draw("COLZ");
 		vecH2D[i]->Write();
-		std::string fileName = OutputDir + name + ".pdf";
-		c->Print(fileName.c_str());
+		TString fileName = OutputDir + name + ".pdf";
+		c->Print(fileName);
 	}
 	for ( int i = 0; i < nameForGraph.size(); i++ ){
 		int sizeOfThisGraph = xForGraph[i].size();
@@ -698,10 +536,10 @@ int main(int argc, char* argv[]){
 				std::cout<<prefix_HistInfo<<"  ["<<j<<"]: ("<<xForGraph[i][j]<<","<<yForGraph[i][j]<<")"<<std::endl;
 			}
 		}
-		std::string name = nameForGraph[i];
-		TCanvas* c = new TCanvas(nameForGraph[i].c_str());
+		TString name = nameForGraph[i];
+		TCanvas* c = new TCanvas(nameForGraph[i]);
 		TGraph *aTGraph = new TGraph(sizeOfThisGraph,&xForGraph[i][0],&yForGraph[i][0]);
-		aTGraph->SetTitle(titleForGraph[i].c_str());
+		aTGraph->SetTitle(titleForGraph[i]);
 		int nCompare = compareForGraph[i];
 		if ( nCompare ) if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<nCompare<<" graphs to be compared"<<std::endl;
 		std::vector<double> yforgraph = yForGraph[i];
@@ -722,13 +560,13 @@ int main(int argc, char* argv[]){
 		else aTGraph->GetXaxis()->SetRangeUser(minxForGraph[i],1.05*maxxForGraph[i]);
 		if ( ylogForGraph[i] ) aTGraph->GetYaxis()->SetRangeUser(minyForGraph[i],2*currentMaximum);
 		else aTGraph->GetYaxis()->SetRangeUser(minyForGraph[i],1.05*currentMaximum);
-		aTGraph->GetXaxis()->SetTitle(xNameForGraph[i].c_str());
-		aTGraph->GetYaxis()->SetTitle(yNameForGraph[i].c_str());
+		aTGraph->GetXaxis()->SetTitle(xNameForGraph[i]);
+		aTGraph->GetYaxis()->SetTitle(yNameForGraph[i]);
 		aTGraph->SetMarkerStyle(markerForGraph[i]);
 		aTGraph->SetMarkerColor(colorForGraph[i]);
 		aTGraph->SetLineColor(colorForGraph[i]);
-		std::string drawOpt = "A"+drawOptForGraph[i];
-		aTGraph->Draw(drawOpt.c_str());
+		TString drawOpt = "A"+drawOptForGraph[i];
+		aTGraph->Draw(drawOpt);
 		aTGraph->Write();
 		for ( int j = 0; j < nCompare; j++ ){
 			i++;
@@ -741,24 +579,23 @@ int main(int argc, char* argv[]){
 				}
 			}
 			TGraph *bTGraph = new TGraph(sizeOfThisGraph,&xForGraph[i][0],&yForGraph[i][0]);
-			bTGraph->SetTitle(titleForGraph[i].c_str());
-			bTGraph->GetXaxis()->SetTitle(xNameForGraph[i].c_str());
-			bTGraph->GetYaxis()->SetTitle(yNameForGraph[i].c_str());
+			bTGraph->SetTitle(titleForGraph[i]);
+			bTGraph->GetXaxis()->SetTitle(xNameForGraph[i]);
+			bTGraph->GetYaxis()->SetTitle(yNameForGraph[i]);
 			bTGraph->SetLineColor(colorForGraph[i]);
 			bTGraph->SetMarkerStyle(markerForGraph[i]);
 			bTGraph->SetMarkerColor(colorForGraph[i]);
 			bTGraph->SetLineColor(colorForGraph[i]);
-			bTGraph->Draw(drawOptForGraph[i].c_str());
+			bTGraph->Draw(drawOptForGraph[i]);
 			bTGraph->Write();
 		}
-		std::string fileName = OutputDir + name + ".pdf";
-		c->Print(fileName.c_str());
+		TString fileName = OutputDir + name + ".pdf";
+		c->Print(fileName);
 	}
 
 	//TTree *m_TTree = m_TChain->CloneTree();
 	//m_TTree->Write();
-	m_TChain->CloneTree(-1,"fast");
-	file->Write();
+	//file->Write();
 	file->Close();
 
 	delete file;
@@ -827,7 +664,7 @@ void init_args()
 	strcpy(m_workMode,"pr");
 	verbose = 0;
 	nEventsLimit = 0;
-	printModule = 100;
+	printModule = 10000;
 }
 
 void print_usage(char* prog_name)

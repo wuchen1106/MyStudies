@@ -86,14 +86,22 @@ int main(int argc, char* argv[]){
 	std::stringstream buff;
 	//=======================================
 	//*************About Models**********
-	double k = 0.065;
-	double m = 9;
-	double a = 1.69;
-	double b = 1.38;
-	double c = 1.79;
-	double crosec_in = 1649; //mb
 	double MX = 2.814;
 	double Mp = 0.93957;
+	double sigmga00 = 3.15;
+	double a1 = 1.05e-4;
+	double a2 = 10.1;
+	double a3 = 0.5;
+	double a4 = 7.9;
+	double a5 = 0/465;
+	double a6 = 3.7e-2;
+	double a7 = 2.31;
+	double a8 = 1.4e-2;
+	double a9 = 3.02e-2;
+	double a10 = 3.19;
+	double a11 = 0.399;
+	double a12 = 8.39;
+	double epsilon = 0.23;
 
 	//=======================================
 	//*************read parameter**********
@@ -302,7 +310,7 @@ int main(int argc, char* argv[]){
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
 	TLorentzVector beam(0.,0.,0.,0.);
-	beam.SetVectM(TVector3(0.0, 0.0, 8.0), 0.9382723);
+	beam.SetVectM(TVector3(0.0, 0.0, 12.5), 0.9382723);
 	//(Momentum, Energy units are Gev/C, GeV)
 	Double_t masses[4] = { 0.9382723, 0.9382723, 0.9382723, 0.9382723} ;
 
@@ -339,11 +347,20 @@ int main(int argc, char* argv[]){
 		TLorentzVector pAllDaughters = *pDaughter1 + *pDaughter2 + *pDaughter3 + *pDaughter4;
 
 		// Calculate weight given by Tan Model
+		double s = W.M2();
 		double Emax = (s - MX*MX + Mp*Mp)/2*sqrt(s);
 		double xR = pDaughter1->E()/Emax;
 		double pt = pDaughter1->Pt();
-		double fr = (1+24/s/s*exp(8*xR))*(a*exp(b*pt*pt)*exp(-c*xR));
-		double weight2 = crosec_in*k*pow(1-xR,m)*exp(-3*pt)*fr;
+		double fr = 0;
+		if ( a3 < xR ){
+			fr = (sigmga00-a1)*pow(1-xR,a4);
+		}
+		else{
+			fr = a1*exp(-a2*xR)+(sigmga00-a1)*pow(1-xR,a4);
+		}
+		double A = a5*exp(-a6*xR)+a7*exp(a8*xR);
+		double B = a9*exp(-a10*(xR+a11))*pow(xR+a11,a12);
+		double weight2 = fr*exp(-A*pt+B*pt*pt);
 
 		// Get the total weight
 		weight *=  weight2;
@@ -392,7 +409,7 @@ int main(int argc, char* argv[]){
 			vecH1D[index_temp]->Fill(pDaughter1->BoostVector().Z(),weight);
 		}
 		if ( (index_temp = get_TH1D("theta")) != -1 ){
-			vecH1D[index_temp]->Fill((pDaughter1->Theta())*180/PI,weight);
+			vecH1D[index_temp]->Fill(pDaughter1->Theta(),weight);
 		}
 		if ( (index_temp = get_TH1D("pa_log")) != -1 ){
 			vecH1D[index_temp]->Fill(pDaughter1->Rho(),weight);
@@ -430,7 +447,7 @@ int main(int argc, char* argv[]){
 		                                                                                             <<", "<<pDaughter4->Pz()
 		                                                                                             <<"), E4="<<pDaughter4->E()
 		                                                                                             <<std::endl;
-		if ( (index_temp = get_TH1D("thetaCMS")) != -1 ){
+		if ( (index_temp = get_TH1D("costhetaCMS")) != -1 ){
 			vecH1D[index_temp]->Fill(cos(pDaughter1->Theta()),weight);
 		}
 		if ( (index_temp = get_TH1D("paCMS")) != -1 ){
