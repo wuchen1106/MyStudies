@@ -521,12 +521,16 @@ int main(int argc, char* argv[]){
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"  nTracks = "<<McTruth_nTracks<<std::endl;;
 			for ( int i = 0; i < McTruth_nTracks; i++ ){
 				if ((*McTruth_pid)[i] != -2212 ) continue;
-				if ((*McTruth_ptid)[i] != 1) continue;
+				//if ((*McTruth_ptid)[i] != 1) continue;
 				double px = (*McTruth_px)[i];
 				double py = (*McTruth_py)[i];
 				double pz = (*McTruth_pz)[i];
 				double pt  = sqrt(px*px+py*py);
 				double theta = (pz==0?0:atan(pt/pz));
+				double x = (*McTruth_x)[i];
+				double y = (*McTruth_y)[i];
+				double z = (*McTruth_z)[i];
+				double r = sqrt(x*x+y*y);
 				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"    track["<<i<<"]:"
 				                                                                                         <<"  pt = "<<pt
 				                                                                                         <<", pz = "<<pz
@@ -537,6 +541,12 @@ int main(int argc, char* argv[]){
 				}
 				if ( (index_temp = get_TH1D("ap_pz")) != -1 ){
 					vecH1D[index_temp]->Fill(pz);
+				}
+				if ( (index_temp = get_TH1D("ap_z")) != -1 ){
+					vecH1D[index_temp]->Fill(z);
+				}
+				if ( (index_temp = get_TH1D("ap_r")) != -1 ){
+					vecH1D[index_temp]->Fill(r);
 				}
 				if ( (index_temp = get_TH1D("ap_theta")) != -1 ){
 					vecH1D[index_temp]->Fill(theta);
@@ -620,7 +630,7 @@ int main(int argc, char* argv[]){
 		if ( xlogForH1D[i] ) vecH1D[i]->GetXaxis()->SetRangeUser(minxForH1D[i],right1ForH1D[i]);
 		else vecH1D[i]->GetXaxis()->SetRangeUser(left1ForH1D[i],right1ForH1D[i]);
 		if ( ylogForH1D[i] ) vecH1D[i]->GetYaxis()->SetRangeUser(minyForH1D[i],2*currentMaximum);
-		else vecH1D[i]->GetYaxis()->SetRangeUser(left1ForH1D[i],1.05*currentMaximum);
+		else vecH1D[i]->GetYaxis()->SetRangeUser(minyForH1D[i],1.05*currentMaximum);
 		vecH1D[i]->SetMarkerStyle(markerForH1D[i]);
 		vecH1D[i]->SetMarkerColor(colorForH1D[i]);
 		vecH1D[i]->SetLineColor(colorForH1D[i]);
@@ -721,7 +731,8 @@ int main(int argc, char* argv[]){
 
 	//TTree *m_TTree = m_TChain->CloneTree();
 	//m_TTree->Write();
-	//file->Write();
+	m_TChain->CloneTree(-1,"fast");
+	file->Write();
 	file->Close();
 
 	delete file;
