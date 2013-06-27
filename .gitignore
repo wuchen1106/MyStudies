@@ -17,3 +17,6 @@ currentEvent.rndm
 currentRun.rndm
 result/
 .svn/
+
+# frequently changing files
+histList
