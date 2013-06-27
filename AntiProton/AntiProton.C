@@ -521,6 +521,7 @@ int main(int argc, char* argv[]){
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"  nTracks = "<<McTruth_nTracks<<std::endl;;
 			for ( int i = 0; i < McTruth_nTracks; i++ ){
 				if ((*McTruth_pid)[i] != -2212 ) continue;
+				if ((*McTruth_ptid)[i] != 1) continue;
 				double px = (*McTruth_px)[i];
 				double py = (*McTruth_py)[i];
 				double pz = (*McTruth_pz)[i];
