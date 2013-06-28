@@ -24,6 +24,8 @@ int verbose = 0;
 int nEventsLimit = 0;
 int printModule = 1;
 
+std::vector<std::string> oFileName;
+
 std::vector<std::string> refFileName;
 std::vector<std::string> refHistName;
 
@@ -48,6 +50,7 @@ std::vector<int> xlogForH1D;
 std::vector<int> ylogForH1D;
 std::vector<int> colorForH1D;
 std::vector<int> markerForH1D;
+std::vector<double> normForH1D;
 std::vector<std::string> drawOptForH1D;
 std::vector<std::string> xNameForH1D;
 std::vector<std::string> yNameForH1D;
@@ -162,7 +165,6 @@ int main(int argc, char* argv[]){
 	//=>About output
 	std::string OutputDir = "result/";
 
-
 	//=======================================================================================================
 	//************SET HISTOGRAMS********************
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
@@ -173,9 +175,6 @@ int main(int argc, char* argv[]){
 		std::cout<<"Cannot find "<<histList<<std::endl;
 	}
 	std::string s_card;
-	std::string histtype, histname, histtitle, dirname, runname, histdrawOpt, histxName, histyName;
-	double histleft1, histright1, histleft2, histright2;
-	int histbin1, histbin2, histcolor, histcompare, histlogx, histlogy, nCPU, njob, histmarker;
 	std::vector<std::string> DirNames; 
 	std::vector<std::string> RunNames; 
 	std::vector<int> NCPU;
@@ -186,7 +185,6 @@ int main(int argc, char* argv[]){
 		std::vector<std::string> segments;
 		seperate_string(s_card,segments,'|');
 		int iterator = 1;
-		std::cout<<"tag = \""<<segments[0]<<"\""<<std::endl;
 		if ( segments[0] == "TH1D" ){
 			if(iterator<segments.size()) nameForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			if(iterator<segments.size()) titleForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
@@ -202,6 +200,7 @@ int main(int argc, char* argv[]){
 			if(iterator<segments.size()) xlogForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			if(iterator<segments.size()) ylogForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			if(iterator<segments.size()) markerForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			if(iterator<segments.size()) normForH1D.push_back(string2double(segments[iterator++])); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			if(iterator<segments.size()) drawOptForH1D.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 		}
 		else if ( segments[0] == "TH2D" ){
@@ -254,6 +253,9 @@ int main(int argc, char* argv[]){
 			if(iterator<segments.size()) refFileName.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			if(iterator<segments.size()) refHistName.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 		}
+		else if (segments[0] == "oFILE"){
+			if(iterator<segments.size()) oFileName.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+		}
 		else{
 			std::cout<<"Cannot recogonize this line: "<<s_card<<std::endl;
 			continue;
@@ -279,6 +281,7 @@ int main(int argc, char* argv[]){
 			return -1;
 		}
 		if ( (index_temp = get_TH1D(refHistName[i])) != -1 ){
+			h1_ref->SetTitle(titleForH1D[index_temp].c_str());
 			vecH1D[index_temp]=h1_ref;
 		}
 		else{
@@ -352,6 +355,9 @@ int main(int argc, char* argv[]){
 				m_TChain->Add(buff.str().c_str());
 			}
 		}
+	}
+	for ( int iFile = 0; iFile < oFileName.size(); iFile++ ){
+		m_TChain->Add(oFileName[iFile].c_str());
 	}
 
 	//=======================================================================================================
@@ -547,11 +553,13 @@ int main(int argc, char* argv[]){
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0 ) std::cout<<prefix_EventInfo<<"  nTracks = "<<McTruth_nTracks<<std::endl;;
 			for ( int i = 0; i < McTruth_nTracks; i++ ){
 				if ((*McTruth_pid)[i] != -2212 ) continue;
-				//if ((*McTruth_ptid)[i] != 1) continue;
+				if ((*McTruth_ptid)[i] != 1) continue;
+				N1++;
 				double px = (*McTruth_px)[i]/1000.; // change to GeV
 				double py = (*McTruth_py)[i]/1000.; // change to GeV
 				double pz = (*McTruth_pz)[i]/1000.; // change to GeV
-				double pt  = sqrt(px*px+py*py);
+				double pt = sqrt(px*px+py*py);
+				double pa = sqrt(pt*pt+pz*pz);
 				double theta = (pz==0?0:atan(pt/pz));
 				double x = (*McTruth_x)[i];
 				double y = (*McTruth_y)[i];
@@ -562,20 +570,33 @@ int main(int argc, char* argv[]){
 				                                                                                         <<", pz = "<<pz
 				                                                                                         <<", theta = "<<theta
 				                                                                                         <<std::endl;
-				if ( (index_temp = get_TH1D("4PS_pt")) != -1 ){
-					vecH1D[index_temp]->Fill(pt);
+				double weight = 1;
+				if ( (index_temp = get_TH1D("W_pt")) != -1 ){
+					vecH1D[index_temp]->Fill(pt,weight);
 				}
-				if ( (index_temp = get_TH1D("4PS_pz")) != -1 ){
-					vecH1D[index_temp]->Fill(pz);
+				if ( (index_temp = get_TH1D("W_pz")) != -1 ){
+					vecH1D[index_temp]->Fill(pz,weight);
 				}
-				if ( (index_temp = get_TH1D("4PS_z")) != -1 ){
-					vecH1D[index_temp]->Fill(z);
+				if ( (index_temp = get_TH1D("W_pa")) != -1 ){
+					vecH1D[index_temp]->Fill(pa,weight);
 				}
-				if ( (index_temp = get_TH1D("4PS_r")) != -1 ){
-					vecH1D[index_temp]->Fill(r);
+				if ( (index_temp = get_TH1D("W_z")) != -1 ){
+					vecH1D[index_temp]->Fill(z,weight);
 				}
-				if ( (index_temp = get_TH1D("4PS_theta")) != -1 ){
-					vecH1D[index_temp]->Fill(theta);
+				if ( (index_temp = get_TH1D("W_r")) != -1 ){
+					vecH1D[index_temp]->Fill(r,weight);
+				}
+				if ( (index_temp = get_TH1D("W_theta")) != -1 ){
+					vecH1D[index_temp]->Fill(theta,weight);
+				}
+				if ( (index_temp = get_TH2D("costheta_VS_z")) != -1 ){
+					vecH2D[index_temp]->Fill(cos(theta),z,weight);
+				}
+				if ( (index_temp = get_TH2D("costheta_VS_r")) != -1 ){
+					vecH2D[index_temp]->Fill(cos(theta),r,weight);
+				}
+				if ( (index_temp = get_TH2D("z_VS_r")) != -1 ){
+					vecH2D[index_temp]->Fill(z,r,weight);
 				}
 			}
 		}
@@ -635,28 +656,50 @@ int main(int argc, char* argv[]){
 	//  gStyle->SetTitleH(0.08);
 	//Output these histograms
 	for ( int i = 0; i < vecH1D.size(); i++ ){
-		if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"Output vecH1D["<<i<<"]: "<<nameForH1D[i]<<", "<<titleForH1D[i]<<", "<<xNameForH1D[i]<<", "<<yNameForH1D[i]<<", "<<bin1ForH1D[i]<<", "<<left1ForH1D[i]<<", "<<right1ForH1D[i]<<", Color="<<colorForH1D[i]<<", xlogSyle="<<xlogForH1D[i]<<", ylogSyle="<<ylogForH1D[i]<<", nCompare="<<compareForH1D[i]<<", markerStyle="<<markerForH1D[i]<<", drawOpt=\""<<drawOptForH1D[i]<<"\""<<std::endl;
+		if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"Output vecH1D["<<i<<"]: "<<nameForH1D[i]<<", "<<titleForH1D[i]<<", "<<xNameForH1D[i]<<", "<<yNameForH1D[i]<<", "<<bin1ForH1D[i]<<", "<<left1ForH1D[i]<<", "<<right1ForH1D[i]<<", Color="<<colorForH1D[i]<<", xlogSyle="<<xlogForH1D[i]<<", ylogSyle="<<ylogForH1D[i]<<", nCompare="<<compareForH1D[i]<<", markerStyle="<<markerForH1D[i]<<", normalize ="<<normForH1D[i]<<", drawOpt=\""<<drawOptForH1D[i]<<"\""<<std::endl;
 		vecH1D[i]->SetLineColor(colorForH1D[i]);
 		std::string name = vecH1D[i]->GetName();
 		TCanvas* c = new TCanvas(name.c_str());
 		int nCompare = compareForH1D[i];
 		if ( nCompare ) if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<nCompare<<" histograms to be compared"<<std::endl;
+		if (normForH1D[i]){
+			if (normForH1D[i] == 1) vecH1D[i]->Scale(1./vecH1D[i]->Integral());
+			else vecH1D[i]->Scale(1./normForH1D[i]);
+		}
 		double currentMaximum = vecH1D[i]->GetMaximum();
+		if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"    currentMaximum y value is ("<<currentMaximum<<")"<<std::endl;
 		for ( int j = 1; j <= nCompare; j++ ){
+			if (normForH1D[i+j]){
+				if (normForH1D[i+j] == 1) vecH1D[i+j]->Scale(1./vecH1D[i+j]->Integral());
+				else vecH1D[i+j]->Scale(1./normForH1D[i+j]);
+			}
 			double maximum = vecH1D[i+j]->GetMaximum();
+			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"    Maximum y for "<<nameForH1D[i+j]<<" is ("<<maximum<<")"<<std::endl;
 			if ( maximum > currentMaximum ){
 				currentMaximum = maximum;
 			}
 		}
-		if ( nCompare ) if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"  maximum y value is ("<<currentMaximum<<")"<<std::endl;
+		if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"  maximum y value is ("<<currentMaximum<<")"<<std::endl;
 		if ( xlogForH1D[i] ) gPad->SetLogx(1);
 		else gPad->SetLogx(0);
 		if ( ylogForH1D[i] ) gPad->SetLogy(1);
 		else gPad->SetLogy(0);
-		if ( xlogForH1D[i] ) vecH1D[i]->GetXaxis()->SetRangeUser(minxForH1D[i],right1ForH1D[i]);
-		else vecH1D[i]->GetXaxis()->SetRangeUser(left1ForH1D[i],right1ForH1D[i]);
-		if ( ylogForH1D[i] ) vecH1D[i]->GetYaxis()->SetRangeUser(minyForH1D[i],2*currentMaximum);
-		else vecH1D[i]->GetYaxis()->SetRangeUser(minyForH1D[i],1.05*currentMaximum);
+		if ( xlogForH1D[i] ){
+			vecH1D[i]->GetXaxis()->SetRangeUser(minxForH1D[i],right1ForH1D[i]);
+			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"  Logx! set xRange("<<minxForH1D[i]<<","<<right1ForH1D[i]<<")"<<std::endl;
+		}
+		else {
+			vecH1D[i]->GetXaxis()->SetRangeUser(left1ForH1D[i],right1ForH1D[i]);
+			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"        set xRange("<<left1ForH1D[i]<<","<<right1ForH1D[i]<<")"<<std::endl;
+		}
+		if ( ylogForH1D[i] ) {
+			vecH1D[i]->GetYaxis()->SetRangeUser(minyForH1D[i],2*currentMaximum);
+			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"  Logy! set yRange("<<minyForH1D[i]<<","<<2*currentMaximum<<")"<<std::endl;
+		}
+		else {
+			vecH1D[i]->GetYaxis()->SetRangeUser(minyForH1D[i],1.05*currentMaximum);
+			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"        set yRange("<<minyForH1D[i]<<","<<1.05*currentMaximum<<")"<<std::endl;
+		}
 		vecH1D[i]->SetMarkerStyle(markerForH1D[i]);
 		vecH1D[i]->SetMarkerColor(colorForH1D[i]);
 		vecH1D[i]->SetLineColor(colorForH1D[i]);
@@ -666,7 +709,7 @@ int main(int argc, char* argv[]){
 		vecH1D[i]->Write();
 		for ( int j = 0; j < nCompare; j++ ){
 			i++;
-			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<" ->"<<j<<", vecH1D["<<i<<"]: "<<nameForH1D[i]<<", "<<titleForH1D[i]<<", "<<xNameForH1D[i]<<", "<<yNameForH1D[i]<<", "<<bin1ForH1D[i]<<", "<<left1ForH1D[i]<<", "<<right1ForH1D[i]<<", Color="<<colorForH1D[i]<<", xlogSyle="<<xlogForH1D[i]<<", ylogSyle="<<ylogForH1D[i]<<", nCompare="<<compareForH1D[i]<<", markerStyle="<<markerForH1D[i]<<", drawOpt=\""<<drawOptForH1D[i]<<"\""<<std::endl;
+			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<" ->"<<j<<", vecH1D["<<i<<"]: "<<nameForH1D[i]<<", "<<titleForH1D[i]<<", "<<xNameForH1D[i]<<", "<<yNameForH1D[i]<<", "<<bin1ForH1D[i]<<", "<<left1ForH1D[i]<<", "<<right1ForH1D[i]<<", Color="<<colorForH1D[i]<<", xlogSyle="<<xlogForH1D[i]<<", ylogSyle="<<ylogForH1D[i]<<", nCompare="<<compareForH1D[i]<<", markerStyle="<<markerForH1D[i]<<", normalize ="<<normForH1D[i]<<", drawOpt=\""<<drawOptForH1D[i]<<"\""<<std::endl;
 			vecH1D[i]->SetLineColor(colorForH1D[i]);
 			vecH1D[i]->SetMarkerStyle(markerForH1D[i]);
 			vecH1D[i]->SetMarkerColor(colorForH1D[i]);
@@ -707,13 +750,15 @@ int main(int argc, char* argv[]){
 		std::vector<double> yforgraph = yForGraph[i];
 		std::vector<double> xforgraph = xForGraph[i];
 		double currentMaximum = *std::max_element(yforgraph.begin(),yforgraph.end());
+		if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"    currentMaximum y value is ("<<currentMaximum<<")"<<std::endl;
 		for ( int j = 1; j <= nCompare; j++ ){
 			double maximum = *std::max_element(yForGraph[i+j].begin(),yForGraph[i+j].end());
+			if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"    Maximum y for "<<nameForGraph[i+j]<<" is ("<<maximum<<")"<<std::endl;
 			if ( maximum > currentMaximum ){
 				currentMaximum = maximum;
 			}
 		}
-		if ( nCompare ) if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"  maximum y value is ("<<currentMaximum<<")"<<std::endl;
+		if (verbose >= Verbose_HistInfo) std::cout<<prefix_HistInfo<<"  maximum y value is ("<<currentMaximum<<")"<<std::endl;
 		if ( xlogForGraph[i] ) gPad->SetLogx(1);
 		else gPad->SetLogx(0);
 		if ( ylogForGraph[i] ) gPad->SetLogy(1);
@@ -769,7 +814,7 @@ int get_TH2D(std::string name){
 	for ( int i = 0; i < vecH2D.size(); i++ ){
 		if ( nameForH2D[i] == name ) return i;
 	}
-	std::cout<<"###!!!In get_TH2D: CAN NOT FIND "<<name<<"!!!"<<std::endl;
+	//std::cout<<"###!!!In get_TH2D: CAN NOT FIND "<<name<<"!!!"<<std::endl;
 	return -1;
 }
 
@@ -777,7 +822,7 @@ int get_TH1D(std::string name){
 	for ( int i = 0; i < vecH1D.size(); i++ ){
 		if ( nameForH1D[i] == name ) return i;
 	}
-	std::cout<<"###!!!In get_TH1D: CAN NOT FIND "<<name<<"!!!"<<std::endl;
+	//std::cout<<"###!!!In get_TH1D: CAN NOT FIND "<<name<<"!!!"<<std::endl;
 	return -1;
 }
 
@@ -785,7 +830,7 @@ int get_TGraph(std::string name){
 	for ( int i = 0; i < nameForGraph.size(); i++ ){
 		if ( nameForGraph[i] == name ) return i;
 	}
-	std::cout<<"###!!!In get_TGraph: CAN NOT FIND "<<name<<"!!!"<<std::endl;
+	//std::cout<<"###!!!In get_TGraph: CAN NOT FIND "<<name<<"!!!"<<std::endl;
 	return -1;
 }
 
