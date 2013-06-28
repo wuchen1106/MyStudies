@@ -25,7 +25,7 @@ LIBS = -pthread -lm -ldl -rdynamic\
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-PROGRAM = TanModel
+PROGRAM = AntiprotonGenerator
 
 # Object list for user defined packages
 OBJ = 
