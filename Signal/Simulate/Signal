@@ -4,10 +4,10 @@
 #GENFILEROOT       = gen_RPC.txt
 #OUTCARDROOT       = output_CdcWire.txt
 #GEOCARDROOT       = geometry_CdcWire.txt
-GEOCARDROOT       = geometry_Signal.txt
-MAGFIELDCARDROOT  = MagField_Signal.txt
-GENFILEROOT       = gen_Signal.txt
-OUTCARDROOT       = output_Signal.txt
+GEOCARDROOT       = geometry_Signal
+MAGFIELDCARDROOT  = MagField_Signal
+GENFILEROOT       = gen_Signal
+OUTCARDROOT       = output_Signal
 
 ##geometry preset
 #detector_configure
@@ -20,7 +20,7 @@ OUTCARDROOT       = output_Signal.txt
 #
 #verbose
 verbose_configure_setCut
-setCut.mac
+setCut_default.mac
 #
 ##output
 #output_configure
