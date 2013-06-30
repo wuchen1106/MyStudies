@@ -28,4 +28,4 @@ setCut_default.mac
 #run
 run_configure
 1
-5000
+250

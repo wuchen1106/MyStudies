@@ -33,7 +33,7 @@ do
 		array_layerNo[num_superlayer]=`echo $temp | gawk '{print $3}'`
 		temp_radius=`echo $temp | gawk '{print $4}'`
 		array_wireNo[num_superlayer]=`echo $temp | gawk '{print $5}'`
-		array_shiftNo[num_superlayer]=`echo $temp | gawk '{print $6}'`
+		array_shiftNo[num_superlayer]=`echo $temp | gawk '{print -$6}'`
 		temp_layerSpace=`echo $temp | gawk '{print $7}'`
 		array_radius[num_superlayer]=`echo "$temp_radius*10"|bc` # cm -> mm
 		array_layerSpace[num_superlayer]=`echo "$temp_layerSpace*10"|bc` # cm -> mm
@@ -118,7 +118,7 @@ output_vis="output_vis.txt"
 echo "" > $output_vis
 echo "#layer info" >> $output_wire
 printf "\tLayerNo:\t\t$num_total_layer\n" >> $output_wire
-printf "#\t%-5s %-8s %-11s %-7s %-12s %-12s %-9s %-7s %-11s\n" "type" "layerNo" "sublayerNo" "WireNo" "Length" "R" "StartPhi" "First" "RotateCell" >> $output_wire
+printf "#\t%-5s %-8s %-11s %-7s %-12s %-12s %-9s %-7s %-11s\n" "type" "layerNo" "sublayerNo" "CellNo" "Length" "R" "StartPhi" "First" "RotateCell" >> $output_wire
 printf "#\t%-5s %-8s %-11s %-7s %-12s %-12s %-9s %-7s %-11s\n" "" "" "" "" "mm" "mm" "rad" "0:F/1:S" "" >> $output_wire
 echo "#Tubs info" >> $output_endplate
 printf "#\t%-4s %-3s %-10s %-10s %-10s %-8s %-7s %-4s %-4s %-4s %-15s %-15s %-15s %-6s %-5s %-10s %-6s %-6s %-6s %-6s %-6s\n" \
@@ -138,8 +138,6 @@ printf "\tVerboseLevel:    5\n" >> $output_vis
 printf "\tVISSETTING  #Keep this line to call Reset\n" >> $output_vis
 printf "#\t%-20s %-6s %-6s %-6s\n" \
 	   "Name" "red" "green" "blue" >> $output_vis
-printf "#\t%-20s %-6s %-6s %-6s\n" \
-	   "vis_layer" "0" "1" "0" >> $output_vis
 printf "#\t%-20s %-6s %-6s %-6s\n" \
 	   "vis_cell" "0" "1" "0" >> $output_vis
 printf "#\t%-20s %-6s %-6s %-6s\n" \
