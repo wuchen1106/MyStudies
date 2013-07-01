@@ -19,19 +19,24 @@ CXXFLAGS = -g -O2 -W -Wall
 # Take root as an example. ( Root is a widely used package developed by CERN for analysing. )
 INCDIR = -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
 LIBDIR = $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
-LIBS = -pthread -lm -ldl -rdynamic
+LIBS = -pthread -lm -ldl -rdynamic\
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
 # Names of user defined packages
+  # Take"MyRoot" as an example
+MYROOT = MyRoot
 
 # Change this name to your program which contains the main function
-PROGRAM = 4BodyPhaseSpace
+PROGRAM = AngularDistribution
 
 # Object list for user defined packages
-OBJ = 
+OBJ = $(MYROOT).o
 
-$(PROGRAM): $(OBJ) $(PROGRAM).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).C $(OBJ) -o $(MYBIN)/$(PROGRAM)
+$(PROGRAM): $(OBJ) $(PROGRAM).cc
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).cc $(OBJ) -o $(PROGRAM)
+
+$(MYROOT).o: $(MYROOT).cc $(MYROOT).h
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) -c $(MYROOT).cc
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
@@ -39,7 +44,10 @@ $(PROGRAM): $(OBJ) $(PROGRAM).C
 .PHONY: clean
 clean:
 	$(RM) $(OBJ)
-	$(RM) $(MYBIN)/$(PROGRAM)
+	$(RM) $(PROGRAM)
+
+.PHONY: $(MYROOT)
+$(MYROOT): $(MYROOT).o
 
 .PHONY: all
 all: $(PROGRAM)

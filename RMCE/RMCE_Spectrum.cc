@@ -60,77 +60,73 @@ int main(int argc, char** argv){
 
 	//=>About Signal window
 	double sig_up = 106;
-	double sig_low = 103.9;
+	double sig_low = 103.8;
 
 	//=>Get resolution
-	std::string FN_res = "/home/chen/workarea/Analyse/common_tools/resolution_cdcwire_15.root";
-	std::string HN_res = "h1";
+	std::string FN_res = "config/mix2_400um_2.root";
+	std::string HN_res = "hsig_res_sum";
 	TFile* fp_res = new TFile(FN_res.c_str());
-  if (fp_res==NULL) {
-    std::cout<<"ERROR: Can not find file: "<<FN_res<<"!!!"<<std::endl;
-    return -1;
-  }
+	if (fp_res==NULL) {
+		std::cout<<"ERROR: Can not find file: "<<FN_res<<"!!!"<<std::endl;
+		return -1;
+	}
 	TH1D* h_res = (TH1D*)fp_res->Get(HN_res.c_str());
 	if(h_res==NULL){
-    std::cout<<"ERROR: Can not find histogram \""<<HN_res<<"\"in file : "<<FN_res<<"!!!"<<std::endl;
-    return -1;
+		std::cout<<"ERROR: Can not find histogram \""<<HN_res<<"\"in file : "<<FN_res<<"!!!"<<std::endl;
+		return -1;
 	}
 	int nbin_res = h_res->GetNbinsX();
 	h_res->SetTitle("P(p_{true}-p_{rec})");
 	double binw_res = h_res->GetBinWidth(0);
 	double res_max = h_res->GetBinLowEdge(nbin_res)+binw_res;
-  //std::cout<<"res_max = "<<res_max<<std::endl;
+	//std::cout<<"res_max = "<<res_max<<std::endl;
 	double res_min = h_res->GetBinLowEdge(0);
-  //std::cout<<"res_min = "<<res_min<<std::endl;
-  h_res->Scale(1./h_res->Integral());
+	//std::cout<<"res_min = "<<res_min<<std::endl;
+	h_res->Scale(1./h_res->Integral());
 
 	//=>Get RMC spectrum
-	std::string FN_RMC = "/home/chen/workarea/Analyse/common_tools/RMC/RMC_Si.root";
-	//std::string FN_RMC = "/home/chen/workarea/Analyse/common_tools/RMC/RMC_Al.root";
+	std::string FN_RMC = "config/RMCE_Al.root";
+	//std::string FN_RMC = "config/RMCE_Si.root";
+	//std::string FN_RMC = "RMCE_Si.root";
 	std::string HN_RMC = "RMC_hist";
 	TFile* fp_RMC = new TFile(FN_RMC.c_str());
-  if (fp_RMC==NULL) {
-    std::cout<<"ERROR: Can not find file: "<<FN_RMC<<"!!!"<<std::endl;
-    return -1;
-  }
+	if (fp_RMC==NULL) {
+		std::cout<<"ERROR: Can not find file: "<<FN_RMC<<"!!!"<<std::endl;
+		return -1;
+	}
 	TH1D* h_RMC = (TH1D*)fp_RMC->Get(HN_RMC.c_str());
 	if(h_RMC==NULL){
-    std::cout<<"ERROR: Can not find histogram \""<<HN_RMC<<"\"in file : "<<FN_RMC<<"!!!"<<std::endl;
-    return -1;
+		std::cout<<"ERROR: Can not find histogram \""<<HN_RMC<<"\"in file : "<<FN_RMC<<"!!!"<<std::endl;
+		return -1;
 	}
 	int nbin_RMC = h_RMC->GetNbinsX();
 	h_RMC->SetTitle("P_{#mu->#gamma}(E_{#gamma})");
 	double binw_RMC = h_RMC->GetBinWidth(0);
 	double RMC_max = h_RMC->GetBinLowEdge(nbin_RMC)+binw_RMC;
-  //std::cout<<"RMC_max = "<<RMC_max<<std::endl;
+	//std::cout<<"RMC_max = "<<RMC_max<<std::endl;
 	double RMC_min = h_RMC->GetBinLowEdge(0);
-  //std::cout<<"RMC_min = "<<RMC_min<<std::endl;
+	//std::cout<<"RMC_min = "<<RMC_min<<std::endl;
 
 	//=>Get kp spectrum
-	std::string FN_kp = "/home/chen/workarea/Analyse/CometPhaseI/GammaStudy_103_2/result/Histo_sum.root";
+	std::string FN_kp = "config/kpa.root";
 	std::string HN_kp = "t_kpa";
 	TFile* fp_kp = new TFile(FN_kp.c_str());
-  if (fp_kp==NULL) {
-    std::cout<<"ERROR: Can not find file: "<<FN_kp<<"!!!"<<std::endl;
-    return -1;
-  }
-  TFolder* folder_kp = (TFolder*) fp_kp->FindObjectAny("t");
-	if(folder_kp==NULL){
-    std::cout<<"ERROR: Can not find folder t in file : "<<FN_kp<<"!!!"<<std::endl;
-    return -1;
+	if (fp_kp==NULL) {
+		std::cout<<"ERROR: Can not find file: "<<FN_kp<<"!!!"<<std::endl;
+		return -1;
 	}
-	TH1D* h_kp = (TH1D*) folder_kp->FindObjectAny(HN_kp.c_str());
+	TH1D* h_kp = (TH1D*) fp_kp->Get(HN_kp.c_str());
 	if(h_kp==NULL){
-    std::cout<<"ERROR: Can not find histogram \""<<HN_kp<<"\"in file : "<<FN_kp<<"!!!"<<std::endl;
-    return -1;
+		std::cout<<"ERROR: Can not find histogram \""<<HN_kp<<"\"in file : "<<FN_kp<<"!!!"<<std::endl;
+		return -1;
 	}
 	h_kp->SetTitle("P_{#gamma->e}(p_{e}/p_{#gamma})");
 	int nbin_kp = h_kp->GetNbinsX();
 	double binw_kp = h_kp->GetBinWidth(0);
 	double kp_max = h_kp->GetBinLowEdge(nbin_kp)+binw_kp;
-  //std::cout<<"kp_max = "<<kp_max<<std::endl;
+	//std::cout<<"kp_max = "<<kp_max<<std::endl;
 	double kp_min = h_kp->GetBinLowEdge(0);
-  //std::cout<<"kp_min = "<<kp_min<<std::endl;
+	//std::cout<<"kp_min = "<<kp_min<<std::endl;
 
 	//=>Prepare histograms
 	double RMCE_left = 100.;
@@ -147,6 +143,18 @@ int main(int argc, char** argv){
 	bin1ForH1D.push_back(num_bin);
 	left1ForH1D.push_back(RMCE_left);
 	right1ForH1D.push_back(RMCE_right);
+
+	nameForH1D.push_back("contribution");
+	titleForH1D.push_back("contribution per captured muon");
+	bin1ForH1D.push_back(num_bin);
+	left1ForH1D.push_back(RMCE_left);
+	right1ForH1D.push_back(RMCE_right);
+
+	nameForH1D.push_back("TotalContribution");
+	titleForH1D.push_back("Total Contribution VS reslution limit");
+	bin1ForH1D.push_back(10);
+	left1ForH1D.push_back(-3);
+	right1ForH1D.push_back(0);
 
 	for ( int i = 0; i < nameForH2D.size(); i++ ){
 		vecH2D.push_back(new TH2D(nameForH2D[i],titleForH2D[i],bin1ForH2D[i],left1ForH2D[i],right1ForH2D[i],bin2ForH2D[i],left2ForH2D[i],right2ForH2D[i]) );
@@ -200,13 +208,51 @@ int main(int argc, char** argv){
 
 	//=>Calculate total mis-measurement probability
 	double prob_tot = 0;
+	std::vector<double> probs;
+	for ( int i = 0; i < 10; i++ ){
+		probs.push_back(0.);
+	}
 	for ( int i = 0; i < num_bin; i++ ){
 		double E = RMCE_left + ( (double)i + 0.5 )*(RMCE_right - RMCE_left)/num_bin;
 		int ibin_RMCE = vecH1D[0]->FindBin(E);
 		int ibin_mis = vecH1D[1]->FindBin(E);
 		double prob_RMCE = vecH1D[0]->GetBinContent(ibin_RMCE);
 		double prob_mis = vecH1D[1]->GetBinContent(ibin_mis);
+		for (int i = 1; i <= 10; i++){
+			double res_limit = vecH1D[3]->GetBinCenter(i);
+			double res_min = E - sig_up;
+			double res_max = E - sig_low;
+			std::cout<<"    res_min = "<<res_min
+				     <<", res_max = "<<res_max
+				     <<", res_limit = "<<res_limit
+				     <<std::endl;
+			if (res_min<res_limit) res_min = res_limit;
+			double probabilityE = 0;
+			if (res_min>res_max){
+				probabilityE=0;
+			} 
+			else{
+				int ibinmin_res = h_res->FindBin(res_min);
+				int ibinmax_res = h_res->FindBin(res_max);
+				probabilityE = h_res->Integral(ibinmin_res,ibinmax_res);
+			}
+			std::cout<<"     probabilityE = "<<probabilityE
+				     <<std::endl;
+			probs[i-1]+=prob_RMCE*probabilityE * 5.3e15;
+		}
+		std::cout<<"bin["<<i
+			     <<"], E = "<<E
+			     <<", prob_RMCE = "<<prob_RMCE
+			     <<", prob_mis = "<<prob_mis
+			     <<", prob_tot = "<<prob_tot
+			     <<" + "<<prob_RMCE * prob_mis
+			     <<std::endl;
 		prob_tot += prob_RMCE * prob_mis; 
+		int ibin = vecH1D[2]->FindBin(E);
+		vecH1D[2]->SetBinContent(ibin,prob_RMCE * prob_mis);
+	}
+	for ( int i = 1; i <= 10; i++ ){
+		vecH1D[3]->SetBinContent(i,probs[i-1]);
 	}
 	std::cout<<"prob_tot = "<<prob_tot<<std::endl;
 
@@ -229,27 +275,27 @@ int main(int argc, char** argv){
 	std::cout<<"N2 = "<<N2<<std::endl;
 	std::cout<<"N3 = "<<N3<<std::endl;
 
-  gStyle->SetPalette(1);
-  gStyle->SetOptStat(0);
-//  gStyle->SetTitleW(0.99);
-//  gStyle->SetTitleH(0.08);
+	gStyle->SetPalette(1);
+	gStyle->SetOptStat(0);
+	//  gStyle->SetTitleW(0.99);
+	//  gStyle->SetTitleH(0.08);
 
-  for ( int i = 0; i < vecH2D.size(); i++ ){
-  	TString name = vecH2D[i]->GetName();
-  	TCanvas* c = new TCanvas(name);
-  	//gPad->SetLogy(1);
-  	vecH2D[i]->Draw("COLZ");
-  	vecH2D[i]->Write();
-  	TString fileName = name + ".pdf";
-  	c->Print(fileName);
-  }
+	for ( int i = 0; i < vecH2D.size(); i++ ){
+		TString name = vecH2D[i]->GetName();
+		TCanvas* c = new TCanvas(name);
+		//gPad->SetLogy(1);
+		vecH2D[i]->Draw("COLZ");
+		vecH2D[i]->Write();
+		TString fileName = name + ".pdf";
+		c->Print(fileName);
+	}
 
 	for ( int i = 0; i < vecH1D.size(); i++ ){
 		TString name = vecH1D[i]->GetName();
 		TCanvas* c = new TCanvas(name);
 		//gPad->SetLogy(1);
 		vecH1D[i]->Draw();
-  	vecH1D[i]->Write();
+		vecH1D[i]->Write();
 		TString fileName = name + ".pdf";
 		c->Print(fileName);
 	}

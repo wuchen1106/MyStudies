@@ -71,30 +71,30 @@ int main(int argc, char** argv){
 	buff.clear();
 	buff<<"Abundance_"<<AtomIndex<<".txt";
 	std::string Abundance_fileName = buff.str();
-  FILE* fp_temp = fopen(Abundance_fileName.c_str(),"r");
-  if (fp_temp==NULL) {
-    std::cout<<"ERROR: Can not find file: "<<Abundance_fileName<<"!!!"<<std::endl;
-    return -1;
-  }
-  char line[128];
-  int num_p,num_n;
-  double Abundance;
-  fgets(line,sizeof(line),fp_temp); //comment line
-  while (fgets(line,sizeof(line),fp_temp)) {
-    sscanf(line,"%i %i %lf",&num_p,&num_n,&Abundance);
+	FILE* fp_temp = fopen(Abundance_fileName.c_str(),"r");
+	if (fp_temp==NULL) {
+		std::cout<<"ERROR: Can not find file: "<<Abundance_fileName<<"!!!"<<std::endl;
+		return -1;
+	}
+	char line[128];
+	int num_p,num_n;
+	double Abundance;
+	fgets(line,sizeof(line),fp_temp); //comment line
+	while (fgets(line,sizeof(line),fp_temp)) {
+		sscanf(line,"%i %i %lf",&num_p,&num_n,&Abundance);
 		vec_num_p.push_back(num_p);
 		vec_num_n.push_back(num_n);
 		vec_Abundance.push_back(Abundance);
-  }
-  fclose(fp_temp);
-  //check
-  double total_abundance = 0;
-  for ( int i = 0; i < vec_Abundance.size(); i++ ){
-  	total_abundance += vec_Abundance[i];
-  }
-  if ( total_abundance == 0 ){
+	}
+	fclose(fp_temp);
+	//check
+	double total_abundance = 0;
+	for ( int i = 0; i < vec_Abundance.size(); i++ ){
+		total_abundance += vec_Abundance[i];
+	}
+	if ( total_abundance == 0 ){
 		std::cout<<"total_abundance is 0!!!"<<std::endl;
-  	return -1;
+		return -1;
 	}
 	if ( total_abundance != 1 ){
 		std::cout<<"total_abundance is not 1!!!\nWill be normalized to 1!!!"<<std::endl;
@@ -105,31 +105,31 @@ int main(int argc, char** argv){
 	for ( int i = 0; i < vec_Abundance.size(); i++ ){
 		std::cout<<"num_p = "<<vec_num_p[i]<<", num_n = "<<vec_num_n[i]<<", Abundance = "<<vec_Abundance[i]<<std::endl;
 	}
-  //Read Mass Info
+	//Read Mass Info
 	std::vector<int> dict_p;
 	std::vector<int> dict_n;
 	std::vector<double> dict_mass;
 	std::string Mass_FileName = "Isotope_Mass.txt";
-  fp_temp = fopen(Mass_FileName.c_str(),"r");
-  if (fp_temp==NULL) {
-    std::cout<<"ERROR: Can not find file: "<<Abundance_fileName<<"!!!"<<std::endl;
-    return -1;
-  }
-  line[128];
-  double mass_isotope;
-  fgets(line,sizeof(line),fp_temp); //comment line
-  while (fgets(line,sizeof(line),fp_temp)) {
-    sscanf(line,"%i %i %lf",&num_p,&num_n,&mass_isotope);
+	fp_temp = fopen(Mass_FileName.c_str(),"r");
+	if (fp_temp==NULL) {
+		std::cout<<"ERROR: Can not find file: "<<Abundance_fileName<<"!!!"<<std::endl;
+		return -1;
+	}
+	line[128];
+	double mass_isotope;
+	fgets(line,sizeof(line),fp_temp); //comment line
+	while (fgets(line,sizeof(line),fp_temp)) {
+		sscanf(line,"%i %i %lf",&num_p,&num_n,&mass_isotope);
 		dict_p.push_back(num_p);
 		dict_n.push_back(num_n);
 		dict_mass.push_back(mass_isotope);
-  }
-  fclose(fp_temp);
-  //check
-  for ( int i = 0; i < dict_mass.size(); i++ ){
+	}
+	fclose(fp_temp);
+	//check
+	for ( int i = 0; i < dict_mass.size(); i++ ){
 		std::cout<<dict_p[i]<<", "<<dict_n[i]<<", "<<std::setprecision(14)<<dict_mass[i]<<std::endl;
-  }
-  //Get Kmax
+	}
+	//Get Kmax
 	std::vector<double> vec_kmax;
 	double maxK = 0;
 	for ( int i = 0; i < vec_Abundance.size(); i++ ){
@@ -241,7 +241,7 @@ int main(int argc, char** argv){
 				Rx = b0*(1-2*x+2*x*x+b1/b0/3*x*(1-x))*x*(1-x)*(1-x);
 			}
 			//std::cout<<"x = "<<x<<", Rx = "<<Rx<<std::endl;
-		  h1d->AddBinContent(i_bin,Rx);
+			h1d->AddBinContent(i_bin,Rx);
 		}
 		vec_Norm.push_back(R/h1d->Integral());
 	}
@@ -304,20 +304,20 @@ int main(int argc, char** argv){
 	std::cout<<"N2 = "<<N2<<std::endl;
 	std::cout<<"N3 = "<<N3<<std::endl;
 
-  gStyle->SetPalette(1);
-  gStyle->SetOptStat(0);
-//  gStyle->SetTitleW(0.99);
-//  gStyle->SetTitleH(0.08);
+	gStyle->SetPalette(1);
+	gStyle->SetOptStat(0);
+	//  gStyle->SetTitleW(0.99);
+	//  gStyle->SetTitleH(0.08);
 
-  for ( int i = 0; i < vecH2D.size(); i++ ){
-  	TString name = vecH2D[i]->GetName();
-  	TCanvas* c = new TCanvas(name);
-  	//gPad->SetLogy(1);
-  	vecH2D[i]->Draw("COLZ");
-  	vecH2D[i]->Write();
-  	TString fileName = name + ".pdf";
-  	c->Print(fileName);
-  }
+	for ( int i = 0; i < vecH2D.size(); i++ ){
+		TString name = vecH2D[i]->GetName();
+		TCanvas* c = new TCanvas(name);
+		//gPad->SetLogy(1);
+		vecH2D[i]->Draw("COLZ");
+		vecH2D[i]->Write();
+		TString fileName = name + ".pdf";
+		c->Print(fileName);
+	}
 
 	for ( int i = 0; i < vecH1D.size(); i++ ){
 		TString name = vecH1D[i]->GetName();
@@ -325,7 +325,7 @@ int main(int argc, char** argv){
 		if ( i == 1 ) gPad->SetLogy(1);
 		else gPad->SetLogy(0);
 		vecH1D[i]->Draw();
-  	vecH1D[i]->Write();
+		vecH1D[i]->Write();
 		TString fileName = name + ".pdf";
 		c->Print(fileName);
 	}
