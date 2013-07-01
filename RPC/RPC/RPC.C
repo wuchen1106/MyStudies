@@ -27,8 +27,7 @@ char m_workMode[128];
 int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
-
-std::vector<std::string> TCFileName;
+bool backup = false;
 
 std::vector<std::string> oFileName;
 
@@ -101,7 +100,7 @@ int main(int argc, char* argv[]){
 	//}
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hv:n:m:p:"))!=-1){
+	while((result=getopt(argc,argv,"hbv:n:m:p:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -111,6 +110,10 @@ int main(int argc, char* argv[]){
 			case 'v':
 				verbose = atoi(optarg);
 				printf("verbose level: %d\n",verbose);
+				break;
+			case 'b':
+				backup = true;
+				printf("restore backup file!\n");
 				break;
 			case 'n':
 				nEvents = atoi(optarg);
@@ -266,9 +269,6 @@ int main(int argc, char* argv[]){
 		else if (segments[0] == "oFILE"){
 			if(iterator<segments.size()) oFileName.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 		}
-		else if (segments[0] == "TChain"){
-			if(iterator<segments.size()) TCFileName.push_back(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
-		}
 		else if (segments[0] == "BEAM"){
 			if(iterator<segments.size()) beamPx = string2double(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			if(iterator<segments.size()) beamPy = string2double(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
@@ -307,10 +307,6 @@ int main(int argc, char* argv[]){
 			return -1;
 		}
 	}
-	TChain *m_TChain = new TChain("tree");
-	for ( int i = 0; i< TCFileName.size(); i++ ){
-		m_TChain->AddFile(TCFileName[i].c_str());
-	}
 
 	//=======================================================================================================
 	//************SET Statistics********************
@@ -321,25 +317,264 @@ int main(int argc, char* argv[]){
 	int N1 = 0;
 	int N2 = 0;
 	int N3 = 0;
+	int N4 = 0;
+	int N5 = 0;
+	int N6 = 0;
+	int N7 = 0;
+
+	//=======================================================================================================
+	//************READ THE FILES********************
+	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In READ THE FILES###"<<std::endl;
+	std::string TreeName = "tree";
+	TChain *m_TChain = new TChain(TreeName.c_str());
+
+	int iStart = 0;
+	int nBit = 2;
+	for ( int iFile = 0; iFile < DirNames.size(); iFile++ ){
+		int nCPU = NCPU[iFile];
+		int njob = NJob[iFile];
+		if ( verbose >= Verbose_FileInfo) std::cout<<prefix_FileInfo<<"FileList \""<<DirNames[iFile]<<"\" with runname = \""<<RunNames[iFile]<<"\" has "<<NJob[iFile]<<" jobs on "<<NCPU[iFile]<<" CPUs"<<std::endl;
+		for (int i = iStart; i < iStart + nCPU; i ++){
+			for (int j = iStart; j < iStart + njob; j ++){
+				buff.str("");
+				buff.clear();
+				buff<<DirNames[iFile]<<"/"<<i<<"_job"<<j<<RunNames[iFile]<<".raw";
+				m_TChain->Add(buff.str().c_str());
+			}
+		}
+	}
+	for ( int iFile = 0; iFile < oFileName.size(); iFile++ ){
+		m_TChain->Add(oFileName[iFile].c_str());
+	}
 
 	//=======================================================================================================
 	//************SET Branches********************
-    int Pro_nSteps = 0;
+	int evt_num = 0;
+	int run_num = 0;
+	int McTruth_nTracks;
+	std::vector<int> *McTruth_pid = 0;
+	std::vector<int> *McTruth_tid = 0;
+	std::vector<int> *McTruth_ptid = 0;
+	std::vector<int> *McTruth_time = 0;
 	std::vector<double> *McTruth_px = 0;
 	std::vector<double> *McTruth_py = 0;
 	std::vector<double> *McTruth_pz = 0;
-    std::vector<double> *Pro_stepL = 0;
+	std::vector<double> *McTruth_e = 0;
+	std::vector<double> *McTruth_x = 0;
+	std::vector<double> *McTruth_y = 0;
+	std::vector<double> *McTruth_z = 0;
+	std::vector<int> *McTruth_charge = 0;
+	std::vector<std::string> *McTruth_particleName = 0;
+	std::vector<std::string> *McTruth_process = 0;
+	std::vector<std::string> *McTruth_volume = 0;
 
-    TBranch *bMcTruth_px= 0;
-    TBranch *bMcTruth_py= 0;
-    TBranch *bMcTruth_pz= 0;
-    TBranch *bPro_stepL = 0;
+	int Trigger_nHits = 0;
+	std::vector<double> *Trigger_x = 0;
+	std::vector<double> *Trigger_y = 0;
+	std::vector<double> *Trigger_z = 0;
+	std::vector<double> *Trigger_t = 0;
+	std::vector<double> *Trigger_px = 0;
+	std::vector<double> *Trigger_py = 0;
+	std::vector<double> *Trigger_pz = 0;
+	std::vector<double> *Trigger_e = 0;
+	std::vector<double> *Trigger_edep = 0;
+	std::vector<double> *Trigger_stepL = 0;
+	std::vector<int> *Trigger_volID = 0;
+	std::vector<std::string> *Trigger_volName = 0;
+	std::vector<int> *Trigger_tid = 0;
+	std::vector<int> *Trigger_pid = 0;
+	std::vector<int> *Trigger_charge = 0;
 
-    m_TChain->SetBranchAddress("ProcessCounting_nSteps", &Pro_nSteps);
-    m_TChain->SetBranchAddress("ProcessCounting_stepL", &Pro_stepL, &bPro_stepL);
-    m_TChain->SetBranchAddress("McTruth_px", &McTruth_px, &bMcTruth_px);
-    m_TChain->SetBranchAddress("McTruth_py", &McTruth_py, &bMcTruth_py);
-    m_TChain->SetBranchAddress("McTruth_pz", &McTruth_pz, &bMcTruth_pz);
+	int CdcCell_nHits;
+	std::vector<double> *CdcCell_x = 0;
+	std::vector<double> *CdcCell_y = 0;
+	std::vector<double> *CdcCell_z = 0;
+	std::vector<double> *CdcCell_pIx = 0;
+	std::vector<double> *CdcCell_pIy = 0;
+	std::vector<double> *CdcCell_pIz = 0;
+	std::vector<double> *CdcCell_pOx = 0;
+	std::vector<double> *CdcCell_pOy = 0;
+	std::vector<double> *CdcCell_pOz = 0;
+	std::vector<double> *CdcCell_t = 0;
+	std::vector<double> *CdcCell_px = 0;
+	std::vector<double> *CdcCell_py = 0;
+	std::vector<double> *CdcCell_pz = 0;
+	std::vector<double> *CdcCell_e = 0;
+	std::vector<double> *CdcCell_edep = 0;
+	std::vector<double> *CdcCell_driftD_smeared = 0;
+	std::vector<double> *CdcCell_driftD = 0;
+	std::vector<double> *CdcCell_error = 0;
+	std::vector<int> *CdcCell_status = 0;
+	std::vector<int> *CdcCell_nTry = 0;
+	std::vector<int> *CdcCell_layerID = 0;
+	std::vector<int> *CdcCell_cellID = 0;
+	std::vector<int> *CdcCell_tid = 0;
+	std::vector<int> *CdcCell_pid = 0;
+
+	TBranch *bMcTruth_pid = 0;
+	TBranch *bMcTruth_tid = 0;
+	TBranch *bMcTruth_ptid = 0;
+	TBranch *bMcTruth_time = 0;             
+	TBranch *bMcTruth_px = 0;              
+	TBranch *bMcTruth_py = 0;              
+	TBranch *bMcTruth_pz = 0;              
+	TBranch *bMcTruth_e = 0;               
+	TBranch *bMcTruth_x = 0;                
+	TBranch *bMcTruth_y = 0;                
+	TBranch *bMcTruth_z = 0;                
+	TBranch *bMcTruth_charge = 0;
+	TBranch *bMcTruth_particleName = 0;
+	TBranch *bMcTruth_process = 0;
+	TBranch *bMcTruth_volume = 0;
+
+	TBranch *bTrigger_x = 0;
+	TBranch *bTrigger_y = 0;
+	TBranch *bTrigger_z = 0;
+	TBranch *bTrigger_t = 0;
+	TBranch *bTrigger_px = 0;
+	TBranch *bTrigger_py = 0;
+	TBranch *bTrigger_pz = 0;
+	TBranch *bTrigger_e = 0;
+	TBranch *bTrigger_edep = 0;
+	TBranch *bTrigger_stepL = 0;
+	TBranch *bTrigger_volID = 0;
+	TBranch *bTrigger_volName = 0;
+	TBranch *bTrigger_tid = 0;
+	TBranch *bTrigger_pid = 0;
+	TBranch *bTrigger_charge = 0;
+
+	TBranch *bCdcCell_x = 0;
+	TBranch *bCdcCell_y = 0;
+	TBranch *bCdcCell_z = 0;
+	TBranch *bCdcCell_pIx = 0;
+	TBranch *bCdcCell_pIy = 0;
+	TBranch *bCdcCell_pIz = 0;
+	TBranch *bCdcCell_pOx = 0;
+	TBranch *bCdcCell_pOy = 0;
+	TBranch *bCdcCell_pOz = 0;
+	TBranch *bCdcCell_t = 0;
+	TBranch *bCdcCell_px = 0;
+	TBranch *bCdcCell_py = 0;
+	TBranch *bCdcCell_pz = 0;
+	TBranch *bCdcCell_e = 0;
+	TBranch *bCdcCell_edep = 0;
+	TBranch *bCdcCell_driftD_smeared = 0;
+	TBranch *bCdcCell_driftD = 0;
+	TBranch *bCdcCell_error = 0;
+	TBranch *bCdcCell_status = 0;
+	TBranch *bCdcCell_nTry = 0;
+	TBranch *bCdcCell_layerID = 0;
+	TBranch *bCdcCell_cellID = 0;
+	TBranch *bCdcCell_tid = 0;
+	TBranch *bCdcCell_pid = 0;
+
+	m_TChain->SetBranchAddress("evt_num", &evt_num);
+	m_TChain->SetBranchAddress("run_num", &run_num);
+	m_TChain->SetBranchAddress("McTruth_nTracks", &McTruth_nTracks);
+	m_TChain->SetBranchAddress("McTruth_pid", &McTruth_pid, &bMcTruth_pid);
+	m_TChain->SetBranchAddress("McTruth_tid", &McTruth_tid, &bMcTruth_tid);
+	m_TChain->SetBranchAddress("McTruth_ptid", &McTruth_ptid, &bMcTruth_ptid);
+	m_TChain->SetBranchAddress("McTruth_time", &McTruth_time, &bMcTruth_time);             
+	m_TChain->SetBranchAddress("McTruth_px", &McTruth_px, &bMcTruth_px);              
+	m_TChain->SetBranchAddress("McTruth_py", &McTruth_py, &bMcTruth_py);              
+	m_TChain->SetBranchAddress("McTruth_pz", &McTruth_pz, &bMcTruth_pz);              
+	m_TChain->SetBranchAddress("McTruth_e", &McTruth_e, &bMcTruth_e);               
+	m_TChain->SetBranchAddress("McTruth_x", &McTruth_x, &bMcTruth_x);                
+	m_TChain->SetBranchAddress("McTruth_y", &McTruth_y, &bMcTruth_y);                
+	m_TChain->SetBranchAddress("McTruth_z", &McTruth_z, &bMcTruth_z);                
+	m_TChain->SetBranchAddress("McTruth_charge", &McTruth_charge, &bMcTruth_charge);
+	m_TChain->SetBranchAddress("McTruth_particleName", &McTruth_particleName, &bMcTruth_particleName);
+	m_TChain->SetBranchAddress("McTruth_process", &McTruth_process, &bMcTruth_process);
+	m_TChain->SetBranchAddress("McTruth_volume", &McTruth_volume, &bMcTruth_volume);
+
+	m_TChain->SetBranchAddress("Trigger_nHits", &Trigger_nHits);
+	m_TChain->SetBranchAddress("Trigger_x", &Trigger_x, &bTrigger_x);
+	m_TChain->SetBranchAddress("Trigger_y", &Trigger_y, &bTrigger_y);
+	m_TChain->SetBranchAddress("Trigger_z", &Trigger_z, &bTrigger_z);
+	m_TChain->SetBranchAddress("Trigger_t", &Trigger_t, &bTrigger_t);
+	m_TChain->SetBranchAddress("Trigger_px", &Trigger_px, &bTrigger_px);
+	m_TChain->SetBranchAddress("Trigger_py", &Trigger_py, &bTrigger_py);
+	m_TChain->SetBranchAddress("Trigger_pz", &Trigger_pz, &bTrigger_pz);
+	m_TChain->SetBranchAddress("Trigger_e", &Trigger_e, &bTrigger_e);
+	m_TChain->SetBranchAddress("Trigger_edep", &Trigger_edep, &bTrigger_edep);
+	m_TChain->SetBranchAddress("Trigger_stepL", &Trigger_stepL, &bTrigger_stepL);
+	m_TChain->SetBranchAddress("Trigger_volID", &Trigger_volID, &bTrigger_volID);
+	m_TChain->SetBranchAddress("Trigger_volName", &Trigger_volName, &bTrigger_volName);
+	m_TChain->SetBranchAddress("Trigger_tid", &Trigger_tid, &bTrigger_tid);
+	m_TChain->SetBranchAddress("Trigger_pid", &Trigger_pid, &bTrigger_pid);
+	m_TChain->SetBranchAddress("Trigger_charge", &Trigger_charge, &bTrigger_charge);
+
+	m_TChain->SetBranchAddress("CdcCell_nHits", &CdcCell_nHits);
+	m_TChain->SetBranchAddress("CdcCell_x", &CdcCell_x, &bCdcCell_x);
+	m_TChain->SetBranchAddress("CdcCell_y", &CdcCell_y, &bCdcCell_y);
+	m_TChain->SetBranchAddress("CdcCell_z", &CdcCell_z, &bCdcCell_z);
+	m_TChain->SetBranchAddress("CdcCell_pIx", &CdcCell_pIx, &bCdcCell_pIx);
+	m_TChain->SetBranchAddress("CdcCell_pIy", &CdcCell_pIy, &bCdcCell_pIy);
+	m_TChain->SetBranchAddress("CdcCell_pIz", &CdcCell_pIz, &bCdcCell_pIz);
+	m_TChain->SetBranchAddress("CdcCell_pOx", &CdcCell_pOx, &bCdcCell_pOx);
+	m_TChain->SetBranchAddress("CdcCell_pOy", &CdcCell_pOy, &bCdcCell_pOy);
+	m_TChain->SetBranchAddress("CdcCell_pOz", &CdcCell_pOz, &bCdcCell_pOz);
+	m_TChain->SetBranchAddress("CdcCell_t", &CdcCell_t, &bCdcCell_t);
+	m_TChain->SetBranchAddress("CdcCell_px", &CdcCell_px, &bCdcCell_px);
+	m_TChain->SetBranchAddress("CdcCell_py", &CdcCell_py, &bCdcCell_py);
+	m_TChain->SetBranchAddress("CdcCell_pz", &CdcCell_pz, &bCdcCell_pz);
+	m_TChain->SetBranchAddress("CdcCell_e", &CdcCell_e, &bCdcCell_e);
+	m_TChain->SetBranchAddress("CdcCell_edep", &CdcCell_edep, &bCdcCell_edep);
+	m_TChain->SetBranchAddress("CdcCell_driftD_smeared", &CdcCell_driftD_smeared, &bCdcCell_driftD_smeared);
+	m_TChain->SetBranchAddress("CdcCell_driftD", &CdcCell_driftD, &bCdcCell_driftD);
+	m_TChain->SetBranchAddress("CdcCell_error", &CdcCell_error, &bCdcCell_error);
+	m_TChain->SetBranchAddress("CdcCell_status", &CdcCell_status, &bCdcCell_status);
+	m_TChain->SetBranchAddress("CdcCell_nTry", &CdcCell_nTry, &bCdcCell_nTry);
+	m_TChain->SetBranchAddress("CdcCell_layerID", &CdcCell_layerID, &bCdcCell_layerID);
+	m_TChain->SetBranchAddress("CdcCell_cellID", &CdcCell_cellID, &bCdcCell_cellID);
+	m_TChain->SetBranchAddress("CdcCell_tid", &CdcCell_tid, &bCdcCell_tid);
+	m_TChain->SetBranchAddress("CdcCell_pid", &CdcCell_pid, &bCdcCell_pid);
+
+	TTree* d_tree = new TTree( "t", "t" );
+
+	int d_evt_num;
+	int d_run_num;
+	int d_pid;
+	int d_tid;
+	char d_vid[124];
+	char d_prid[124];
+	double d_mot_x;
+	double d_mot_y;
+	double d_mot_z;
+	double d_mot_px;
+	double d_mot_py;
+	double d_mot_pz;
+	int d_nhits;
+	double d_hits_x[1000];
+	double d_hits_y[1000];
+	double d_hits_z[1000];
+	double d_hits_t[1000];
+	double d_hits_px[1000];
+	double d_hits_py[1000];
+	double d_hits_pz[1000];
+	double d_tri_t;
+
+	d_tree->Branch("evt_num", &d_evt_num, "evt_num/I");
+	d_tree->Branch("run_num", &d_run_num, "run_num/I");
+	d_tree->Branch("pid", &d_pid, "pid/I");
+	d_tree->Branch("tid", &d_tid, "tid/I");
+	d_tree->Branch("vid", d_vid, "vid[124]/C");
+	d_tree->Branch("prid", d_prid, "prid[124]/C");
+	d_tree->Branch("mot_x", &d_mot_x, "mot_x/D");
+	d_tree->Branch("mot_y", &d_mot_y, "mot_y/D");
+	d_tree->Branch("mot_z", &d_mot_z, "mot_z/D");
+	d_tree->Branch("mot_px", &d_mot_px, "mot_px/D");
+	d_tree->Branch("mot_py", &d_mot_py, "mot_py/D");
+	d_tree->Branch("mot_pz", &d_mot_pz, "mot_pz/D");
+	d_tree->Branch("nhits", &d_nhits, "nhits/I");
+	d_tree->Branch("hits_x", d_hits_x, "hits_x[nhits]/D");
+	d_tree->Branch("hits_y", d_hits_y, "hits_y[nhits]/D");
+	d_tree->Branch("hits_z", d_hits_z, "hits_z[nhits]/D");
+	d_tree->Branch("hits_t", d_hits_t, "hits_t[nhits]/D");
+	d_tree->Branch("hits_px", d_hits_px, "hits_px[nhits]/D");
+	d_tree->Branch("hits_py", d_hits_py, "hits_py[nhits]/D");
+	d_tree->Branch("hits_pz", d_hits_pz, "hits_pz[nhits]/D");
+	d_tree->Branch("tri_t", &d_tri_t, "tri_t/D");
 
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
@@ -351,48 +586,184 @@ int main(int argc, char* argv[]){
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
 			N0++;
 			Long64_t tentry = m_TChain->LoadTree(iEvent);
-			if(bPro_stepL) bPro_stepL->GetEntry(tentry);
-			if(bMcTruth_px) bMcTruth_px->GetEntry(tentry);
-			if(bMcTruth_py) bMcTruth_py->GetEntry(tentry);
-			if(bMcTruth_pz) bMcTruth_pz->GetEntry(tentry);
+			if(bMcTruth_pid) bMcTruth_pid->GetEntry(tentry);
+			if(bMcTruth_tid) bMcTruth_tid->GetEntry(tentry);
+			if(bMcTruth_ptid) bMcTruth_ptid->GetEntry(tentry);
+			if(bMcTruth_time) bMcTruth_time->GetEntry(tentry);             
+			if(bMcTruth_px) bMcTruth_px->GetEntry(tentry);              
+			if(bMcTruth_py) bMcTruth_py->GetEntry(tentry);              
+			if(bMcTruth_pz) bMcTruth_pz->GetEntry(tentry);              
+			if(bMcTruth_e) bMcTruth_e->GetEntry(tentry);               
+			if(bMcTruth_x) bMcTruth_x->GetEntry(tentry);                
+			if(bMcTruth_y) bMcTruth_y->GetEntry(tentry);                
+			if(bMcTruth_z) bMcTruth_z->GetEntry(tentry);                
+			if(bMcTruth_charge) bMcTruth_charge->GetEntry(tentry);
+			if(bMcTruth_particleName) bMcTruth_particleName->GetEntry(tentry);
+			if(bMcTruth_process) bMcTruth_process->GetEntry(tentry);
+			if(bMcTruth_volume) bMcTruth_volume->GetEntry(tentry);
+
+			if(bTrigger_x) bTrigger_x->GetEntry(tentry);
+			if(bTrigger_y) bTrigger_y->GetEntry(tentry);
+			if(bTrigger_z) bTrigger_z->GetEntry(tentry);
+			if(bTrigger_t) bTrigger_t->GetEntry(tentry);
+			if(bTrigger_px) bTrigger_px->GetEntry(tentry);
+			if(bTrigger_py) bTrigger_py->GetEntry(tentry);
+			if(bTrigger_pz) bTrigger_pz->GetEntry(tentry);
+			if(bTrigger_e) bTrigger_e->GetEntry(tentry);
+			if(bTrigger_edep) bTrigger_edep->GetEntry(tentry);
+			if(bTrigger_stepL) bTrigger_stepL->GetEntry(tentry);
+			if(bTrigger_volID) bTrigger_volID->GetEntry(tentry);
+			if(bTrigger_volName) bTrigger_volName->GetEntry(tentry);
+			if(bTrigger_tid) bTrigger_tid->GetEntry(tentry);
+			if(bTrigger_pid) bTrigger_pid->GetEntry(tentry);
+			if(bTrigger_charge) bTrigger_charge->GetEntry(tentry);
+
+			if(bCdcCell_x) bCdcCell_x->GetEntry(tentry);
+			if(bCdcCell_y) bCdcCell_y->GetEntry(tentry);
+			if(bCdcCell_z) bCdcCell_z->GetEntry(tentry);
+			if(bCdcCell_pIx) bCdcCell_pIx->GetEntry(tentry);
+			if(bCdcCell_pIy) bCdcCell_pIy->GetEntry(tentry);
+			if(bCdcCell_pIz) bCdcCell_pIz->GetEntry(tentry);
+			if(bCdcCell_pOx) bCdcCell_pOx->GetEntry(tentry);
+			if(bCdcCell_pOy) bCdcCell_pOy->GetEntry(tentry);
+			if(bCdcCell_pOz) bCdcCell_pOz->GetEntry(tentry);
+			if(bCdcCell_t) bCdcCell_t->GetEntry(tentry);
+			if(bCdcCell_px) bCdcCell_px->GetEntry(tentry);
+			if(bCdcCell_py) bCdcCell_py->GetEntry(tentry);
+			if(bCdcCell_pz) bCdcCell_pz->GetEntry(tentry);
+			if(bCdcCell_e) bCdcCell_e->GetEntry(tentry);
+			if(bCdcCell_edep) bCdcCell_edep->GetEntry(tentry);
+			if(bCdcCell_driftD_smeared) bCdcCell_driftD_smeared->GetEntry(tentry);
+			if(bCdcCell_driftD) bCdcCell_driftD->GetEntry(tentry);
+			if(bCdcCell_error) bCdcCell_error->GetEntry(tentry);
+			if(bCdcCell_status) bCdcCell_status->GetEntry(tentry);
+			if(bCdcCell_nTry) bCdcCell_nTry->GetEntry(tentry);
+			if(bCdcCell_layerID) bCdcCell_layerID->GetEntry(tentry);
+			if(bCdcCell_cellID) bCdcCell_cellID->GetEntry(tentry);
+			if(bCdcCell_tid) bCdcCell_tid->GetEntry(tentry);
+			if(bCdcCell_pid) bCdcCell_pid->GetEntry(tentry);
+
 			m_TChain->GetEntry(iEvent);
 
-			double px = (*McTruth_px)[0];
-			double py = (*McTruth_py)[0];
-			double pz = (*McTruth_pz)[0];
-			double pt = sqrt(px*px+py*py);
-			double pa = sqrt(pt*pt+pz*pz);
-			double theta = (pt==0?PI/2:atan(pt/pz));
-			double track_length = 0;
-			for ( int iStep = 0; iStep < Pro_nSteps; iStep++ ){
-				track_length += (*Pro_stepL)[iStep];
+			// find the electron
+			double pa_max = 0;
+			int index = -1;
+			for ( int i_par = 0; i_par<McTruth_nTracks; i_par++){
+				int i_pid = (*McTruth_pid)[i_par];
+				int i_ptid = (*McTruth_ptid)[i_par];
+				if (i_pid==11&&i_ptid==1){
+					double px = (*McTruth_px)[0];
+					double py = (*McTruth_py)[0];
+					double pz = (*McTruth_pz)[0];
+					double pt = sqrt(px*px+py*py);
+					double pa = sqrt(pt*pt+pz*pz);
+					if (pa>pa_max){
+						index = i_par;
+						pa_max = pa;
+					}
+				}
 			}
-			double track_depth = track_length * cos(theta);
+			if (index==-1){ // cannot find electrons from gamma
+				continue;
+			}
+			N1++;
+			if (pa_max<90){ // pa < 90MeV/c
+				continue;
+			}
+			N2++;
+
+			std::string process = (*McTruth_process)[index];
+			std::string volume = (*McTruth_volume)[index];
+			int tid = (*McTruth_tid)[index];
+
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0)
 				std::cout<<prefix_EventInfoStart
-					     <<"  nSteps = "<<Pro_nSteps
-					     <<", track_length = "<<track_length
-					     <<"mm, theta = "<<theta
-					     <<"rad, track_depth = "<<track_depth
-					     <<"mm"
+					     <<" pa = "<<pa_max
+					     <<"MeV/c, process = "<<process
 					     <<std::endl;
 
-			if (pa < 80) continue;
-			if ( (index_temp = get_TH1D("track_length")) != -1 ){
-				vecH1D[index_temp]->Fill(track_length);
+			if (process == "compt"){
+				if ( (index_temp = get_TH1D("compt_pa")) != -1 ){
+					vecH1D[index_temp]->Fill(pa_max);
+				}
 			}
-			if ( (index_temp = get_TH1D("track_depth")) != -1 ){
-				vecH1D[index_temp]->Fill(track_depth);
+			if (process == "conv"){
+				if ( (index_temp = get_TH1D("conv_pa")) != -1 ){
+					vecH1D[index_temp]->Fill(pa_max);
+				}
 			}
-			if ( (index_temp = get_TH1D("InitialMom")) != -1 ){
-				vecH1D[index_temp]->Fill(pa);
+
+			// prepare for d_tree
+			d_nhits = 0;
+
+			// Trigger system
+			if (CdcCell_nHits<=0) // not hit the Cdc
+				continue;
+			N3++;
+			double CdcCell_firstHitTime = -1;
+			for ( int i_hit = 0; i_hit < CdcCell_nHits; i_hit++ ){
+				int i_tid = (*CdcCell_tid)[i_hit];
+				if (i_tid == tid){
+					d_hits_x[d_nhits] = (*CdcCell_x)[i_hit];
+					d_hits_y[d_nhits] = (*CdcCell_y)[i_hit];
+					d_hits_z[d_nhits] = (*CdcCell_z)[i_hit];
+					d_hits_t[d_nhits] = (*CdcCell_t)[i_hit];
+					d_hits_px[d_nhits] = (*CdcCell_px)[i_hit];
+					d_hits_py[d_nhits] = (*CdcCell_py)[i_hit];
+					d_hits_pz[d_nhits] = (*CdcCell_pz)[i_hit];
+					d_nhits++;
+				}
 			}
-			if ( (index_temp = get_TH1D("InitialTheta")) != -1 ){
-				vecH1D[index_temp]->Fill(theta);
+			CdcCell_firstHitTime = d_hits_t[0];
+			if ( CdcCell_firstHitTime == -1) // this electron not hit the Cdc
+				continue;
+			N4++;
+			if (Trigger_nHits<=0) // not hit the trigger
+				continue;
+			N5++;
+			double Trigger_firstHitTime = -1;
+			for ( int i_hit = 0; i_hit < Trigger_nHits; i_hit++ ){
+				int i_tid = (*Trigger_tid)[i_hit];
+				if (i_tid == tid){
+					Trigger_firstHitTime = (*Trigger_t)[i_hit];
+					break;
+				}
 			}
-			if ( (index_temp = get_TH2D("IniMomTheta")) != -1 ){
-				vecH2D[index_temp]->Fill(theta,pa);
+			if ( Trigger_firstHitTime == -1) // this electron not hit the trigger
+				continue;
+			N6++;
+
+			// Fill the tree
+			d_evt_num = evt_num;
+			d_run_num = run_num;
+			d_pid = 11;
+			d_tid = tid;
+			strcpy(d_vid,volume.c_str());
+			strcpy(d_prid,process.c_str());
+			d_tri_t = Trigger_firstHitTime;
+			d_mot_x = (*McTruth_x)[0];
+			d_mot_y = (*McTruth_y)[0];
+			d_mot_z = (*McTruth_z)[0];
+			d_mot_px = (*McTruth_px)[0];
+			d_mot_py = (*McTruth_py)[0];
+			d_mot_pz = (*McTruth_pz)[0];
+			d_tree->Fill();
+
+			if ( Trigger_firstHitTime <= CdcCell_firstHitTime ) // hit trigger first
+				continue;
+			N7++;
+
+			if (process == "compt"){
+				if ( (index_temp = get_TH1D("compt_pa_pass")) != -1 ){
+					vecH1D[index_temp]->Fill(pa_max);
+				}
 			}
+			if (process == "conv"){
+				if ( (index_temp = get_TH1D("conv_pa_pass")) != -1 ){
+					vecH1D[index_temp]->Fill(pa_max);
+				}
+			}
+
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 		}/* end of loop in events*/
 	}
@@ -408,6 +779,10 @@ int main(int argc, char* argv[]){
 	std::cout<<"N1 = "<<N1<<std::endl;
 	std::cout<<"N2 = "<<N2<<std::endl;
 	std::cout<<"N3 = "<<N3<<std::endl;
+	std::cout<<"N4 = "<<N4<<std::endl;
+	std::cout<<"N5 = "<<N5<<std::endl;
+	std::cout<<"N6 = "<<N6<<std::endl;
+	std::cout<<"N7 = "<<N7<<std::endl;
 
 	gStyle->SetPalette(1);
 	gStyle->SetOptStat(0);
@@ -563,10 +938,16 @@ int main(int argc, char* argv[]){
 		c->Print(fileName.c_str());
 	}
 
-	//TTree *m_TTree = m_TChain->CloneTree();
-	//m_TTree->Write();
-	//file->Write();
+	d_tree->Write();
 	file->Close();
+	std::string backupFileName = OutputDir + "backup.root";
+
+	if (backup){
+		TFile *file2 = new TFile(backupFileName.c_str(),"RECREATE");
+		m_TChain->CloneTree(-1,"fast");
+		file2->Write();
+		file2->Close();
+	}
 
 	delete file;
 	return 0;
@@ -635,6 +1016,7 @@ void init_args()
 	verbose = 0;
 	nEvents = 0;
 	printModule = 10000;
+	backup = false;
 }
 
 void print_usage(char* prog_name)
@@ -651,6 +1033,8 @@ void print_usage(char* prog_name)
 	fprintf(stderr,"\t\t printModule\n");
 	fprintf(stderr,"\t -h\n");
 	fprintf(stderr,"\t\t Usage message.\n");
+	fprintf(stderr,"\t -b\n");
+	fprintf(stderr,"\t\t restore backup file.\n");
 	fprintf(stderr,"[example]\n");
 	fprintf(stderr,"\t\t%s -m ab -v 20 -n 100\n",prog_name);
 }

@@ -352,7 +352,7 @@ int main(int argc, char* argv[]){
 				dir_x=G4UniformRand()-0.5;
 				dir_y=G4UniformRand()-0.5;
 				dir_z=G4UniformRand()-0.5;
-				if ( dir_x*dir_x + dir_y*dir_y + dir_z*dir_z <= 0.025 && dir_x*dir_x + dir_y*dir_y + dir_z*dir_z != 0) dir_OK = true;
+				if ( dir_x*dir_x + dir_y*dir_y + dir_z*dir_z <= 0.25 && dir_x*dir_x + dir_y*dir_y + dir_z*dir_z != 0) dir_OK = true;
 			}
 			TVector3 dir_3Vec(dir_x, dir_y, dir_z);
 			dir_3Vec.SetMag(pFermi);
