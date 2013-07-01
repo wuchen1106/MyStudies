@@ -57,7 +57,7 @@ int main(int argc, char** argv){
 	}
 
 	//=>About Atom
-	int AtomIndex = 13; //default value is Al;
+	int AtomIndex = 14; //default value is Al;
 	if (argc >= 2){
 		buff.str("");
 		buff.clear();
@@ -218,7 +218,7 @@ int main(int argc, char** argv){
 	ga = 8.56/6.78;
 	b0 = gv*gv+3*ga;
 	b1 = gv*gv-ga*ga;
-	R = 6.7E-5;
+	R = 1;
 
 	//=>About Statistical
 	int N0 = 0;

@@ -17,25 +17,9 @@ CXXFLAGS = -g -O2 -W -Wall
   # LIBS is the list of shared library files you would use.They can be found in LIBDIR. ( Names changing rule: libXXX.so to -lXXX )
 
 # Take root as an example. ( Root is a widely used package developed by CERN for analysing. )
-INCDIR = -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I/scratchfs/bes/wuc/Programs/geant4.9.6.p01-install/include/Geant4 -I/workfs/bes/wuc/Programs/CLHEP-2.1.3.1/include
-LIBDIR = $(shell $(ROOTSYS)/bin/root-config --glibs) -L/scratchfs/bes/wuc/Programs/geant4.9.6.p01-install/lib64 -L/workfs/bes/wuc/Programs/CLHEP-2.1.3.1/lib
-LIBS = -pthread -lm -ldl -rdynamic\
-       -lASImageGui -lASImage -lCintex -lCint -lcomplexDict -lCore -ldequeDict -lEG -lEve -lFFTW\
-       -lFitPanel -lFoam -lFTGL -lFumili -lGed -lGenetic -lGenVector -lGeomBuilder -lGeomPainter -lGeom -lGLEW -lGpad -lGraf3d\
-       -lGraf -lGuiBld -lGuiHtml -lGui -lGviz3d -lGX11 -lGX11TTF -lHistFactory -lHistPainter -lHist -lHtml -lKrb5Auth -llistDict\
-       -lmap2Dict -lmapDict -lMathCore -lMatrix -lMemStat -lMinuit -lMLP -lmultimap2Dict -lmultimapDict -lmultisetDict -lNet\
-       -lNew -lPhysics -lPostscript -lProofBench -lProofDraw -lProofPlayer -lProof -lQuadp -lRecorder -lReflexDict -lReflex\
-       -lRGL -lRint -lRIO -lRLDAP -lRooFitCore -lRooFit -lRooStats -lRootAuth -lSessionViewer -lsetDict -lSmatrix -lSpectrumPainter\
-       -lSpectrum -lSPlot -lSQLIO -lSrvAuth -lThread -lTMVA -lTreePlayer -lTree -lTreeViewer -lvalarrayDict\
-       -lvectorDict -lVMC -lX3d -lXMLIO -lXMLParser\
-       -lCLHEP-2.1.3.1 -lCLHEP-Cast-2.1.3.1 -lCLHEP-Evaluator-2.1.3.1 -lCLHEP-Exceptions-2.1.3.1\
-       -lCLHEP-GenericFunctions-2.1.3.1 -lCLHEP-Geometry-2.1.3.1 -lCLHEP-Matrix-2.1.3.1\
-       -lCLHEP-Random-2.1.3.1 -lCLHEP-RandomObjects-2.1.3.1 -lCLHEP-RefCount-2.1.3.1\
-       -lCLHEP-Vector-2.1.3.1 -lG4analysis -lG4digits_hits -lG4error_propagation -lG4event\
-       -lG4FR -lG4geometry -lG4gl2ps -lG4global -lG4GMocren -lG4graphics_reps -lG4intercoms -lG4interfaces\
-       -lG4materials -lG4modeling -lG4OpenGL -lG4parmodels -lG4particles -lG4persistency -lG4physicslists\
-       -lG4processes -lG4RayTracer -lG4readout -lG4run -lG4tracking -lG4track -lG4Tree -lG4visHepRep\
-       -lG4vis_management -lG4visXXX -lG4VRML -lG4zlib 
+INCDIR = -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
+LIBDIR = $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
+LIBS = -pthread -lm -ldl -rdynamic
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
 # Names of user defined packages

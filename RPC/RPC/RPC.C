@@ -544,6 +544,12 @@ int main(int argc, char* argv[]){
 	double d_mot_px;
 	double d_mot_py;
 	double d_mot_pz;
+	double d_x;
+	double d_y;
+	double d_z;
+	double d_px;
+	double d_py;
+	double d_pz;
 	int d_nhits;
 	double d_hits_x[1000];
 	double d_hits_y[1000];
@@ -566,6 +572,12 @@ int main(int argc, char* argv[]){
 	d_tree->Branch("mot_px", &d_mot_px, "mot_px/D");
 	d_tree->Branch("mot_py", &d_mot_py, "mot_py/D");
 	d_tree->Branch("mot_pz", &d_mot_pz, "mot_pz/D");
+	d_tree->Branch("x", &d_x, "x/D");
+	d_tree->Branch("y", &d_y, "y/D");
+	d_tree->Branch("z", &d_z, "z/D");
+	d_tree->Branch("px", &d_px, "px/D");
+	d_tree->Branch("py", &d_py, "py/D");
+	d_tree->Branch("pz", &d_pz, "pz/D");
 	d_tree->Branch("nhits", &d_nhits, "nhits/I");
 	d_tree->Branch("hits_x", d_hits_x, "hits_x[nhits]/D");
 	d_tree->Branch("hits_y", d_hits_y, "hits_y[nhits]/D");
@@ -747,6 +759,12 @@ int main(int argc, char* argv[]){
 			d_mot_px = (*McTruth_px)[0];
 			d_mot_py = (*McTruth_py)[0];
 			d_mot_pz = (*McTruth_pz)[0];
+			d_x = (*McTruth_x)[index];
+			d_y = (*McTruth_y)[index];
+			d_z = (*McTruth_z)[index];
+			d_px = (*McTruth_px)[index];
+			d_py = (*McTruth_py)[index];
+			d_pz = (*McTruth_pz)[index];
 			d_tree->Fill();
 
 			if ( Trigger_firstHitTime <= CdcCell_firstHitTime ) // hit trigger first

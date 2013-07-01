@@ -65,7 +65,6 @@ int main(int argc, char** argv){
 	double thickness = 3.4; // mm
 	double r_disk = 10;// mm
 	double Rmin = 55.8;
-	double pa = 105;
 	double space = 50;// mm
 
 	//=>About Particle
@@ -107,7 +106,8 @@ int main(int argc, char** argv){
 	clock_t t_PRESET = clock();
 
 	//###########################INITIALIZING#######################
-	double trackL = thickness/cos(ini_theta)/nsteps;
+	double trackL = thickness/cos(ini_theta);
+	std::cout<<"trackL = "<<trackL<<std::endl;
 	//=>Useful variables
 	double stepL = trackL/nsteps;
 	//std::cout<<"stepL = "<<stepL<<std::endl;
@@ -316,6 +316,12 @@ int main(int argc, char** argv){
 		double prob;
 		int idisk = G4UniformRand()*17;
 		z = (idisk - 9)*space;
+		double pa = 100 + G4UniformRand()*10;
+		//std::cout<<" r = "<<sqrt(pos_x*pos_x+pos_y*pos_y)
+		//	     <<", thetap = "<<thetap
+		//	     <<", z = "<<z
+		//	     <<", pa = "<<pa
+		//	     <<std::endl;
 		if (cos(phip)>cosphimax){
 			N1++;
 			std::cout<<" "<<pos_x<<" "<<pos_y<<" "<<pos_z

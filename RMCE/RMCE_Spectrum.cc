@@ -238,7 +238,7 @@ int main(int argc, char** argv){
 			}
 			std::cout<<"     probabilityE = "<<probabilityE
 				     <<std::endl;
-			probs[i-1]+=prob_RMCE*probabilityE * 5.3e15;
+			probs[i-1]+=prob_RMCE*probabilityE * 1.39e11;
 		}
 		std::cout<<"bin["<<i
 			     <<"], E = "<<E
