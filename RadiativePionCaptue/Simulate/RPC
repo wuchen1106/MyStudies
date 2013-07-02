@@ -1,0 +1,31 @@
+#this is for RPC
+#GEOCARDROOT       = geometry_CdcWire.txt
+#MAGFIELDCARDROOT  = MagField_default.txt
+#GENFILEROOT       = gen_RPC.txt
+#OUTCARDROOT       = output_CdcWire.txt
+#GEOCARDROOT       = geometry_CdcWire.txt
+GEOCARDROOT       = geometry_RPC
+MAGFIELDCARDROOT  = MagField_RPC
+GENFILEROOT       = gen_RPC
+OUTCARDROOT       = output_RPC
+
+##geometry preset
+#detector_configure
+#
+##magnet field (uniform file)
+#magField_configure
+#
+##generator
+#gen_configure
+#
+#verbose
+verbose_configure_setCut
+setCut_default.mac
+#
+##output
+#output_configure
+
+#run
+run_configure
+1
+5000
