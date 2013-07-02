@@ -1,2 +1,0 @@
-#proton neutron abundance
- 13     14      1.
