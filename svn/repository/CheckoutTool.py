@@ -105,6 +105,9 @@ class CheckoutTool(object):
 		self.m_package_reldir = "packages"
 		self.m_target = ""
 		self.m_target_type = ""
+		self.m_version = ""
+		self.m_version_type = ""
+		self.m_checkoutlog = ""
 		result=self.GetRepoStructure()
 		if result:
 			self.m_status=1 # cannot recogonize URL
@@ -126,6 +129,9 @@ class CheckoutTool(object):
 	@property
 	def repoStructure(self):
 		return self.m_RepoStructure
+	@property
+	def checkoutlog(self):
+		return self.m_checkoutlog
 
 	# check the type of target
 	def checkout(self,dest_dir,target,version,recursive=False):
@@ -175,23 +181,21 @@ class CheckoutTool(object):
 
 		# get options
 		self.m_Recursive = recursive
-		# check version type
-		version_type = self.GetVersionType(version)
 		# get the directory
 		target_dir = self.GetDirectory(self.m_target,self.m_target_type)
 
 		# check it out
 		if self.m_verbose >= 1:
-			print "==> checking out %s[%s] @%s[%s] recursively[%s] to %s" % (self.m_target_type,self.m_target,version_type,version,recursive,target_dir)
-		status=self.CheckoutTarget(self.m_target,version,self.m_target_type,version_type,target_dir)
+			print "==> checking out %s[%s] @%s[%s] recursively[%s] to %s" % (self.m_target_type,self.m_target,self.m_version_type,self.m_version,recursive,target_dir)
+		status=self.CheckoutTarget(self.m_target,self.m_version,self.m_target_type,self.m_version_type,target_dir)
 		if status:
 			self.m_status = -1
-			print "ERROR!!! in CheckoutTarget(%s,%s,%s,%s,%s)" % (self.m_target,version_type,self.m_target_type,version_type,target_dir)
+			print "ERROR!!! in CheckoutTarget(%s,%s,%s,%s,%s)" % (self.m_target,self.m_version_type,self.m_target_type,self.m_version_type,target_dir)
 			return -1 # error occurred when CheckoutTarget
 		if self.m_target_type == "project":
-			self.m_RepoStructure.projects.check(self.m_target,version)
+			self.m_RepoStructure.projects.check(self.m_target,self.m_version)
 		elif self.m_target_type == "package":
-			self.m_RepoStructure.packages.check(self.m_target,version)
+			self.m_RepoStructure.packages.check(self.m_target,self.m_version)
 
 		# recursive?
 		if self.m_Recursive:
@@ -229,6 +233,28 @@ class CheckoutTool(object):
 		return 0
 
 	def UpdateTarget(self,target,version):
+		# update version
+		if version == "trunk":
+			self.m_version = "trunk"
+			self.m_version_type = "trunk"
+		elif version == "*":
+			#FIXME infact this should refer to the newest tag. Do we need to support regular expression?
+			self.m_version = "trunk"
+			self.m_version_type = "trunk"
+		elif version == "":
+			#FIXME infact this should refer to the newest tag. Do we need to support regular expression?
+			self.m_version = "trunk"
+			self.m_version_type = "trunk"
+		else:
+			pattern = re.compile(r'.*_t\d+')
+			match = pattern.match(version)
+			if match:
+				self.m_version = version
+				self.m_version_type = "branch"
+			else:
+				self.m_version = version
+				self.m_version_type = "tag"
+		# update target name
 		if target == "":
 			top_dir = os.getcwd()
 			self.m_target = self.dir2name(top_dir)
@@ -240,38 +266,24 @@ class CheckoutTool(object):
 		if project:
 			if project.checked():
 				self.m_target_type = "CHECKED"
-				if not version == project.checkedVersion:
+				if not self.m_version == project.checkedVersion:
 					if self.m_verbose >= 5:
-						print "WARNING: current required version(%s) does not match previous checked version(%s)!!!" % (version,project.checkedVersion())
+						print "WARNING: \"%s\": current required version(%s) does not match previous checked version(%s)!!!" % (package.name,self.m_version,project.checkedVersion)
 			else:
 				self.m_target_type = "project"
 		elif package:
 			if package.checked():
 				self.m_target_type = "CHECKED"
-				if not version == package.checkedVersion:
+				if not self.m_version == package.checkedVersion:
 					if self.m_verbose >= 5:
-						print "WARNING: current required version(%s) does not match previous checked version(%s)!!!" % (version,package.checkedVersion())
+						print "WARNING: \"%s\": current required version(%s) does not match previous checked version(%s)!!!" % (package.name,self.m_version,package.checkedVersion)
 			else:
 				self.m_target_type = "package"
 		elif unrecogonized:
 			self.m_target_type = "OCCURRED"
 		else:
-			self.m_RepoStructure.unrecogonized.append(self.m_target,version)
+			self.m_RepoStructure.unrecogonized.append(self.m_target,self.m_version)
 			self.m_target_type = "" # cannnot recogonize this target!
-
-	def GetVersionType(self,version):
-		if version == "trunk":
-			return "trunk"
-		elif version == "*":
-			#FIXME infact this should refer to the newest tag. Do we need to support regular expression?
-			return "trunk"
-		else:
-			pattern = re.compile(r'.*_t\d+')
-			match = pattern.match(version)
-			if match:
-				return "branch"
-			else:
-				return "tag"
 
 	def GetDirectory(self,target,target_type):
 		if target_type == "project":
@@ -330,6 +342,8 @@ class CheckoutToolSVN(CheckoutTool):
 			url = url + "/branches/" + version
 		p = subprocess.Popen(["svn","checkout",url,target_dir],stdout=subprocess.PIPE,stderr = subprocess.PIPE)
 		p.wait()
+		self.m_checkoutlog += "svn checkout " + url + " " + target_dir + ":\n"
+		self.m_checkoutlog += p.stdout.read()
 		if p.returncode:
 			return 1
 		return 0

@@ -43,7 +43,7 @@ class PythonCMTParser(BaseParser):
 		if not os.path.isfile(requirements):
 			self.m_status=1 # cannot open the requirements file
 			return ""
-		pattern = re.compile(r'use[ \t]+(.*)[ \t]+(.*)')
+		pattern = re.compile(r'use[ \t]+(\w*)[ \t]*([a-zA-Z0-9_*.]*)')
 		statement = ""
 		if self.m_verbose >= 10:
 			print "## in PythonCMTParser GetTargetList"

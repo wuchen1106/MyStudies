@@ -90,6 +90,12 @@ def signal_handler(signal,frame):
 	sys.exit(0);
 signal.signal(signal.SIGINT, signal_handler)
 
+#################################################################
+def writeToFile(filename, data):
+	f = open(filename, "w")
+	f.write(data)
+	f.close()
+
 ##################################################################
 def main(args=None):
 # read options and arguments
@@ -122,6 +128,9 @@ def main(args=None):
 							cmt		(use CMT directly)(not supported yet)\n \
 							cmake	(use CMake directly)(not supported yet)\n'
 					  )
+	parser.add_option('-l' ,'--Logfile', dest='Logfile',
+					  help= 'Specify a Logfile where checkout logs should be put in\n'
+					  )
 
 	opts, args = parser.parse_args(args=args)
 
@@ -133,6 +142,7 @@ def main(args=None):
 	verbose = 5
 	version_control = "svn"
 	dependency_manage = "pcmt"
+	Logfile = "ICEDUST_checkoutlog.txt"
 
 # update
 	if opts.recursive:
@@ -147,6 +157,8 @@ def main(args=None):
 		version_control=opts.version_control
 	if opts.dependency_manage:
 		dependency_manage = opts.dependency_manage
+	if opts.Logfile:
+		Logfile = opts.Logfile
 	if args:
 		target = args[0]
 	if len(args) >= 2:
@@ -159,6 +171,7 @@ def main(args=None):
 	print "Verbose Level:       %s"		% (verbose)
 	print "Version Control:     \"%s\""	% (version_control)
 	print "Dependency Manage:   \"%s\""	% (dependency_manage)
+	print "Logfile:				\"%s\""	% (Logfile)
 	print "#########################################################"
 
 # prepare toolkit
@@ -180,6 +193,8 @@ def main(args=None):
 
 # a dedicated function is supposed to checkout the target recursively or not
 	myCheckoutTool.checkout(dest_dir,target,version,recursive)
+	writeToFile(Logfile,myCheckoutTool.checkoutlog)
+
 	if myCheckoutTool.status:
 		print "FAILED!!!"
 		sys.exit(1)
