@@ -16,7 +16,7 @@ __all__ = [
 ##################################################################
 # class RepoStructure
 ##################################################################
-class RepoStructure():
+class RepoStructure(object):
 	def __init__(self,urls):
 		self.m_packages = []
 		self.m_projects = []

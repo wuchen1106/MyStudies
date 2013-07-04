@@ -8,7 +8,7 @@ __all__ = [
 ##################################################################
 # class Target
 ##################################################################
-class Target():
+class Target(object):
 	def __init__(self,name,version=""):
 		self.m_name = name
 		self.m_checked = False

@@ -6,7 +6,7 @@ __all__ = [
 ##################################################################
 # class URLs
 ##################################################################
-class URLs():
+class URLs(object):
 	def __init__(self, BASE_URL = "https://www.muec-uk.org/muecuk/COMET/ICEDUST"):
 		self.m_base_url = BASE_URL
 		self.m_package_url = BASE_URL + "/packages"

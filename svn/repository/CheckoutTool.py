@@ -95,7 +95,7 @@ __all__ = [
 # class CheckoutTool
 ##################################################################
 
-class CheckoutTool():
+class CheckoutTool(object):
 	def __init__(self,depParser,verbose=0):
 		self.m_status=0
 		self.m_Recursive=False

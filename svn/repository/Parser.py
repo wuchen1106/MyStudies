@@ -16,7 +16,7 @@ __all__ = [
 ##################################################################
 # class BaseParser
 ##################################################################
-class BaseParser():
+class BaseParser(object):
 	def __init__(self,verbose=0):
 		self.m_status=0
 		self.m_TargetList=TargetList()

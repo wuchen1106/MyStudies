@@ -10,7 +10,7 @@ __all__ = [
 ##################################################################
 # class TargetList 
 ##################################################################
-class TargetList():
+class TargetList(object):
 	def __init__(self):
 		self.m_TargetList = []
 		self.m_type = "TargetList"
