@@ -33,6 +33,7 @@ class Target():
 	@property
 	def version(self):
 		return self.m_version
+	@property
 	def checkedVersion(self):
 		return self.m_checkedVersion
 	@property

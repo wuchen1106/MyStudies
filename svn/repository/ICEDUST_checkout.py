@@ -70,6 +70,12 @@ Conventions should follow:
 				put copy to m_BaseDirectory/m_package_reldir
 		NOTICE: Never try to checkout more than one project at one time. It will be confusing for package location.
 				This also means that we should not let a project/package depend on a project
+
+About verbose control:
+	<=0:  nothing but error messages and basic prompt
+	>=1:  + checking progress
+	>=5:  + important warnings during checking	(default level)
+	>=10: + everything else
 """
 
 import os
@@ -99,7 +105,8 @@ def main(args=None):
 	parser.add_option('-v' ,'--verbose', dest='verbose',
 					  help= 'Specify a verbose level\n \
 							<=0:  nothing but error messages and basic prompt\n \
-							>=1:  + checking progress	(default level)\n \
+							>=1:  + checking progress\n \
+							>=5:  + important warnings during checking	(default level)\n \
 							>=10: + everything else\n'
 					  )
 	parser.add_option('-c' ,'--version-control', dest='version_control',
@@ -123,7 +130,7 @@ def main(args=None):
 	target = ""
 	recursive = True
 	version = "trunk"
-	verbose = 1
+	verbose = 5
 	version_control = "svn"
 	dependency_manage = "pcmt"
 

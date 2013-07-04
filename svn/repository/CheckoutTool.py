@@ -68,6 +68,12 @@ Use URLs class to get all relative urls
 Use Parser classes to deal with dependency managing
 Use RepoStructure to get a list of target objects from repository
 	where target objects can store information like whether it has been checked out or not
+
+About verbose control:
+	<=0:  nothing but error messages and basic prompt
+	>=1:  + checking progress
+	>=5:  + important warnings during checking
+	>=10: + everything else
 """
 
 import re
@@ -125,7 +131,7 @@ class CheckoutTool():
 	def checkout(self,dest_dir,target,version,recursive=False):
 
 		# analyse target type
-		self.UpdateTarget(target)
+		self.UpdateTarget(target,version)
 		# if this is the first time, get direcoties and output basic informations
 		if self.m_BaseDirectory == "":
 			if self.m_target == "":
@@ -140,7 +146,7 @@ class CheckoutTool():
 					self.m_BaseDirectory=pwd[:pwd.find(self.m_target)] + self.m_target
 				else:
 					self.m_BaseDirectory=pwd+"/"+self.m_target
-			elif self.m_target_type == "packages":
+			elif self.m_target_type == "package":
 				if self.m_target in pwd:
 					self.m_BaseDirectory=pwd[:pwd.find(self.m_target)-1]
 					package_reldir = os.path.basename(self.m_BaseDirectory)
@@ -152,15 +158,19 @@ class CheckoutTool():
 					self.m_BaseDirectory=pwd
 			else:
 				print "ERROR!!! primary target \"%s\" is neither a project nor a package!" % (self.m_target)
+				# This is the primary target so please stop since it's not recognized and send the error message
 				return -1
 			print " Destination:         \"%s\"" % (self.m_BaseDirectory)
 			print " Target:              \"%s\"(%s)" % (self.m_target,self.m_target_type)
 
 		if self.m_target_type == "":
-			print "WARNING!!! \"%s\" is neither a project nor a package!" % (self.m_target)
-			print "  will omit this target and continue!"
+			if self.m_verbose >= 5:
+				print "WARNING!!! \"%s\" is neither a project nor a package!" % (self.m_target)
+				print "  will omit this target and continue!"
 			return 0
 		elif self.m_target_type == "CHECKED":
+			return 0 # checked already
+		elif self.m_target_type == "OCCURRED":
 			return 0 # checked already
 
 		# get options
@@ -186,9 +196,28 @@ class CheckoutTool():
 		# recursive?
 		if self.m_Recursive:
 			target_list = self.m_DependencyParser.GetTargetList(self.m_target,self.m_target_type,target_dir)
+			# this is a list from parser, which we only store information like name and version but no checked status.
+			# checking record is only preserved in m_RepoStructure.targets
 			if self.m_verbose >= 10:
 				print "%s has " % (self.m_target)
-				target_list.Dump()
+				for p in target_list.targets:
+					project = self.m_RepoStructure.projects.get(p.name)
+					if project:
+						text_output = ""
+						if project.checked():
+							text_output += " checkedout already! version = "
+							text_output += project.checkedVersion
+						print "  \"%-25s\" @%-15s %s" % (p.name,p.version,text_output)
+					else:
+						package = self.m_RepoStructure.packages.get(p.name)
+						if package:
+							text_output = ""
+							if package.checked():
+								text_output += " checkedout already! version = "
+								text_output += package.checkedVersion
+							print "  \"%-25s\" @%-15s %s" % (p.name,p.version,text_output)
+						else:
+							print "  \"%-25s\" @%-15s  !!!is neither a project nor a package" % (p.name,p.version)
 			if self.m_DependencyParser.status:
 				self.m_status = -3
 				print "ERROR!!! cannnot find dependency of \"%s\" @ \"%s\"!" % (self.m_target,target_dir)
@@ -199,25 +228,35 @@ class CheckoutTool():
 					return -1 # error occurred when checkout
 		return 0
 
-	def UpdateTarget(self,target):
+	def UpdateTarget(self,target,version):
 		if target == "":
 			top_dir = os.getcwd()
 			self.m_target = self.dir2name(top_dir)
 		else:
 			self.m_target = target
-		project = self.m_RepoStructure.projects.get(target)
-		package = self.m_RepoStructure.packages.get(target)
+		project = self.m_RepoStructure.projects.get(self.m_target)
+		package = self.m_RepoStructure.packages.get(self.m_target)
+		unrecogonized = self.m_RepoStructure.unrecogonized.get(self.m_target)
 		if project:
 			if project.checked():
 				self.m_target_type = "CHECKED"
+				if not version == project.checkedVersion:
+					if self.m_verbose >= 5:
+						print "WARNING: current required version(%s) does not match previous checked version(%s)!!!" % (version,project.checkedVersion())
 			else:
 				self.m_target_type = "project"
 		elif package:
 			if package.checked():
 				self.m_target_type = "CHECKED"
+				if not version == package.checkedVersion:
+					if self.m_verbose >= 5:
+						print "WARNING: current required version(%s) does not match previous checked version(%s)!!!" % (version,package.checkedVersion())
 			else:
 				self.m_target_type = "package"
+		elif unrecogonized:
+			self.m_target_type = "OCCURRED"
 		else:
+			self.m_RepoStructure.unrecogonized.append(self.m_target,version)
 			self.m_target_type = "" # cannnot recogonize this target!
 
 	def GetVersionType(self,version):
@@ -250,23 +289,13 @@ class CheckoutTool():
 		return 0
 
 	def dir2name(self,directory):
-		name=""
-		prodir=""
 		for p in self.m_RepoStructure.projects.names:
 			if p in directory:
-				prodir = directory[:directory.find(p)] + p
-				name = p
-				break
-		if not name == "":
-			pacbasedir = prodir + "/packages"
-			if pacbasedir in directory:
-				reldir = directory[len(reldir)+1:]
-				pacname = reldir[:reldir.find('/')]
-				for p in self.m_RepoStructure.packages.names:
-					if p == pacname:
-						name = p
-						break
-		return name
+				return p
+		for p in self.m_RepoStructure.packages.names:
+			if p in directory:
+				return p
+		return ""
 
 	def CheckoutTarget(self,target,version,target_type,version_type,target_dir):
 		print "  ##Check out using CheckoutTool (?could not be...)"
@@ -330,4 +359,3 @@ class CheckoutToolGITSVN(CheckoutTool):
 
 	def CheckoutTarget(self,target,version,target_type,version_type,target_dir):
 		return 0
-

@@ -50,9 +50,8 @@ class TargetList():
 		return 0
 
 	def Dump(self):
-		print "##%s has:" % (self.m_type)
-		for aTarget in self.m_TargetList:
-			aTarget = self.get(aTarget.name())
+		for aTargetName in self.m_names:
+			aTarget = self.get(aTargetName)
 			text_output = "  " + aTarget.name
 			if aTarget.checked():
 				text_output += " checkedout already! version = "
