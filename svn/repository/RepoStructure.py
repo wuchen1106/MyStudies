@@ -1,4 +1,9 @@
 
+"""
+Storing target lists consisting of target objects
+	where target objects can store information like whether it has been checked out or not
+"""
+
 import subprocess
 
 from TargetList import *

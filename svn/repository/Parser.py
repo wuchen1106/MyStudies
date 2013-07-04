@@ -8,6 +8,9 @@ from TargetList import *
 __all__ = [
 'BaseParser',
 'PythonCMTParser',
+'PythonCMakeParser',
+'CMTParser',
+'CMakeParser',
 ]
 
 ##################################################################
@@ -71,4 +74,34 @@ class PythonCMTParser(BaseParser):
 						self.m_TargetList.append(name,version)
 		except:
 			sys.exit("Cannot open requirements file "+requirements+"\nExiting...")
+		return self.m_TargetList
+
+##################################################################
+# class PythonCMakeParser
+##################################################################
+class PythonCMakeParser(BaseParser):
+	def __init__(self,verbose=0):
+		BaseParser.__init__(self,verbose)
+
+	def GetTargetList(self,target,target_type,target_dir):
+		return self.m_TargetList
+
+##################################################################
+# class CMakeParser
+##################################################################
+class CMakeParser(BaseParser):
+	def __init__(self,verbose=0):
+		BaseParser.__init__(self,verbose)
+
+	def GetTargetList(self,target,target_type,target_dir):
+		return self.m_TargetList
+
+##################################################################
+# class CMTParser
+##################################################################
+class CMTParser(BaseParser):
+	def __init__(self,verbose=0):
+		BaseParser.__init__(self,verbose)
+
+	def GetTargetList(self,target,target_type,target_dir):
 		return self.m_TargetList
