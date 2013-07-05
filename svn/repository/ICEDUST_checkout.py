@@ -98,6 +98,8 @@ def main(args=None):
 						  description="Checkout a working copy from remote repository")
 	parser.add_option("-R", "--recursive", action="store_true",
 					  help="Checkout all packages/projects required by the given one recursively")
+	parser.add_option("-T", "--test", action="store_true",
+					  help="Checkout all only cmt/ files for test")
 	parser.add_option("-N", "--norecursive", action="store_true",
 					  help="Disable recursive mode. Checkout the specified project or package only")
 	parser.add_option('-V' ,'--version', dest='version',
@@ -132,6 +134,7 @@ def main(args=None):
 	dest_dir = ""
 	target = ""
 	recursive = True
+	test = False
 	version = "trunk"
 	verbose = 5
 	version_control = "svn"
@@ -143,6 +146,8 @@ def main(args=None):
 		recursive = True
 	if opts.norecursive:
 		recursive = False
+	if opts.test:
+		test = True
 	if opts.version:
 		version = opts.version
 	if opts.verbose:
@@ -160,13 +165,15 @@ def main(args=None):
 
 # display options and arguments
 	print "#########################################################"
-	print "Recusive?            %s"		% (recursive)
-	print "Version:             \"%s\"" % (version)
-	print "Verbose Level:       %s"		% (verbose)
-	print "Version Control:     \"%s\""	% (version_control)
-	print "Dependency Manage:   \"%s\""	% (dependency_manage)
-	print "Logfile:				\"%s\""	% (Logfile)
+	print "test?                %s"        % (test)
+	print "Recusive?            %s"        % (recursive)
+	print "Version:             \"%s\""    % (version)
+	print "Verbose Level:       %s"        % (verbose)
+	print "Version Control:     \"%s\""    % (version_control)
+	print "Dependency Manage:   \"%s\""    % (dependency_manage)
+	print "Logfile:             \"%s\"" % (Logfile)
 	print "#########################################################"
+	sys.stdout.flush()
 
 # prepare toolkit
 	# choose repository type and dependency managing tool here
@@ -185,10 +192,11 @@ def main(args=None):
 		print "FAILED in initializing CheckoutTool!!!"
 		sys.exit(1)
 
+	sys.stdout.flush()
 # a dedicated function is supposed to checkout the target recursively or not
-	myCheckoutTool.checkout(dest_dir,target,version,recursive)
+	result = myCheckoutTool.checkout(dest_dir,target,version,recursive,test)
 
-	if myCheckoutTool.status:
+	if result:
 		print "FAILED!!!"
 		sys.exit(1)
 	else:

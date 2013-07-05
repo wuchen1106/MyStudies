@@ -39,13 +39,10 @@ class TargetList(object):
 	def check(self,name,version):
 		aTarget=self.get(name)
 		if not aTarget:
-			print "%s is not a target" % (name)
 			return -1 # cannot get this Target
 		elif aTarget.checked():
-			print "%s has been checked already" % (name)
 			return 1 # already checked
 		else:
-			print "%s is not checked yet" % (name)
 			aTarget.check(version)
 		return 0
 

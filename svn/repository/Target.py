@@ -22,10 +22,8 @@ class Target(object):
 
 	def check(self,version):
 		if self.checked():
-			print "  %s is checked already!" %  (self.m_name)
 			return 1 # already checked
 		else:
-			print "  checking %s" %  (self.m_name)
 			self.m_checked = True
 			self.m_checkedVersion = version
 		return 0

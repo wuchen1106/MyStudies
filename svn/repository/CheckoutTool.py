@@ -77,6 +77,7 @@ About verbose control:
 """
 
 import re
+import sys
 import os
 import subprocess
 
@@ -98,7 +99,7 @@ __all__ = [
 class CheckoutTool(object):
 	def __init__(self,depParser,Logfile,verbose=0):
 		self.m_status=0
-		self.m_Recursive=False
+		self.m_recursive=False
 		self.m_BaseDirectory = ""
 		self.m_RepoStructure=""
 		self.m_verbose=verbose
@@ -110,11 +111,14 @@ class CheckoutTool(object):
 		self.m_checkoutlog = ""
 		self.m_LogfileName = Logfile
 		self.m_Logfile = ''
+		self.m_target_num = 0
 		try:
 			self.m_Logfile = open(Logfile,'w')
 		except:
 			print "ERROR!!! Cannot open \"%s\"" % (self.m_LogfileName)
 			sys.exit(-1)
+		print "Retrieving packages and projects list ..."
+		sys.stdout.flush()
 		result=self.GetRepoStructure()
 		if result:
 			self.m_status=1 # cannot recogonize URL
@@ -141,72 +145,62 @@ class CheckoutTool(object):
 		return self.m_checkoutlog
 
 	# check the type of target
-	def checkout(self,dest_dir,target,version,recursive=False):
+	def checkout(self,dest_dir,target,version,recursive=False,test=False):
 
-		# analyse target type
-		self.UpdateTarget(target,version)
+		# get options
+		self.m_recursive = recursive
+		self.m_test = test
+
+		# update target and version information
+		self.AnalyseVersion(version)
+		self.AnalyseTarget(target)
+
 		# if this is the first time, get direcoties and output basic informations
 		if self.m_BaseDirectory == "":
-			if self.m_target == "":
-				print "ERROR!!! Cannot recogonize this primary target \"%s\"!!" % (target)
-				return -1
-			if dest_dir == "":
-				pwd=os.getcwd()
-			else:
-				pwd = os.path.realpath(dest_dir)
-			if self.m_target_type == "project":
-				if self.m_target in pwd:
-					self.m_BaseDirectory=pwd[:pwd.find(self.m_target)] + self.m_target
-				else:
-					self.m_BaseDirectory=pwd+"/"+self.m_target
-			elif self.m_target_type == "package":
-				if self.m_target in pwd:
-					self.m_BaseDirectory=pwd[:pwd.find(self.m_target)-1]
-					package_reldir = os.path.basename(self.m_BaseDirectory)
-					if not package_reldir == self.m_package_reldir:
-						self.m_BaseDirectory = self.m_BaseDirectory[:self.m_BaseDirectory.find(package_reldir)-1]
-						self.m_package_reldir = package_reldir
-						print " WARNING: you are not under a standard directory!! packages will be put to \"%s\"" % (self.m_BaseDirectory+"/"+self.m_package_reldir)
-				else:
-					self.m_BaseDirectory=pwd
-			else:
-				print "ERROR!!! primary target \"%s\" is neither a project nor a package!" % (self.m_target)
+			result = self.GetBaseDirectory(dest_dir)
+			if result:
 				# This is the primary target so please stop since it's not recognized and send the error message
 				return -1
 			print " Destination:         \"%s\"" % (self.m_BaseDirectory)
 			print " Target:              \"%s\"(%s)" % (self.m_target,self.m_target_type)
+			print "**************************************************************"
 
+		# get direcoty for this checkout
+		self.GetDirectory()
+
+		# check target type
 		if self.m_target_type == "":
 			if self.m_verbose >= 5:
 				print "WARNING!!! \"%s\" is neither a project nor a package!" % (self.m_target)
 				print "  will omit this target and continue!"
-			return 0
+			return 0 # ignore the unrecognized
 		elif self.m_target_type == "CHECKED":
 			return 0 # checked already
 		elif self.m_target_type == "OCCURRED":
 			return 0 # checked already
 
-		# get options
-		self.m_Recursive = recursive
-		# get the directory
-		target_dir = self.GetDirectory(self.m_target,self.m_target_type)
-
 		# check it out
-		if self.m_verbose >= 1:
-			print "==> checking out %s[%s] @%s[%s] recursively[%s] to %s" % (self.m_target_type,self.m_target,self.m_version_type,self.m_version,recursive,target_dir)
-		status=self.CheckoutTarget(self.m_target,self.m_version,self.m_target_type,self.m_version_type,target_dir)
+		if self.m_verbose >= 5:
+			self.m_target_num += 1;
+			print "==> [%d] checking out \"%s\" @[%s]" % (self.m_target_num,self.m_target,self.m_version)
+			sys.stdout.flush() # see what happended everytime we checked something down
+		status=self.CheckoutTarget(self.m_test)
 		if status:
-			self.m_status = -1
-			print "ERROR!!! in CheckoutTarget(%s,%s,%s,%s,%s)" % (self.m_target,self.m_version_type,self.m_target_type,self.m_version_type,target_dir)
-			return -1 # error occurred when CheckoutTarget
+			self.m_status = -1 # single package download error
+			print "ERROR!!! in CheckoutTarget for \"%s\"[%s] @%s[%s] recursively[%s] to \"%s\"" % (self.m_target,self.m_target_type,self.m_version,self.m_version_type,self.m_recursive,self.m_target_dir)
+			# This will return back to upper loop and let the upper loop deal with this error status
+			# Since this package is possibly containing requirements file, we had better try to read it anyway
+
+		# record check information
 		if self.m_target_type == "project":
 			self.m_RepoStructure.projects.check(self.m_target,self.m_version)
 		elif self.m_target_type == "package":
 			self.m_RepoStructure.packages.check(self.m_target,self.m_version)
 
 		# recursive?
-		if self.m_Recursive:
-			target_list = self.m_DependencyParser.GetTargetList(self.m_target,self.m_target_type,target_dir)
+		if self.m_recursive:
+			requirements = os.path.join(self.m_target_dir, "cmt", "requirements")
+			target_list = self.m_DependencyParser.GetTargetList(requirements)
 			# this is a list from parser, which we only store information like name and version but no checked status.
 			# checking record is only preserved in m_RepoStructure.targets
 			if self.m_verbose >= 10:
@@ -224,23 +218,26 @@ class CheckoutTool(object):
 						if package:
 							text_output = ""
 							if package.checked():
-								text_output += " checkedout already! version = "
-								text_output += package.checkedVersion
-							print "  \"%-25s\" @%-15s %s" % (p.name,p.version,text_output)
+								text_output += " checked already @["
+								text_output += package.checkedVersion + ']'
+							print "  %-25s @%-15s %s" % ('"'+p.name+'"','['+p.version+']',text_output)
 						else:
-							print "  \"%-25s\" @%-15s  !!!is neither a project nor a package" % (p.name,p.version)
+							print "  %-25s @%-15s  !!!is neither a project nor a package" % ('"'+p.name+'"','['+p.version+']')
 			if self.m_DependencyParser.status:
-				self.m_status = -3
-				print "ERROR!!! cannnot find dependency of \"%s\" @ \"%s\"!" % (self.m_target,target_dir)
-				return -3 # cannot get the paser
+				if self.m_verbose >= 5:
+					print "WARNING!!! cannnot find dependency of \"%s\" @ \"%s\"!" % (self.m_target,self.m_target_dir)
+					return 0 # cannot get the paser
+					# cannot continue with a further loop, back to upper loop
+					# since this is a minor error, so we have to return successful status so that the upper loop can keep going
 			for aTarget in target_list.targets:
-				result = self.checkout(self.m_BaseDirectory,aTarget.name,aTarget.version,True)
-				if result:
-					return -1 # error occurred when checkout
-		return 0
+				result = self.checkout(self.m_BaseDirectory,aTarget.name,aTarget.version,True,self.m_test)
+				if result: # must be serious error that should force us to stop the whole process
+					if self.m_verbose >= 0:
+						print "ERROR!!! serious error occurred when checkout \"%s\" @ \"%s\"!" % (self.m_target,self.m_version)
+					return 1 # terminate the loop and stop checking process recursively
+		return 0 # successful
 
-	def UpdateTarget(self,target,version):
-		# update version
+	def AnalyseVersion(self,version):
 		if version == "trunk":
 			self.m_version = "trunk"
 			self.m_version_type = "trunk"
@@ -261,6 +258,8 @@ class CheckoutTool(object):
 			else:
 				self.m_version = version
 				self.m_version_type = "tag"
+
+	def AnalyseTarget(self,target):
 		# update target name
 		if target == "":
 			top_dir = os.getcwd()
@@ -269,7 +268,7 @@ class CheckoutTool(object):
 			self.m_target = target
 		project = self.m_RepoStructure.projects.get(self.m_target)
 		package = self.m_RepoStructure.packages.get(self.m_target)
-		unrecogonized = self.m_RepoStructure.unrecogonized.get(self.m_target)
+		unrecognized = self.m_RepoStructure.unrecognized.get(self.m_target)
 		if project:
 			if project.checked():
 				self.m_target_type = "CHECKED"
@@ -286,17 +285,45 @@ class CheckoutTool(object):
 						print "WARNING: \"%s\": current required version(%s) does not match previous checked version(%s)!!!" % (package.name,self.m_version,package.checkedVersion)
 			else:
 				self.m_target_type = "package"
-		elif unrecogonized:
+		elif unrecognized:
 			self.m_target_type = "OCCURRED"
 		else:
-			self.m_RepoStructure.unrecogonized.append(self.m_target,self.m_version)
+			self.m_RepoStructure.unrecognized.append(self.m_target,self.m_version)
 			self.m_target_type = "" # cannnot recogonize this target!
 
-	def GetDirectory(self,target,target_type):
-		if target_type == "project":
-			return self.m_BaseDirectory
-		elif target_type == "package":
-			return self.m_BaseDirectory + "/" + self.m_package_reldir + "/" + target
+	def GetDirectory(self):
+		if self.m_target_type == "project":
+			self.m_target_dir = self.m_BaseDirectory
+		elif self.m_target_type == "package":
+			self.m_target_dir = self.m_BaseDirectory + "/" + self.m_package_reldir + "/" + self.m_target + "/" + self.m_version
+
+	def GetBaseDirectory(self,dest_dir):
+		if self.m_target == "":
+			print "ERROR!!! Cannot recogonize this primary target \"%s\"!!" % (target)
+			return -1
+		if dest_dir == "":
+			pwd=os.getcwd()
+		else:
+			pwd = os.path.realpath(dest_dir)
+		if self.m_target_type == "project":
+			if self.m_target in pwd:
+				self.m_BaseDirectory=pwd[:pwd.find(self.m_target)] + self.m_target
+			else:
+				self.m_BaseDirectory=pwd+"/"+self.m_target
+		elif self.m_target_type == "package":
+			if self.m_target in pwd:
+				self.m_BaseDirectory=pwd[:pwd.find(self.m_target)-1]
+				package_reldir = os.path.basename(self.m_BaseDirectory)
+				if not package_reldir == self.m_package_reldir:
+					self.m_BaseDirectory = self.m_BaseDirectory[:self.m_BaseDirectory.find(package_reldir)-1]
+					self.m_package_reldir = package_reldir
+					print " WARNING: you are not under a standard directory!! packages will be put to \"%s\"" % (self.m_BaseDirectory+"/"+self.m_package_reldir)
+			else:
+				self.m_BaseDirectory=pwd
+		else:
+			print "ERROR!!! primary target \"%s\" is neither a project nor a package!" % (self.m_target)
+			# This is the primary target so please stop since it's not recognized and send the error message
+			return -1
 
 	def GetRepoStructure(self):
 		# prepare urls, repoStructure, and Base Directory
@@ -316,7 +343,7 @@ class CheckoutTool(object):
 				return p
 		return ""
 
-	def CheckoutTarget(self,target,version,target_type,version_type,target_dir):
+	def CheckoutTarget(self,test=False):
 		print "  ##Check out using CheckoutTool (?could not be...)"
 
 ##################################################################
@@ -335,24 +362,40 @@ class CheckoutToolSVN(CheckoutTool):
 			return 1 # cannot recogonize structure from the given url
 		return 0
 
-	def CheckoutTarget(self,target,version,target_type,version_type,target_dir):
+	def CheckoutTarget(self,test=False):
 		url = ""
-		if target_type == "project":
-			url = self.m_urls.project_url + "/" + target
-		elif target_type == "package":
-			url = self.m_urls.package_url + "/" + target
-		if version_type == "trunk":
+		if self.m_target_type == "project":
+			url = self.m_urls.project_url + "/" + self.m_target
+		elif self.m_target_type == "package":
+			url = self.m_urls.package_url + "/" + self.m_target
+		if self.m_version_type == "trunk":
 			url = url + "/trunk"
-		elif version_type == "tag":
-			url = url + "/" + version
-		elif version_type == "branch":
-			url = url + "/branches/" + version
-		p = subprocess.Popen(["svn","checkout",url,target_dir],stdout=subprocess.PIPE,stderr = subprocess.PIPE)
+		elif self.m_version_type == "tag":
+			url = url + "/" + self.m_version
+		elif self.m_version_type == "branch":
+			url = url + "/branches/" + self.m_version
+
+		destination = self.m_target_dir
+
+		if test:
+			url += "/cmt"
+			destination += "/cmt"
+
+		if self.m_verbose >= 10:
+			print "    #$ svn checkout %s %s" % (url,destination)
+			sys.stdout.flush() # see what happended everytime we checked something down
+
+		self.m_checkoutlog = "#$ svn checkout " + url + " " + destination + "\n"
+		self.m_Logfile.write(self.m_checkoutlog)
+		self.m_Logfile.flush()
+
+		p = subprocess.Popen(["svn","checkout",url,destination],stdout=subprocess.PIPE,stderr = subprocess.PIPE)
 		p.wait()
-		self.m_checkoutlog = "@ svn checkout " + url + " " + target_dir + ":\n"
-		self.m_checkoutlog += p.stdout.read()
+
+		self.m_checkoutlog = p.stdout.read()
 		self.m_checkoutlog += p.stderr.read()
 		self.m_Logfile.write(self.m_checkoutlog)
+		self.m_Logfile.flush()
 		if p.returncode:
 			return 1
 		return 0
@@ -367,7 +410,7 @@ class CheckoutToolGIT(CheckoutTool):
 	def GetRepoStructure(self):
 		return 0
 
-	def CheckoutTarget(self,target,version,target_type,version_type,target_dir):
+	def CheckoutTarget(self,test=False):
 		return 0
 
 ##################################################################
@@ -380,5 +423,5 @@ class CheckoutToolGITSVN(CheckoutTool):
 	def GetRepoStructure(self):
 		return 0
 
-	def CheckoutTarget(self,target,version,target_type,version_type,target_dir):
+	def CheckoutTarget(self,test=False):
 		return 0

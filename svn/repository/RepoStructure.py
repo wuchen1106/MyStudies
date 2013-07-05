@@ -20,7 +20,7 @@ class RepoStructure(object):
 	def __init__(self,urls):
 		self.m_packages = []
 		self.m_projects = []
-		self.m_unrecogonized = TargetList()
+		self.m_unrecognized = TargetList()
 		self.ini_target_list(urls)
 		self.m_status = 0
 
@@ -40,8 +40,8 @@ class RepoStructure(object):
 		return self.m_projects
 
 	@property
-	def unrecogonized(self):
-		return self.m_unrecogonized
+	def unrecognized(self):
+		return self.m_unrecognized
 
 	def Dump(self):
 		print "packages:"
