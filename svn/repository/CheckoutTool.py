@@ -108,7 +108,13 @@ class CheckoutTool(object):
 		self.m_version = ""
 		self.m_version_type = ""
 		self.m_checkoutlog = ""
-		self.m_Logfile = Logfile
+		self.m_LogfileName = Logfile
+		self.m_Logfile = ''
+		try:
+			self.m_Logfile = open(Logfile,'w')
+		except:
+			print "ERROR!!! Cannot open \"%s\"" % (self.m_LogfileName)
+			sys.exit(-1)
 		result=self.GetRepoStructure()
 		if result:
 			self.m_status=1 # cannot recogonize URL
@@ -310,11 +316,6 @@ class CheckoutTool(object):
 				return p
 		return ""
 
-	def writeToFile(self):
-		f = open(self.m_Logfile, "w")
-		f.write(self.m_checkoutlog)
-		f.close()
-
 	def CheckoutTarget(self,target,version,target_type,version_type,target_dir):
 		print "  ##Check out using CheckoutTool (?could not be...)"
 
@@ -350,7 +351,7 @@ class CheckoutToolSVN(CheckoutTool):
 		p.wait()
 		self.m_checkoutlog = "svn checkout " + url + " " + target_dir + ":\n"
 		self.m_checkoutlog += p.stdout.read()
-		self.writeToFile()
+		self.m_Logfile.write(self.m_checkoutlog)
 		if p.returncode:
 			return 1
 		return 0

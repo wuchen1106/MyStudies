@@ -39,6 +39,7 @@ class PythonCMTParser(BaseParser):
 		BaseParser.__init__(self,verbose)
 
 	def GetTargetList(self,target,target_type,target_dir):
+		self.m_TargetList=TargetList()
 		requirements = os.path.join(target_dir, "cmt", "requirements")
 		if not os.path.isfile(requirements):
 			self.m_status=1 # cannot open the requirements file
