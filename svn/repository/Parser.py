@@ -48,6 +48,7 @@ class PythonCMTParser(BaseParser):
 			return TargetList()
 		pattern_general = re.compile(r'(\w+)[ \t]+(.*)')
 		pattern_macro = re.compile(r'(\w+)[ \t]+\"(.*)\".*')
+		# FIXME: cannot deal with recursive macros yet
 		pattern_macro_append = re.compile(r'(\w+)[ \t]+\"(.*)\".*')
 		pattern_macro_append_more = re.compile(r'(\w+)[ \t]+\"(.*)\"(\w+[ \t]+\".*\")')
 		pattern_use_macro = re.compile(r'\$\((\w+)\)(.*)')

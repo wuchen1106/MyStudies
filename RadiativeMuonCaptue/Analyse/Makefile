@@ -25,13 +25,17 @@ LIBS = -pthread -lm -ldl -rdynamic
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-PROGRAM = RMCE
+PROGRAM1 = RMCE
+PROGRAM2 = ph2e
 
 # Object list for user defined packages
 OBJ = 
 
-$(PROGRAM): $(OBJ) $(PROGRAM).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).C $(OBJ) -o $(MYBIN)/$(PROGRAM)
+$(PROGRAM1): $(OBJ) $(PROGRAM1).C
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM1).C $(OBJ) -o $(PROGRAM1)
+
+$(PROGRAM2): $(OBJ) $(PROGRAM2).C
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM2).C $(OBJ) -o $(PROGRAM2)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
@@ -39,7 +43,8 @@ $(PROGRAM): $(OBJ) $(PROGRAM).C
 .PHONY: clean
 clean:
 	$(RM) $(OBJ)
-	$(RM) $(MYBIN)/$(PROGRAM)
+	$(RM) $(PROGRAM1)
+	$(RM) $(PROGRAM2)
 
 .PHONY: all
-all: $(PROGRAM)
+all: $(PROGRAM1) $(PROGRAM2)

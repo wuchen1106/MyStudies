@@ -32,7 +32,7 @@ PROGRAM = AntiProton
 OBJ = 
 
 $(PROGRAM): $(OBJ) $(PROGRAM).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).C $(OBJ) -o $(MYBIN)/$(PROGRAM)
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).C $(OBJ) -o $(PROGRAM)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
