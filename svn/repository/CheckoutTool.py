@@ -96,7 +96,7 @@ __all__ = [
 ##################################################################
 
 class CheckoutTool(object):
-	def __init__(self,depParser,verbose=0):
+	def __init__(self,depParser,Logfile,verbose=0):
 		self.m_status=0
 		self.m_Recursive=False
 		self.m_BaseDirectory = ""
@@ -108,6 +108,7 @@ class CheckoutTool(object):
 		self.m_version = ""
 		self.m_version_type = ""
 		self.m_checkoutlog = ""
+		self.m_Logfile = Logfile
 		result=self.GetRepoStructure()
 		if result:
 			self.m_status=1 # cannot recogonize URL
@@ -309,6 +310,11 @@ class CheckoutTool(object):
 				return p
 		return ""
 
+	def writeToFile(self):
+		f = open(self.m_Logfile, "w")
+		f.write(self.m_checkoutlog)
+		f.close()
+
 	def CheckoutTarget(self,target,version,target_type,version_type,target_dir):
 		print "  ##Check out using CheckoutTool (?could not be...)"
 
@@ -316,8 +322,8 @@ class CheckoutTool(object):
 # class CheckoutToolSVN
 ##################################################################
 class CheckoutToolSVN(CheckoutTool):
-	def __init__(self,depParser,verbose=0):
-		CheckoutTool.__init__(self,depParser,verbose)
+	def __init__(self,depParser,Logfile,verbose=0):
+		CheckoutTool.__init__(self,depParser,Logfile,verbose)
 
 	def GetRepoStructure(self):
 		# prepare urls, repoStructure, and Base Directory
@@ -342,8 +348,9 @@ class CheckoutToolSVN(CheckoutTool):
 			url = url + "/branches/" + version
 		p = subprocess.Popen(["svn","checkout",url,target_dir],stdout=subprocess.PIPE,stderr = subprocess.PIPE)
 		p.wait()
-		self.m_checkoutlog += "svn checkout " + url + " " + target_dir + ":\n"
+		self.m_checkoutlog = "svn checkout " + url + " " + target_dir + ":\n"
 		self.m_checkoutlog += p.stdout.read()
+		self.writeToFile()
 		if p.returncode:
 			return 1
 		return 0
@@ -352,8 +359,8 @@ class CheckoutToolSVN(CheckoutTool):
 # class CheckoutToolGIT
 ##################################################################
 class CheckoutToolGIT(CheckoutTool):
-	def __init__(self,depParser,verbose=0):
-		CheckoutTool.__init__(self,depParser,verbose)
+	def __init__(self,depParser,Logfile,verbose=0):
+		CheckoutTool.__init__(self,depParser,Logfile,verbose)
 
 	def GetRepoStructure(self):
 		return 0
@@ -365,8 +372,8 @@ class CheckoutToolGIT(CheckoutTool):
 # class CheckoutToolGITSVN
 ##################################################################
 class CheckoutToolGITSVN(CheckoutTool):
-	def __init__(self,depParser,verbose=0):
-		CheckoutTool.__init__(self,depParser,verbose)
+	def __init__(self,depParser,Logfile,verbose=0):
+		CheckoutTool.__init__(self,depParser,Logfile,verbose)
 
 	def GetRepoStructure(self):
 		return 0

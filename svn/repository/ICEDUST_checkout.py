@@ -90,12 +90,6 @@ def signal_handler(signal,frame):
 	sys.exit(0);
 signal.signal(signal.SIGINT, signal_handler)
 
-#################################################################
-def writeToFile(filename, data):
-	f = open(filename, "w")
-	f.write(data)
-	f.close()
-
 ##################################################################
 def main(args=None):
 # read options and arguments
@@ -178,11 +172,11 @@ def main(args=None):
 	# choose repository type and dependency managing tool here
 	myCheckoutTool = ''
 	if version_control == "svn":
-		myCheckoutTool = CheckoutToolSVN(dependency_manage,verbose)
+		myCheckoutTool = CheckoutToolSVN(dependency_manage,Logfile,verbose)
 	elif version_control == "git":
-		myCheckoutTool = CheckoutToolGIT(dependency_manage,verbose)
+		myCheckoutTool = CheckoutToolGIT(dependency_manage,Logfile,verbose)
 	elif version_control == "gitsvn":
-		myCheckoutTool = CheckoutToolGITSVN(dependency_manage,verbose)
+		myCheckoutTool = CheckoutToolGITSVN(dependency_manage,Logfile,verbose)
 	else:
 		print "ERROR: \"%s\" is not supported yet for version control!!!" % (version_control)
 		sys.exit(1)
@@ -193,7 +187,6 @@ def main(args=None):
 
 # a dedicated function is supposed to checkout the target recursively or not
 	myCheckoutTool.checkout(dest_dir,target,version,recursive)
-	writeToFile(Logfile,myCheckoutTool.checkoutlog)
 
 	if myCheckoutTool.status:
 		print "FAILED!!!"
