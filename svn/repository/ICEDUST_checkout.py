@@ -104,7 +104,7 @@ def main(args=None):
 					  help="Disable recursive mode. Checkout the specified project or package only")
 	parser.add_option('-V' ,'--version', dest='version',
 					  help='Specify a tag/branch for the project or package')
-	parser.add_option('-v' ,'--verbose', dest='verbose',
+	parser.add_option('-v' ,'--verbose', dest='verbose', type="int",
 					  help= 'Specify a verbose level\n \
 							<=0:  nothing but error messages and basic prompt\n \
 							>=1:  + checking progress\n \
@@ -168,10 +168,10 @@ def main(args=None):
 	print "test?                %s"        % (test)
 	print "Recusive?            %s"        % (recursive)
 	print "Version:             \"%s\""    % (version)
-	print "Verbose Level:       %s"        % (verbose)
+	print "Verbose Level:       %d"        % (verbose)
 	print "Version Control:     \"%s\""    % (version_control)
 	print "Dependency Manage:   \"%s\""    % (dependency_manage)
-	print "Logfile:             \"%s\"" % (Logfile)
+	print "Logfile:             \"%s\""    % (Logfile)
 	print "#########################################################"
 	sys.stdout.flush()
 

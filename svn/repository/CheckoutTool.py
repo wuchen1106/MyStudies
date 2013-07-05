@@ -134,6 +134,7 @@ class CheckoutTool(object):
 			print "ERROR!!! Cannot recogonize dependency parser type \"%s\"" % (depParser)
 			self.m_status=2 # cannot recogonize depParser parser type
 
+##################################################################
 	@property
 	def status(self):
 		return self.m_status
@@ -144,7 +145,7 @@ class CheckoutTool(object):
 	def checkoutlog(self):
 		return self.m_checkoutlog
 
-	# check the type of target
+##################################################################
 	def checkout(self,dest_dir,target,version,recursive=False,test=False):
 
 		# get options
@@ -182,7 +183,7 @@ class CheckoutTool(object):
 		# check it out
 		if self.m_verbose >= 5:
 			self.m_target_num += 1;
-			print "==> [%d] checking out \"%s\" @[%s]" % (self.m_target_num,self.m_target,self.m_version)
+			print "==> [%s] checking out \"%s\" @[%s]" % (self.m_target_num,self.m_target,self.m_version)
 			sys.stdout.flush() # see what happended everytime we checked something down
 		status=self.CheckoutTarget(self.m_test)
 		if status:
@@ -190,6 +191,9 @@ class CheckoutTool(object):
 			print "ERROR!!! in CheckoutTarget for \"%s\"[%s] @%s[%s] recursively[%s] to \"%s\"" % (self.m_target,self.m_target_type,self.m_version,self.m_version_type,self.m_recursive,self.m_target_dir)
 			# This will return back to upper loop and let the upper loop deal with this error status
 			# Since this package is possibly containing requirements file, we had better try to read it anyway
+		else:
+			if self.m_verbose >= 5:
+				print "		Successful!"
 
 		# record check information
 		if self.m_target_type == "project":
@@ -237,6 +241,7 @@ class CheckoutTool(object):
 					return 1 # terminate the loop and stop checking process recursively
 		return 0 # successful
 
+##################################################################
 	def AnalyseVersion(self,version):
 		if version == "trunk":
 			self.m_version = "trunk"
@@ -259,6 +264,7 @@ class CheckoutTool(object):
 				self.m_version = version
 				self.m_version_type = "tag"
 
+##################################################################
 	def AnalyseTarget(self,target):
 		# update target name
 		if target == "":
@@ -291,12 +297,14 @@ class CheckoutTool(object):
 			self.m_RepoStructure.unrecognized.append(self.m_target,self.m_version)
 			self.m_target_type = "" # cannnot recogonize this target!
 
+##################################################################
 	def GetDirectory(self):
 		if self.m_target_type == "project":
 			self.m_target_dir = self.m_BaseDirectory
 		elif self.m_target_type == "package":
 			self.m_target_dir = self.m_BaseDirectory + "/" + self.m_package_reldir + "/" + self.m_target + "/" + self.m_version
 
+##################################################################
 	def GetBaseDirectory(self,dest_dir):
 		if self.m_target == "":
 			print "ERROR!!! Cannot recogonize this primary target \"%s\"!!" % (target)
@@ -325,6 +333,7 @@ class CheckoutTool(object):
 			# This is the primary target so please stop since it's not recognized and send the error message
 			return -1
 
+##################################################################
 	def GetRepoStructure(self):
 		# prepare urls, repoStructure, and Base Directory
 		self.m_urls=URLs()
@@ -334,6 +343,7 @@ class CheckoutTool(object):
 			return 1 # cannot recogonize structure from the given url
 		return 0
 
+##################################################################
 	def dir2name(self,directory):
 		for p in self.m_RepoStructure.projects.names:
 			if p in directory:
@@ -343,6 +353,7 @@ class CheckoutTool(object):
 				return p
 		return ""
 
+##################################################################
 	def CheckoutTarget(self,test=False):
 		print "  ##Check out using CheckoutTool (?could not be...)"
 
@@ -353,6 +364,7 @@ class CheckoutToolSVN(CheckoutTool):
 	def __init__(self,depParser,Logfile,verbose=0):
 		CheckoutTool.__init__(self,depParser,Logfile,verbose)
 
+##################################################################
 	def GetRepoStructure(self):
 		# prepare urls, repoStructure, and Base Directory
 		self.m_urls=URLs()
@@ -362,6 +374,7 @@ class CheckoutToolSVN(CheckoutTool):
 			return 1 # cannot recogonize structure from the given url
 		return 0
 
+##################################################################
 	def CheckoutTarget(self,test=False):
 		url = ""
 		if self.m_target_type == "project":
@@ -407,9 +420,11 @@ class CheckoutToolGIT(CheckoutTool):
 	def __init__(self,depParser,Logfile,verbose=0):
 		CheckoutTool.__init__(self,depParser,Logfile,verbose)
 
+##################################################################
 	def GetRepoStructure(self):
 		return 0
 
+##################################################################
 	def CheckoutTarget(self,test=False):
 		return 0
 
@@ -420,8 +435,10 @@ class CheckoutToolGITSVN(CheckoutTool):
 	def __init__(self,depParser,Logfile,verbose=0):
 		CheckoutTool.__init__(self,depParser,Logfile,verbose)
 
+##################################################################
 	def GetRepoStructure(self):
 		return 0
 
+##################################################################
 	def CheckoutTarget(self,test=False):
 		return 0

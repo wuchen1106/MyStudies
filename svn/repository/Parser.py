@@ -53,7 +53,7 @@ class PythonCMTParser(BaseParser):
 		pattern_use_macro = re.compile(r'\$\((\w+)\)(.*)')
 		pattern_use = re.compile(r'(\w+)[ \t]*([a-zA-Z0-9_*.]*)')
 		statement = ""
-		if self.m_verbose >= 10:
+		if self.m_verbose >= 15:
 			print "## in PythonCMTParser GetTargetList"
 			print "##   reading %s" % (requirements)
 		try:
