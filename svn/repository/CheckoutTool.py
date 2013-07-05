@@ -349,8 +349,9 @@ class CheckoutToolSVN(CheckoutTool):
 			url = url + "/branches/" + version
 		p = subprocess.Popen(["svn","checkout",url,target_dir],stdout=subprocess.PIPE,stderr = subprocess.PIPE)
 		p.wait()
-		self.m_checkoutlog = "svn checkout " + url + " " + target_dir + ":\n"
+		self.m_checkoutlog = "@ svn checkout " + url + " " + target_dir + ":\n"
 		self.m_checkoutlog += p.stdout.read()
+		self.m_checkoutlog += p.stderr.read()
 		self.m_Logfile.write(self.m_checkoutlog)
 		if p.returncode:
 			return 1
