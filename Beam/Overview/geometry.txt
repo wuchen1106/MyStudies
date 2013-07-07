@@ -1,0 +1,725 @@
+MyFieldMap: /home/chen/MyWorkArea/comet_g4_chen/fieldMaps/130117/Phase1Field.dat, 1
+------------------------------------------------------------
+Pion Target Solenoid = (0,0,1700) mm
+FieldPos global coords (1.56175e-316,6.92707e-310,6.92706e-310) mm
+Muon Torus 1 = (3000,0,4350) mm
+BLTransport Position = (3750,0,7350) mm
+FieldPos global coords (3.55727e-322,1.32028e-316,1.32032e-316) mm
+TSolenoid2 Position = (5260,0,7350) mm
+FieldPos global coords (7350,0,0) mm
+-- PionTargetAndCaptureSolenoids --------------------------------------------
+PTACS Solenoid Dimensions =
+RMax = 0.806 m
+SizeZ = 2.65 m
+Pion Production Target Dimensions =
+Pos = (0,0,-1.7) m
+Note that this is the position of the Pion Production Target in the coordinate system of the PTACS Solenoid. It is at the origin of the World volume.
+RMax = 0.005999 m
+SizeZ = 0.3 m
+PTACSEntry mother is PionTargetAndCaptureSolenoids
+Pos =  (0,0,-2.6495) m
+RMax = 299.78
+PTACSShieldDmonitor mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,-0.9495) m
+RMax = 350
+PTACSBPmonitor mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,1.1445) m
+RMax = 500
+PTACSPTmonitor mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,-1.6195) m
+RMax = 150
+PTACSExit mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,2.6495) m
+RMax = 200
+------------------------------------------------------------
+-- MuonTorus1 --------------------------------------------
+MT1 Solenoid Dimensions =
+RMax = 0.6 m
+MT1 Shell Dimensions =
+RMin = 0.18 m
+RMax = 0.23 m
+Pos = (0,0,0) m
+MT1 Yoke Dimensions =
+RMin = 0.6 m
+RMax = 0.8 m
+Pos = (0,0,0) m
+MT1Entry Dimensions =
+Pos = (3000,0.1,0) mm
+MT1_225 Dimensions =
+Pos = (2771.6,1148.14,0) mm
+MT1 _45 Dimensions =
+Pos = (2121.25,2121.39,0) mm
+MT1 _675 Dimensions =
+Pos = (1147.96,2771.68,0) mm
+MT1 Exit Dimensions =
+Pos = (0.1,3000,0) mm
+------------------------------------------------------------
+-- BLTransport --------------------------------------------
+BLT Solenoid Dimensions =
+RMax = 0.6 m
+SizeZ = 0.75 m
+BLT Shell Dimensions =
+RMin = 0.35 m
+RMax = 0.4 m
+SizeZ = 0.75 m
+Pos = (0,0,0) m
+BLT Yoke Dimensions =
+RMin = 0.6 m
+RMax = 0.7 m
+SizeZ = 0.75 m
+Pos = (0,0,0) m
+BLTEntry mother is BLTField
+and pos is (0,0,-749.5)
+BLTExit mother is BLTField
+and pos is (0,0,749.5)
+BLTColl mother is BLTField
+and z pos is 0.249 m
+------------------------------------------------------------
+-- TSolenoid2 --------------------------------------------
+TS2 Solenoid Dimensions =
+RMax = 1.1 m
+SizeZ = 0.76 m
+TS2 Shell Dimensions =
+RMin = 0.42 m
+RMax = 0.47 m
+SizeZ = 0.725 m
+Pos = (0,0,0) m
+TS2 Yoke Dimensions =
+RMin = 1.1 m
+RMax = 1.3 m
+SizeZ = 0.725 m
+Pos = (0,0,0) m
+Target Region Dimensions =
+RMax = 0.1 m
+SizeZ = 0.425 m
+Pos = (0,0,0) m
+Target Section Dimensions =
+No of Sections = 17
+RMax = 100 mm
+SizeZ = 25 mm
+TDisk Pos = (0,0,0) mm
+Beam Stop
+RMax = 15 cm
+SizeZ = 2 cm
+Pos = (0,0,0.7) m
+Beam Stop Monitor =
+Pos = (0,0,0.6795) m
+TS2Entry mother is TSolenoid2
+and pos is(0,0,-758.5)
+TS2Exit mother is TSolenoid2
+and pos is(0,0,759.5)
+------------------------------------------------------------
+-- TDisk ---------------------------------------------
+Target Disk Dimensions =
+RMax = 100 mm
+SizeZ = 0.1 mm
+Target Strip Dimensions =
+No. of Stips = 1
+SizeZ = 0.1 mm
+SizeX = 100 mm
+Angle = 0 deg
+------------------------------------------------------------
+TDisk Positions
+TDisk[ 0]: zpos(       695 cm)
+TDisk[ 1]: zpos(       700 cm)
+TDisk[ 2]: zpos(       705 cm)
+TDisk[ 3]: zpos(       710 cm)
+TDisk[ 4]: zpos(       715 cm)
+TDisk[ 5]: zpos(       720 cm)
+TDisk[ 6]: zpos(       725 cm)
+TDisk[ 7]: zpos(       730 cm)
+TDisk[ 8]: zpos(       735 cm)
+TDisk[ 9]: zpos(       740 cm)
+TDisk[10]: zpos(       745 cm)
+TDisk[11]: zpos(       750 cm)
+TDisk[12]: zpos(       755 cm)
+TDisk[13]: zpos(       760 cm)
+TDisk[14]: zpos(       765 cm)
+TDisk[15]: zpos(       770 cm)
+TDisk[16]: zpos(       775 cm)
+------------------------------------------------------------
+WARNING: model G4LENeutronInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 12 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 6, A = 13 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Elastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Elastic/CrossSection/6_nat_Carbon
+NeutronHP: /Inelastic file for Z = 6, A = 13 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Inelastic/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 8, A = 18 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Capture/CrossSection/8_17_Oxygen
+NeutronHP: /Elastic file for Z = 8, A = 18 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Elastic/CrossSection/8_17_Oxygen
+NeutronHP: /Inelastic file for Z = 8, A = 18 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Inelastic/CrossSection/8_17_Oxygen
+NeutronHP: /Capture file for Z = 74, A = 180 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Capture/CrossSection/74_182_Tungsten
+NeutronHP: /Elastic file for Z = 74, A = 180 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Elastic/CrossSection/74_182_Tungsten
+NeutronHP: /Inelastic file for Z = 74, A = 180 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Inelastic/CrossSection/74_182_Tungsten
+NeutronHP: /Capture file for Z = 6, A = 12 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 6, A = 13 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Capture/CrossSection/6_nat_Carbon
+NeutronHP: /Capture file for Z = 8, A = 18 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Capture/CrossSection/8_17_Oxygen
+NeutronHP: /Capture file for Z = 74, A = 180 is not found and NeutronHP will use /home/chen/MyWorkArea/Programs/Geant4/share/Geant4-9.6.1/data/G4NDL4.2/Capture/CrossSection/74_182_Tungsten
+WARNING: model G4LEProtonInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEPionPlusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEPionMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEKaonPlusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEKaonMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEKaonZeroInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEAntiKaonZeroInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEKaonZeroLInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEKaonZeroInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEAntiKaonZeroInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEKaonZeroSInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEAntiProtonInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HEAntiProtonInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEAntiNeutronInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HEAntiNeutronInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LELambdaInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HELambdaInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEAntiLambdaInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HEAntiLambdaInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LESigmaMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HESigmaMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEAntiSigmaMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HEAntiSigmaMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LESigmaPlusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HESigmaPlusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEAntiSigmaPlusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HEAntiSigmaPlusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEXiMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HEXiMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEAntiXiMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HEAntiXiMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEXiZeroInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HEXiZeroInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEAntiXiZeroInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HEAntiXiZeroInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEOmegaMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HEOmegaMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4LEAntiOmegaMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+WARNING: model G4HEAntiOmegaMinusInelastic is being deprecated and will
+disappear in Geant4 version 10.0
+---> rndm sequece 1 is selected.
+----------- Dump of Random Engine Status ----------
+2769128570
+1
+4227051060
+849559001
+40204556
+1532833280
+673091472
+2902510050
+254018192
+2001565395
+2529241031
+---------------------------------------------------
+Region <DefaultRegionForTheWorld> --  -- appears in <World> world volume
+This region is in the mass world.
+Root logical volume(s) : World
+Pointers : G4VUserRegionInformation[0], G4UserLimits[0], G4FastSimulationManager[0], G4UserSteppingAction[0]
+Materials : Vacuum Air Copper Steel Tungsten Graphite He50Ethane50 CFRP Aluminium Scintillator
+Production cuts :   gamma 10 um      e- 10 um      e+ 10 um  proton 10 um
+Region <DefaultRegionForParallelWorld> --  -- is not associated to any world.
+Root logical volume(s) :
+Pointers : G4VUserRegionInformation[0], G4UserLimits[0], G4FastSimulationManager[0], G4UserSteppingAction[0]
+Materials :
+Production cuts :   gamma 10 um      e- 10 um      e+ 10 um  proton 10 um
+Region <TargetDisk> --  -- appears in <World> world volume
+This region is in the mass world.
+Root logical volume(s) : TStrip00
+Pointers : G4VUserRegionInformation[0], G4UserLimits[0x19808d0], G4FastSimulationManager[0], G4UserSteppingAction[0]
+Materials : Aluminium
+Production cuts :   gamma 1 um      e- 1 um      e+ 1 um  proton 1 um
+Region <Collimator> --  -- appears in <World> world volume
+This region is in the mass world.
+Root logical volume(s) : BStop
+Pointers : G4VUserRegionInformation[0], G4UserLimits[0x1997200], G4FastSimulationManager[0], G4UserSteppingAction[0]
+Materials : Vacuum Air
+Production cuts :   gamma 1 mm      e- 1 mm      e+ 1 mm  proton 1 mm
+========= Table of registered couples ==============================
+====================================================================
+------------------------------------------------------------
+Pion Target Solenoid = (0,0,1700) mm
+FieldPos global coords (1.55541e-316,6.92708e-310,1.58101e-322) mm
+Muon Torus 1 = (3000,0,4350) mm
+BLTransport Position = (3750,0,7350) mm
+FieldPos global coords (1.55541e-316,6.92708e-310,1.97626e-322) mm
+TSolenoid2 Position = (5260,0,7350) mm
+FieldPos global coords (6.92706e-310,6.92706e-310,1.97626e-322) mm
+-- PionTargetAndCaptureSolenoids --------------------------------------------
+PTACS Solenoid Dimensions =
+RMax = 0.806 m
+SizeZ = 2.65 m
+Pion Production Target Dimensions =
+Pos = (0,0,-1.7) m
+Note that this is the position of the Pion Production Target in the coordinate system of the PTACS Solenoid. It is at the origin of the World volume.
+RMax = 0.005999 m
+SizeZ = 0.3 m
+PTACSEntry mother is PionTargetAndCaptureSolenoids
+Pos =  (0,0,-2.6495) m
+RMax = 299.78
+PTACSShieldDmonitor mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,-0.9495) m
+RMax = 350
+PTACSBPmonitor mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,1.1445) m
+RMax = 500
+PTACSPTmonitor mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,-1.6195) m
+RMax = 150
+PTACSExit mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,2.6495) m
+RMax = 200
+------------------------------------------------------------
+-- MuonTorus1 --------------------------------------------
+MT1 Solenoid Dimensions =
+RMax = 0.6 m
+MT1 Shell Dimensions =
+RMin = 0.18 m
+RMax = 0.23 m
+Pos = (0,0,0) m
+MT1 Yoke Dimensions =
+RMin = 0.6 m
+RMax = 0.8 m
+Pos = (0,0,0) m
+MT1Entry Dimensions =
+Pos = (3000,0.1,0) mm
+MT1_225 Dimensions =
+Pos = (2771.6,1148.14,0) mm
+MT1 _45 Dimensions =
+Pos = (2121.25,2121.39,0) mm
+MT1 _675 Dimensions =
+Pos = (1147.96,2771.68,0) mm
+MT1 Exit Dimensions =
+Pos = (0.1,3000,0) mm
+------------------------------------------------------------
+-- BLTransport --------------------------------------------
+BLT Solenoid Dimensions =
+RMax = 0.6 m
+SizeZ = 0.75 m
+BLT Shell Dimensions =
+RMin = 0.35 m
+RMax = 0.4 m
+SizeZ = 0.75 m
+Pos = (0,0,0) m
+BLT Yoke Dimensions =
+RMin = 0.6 m
+RMax = 0.7 m
+SizeZ = 0.75 m
+Pos = (0,0,0) m
+BLTEntry mother is BLTField
+and pos is (0,0,-749.5)
+BLTExit mother is BLTField
+and pos is (0,0,749.5)
+BLTColl mother is BLTField
+and z pos is 0.249 m
+------------------------------------------------------------
+-- TSolenoid2 --------------------------------------------
+TS2 Solenoid Dimensions =
+RMax = 1.1 m
+SizeZ = 0.76 m
+TS2 Shell Dimensions =
+RMin = 0.42 m
+RMax = 0.47 m
+SizeZ = 0.725 m
+Pos = (0,0,0) m
+TS2 Yoke Dimensions =
+RMin = 1.1 m
+RMax = 1.3 m
+SizeZ = 0.725 m
+Pos = (0,0,0) m
+Target Region Dimensions =
+RMax = 0.1 m
+SizeZ = 0.425 m
+Pos = (0,0,0) m
+Target Section Dimensions =
+No of Sections = 17
+RMax = 100 mm
+SizeZ = 25 mm
+TDisk Pos = (0,0,0) mm
+Beam Stop
+RMax = 15 cm
+SizeZ = 2 cm
+Pos = (0,0,0.7) m
+Beam Stop Monitor =
+Pos = (0,0,0.6795) m
+TS2Entry mother is TSolenoid2
+and pos is(0,0,-758.5)
+TS2Exit mother is TSolenoid2
+and pos is(0,0,759.5)
+------------------------------------------------------------
+-- TDisk ---------------------------------------------
+Target Disk Dimensions =
+RMax = 100 mm
+SizeZ = 0.1 mm
+Target Strip Dimensions =
+No. of Stips = 1
+SizeZ = 0.1 mm
+SizeX = 100 mm
+Angle = 0 deg
+------------------------------------------------------------
+TDisk Positions
+TDisk[ 0]: zpos(       695 cm)
+TDisk[ 1]: zpos(       700 cm)
+TDisk[ 2]: zpos(       705 cm)
+TDisk[ 3]: zpos(       710 cm)
+TDisk[ 4]: zpos(       715 cm)
+TDisk[ 5]: zpos(       720 cm)
+TDisk[ 6]: zpos(       725 cm)
+TDisk[ 7]: zpos(       730 cm)
+TDisk[ 8]: zpos(       735 cm)
+TDisk[ 9]: zpos(       740 cm)
+TDisk[10]: zpos(       745 cm)
+TDisk[11]: zpos(       750 cm)
+TDisk[12]: zpos(       755 cm)
+TDisk[13]: zpos(       760 cm)
+TDisk[14]: zpos(       765 cm)
+TDisk[15]: zpos(       770 cm)
+TDisk[16]: zpos(       775 cm)
+------------------------------------------------------------
+/control/saveHistory
+/run/verbose 2
+#
+# Use this open statement to create an OpenGL view:
+/vis/open OGL 600x600-0+0
+/vis/sceneHandler/create OGL
+/vis/viewer/create ! ! 600x600-0+0
+/vis/viewer/refresh
+#
+# Use this open statement to create a .prim file suitable for
+# viewing in DAWN:
+#/vis/open DAWNFILE
+#
+# Use this open statement to create a .heprep file suitable for
+# viewing in HepRApp:
+#/vis/open HepRepFile
+#
+# Use this open statement to create a .wrl file suitable for
+# viewing in a VRML viewer:
+#/vis/open VRML2FILE
+#
+# Disable auto refresh and quieten vis messages whilst scene and
+# trajectories are established:
+/vis/viewer/set/autoRefresh false
+/vis/verbose errors
+Visualization verbosity changed to errors (2)
+#
+# Draw geometry:
+/vis/drawVolume
+/vis/scene/create
+/vis/scene/add/volume world
+/vis/sceneHandler/attach
+#
+# Specify view angle:
+#/vis/viewer/set/viewpointThetaPhi 90. 0.
+#
+# Specify zoom value:
+#/vis/viewer/zoom 2.
+#
+# Specify style (surface or wireframe):
+#/vis/viewer/set/style wireframe
+#
+# Draw coordinate axes:
+#/vis/scene/add/axes 0 0 0 1 m
+#
+# Draw smooth trajectories at end of event, showing trajectory points
+# as markers 2 pixels wide:
+/vis/scene/add/trajectories smooth
+/tracking/storeTrajectory 2
+Attributes available for modeling and filtering with
+  "/vis/modeling/trajectories/create/drawByAttribute" and
+  "/vis/filtering/trajectories/create/attributeFilter" commands:
+G4TrajectoriesModel:
+  Event ID (EventID): G4int
+G4SmoothTrajectory:
+  Charge (Ch): unit: e+ (G4double)
+  Track ID (ID): G4int
+  Initial kinetic energy (IKE): G4BestUnit (G4double)
+  Initial momentum magnitude (IMag): G4BestUnit (G4double)
+  Initial momentum (IMom): G4BestUnit (G4ThreeVector)
+  No. of points (NTP): G4int
+  PDG Encoding (PDG): G4int
+  Parent ID (PID): G4int
+  Particle Name (PN): G4String
+G4SmoothTrajectoryPoint:
+  Auxiliary Point Position (Aux): G4BestUnit (G4ThreeVector)
+  Step Position (Pos): G4BestUnit (G4ThreeVector)
+/vis/scene/notifyHandlers
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
+/vis/scene/notifyHandlers scene-0
+/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 1
+/vis/scene/notifyHandlers scene-0
+# (if too many tracks cause core dump => /tracking/storeTrajectory 0)
+#
+# Draw hits at end of event:
+#/vis/scene/add/hits
+#
+# To draw only gammas:
+#/vis/filtering/trajectories/create/particleFilter
+#/vis/filtering/trajectories/particleFilter-0/add gamma
+#
+# To invert the above, drawing all particles except gammas,
+# keep the above two lines but also add:
+#/vis/filtering/trajectories/particleFilter-0/invert true
+#
+# Many other options are available with /vis/modeling and /vis/filtering.
+# For example, to select colour by particle ID:
+#/vis/modeling/trajectories/create/drawByParticleID
+#/vis/modeling/trajectories/drawByParticleID-0/set e- blue
+#
+# To superimpose all of the events from a given run:
+/vis/scene/endOfEventAction accumulate
+#
+# Re-establish auto refreshing and verbosity:
+/vis/viewer/set/autoRefresh true
+/vis/viewer/refresh
+/vis/verbose warnings
+Visualization verbosity changed to warnings (3)
+#
+# For file-based drivers, use this to create an empty detector view:
+#/vis/viewer/flush
+/control/execute chen/macros/gui.mac
+#
+#  This file permits to customize, with commands,
+# the menu bar of the G4UIXm, G4UIQt, G4UIWin32 sessions.
+# It has no effect with G4UIterminal.
+#
+# File :
+/gui/addMenu g4file G4File
+/gui/addButton g4file Continue continue
+Warning: command 'continue' does not exist, please define it before using it.
+/gui/addButton g4file Exit "exit"
+Warning: command 'exit' does not exist, please define it before using it.
+#
+# Run menu :
+/gui/addMenu run Run
+/gui/addButton run "beamOn 1" "/run/beamOn 1"
+Warning: command '/run/beamOn 1' does not exist, please define it before using it.
+/gui/addButton run run "/control/execute chen/macros/run.mac"
+Warning: command '/control/execute chen/macros/run.mac' does not exist, please define it before using it.
+/gui/addButton run test "/control/execute chen/macros/test.mac"
+Warning: command '/control/execute chen/macros/test.mac' does not exist, please define it before using it.
+/gui/addButton run grid_ol "/control/execute chen/macros/grid_ol.mac"
+Warning: command '/control/execute chen/macros/grid_ol.mac' does not exist, please define it before using it.
+/gui/addButton run line_ol "/control/execute chen/macros/line_ol.mac"
+Warning: command '/control/execute chen/macros/line_ol.mac' does not exist, please define it before using it.
+#
+# Gun menu :
+/gui/addMenu gun Gun
+/gui/addButton gun "50 MeV" "/gun/energy 50 MeV"
+Warning: command '/gun/energy 50 MeV' does not exist, please define it before using it.
+/gui/addButton gun "1 GeV" "/gun/energy 1 GeV"
+Warning: command '/gun/energy 1 GeV' does not exist, please define it before using it.
+/gui/addButton gun "10 GeV" "/gun/energy 10 GeV"
+Warning: command '/gun/energy 10 GeV' does not exist, please define it before using it.
+/gui/addButton gun "e-" "/gun/particle e-"
+Warning: command '/gun/particle e-' does not exist, please define it before using it.
+/gui/addButton gun "pi0" "/gun/particle pi0"
+Warning: command '/gun/particle pi0' does not exist, please define it before using it.
+/gui/addButton gun "pi+" "/gun/particle pi+"
+Warning: command '/gun/particle pi+' does not exist, please define it before using it.
+/gui/addButton gun "neutron" "/gun/particle neutron"
+Warning: command '/gun/particle neutron' does not exist, please define it before using it.
+/gui/addButton gun "proton" "/gun/particle proton"
+Warning: command '/gun/particle proton' does not exist, please define it before using it.
+#
+# Vis menu :
+/gui/addMenu vis Vis
+/gui/addButton vis DAWNFILE "/control/execute chen/macros/visTutor/Vis0.mac"
+Warning: command '/control/execute chen/macros/visTutor/Vis0.mac' does not exist, please define it before using it.
+/gui/addButton vis OpenInventor "/control/execute chen/macros/visTutor/Vis5.mac"
+Warning: command '/control/execute chen/macros/visTutor/Vis5.mac' does not exist, please define it before using it.
+/gui/addButton vis TimeSlicing "/control/execute chen/macros/visTutor/Vis12.mac"
+Warning: command '/control/execute chen/macros/visTutor/Vis12.mac' does not exist, please define it before using it.
+/gui/addButton vis EmShower "/control/execute chen/macros/visTutor/Vis13.mac"
+Warning: command '/control/execute chen/macros/visTutor/Vis13.mac' does not exist, please define it before using it.
+#
+# Viewer menu :
+/gui/addMenu viewer Viewer
+/gui/addButton viewer "Set style surface" "/vis/viewer/set/style surface"
+Warning: command '/vis/viewer/set/style surface' does not exist, please define it before using it.
+/gui/addButton viewer "Set style wireframe" "/vis/viewer/set/style wire"
+Warning: command '/vis/viewer/set/style wire' does not exist, please define it before using it.
+/gui/addButton viewer "Refresh viewer" "/vis/viewer/refresh"
+/gui/addButton viewer "Update viewer (interaction or end-of-file)" "/vis/viewer/update"
+/gui/addButton viewer "Flush viewer (= refresh + update)" "/vis/viewer/flush"
+/gui/addButton viewer "Update scene" "/vis/scene/notifyHandlers"
+#
+# To limit the output flow in the "dump" widget :
+#/XXX/event/printModulo 100
+/detector/print
+------------------------------------------------------------
+Pion Target Solenoid = (0,0,1700) mm
+FieldPos global coords (6.95318e-310,1.5523e-316,1.50761e-316) mm
+Muon Torus 1 = (3000,0,4350) mm
+BLTransport Position = (3750,0,7350) mm
+FieldPos global coords (9.88131e-324,0,1.5527e-316) mm
+TSolenoid2 Position = (5260,0,7350) mm
+FieldPos global coords (1.97626e-322,6.92706e-310,1.97626e-322) mm
+-- PionTargetAndCaptureSolenoids --------------------------------------------
+PTACS Solenoid Dimensions =
+RMax = 0.806 m
+SizeZ = 2.65 m
+Pion Production Target Dimensions =
+Pos = (0,0,-1.7) m
+Note that this is the position of the Pion Production Target in the coordinate system of the PTACS Solenoid. It is at the origin of the World volume.
+RMax = 0.005999 m
+SizeZ = 0.3 m
+PTACSEntry mother is PionTargetAndCaptureSolenoids
+Pos =  (0,0,-2.6495) m
+RMax = 299.78
+PTACSShieldDmonitor mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,-0.9495) m
+RMax = 350
+PTACSBPmonitor mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,1.1445) m
+RMax = 500
+PTACSPTmonitor mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,-1.6195) m
+RMax = 150
+PTACSExit mother is PionTargetAndCaptureSolenoids
+Pos = (0,0,2.6495) m
+RMax = 200
+------------------------------------------------------------
+-- MuonTorus1 --------------------------------------------
+MT1 Solenoid Dimensions =
+RMax = 0.6 m
+MT1 Shell Dimensions =
+RMin = 0.18 m
+RMax = 0.23 m
+Pos = (0,0,0) m
+MT1 Yoke Dimensions =
+RMin = 0.6 m
+RMax = 0.8 m
+Pos = (0,0,0) m
+MT1Entry Dimensions =
+Pos = (3000,0.1,0) mm
+MT1_225 Dimensions =
+Pos = (2771.6,1148.14,0) mm
+MT1 _45 Dimensions =
+Pos = (2121.25,2121.39,0) mm
+MT1 _675 Dimensions =
+Pos = (1147.96,2771.68,0) mm
+MT1 Exit Dimensions =
+Pos = (0.1,3000,0) mm
+------------------------------------------------------------
+-- BLTransport --------------------------------------------
+BLT Solenoid Dimensions =
+RMax = 0.6 m
+SizeZ = 0.75 m
+BLT Shell Dimensions =
+RMin = 0.35 m
+RMax = 0.4 m
+SizeZ = 0.75 m
+Pos = (0,0,0) m
+BLT Yoke Dimensions =
+RMin = 0.6 m
+RMax = 0.7 m
+SizeZ = 0.75 m
+Pos = (0,0,0) m
+BLTEntry mother is BLTField
+and pos is (0,0,-749.5)
+BLTExit mother is BLTField
+and pos is (0,0,749.5)
+BLTColl mother is BLTField
+and z pos is 0.249 m
+------------------------------------------------------------
+-- TSolenoid2 --------------------------------------------
+TS2 Solenoid Dimensions =
+RMax = 1.1 m
+SizeZ = 0.76 m
+TS2 Shell Dimensions =
+RMin = 0.42 m
+RMax = 0.47 m
+SizeZ = 0.725 m
+Pos = (0,0,0) m
+TS2 Yoke Dimensions =
+RMin = 1.1 m
+RMax = 1.3 m
+SizeZ = 0.725 m
+Pos = (0,0,0) m
+Target Region Dimensions =
+RMax = 0.1 m
+SizeZ = 0.425 m
+Pos = (0,0,0) m
+Target Section Dimensions =
+No of Sections = 17
+RMax = 100 mm
+SizeZ = 25 mm
+TDisk Pos = (0,0,0) mm
+Beam Stop
+RMax = 15 cm
+SizeZ = 2 cm
+Pos = (0,0,0.7) m
+Beam Stop Monitor =
+Pos = (0,0,0.6795) m
+TS2Entry mother is TSolenoid2
+and pos is(0,0,-758.5)
+TS2Exit mother is TSolenoid2
+and pos is(0,0,759.5)
+------------------------------------------------------------
+-- TDisk ---------------------------------------------
+Target Disk Dimensions =
+RMax = 100 mm
+SizeZ = 0.1 mm
+Target Strip Dimensions =
+No. of Stips = 1
+SizeZ = 0.1 mm
+SizeX = 100 mm
+Angle = 0 deg
+------------------------------------------------------------
+TDisk Positions
+TDisk[ 0]: zpos(       695 cm)
+TDisk[ 1]: zpos(       700 cm)
+TDisk[ 2]: zpos(       705 cm)
+TDisk[ 3]: zpos(       710 cm)
+TDisk[ 4]: zpos(       715 cm)
+TDisk[ 5]: zpos(       720 cm)
+TDisk[ 6]: zpos(       725 cm)
+TDisk[ 7]: zpos(       730 cm)
+TDisk[ 8]: zpos(       735 cm)
+TDisk[ 9]: zpos(       740 cm)
+TDisk[10]: zpos(       745 cm)
+TDisk[11]: zpos(       750 cm)
+TDisk[12]: zpos(       755 cm)
+TDisk[13]: zpos(       760 cm)
+TDisk[14]: zpos(       765 cm)
+TDisk[15]: zpos(       770 cm)
+TDisk[16]: zpos(       775 cm)
+------------------------------------------------------------

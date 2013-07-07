@@ -1,0 +1,25 @@
+GEOCARDROOT       = geometry_ph2e
+MAGFIELDCARDROOT  = MagField_ph2e
+GENFILEROOT       = gen_ph2e
+OUTCARDROOT       = output_ph2e
+
+##geometry preset
+#detector_configure
+#
+##magnet field (uniform file)
+#magField_configure
+#
+##generator
+#gen_configure
+#
+#verbose
+verbose_configure_setCut
+setCut_default.mac
+#
+##output
+#output_configure
+
+#run
+run_configure
+1
+50000000
