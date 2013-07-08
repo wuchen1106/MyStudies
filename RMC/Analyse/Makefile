@@ -25,17 +25,21 @@ LIBS = -pthread -lm -ldl -rdynamic
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-PROGRAM1 = RMCE
-PROGRAM2 = ph2e
+RMCE = RMCE
+PH2E = ph2e
+BM = bm
 
 # Object list for user defined packages
 OBJ = 
 
-$(PROGRAM1): $(OBJ) $(PROGRAM1).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM1).C $(OBJ) -o $(PROGRAM1)
+$(RMCE): $(OBJ) $(RMCE).C
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(RMCE).C $(OBJ) -o $(RMCE)
 
-$(PROGRAM2): $(OBJ) $(PROGRAM2).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM2).C $(OBJ) -o $(PROGRAM2)
+$(PH2E): $(OBJ) $(PH2E).C
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PH2E).C $(OBJ) -o $(PH2E)
+
+$(BM): $(OBJ) $(BM).C
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(BM).C $(OBJ) -o $(BM)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
@@ -43,8 +47,9 @@ $(PROGRAM2): $(OBJ) $(PROGRAM2).C
 .PHONY: clean
 clean:
 	$(RM) $(OBJ)
-	$(RM) $(PROGRAM1)
-	$(RM) $(PROGRAM2)
+	$(RM) $(RMCE)
+	$(RM) $(PH2E)
+	$(RM) $(BM)
 
 .PHONY: all
-all: $(PROGRAM1) $(PROGRAM2)
+all: $(RMCE)

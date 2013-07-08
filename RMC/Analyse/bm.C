@@ -368,39 +368,51 @@ int main(int argc, char* argv[]){
 	std::vector<std::string> *McTruth_process = 0;
 	std::vector<std::string> *McTruth_volume = 0;
 
-	int MonitorE_nHits = 0;
-	std::vector<double> *MonitorE_x = 0;
-	std::vector<double> *MonitorE_y = 0;
-	std::vector<double> *MonitorE_z = 0;
-	std::vector<double> *MonitorE_t = 0;
-	std::vector<double> *MonitorE_px = 0;
-	std::vector<double> *MonitorE_py = 0;
-	std::vector<double> *MonitorE_pz = 0;
-	std::vector<double> *MonitorE_e = 0;
-	std::vector<double> *MonitorE_edep = 0;
-	std::vector<double> *MonitorE_stepL = 0;
-	std::vector<int> *MonitorE_volID = 0;
-	std::vector<std::string> *MonitorE_volName = 0;
-	std::vector<int> *MonitorE_tid = 0;
-	std::vector<int> *MonitorE_pid = 0;
-	std::vector<int> *MonitorE_charge = 0;
-
-	int MonitorB_nHits = 0;
-	std::vector<double> *MonitorB_x = 0;
-	std::vector<double> *MonitorB_y = 0;
-	std::vector<double> *MonitorB_z = 0;
-	std::vector<double> *MonitorB_t = 0;
-	std::vector<double> *MonitorB_px = 0;
-	std::vector<double> *MonitorB_py = 0;
-	std::vector<double> *MonitorB_pz = 0;
-	std::vector<double> *MonitorB_e = 0;
-	std::vector<double> *MonitorB_edep = 0;
-	std::vector<double> *MonitorB_stepL = 0;
-	std::vector<int> *MonitorB_volID = 0;
-	std::vector<std::string> *MonitorB_volName = 0;
-	std::vector<int> *MonitorB_tid = 0;
-	std::vector<int> *MonitorB_pid = 0;
-	std::vector<int> *MonitorB_charge = 0;
+	int ProcessCounting_nSteps = 0;
+	std::vector<int> *ProcessCounting_pid = 0;
+	std::vector<int> *ProcessCounting_tid = 0;
+	std::vector<int> *ProcessCounting_nSec = 0;
+	std::vector<double> *ProcessCounting_time = 0;
+	std::vector<double> *ProcessCounting_stepL = 0;
+	std::vector<double> *ProcessCounting_prePx = 0;
+	std::vector<double> *ProcessCounting_prePy = 0;
+	std::vector<double> *ProcessCounting_prePz = 0;
+	std::vector<double> *ProcessCounting_postPx = 0;
+	std::vector<double> *ProcessCounting_postPy = 0;
+	std::vector<double> *ProcessCounting_postPz = 0;
+	std::vector<double> *ProcessCounting_dE = 0;
+	std::vector<double> *ProcessCounting_dTheta = 0;
+	std::vector<double> *ProcessCounting_e = 0;
+	std::vector<double> *ProcessCounting_preX = 0;
+	std::vector<double> *ProcessCounting_preY = 0;
+	std::vector<double> *ProcessCounting_preZ = 0;
+	std::vector<double> *ProcessCounting_postX = 0;
+	std::vector<double> *ProcessCounting_postY = 0;
+	std::vector<double> *ProcessCounting_postZ = 0;
+	std::vector<int> *ProcessCounting_charge = 0;
+	std::vector<std::string> *ProcessCounting_particleName = 0;
+	std::vector<std::string> *ProcessCounting_process = 0;
+	std::vector<int> *ProcessCounting_ASDI_msc = 0;
+	std::vector<int> *ProcessCounting_ASDI_hIoni = 0;
+	std::vector<int> *ProcessCounting_ASDI_hadElastic = 0;
+	std::vector<int> *ProcessCounting_ASDI_Transportation = 0;
+	std::vector<int> *ProcessCounting_ASDI_Decay = 0;
+	std::vector<int> *ProcessCounting_ASDI_ionIoni = 0;
+	std::vector<int> *ProcessCounting_ASDI_hBrems = 0;
+	std::vector<int> *ProcessCounting_ASDI_hPairProd = 0;
+	std::vector<int> *ProcessCounting_ASDI_eBrem = 0;
+	std::vector<int> *ProcessCounting_ASDI_eIoni = 0;
+	std::vector<int> *ProcessCounting_PSDI_eIoni = 0;
+	std::vector<int> *ProcessCounting_PSDI_eBrem = 0;
+	std::vector<int> *ProcessCounting_PSDI_msc = 0;
+	std::vector<int> *ProcessCounting_PSDI_hPairProd = 0;
+	std::vector<int> *ProcessCounting_PSDI_hBrems = 0;
+	std::vector<int> *ProcessCounting_PSDI_hIoni = 0;
+	std::vector<int> *ProcessCounting_PSDI_hadElastic = 0;
+	std::vector<int> *ProcessCounting_PSDI_Transportation = 0;
+	std::vector<int> *ProcessCounting_PSDI_Decay = 0;
+	std::vector<int> *ProcessCounting_PSDI_ionIoni = 0;
+	std::vector<std::string> *ProcessCounting_volume = 0;
 
 	TBranch *bMcTruth_pid = 0;
 	TBranch *bMcTruth_tid = 0;
@@ -418,37 +430,50 @@ int main(int argc, char* argv[]){
 	TBranch *bMcTruth_process = 0;
 	TBranch *bMcTruth_volume = 0;
 
-	TBranch *bMonitorE_x = 0;
-	TBranch *bMonitorE_y = 0;
-	TBranch *bMonitorE_z = 0;
-	TBranch *bMonitorE_t = 0;
-	TBranch *bMonitorE_px = 0;
-	TBranch *bMonitorE_py = 0;
-	TBranch *bMonitorE_pz = 0;
-	TBranch *bMonitorE_e = 0;
-	TBranch *bMonitorE_edep = 0;
-	TBranch *bMonitorE_stepL = 0;
-	TBranch *bMonitorE_volID = 0;
-	TBranch *bMonitorE_volName = 0;
-	TBranch *bMonitorE_tid = 0;
-	TBranch *bMonitorE_pid = 0;
-	TBranch *bMonitorE_charge = 0;
-
-	TBranch *bMonitorB_x = 0;
-	TBranch *bMonitorB_y = 0;
-	TBranch *bMonitorB_z = 0;
-	TBranch *bMonitorB_t = 0;
-	TBranch *bMonitorB_px = 0;
-	TBranch *bMonitorB_py = 0;
-	TBranch *bMonitorB_pz = 0;
-	TBranch *bMonitorB_e = 0;
-	TBranch *bMonitorB_edep = 0;
-	TBranch *bMonitorB_stepL = 0;
-	TBranch *bMonitorB_volID = 0;
-	TBranch *bMonitorB_volName = 0;
-	TBranch *bMonitorB_tid = 0;
-	TBranch *bMonitorB_pid = 0;
-	TBranch *bMonitorB_charge = 0;
+	TBranch *bProcessCounting_pid = 0;
+	TBranch *bProcessCounting_tid = 0;
+	TBranch *bProcessCounting_nSec = 0;
+	TBranch *bProcessCounting_time = 0;
+	TBranch *bProcessCounting_stepL = 0;
+	TBranch *bProcessCounting_prePx = 0;
+	TBranch *bProcessCounting_prePy = 0;
+	TBranch *bProcessCounting_prePz = 0;
+	TBranch *bProcessCounting_postPx = 0;
+	TBranch *bProcessCounting_postPy = 0;
+	TBranch *bProcessCounting_postPz = 0;
+	TBranch *bProcessCounting_dE = 0;
+	TBranch *bProcessCounting_dTheta = 0;
+	TBranch *bProcessCounting_e = 0;
+	TBranch *bProcessCounting_preX = 0;
+	TBranch *bProcessCounting_preY = 0;
+	TBranch *bProcessCounting_preZ = 0;
+	TBranch *bProcessCounting_postX = 0;
+	TBranch *bProcessCounting_postY = 0;
+	TBranch *bProcessCounting_postZ = 0;
+	TBranch *bProcessCounting_charge = 0;
+	TBranch *bProcessCounting_particleName = 0;
+	TBranch *bProcessCounting_process = 0;
+	TBranch *bProcessCounting_ASDI_msc = 0;
+	TBranch *bProcessCounting_ASDI_hIoni = 0;
+	TBranch *bProcessCounting_ASDI_hadElastic = 0;
+	TBranch *bProcessCounting_ASDI_Transportation = 0;
+	TBranch *bProcessCounting_ASDI_Decay = 0;
+	TBranch *bProcessCounting_ASDI_ionIoni = 0;
+	TBranch *bProcessCounting_ASDI_hBrems = 0;
+	TBranch *bProcessCounting_ASDI_hPairProd = 0;
+	TBranch *bProcessCounting_ASDI_eBrem = 0;
+	TBranch *bProcessCounting_ASDI_eIoni = 0;
+	TBranch *bProcessCounting_PSDI_eIoni = 0;
+	TBranch *bProcessCounting_PSDI_eBrem = 0;
+	TBranch *bProcessCounting_PSDI_msc = 0;
+	TBranch *bProcessCounting_PSDI_hPairProd = 0;
+	TBranch *bProcessCounting_PSDI_hBrems = 0;
+	TBranch *bProcessCounting_PSDI_hIoni = 0;
+	TBranch *bProcessCounting_PSDI_hadElastic = 0;
+	TBranch *bProcessCounting_PSDI_Transportation = 0;
+	TBranch *bProcessCounting_PSDI_Decay = 0;
+	TBranch *bProcessCounting_PSDI_ionIoni = 0;
+	TBranch *bProcessCounting_volume = 0;
 
 	m_TChain->SetBranchAddress("evt_num", &evt_num);
 	m_TChain->SetBranchAddress("run_num", &run_num);
@@ -469,97 +494,51 @@ int main(int argc, char* argv[]){
 	m_TChain->SetBranchAddress("McTruth_process", &McTruth_process, &bMcTruth_process);
 	m_TChain->SetBranchAddress("McTruth_volume", &McTruth_volume, &bMcTruth_volume);
 
-	m_TChain->SetBranchAddress("MonitorE_nHits", &MonitorE_nHits);
-	m_TChain->SetBranchAddress("MonitorE_x", &MonitorE_x, &bMonitorE_x);
-	m_TChain->SetBranchAddress("MonitorE_y", &MonitorE_y, &bMonitorE_y);
-	m_TChain->SetBranchAddress("MonitorE_z", &MonitorE_z, &bMonitorE_z);
-	m_TChain->SetBranchAddress("MonitorE_t", &MonitorE_t, &bMonitorE_t);
-	m_TChain->SetBranchAddress("MonitorE_px", &MonitorE_px, &bMonitorE_px);
-	m_TChain->SetBranchAddress("MonitorE_py", &MonitorE_py, &bMonitorE_py);
-	m_TChain->SetBranchAddress("MonitorE_pz", &MonitorE_pz, &bMonitorE_pz);
-	m_TChain->SetBranchAddress("MonitorE_e", &MonitorE_e, &bMonitorE_e);
-	m_TChain->SetBranchAddress("MonitorE_edep", &MonitorE_edep, &bMonitorE_edep);
-	m_TChain->SetBranchAddress("MonitorE_stepL", &MonitorE_stepL, &bMonitorE_stepL);
-	m_TChain->SetBranchAddress("MonitorE_volID", &MonitorE_volID, &bMonitorE_volID);
-	m_TChain->SetBranchAddress("MonitorE_volName", &MonitorE_volName, &bMonitorE_volName);
-	m_TChain->SetBranchAddress("MonitorE_tid", &MonitorE_tid, &bMonitorE_tid);
-	m_TChain->SetBranchAddress("MonitorE_pid", &MonitorE_pid, &bMonitorE_pid);
-	m_TChain->SetBranchAddress("MonitorE_charge", &MonitorE_charge, &bMonitorE_charge);
-
-	m_TChain->SetBranchAddress("MonitorB_nHits", &MonitorB_nHits);
-	m_TChain->SetBranchAddress("MonitorB_x", &MonitorB_x, &bMonitorB_x);
-	m_TChain->SetBranchAddress("MonitorB_y", &MonitorB_y, &bMonitorB_y);
-	m_TChain->SetBranchAddress("MonitorB_z", &MonitorB_z, &bMonitorB_z);
-	m_TChain->SetBranchAddress("MonitorB_t", &MonitorB_t, &bMonitorB_t);
-	m_TChain->SetBranchAddress("MonitorB_px", &MonitorB_px, &bMonitorB_px);
-	m_TChain->SetBranchAddress("MonitorB_py", &MonitorB_py, &bMonitorB_py);
-	m_TChain->SetBranchAddress("MonitorB_pz", &MonitorB_pz, &bMonitorB_pz);
-	m_TChain->SetBranchAddress("MonitorB_e", &MonitorB_e, &bMonitorB_e);
-	m_TChain->SetBranchAddress("MonitorB_edep", &MonitorB_edep, &bMonitorB_edep);
-	m_TChain->SetBranchAddress("MonitorB_stepL", &MonitorB_stepL, &bMonitorB_stepL);
-	m_TChain->SetBranchAddress("MonitorB_volID", &MonitorB_volID, &bMonitorB_volID);
-	m_TChain->SetBranchAddress("MonitorB_volName", &MonitorB_volName, &bMonitorB_volName);
-	m_TChain->SetBranchAddress("MonitorB_tid", &MonitorB_tid, &bMonitorB_tid);
-	m_TChain->SetBranchAddress("MonitorB_pid", &MonitorB_pid, &bMonitorB_pid);
-	m_TChain->SetBranchAddress("MonitorB_charge", &MonitorB_charge, &bMonitorB_charge);
-
-	TTree* d_tree = new TTree( "t", "t" );
-
-	int d_evt_num;
-	int d_run_num;
-	int d_pid;
-	int d_tid;
-	char d_vid[124];
-	char d_prid[124];
-	double d_mot_x;
-	double d_mot_y;
-	double d_mot_z;
-	double d_mot_px;
-	double d_mot_py;
-	double d_mot_pz;
-	double d_x;
-	double d_y;
-	double d_z;
-	double d_px;
-	double d_py;
-	double d_pz;
-	int d_nhits;
-	double d_hits_x[1000];
-	double d_hits_y[1000];
-	double d_hits_z[1000];
-	double d_hits_t[1000];
-	double d_hits_px[1000];
-	double d_hits_py[1000];
-	double d_hits_pz[1000];
-	double d_tri_t;
-
-	d_tree->Branch("evt_num", &d_evt_num, "evt_num/I");
-	d_tree->Branch("run_num", &d_run_num, "run_num/I");
-	d_tree->Branch("pid", &d_pid, "pid/I");
-	d_tree->Branch("tid", &d_tid, "tid/I");
-	d_tree->Branch("vid", d_vid, "vid[124]/C");
-	d_tree->Branch("prid", d_prid, "prid[124]/C");
-	d_tree->Branch("mot_x", &d_mot_x, "mot_x/D");
-	d_tree->Branch("mot_y", &d_mot_y, "mot_y/D");
-	d_tree->Branch("mot_z", &d_mot_z, "mot_z/D");
-	d_tree->Branch("mot_px", &d_mot_px, "mot_px/D");
-	d_tree->Branch("mot_py", &d_mot_py, "mot_py/D");
-	d_tree->Branch("mot_pz", &d_mot_pz, "mot_pz/D");
-	d_tree->Branch("ini_x_cm", &d_x, "ini_x_cm/D");
-	d_tree->Branch("ini_y_cm", &d_y, "ini_y_cm/D");
-	d_tree->Branch("ini_z_cm", &d_z, "ini_z_cm/D");
-	d_tree->Branch("ini_px_GeV", &d_px, "ini_px_GeV/D");
-	d_tree->Branch("ini_py_GeV", &d_py, "ini_py_GeV/D");
-	d_tree->Branch("ini_pz_GeV", &d_pz, "ini_pz_GeV/D");
-	d_tree->Branch("nwirehit", &d_nhits, "nwirehit/I");
-	d_tree->Branch("x", d_hits_x, "x[nhits]/D");
-	d_tree->Branch("y", d_hits_y, "y[nhits]/D");
-	d_tree->Branch("z", d_hits_z, "z[nhits]/D");
-	d_tree->Branch("t", d_hits_t, "t[nhits]/D");
-	d_tree->Branch("px", d_hits_px, "px[nhits]/D");
-	d_tree->Branch("py", d_hits_py, "py[nhits]/D");
-	d_tree->Branch("pz", d_hits_pz, "pz[nhits]/D");
-	d_tree->Branch("tri_t", &d_tri_t, "tri_t/D");
+	m_TChain->SetBranchAddress("ProcessCounting_nSteps", &ProcessCounting_nSteps);
+	m_TChain->SetBranchAddress("ProcessCounting_pid", &ProcessCounting_pid, &bProcessCounting_pid);
+	m_TChain->SetBranchAddress("ProcessCounting_tid", &ProcessCounting_tid, &bProcessCounting_tid);
+	m_TChain->SetBranchAddress("ProcessCounting_nSec", &ProcessCounting_nSec, &bProcessCounting_nSec);
+	m_TChain->SetBranchAddress("ProcessCounting_time", &ProcessCounting_time, &bProcessCounting_time);
+	m_TChain->SetBranchAddress("ProcessCounting_stepL", &ProcessCounting_stepL, &bProcessCounting_stepL);
+	m_TChain->SetBranchAddress("ProcessCounting_prePx", &ProcessCounting_prePx, &bProcessCounting_prePx);
+	m_TChain->SetBranchAddress("ProcessCounting_prePy", &ProcessCounting_prePy, &bProcessCounting_prePy);
+	m_TChain->SetBranchAddress("ProcessCounting_prePz", &ProcessCounting_prePz, &bProcessCounting_prePz);
+	m_TChain->SetBranchAddress("ProcessCounting_postPx", &ProcessCounting_postPx, &bProcessCounting_postPx);
+	m_TChain->SetBranchAddress("ProcessCounting_postPy", &ProcessCounting_postPy, &bProcessCounting_postPy);
+	m_TChain->SetBranchAddress("ProcessCounting_postPz", &ProcessCounting_postPz, &bProcessCounting_postPz);
+	m_TChain->SetBranchAddress("ProcessCounting_dE", &ProcessCounting_dE, &bProcessCounting_dE);
+	m_TChain->SetBranchAddress("ProcessCounting_dTheta", &ProcessCounting_dTheta, &bProcessCounting_dTheta);
+	m_TChain->SetBranchAddress("ProcessCounting_e", &ProcessCounting_e, &bProcessCounting_e);
+	m_TChain->SetBranchAddress("ProcessCounting_preX", &ProcessCounting_preX, &bProcessCounting_preX);
+	m_TChain->SetBranchAddress("ProcessCounting_preY", &ProcessCounting_preY, &bProcessCounting_preY);
+	m_TChain->SetBranchAddress("ProcessCounting_preZ", &ProcessCounting_preZ, &bProcessCounting_preZ);
+	m_TChain->SetBranchAddress("ProcessCounting_postX", &ProcessCounting_postX, &bProcessCounting_postX);
+	m_TChain->SetBranchAddress("ProcessCounting_postY", &ProcessCounting_postY, &bProcessCounting_postY);
+	m_TChain->SetBranchAddress("ProcessCounting_postZ", &ProcessCounting_postZ, &bProcessCounting_postZ);
+	m_TChain->SetBranchAddress("ProcessCounting_charge", &ProcessCounting_charge, &bProcessCounting_charge);
+	m_TChain->SetBranchAddress("ProcessCounting_particleName", &ProcessCounting_particleName, &bProcessCounting_particleName);
+	m_TChain->SetBranchAddress("ProcessCounting_process", &ProcessCounting_process, &bProcessCounting_process);
+	m_TChain->SetBranchAddress("ProcessCounting_ASDI_msc", &ProcessCounting_ASDI_msc, &bProcessCounting_ASDI_msc);
+	m_TChain->SetBranchAddress("ProcessCounting_ASDI_hIoni", &ProcessCounting_ASDI_hIoni, &bProcessCounting_ASDI_hIoni);
+	m_TChain->SetBranchAddress("ProcessCounting_ASDI_hadElastic", &ProcessCounting_ASDI_hadElastic, &bProcessCounting_ASDI_hadElastic);
+	m_TChain->SetBranchAddress("ProcessCounting_ASDI_Transportation", &ProcessCounting_ASDI_Transportation, &bProcessCounting_ASDI_Transportation);
+	m_TChain->SetBranchAddress("ProcessCounting_ASDI_Decay", &ProcessCounting_ASDI_Decay, &bProcessCounting_ASDI_Decay);
+	m_TChain->SetBranchAddress("ProcessCounting_ASDI_ionIoni", &ProcessCounting_ASDI_ionIoni, &bProcessCounting_ASDI_ionIoni);
+	m_TChain->SetBranchAddress("ProcessCounting_ASDI_hBrems", &ProcessCounting_ASDI_hBrems, &bProcessCounting_ASDI_hBrems);
+	m_TChain->SetBranchAddress("ProcessCounting_ASDI_hPairProd", &ProcessCounting_ASDI_hPairProd, &bProcessCounting_ASDI_hPairProd);
+	m_TChain->SetBranchAddress("ProcessCounting_ASDI_eBrem", &ProcessCounting_ASDI_eBrem, &bProcessCounting_ASDI_eBrem);
+	m_TChain->SetBranchAddress("ProcessCounting_ASDI_eIoni", &ProcessCounting_ASDI_eIoni, &bProcessCounting_ASDI_eIoni);
+	m_TChain->SetBranchAddress("ProcessCounting_PSDI_eIoni", &ProcessCounting_PSDI_eIoni, &bProcessCounting_PSDI_eIoni);
+	m_TChain->SetBranchAddress("ProcessCounting_PSDI_eBrem", &ProcessCounting_PSDI_eBrem, &bProcessCounting_PSDI_eBrem);
+	m_TChain->SetBranchAddress("ProcessCounting_PSDI_msc", &ProcessCounting_PSDI_msc, &bProcessCounting_PSDI_msc);
+	m_TChain->SetBranchAddress("ProcessCounting_PSDI_hPairProd", &ProcessCounting_PSDI_hPairProd, &bProcessCounting_PSDI_hPairProd);
+	m_TChain->SetBranchAddress("ProcessCounting_PSDI_hBrems", &ProcessCounting_PSDI_hBrems, &bProcessCounting_PSDI_hBrems);
+	m_TChain->SetBranchAddress("ProcessCounting_PSDI_hIoni", &ProcessCounting_PSDI_hIoni, &bProcessCounting_PSDI_hIoni);
+	m_TChain->SetBranchAddress("ProcessCounting_PSDI_hadElastic", &ProcessCounting_PSDI_hadElastic, &bProcessCounting_PSDI_hadElastic);
+	m_TChain->SetBranchAddress("ProcessCounting_PSDI_Transportation", &ProcessCounting_PSDI_Transportation, &bProcessCounting_PSDI_Transportation);
+	m_TChain->SetBranchAddress("ProcessCounting_PSDI_Decay", &ProcessCounting_PSDI_Decay, &bProcessCounting_PSDI_Decay);
+	m_TChain->SetBranchAddress("ProcessCounting_PSDI_ionIoni", &ProcessCounting_PSDI_ionIoni, &bProcessCounting_PSDI_ionIoni);
+	m_TChain->SetBranchAddress("ProcessCounting_volume", &ProcessCounting_volume, &bProcessCounting_volume);
 
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
@@ -587,151 +566,101 @@ int main(int argc, char* argv[]){
 			if(bMcTruth_process) bMcTruth_process->GetEntry(tentry);
 			if(bMcTruth_volume) bMcTruth_volume->GetEntry(tentry);
 
-			if(bMonitorE_x) bMonitorE_x->GetEntry(tentry);
-			if(bMonitorE_y) bMonitorE_y->GetEntry(tentry);
-			if(bMonitorE_z) bMonitorE_z->GetEntry(tentry);
-			if(bMonitorE_t) bMonitorE_t->GetEntry(tentry);
-			if(bMonitorE_px) bMonitorE_px->GetEntry(tentry);
-			if(bMonitorE_py) bMonitorE_py->GetEntry(tentry);
-			if(bMonitorE_pz) bMonitorE_pz->GetEntry(tentry);
-			if(bMonitorE_e) bMonitorE_e->GetEntry(tentry);
-			if(bMonitorE_edep) bMonitorE_edep->GetEntry(tentry);
-			if(bMonitorE_stepL) bMonitorE_stepL->GetEntry(tentry);
-			if(bMonitorE_volID) bMonitorE_volID->GetEntry(tentry);
-			if(bMonitorE_volName) bMonitorE_volName->GetEntry(tentry);
-			if(bMonitorE_tid) bMonitorE_tid->GetEntry(tentry);
-			if(bMonitorE_pid) bMonitorE_pid->GetEntry(tentry);
-			if(bMonitorE_charge) bMonitorE_charge->GetEntry(tentry);
-
-			if(bMonitorB_x) bMonitorB_x->GetEntry(tentry);
-			if(bMonitorB_y) bMonitorB_y->GetEntry(tentry);
-			if(bMonitorB_z) bMonitorB_z->GetEntry(tentry);
-			if(bMonitorB_t) bMonitorB_t->GetEntry(tentry);
-			if(bMonitorB_px) bMonitorB_px->GetEntry(tentry);
-			if(bMonitorB_py) bMonitorB_py->GetEntry(tentry);
-			if(bMonitorB_pz) bMonitorB_pz->GetEntry(tentry);
-			if(bMonitorB_e) bMonitorB_e->GetEntry(tentry);
-			if(bMonitorB_edep) bMonitorB_edep->GetEntry(tentry);
-			if(bMonitorB_stepL) bMonitorB_stepL->GetEntry(tentry);
-			if(bMonitorB_volID) bMonitorB_volID->GetEntry(tentry);
-			if(bMonitorB_volName) bMonitorB_volName->GetEntry(tentry);
-			if(bMonitorB_tid) bMonitorB_tid->GetEntry(tentry);
-			if(bMonitorB_pid) bMonitorB_pid->GetEntry(tentry);
-			if(bMonitorB_charge) bMonitorB_charge->GetEntry(tentry);
+			if(bProcessCounting_pid) bProcessCounting_pid->GetEntry(tentry);
+			if(bProcessCounting_tid) bProcessCounting_tid->GetEntry(tentry);
+			if(bProcessCounting_nSec) bProcessCounting_nSec->GetEntry(tentry);
+			if(bProcessCounting_time) bProcessCounting_time->GetEntry(tentry);
+			if(bProcessCounting_stepL) bProcessCounting_stepL->GetEntry(tentry);
+			if(bProcessCounting_prePx) bProcessCounting_prePx->GetEntry(tentry);
+			if(bProcessCounting_prePy) bProcessCounting_prePy->GetEntry(tentry);
+			if(bProcessCounting_prePz) bProcessCounting_prePz->GetEntry(tentry);
+			if(bProcessCounting_postPx) bProcessCounting_postPx->GetEntry(tentry);
+			if(bProcessCounting_postPy) bProcessCounting_postPy->GetEntry(tentry);
+			if(bProcessCounting_postPz) bProcessCounting_postPz->GetEntry(tentry);
+			if(bProcessCounting_dE) bProcessCounting_dE->GetEntry(tentry);
+			if(bProcessCounting_dTheta) bProcessCounting_dTheta->GetEntry(tentry);
+			if(bProcessCounting_e) bProcessCounting_e->GetEntry(tentry);
+			if(bProcessCounting_preX) bProcessCounting_preX->GetEntry(tentry);
+			if(bProcessCounting_preY) bProcessCounting_preY->GetEntry(tentry);
+			if(bProcessCounting_preZ) bProcessCounting_preZ->GetEntry(tentry);
+			if(bProcessCounting_postX) bProcessCounting_postX->GetEntry(tentry);
+			if(bProcessCounting_postY) bProcessCounting_postY->GetEntry(tentry);
+			if(bProcessCounting_postZ) bProcessCounting_postZ->GetEntry(tentry);
+			if(bProcessCounting_charge) bProcessCounting_charge->GetEntry(tentry);
+			if(bProcessCounting_particleName) bProcessCounting_particleName->GetEntry(tentry);
+			if(bProcessCounting_process) bProcessCounting_process->GetEntry(tentry);
+			if(bProcessCounting_ASDI_msc) bProcessCounting_ASDI_msc->GetEntry(tentry);
+			if(bProcessCounting_ASDI_hIoni) bProcessCounting_ASDI_hIoni->GetEntry(tentry);
+			if(bProcessCounting_ASDI_hadElastic) bProcessCounting_ASDI_hadElastic->GetEntry(tentry);
+			if(bProcessCounting_ASDI_Transportation) bProcessCounting_ASDI_Transportation->GetEntry(tentry);
+			if(bProcessCounting_ASDI_Decay) bProcessCounting_ASDI_Decay->GetEntry(tentry);
+			if(bProcessCounting_ASDI_ionIoni) bProcessCounting_ASDI_ionIoni->GetEntry(tentry);
+			if(bProcessCounting_ASDI_hBrems) bProcessCounting_ASDI_hBrems->GetEntry(tentry);
+			if(bProcessCounting_ASDI_hPairProd) bProcessCounting_ASDI_hPairProd->GetEntry(tentry);
+			if(bProcessCounting_ASDI_eBrem) bProcessCounting_ASDI_eBrem->GetEntry(tentry);
+			if(bProcessCounting_ASDI_eIoni) bProcessCounting_ASDI_eIoni->GetEntry(tentry);
+			if(bProcessCounting_PSDI_eIoni) bProcessCounting_PSDI_eIoni->GetEntry(tentry);
+			if(bProcessCounting_PSDI_eBrem) bProcessCounting_PSDI_eBrem->GetEntry(tentry);
+			if(bProcessCounting_PSDI_msc) bProcessCounting_PSDI_msc->GetEntry(tentry);
+			if(bProcessCounting_PSDI_hPairProd) bProcessCounting_PSDI_hPairProd->GetEntry(tentry);
+			if(bProcessCounting_PSDI_hBrems) bProcessCounting_PSDI_hBrems->GetEntry(tentry);
+			if(bProcessCounting_PSDI_hIoni) bProcessCounting_PSDI_hIoni->GetEntry(tentry);
+			if(bProcessCounting_PSDI_hadElastic) bProcessCounting_PSDI_hadElastic->GetEntry(tentry);
+			if(bProcessCounting_PSDI_Transportation) bProcessCounting_PSDI_Transportation->GetEntry(tentry);
+			if(bProcessCounting_PSDI_Decay) bProcessCounting_PSDI_Decay->GetEntry(tentry);
+			if(bProcessCounting_PSDI_ionIoni) bProcessCounting_PSDI_ionIoni->GetEntry(tentry);
+			if(bProcessCounting_volume) bProcessCounting_volume->GetEntry(tentry);
 
 			m_TChain->GetEntry(iEvent);
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
 
-			// find electron, positron, photon
-			int index_g = 0;
-			int index_e = -1;
-			int index_p = -1;
-			for ( int i_par = 0; i_par < McTruth_nTracks; i_par++ ){
-				int pid = (*McTruth_pid)[i_par];
-				int ptid = (*McTruth_ptid)[i_par];
-				if ( pid == 11 && ptid == 1 ) index_e = i_par;
-				if ( pid == -11 && ptid == 1 ) index_p = i_par;
+			// Got captured? which step?
+			int index = -1;
+			for ( int i_step = 0; i_step < ProcessCounting_nSteps; i_step++ ){
+				std::string processName = (*ProcessCounting_process)[i_step];
+				if (processName == "muMinusCaptureAtRest"){
+					index = i_step;
+					break;
+				}
 			}
+			if ( index == -1 )
+				continue;
+			N1++;
+
+			// Position and which plate?
+			double hit_x = (*ProcessCounting_postX)[index];
+			double hit_y = (*ProcessCounting_postY)[index];
+			double hit_z = (*ProcessCounting_postZ)[index];
+			double hit_r = sqrt(hit_x*hit_x+hit_y*hit_y);
+			double hit_relZ = 0;
+			int nPlates = 17;
+			double thickness = 0.02;
+			double space = 5;
+			int hit_iPlate = -1;
+			for ( int i_plate = 0; i_plate < nPlates; i_plate++ ){
+				double plateZ = (i_plate*2 - nPlates +1)/2*space;
+				double leftEnd = plateZ - thickness/2;
+				double rightEnd = plateZ + thickness/2;
+				if ( hit_z >= leftEnd && hit_z <= rightEnd){
+					hit_iPlate = i_plate;
+					hit_relZ = hit_z - plateZ;
+					break;
+				}
+			}
+
+			if ( hit_iPlate == -1 )
+				continue;
 			N2++;
 
-			// get information about them
-			double px_g = (*McTruth_px)[index_g]*1000;// GeV -> MeV 
-			double py_g = (*McTruth_py)[index_g]*1000;// GeV -> MeV 
-			double pz_g = (*McTruth_pz)[index_g]*1000;// GeV -> MeV 
-			double pa_g = sqrt(px_g*px_g+py_g*py_g+pz_g*pz_g);
-			double theta_g = (pa_g==0?2*PI:acos(pz_g/pa_g));
-			double px_e = 0;
-			double py_e = 0;
-			double pz_e = 0;
-			double pa_e = 0;
-			double theta_e = 0;
-			double px_p = 0;
-			double py_p = 0;
-			double pz_p = 0;
-			double pa_p = 0;
-			double theta_p = 0;
-			if (index_e!=-1){
-				px_e = (*McTruth_px)[index_e]*1000;// GeV -> MeV 
-				py_e = (*McTruth_py)[index_e]*1000;// GeV -> MeV 
-				pz_e = (*McTruth_pz)[index_e]*1000;// GeV -> MeV 
-				pa_e = sqrt(px_e*px_e+py_e*py_e+pz_e*pz_e);
-				theta_e = (pa_e==0?2*PI:acos(pz_e/pa_e));
+			if ( (index_temp = get_TH1D("relz")) != -1 ){
+				vecH1D[index_temp]->Fill(hit_relZ*10); //cm -> mm
 			}
-			if (index_p!=-1){
-				px_p = (*McTruth_px)[index_p]*1000;// GeV -> MeV 
-				py_p = (*McTruth_py)[index_p]*1000;// GeV -> MeV 
-				pz_p = (*McTruth_pz)[index_p]*1000;// GeV -> MeV 
-				pa_p = sqrt(px_p*px_p+py_p*py_p+pz_p*pz_p);
-				theta_p = (pa_p==0?2*PI:acos(pz_p/pa_p));
+			if ( (index_temp = get_TH1D("iplate")) != -1 ){
+				vecH1D[index_temp]->Fill(hit_iPlate);
 			}
-			int index_m = (pa_e>pa_p?index_e:index_p);
-			std::string process = "Null";
-			//std::cout<<"index_m = "<<index_m<<", nTracks = "<<McTruth_nTracks<<std::endl;
-			if (index_m!=-1){
-				process = (*McTruth_process)[index_m];
+			if ( (index_temp = get_TH1D("r")) != -1 ){
+				vecH1D[index_temp]->Fill(hit_r);
 			}
-
-			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0)
-				std::cout<<prefix_EventInfoStart
-					     <<"process = \""<<process
-					     <<"\""
-					     <<std::endl;
-
-			if ( (index_temp = get_TH1D("pa_g")) != -1 ){
-				vecH1D[index_temp]->Fill(pa_g);
-			}
-			if ( (index_temp = get_TH1D("theta_g")) != -1 ){
-				vecH1D[index_temp]->Fill(theta_g);
-			}
-			if (index_e!=-1){
-				if ( (index_temp = get_TH1D("pa_e")) != -1 ){
-					vecH1D[index_temp]->Fill(pa_e);
-				}
-				if ( (index_temp = get_TH1D("theta_e")) != -1 ){
-					vecH1D[index_temp]->Fill(theta_e);
-				}
-				if ( (index_temp = get_TH2D("pa_gVSe")) != -1 ){
-					vecH2D[index_temp]->Fill(pa_g,pa_e);
-				}
-			}
-			if (index_p!=-1){
-				if ( (index_temp = get_TH1D("pa_p")) != -1 ){
-					vecH1D[index_temp]->Fill(pa_p);
-				}
-				if ( (index_temp = get_TH1D("theta_p")) != -1 ){
-					vecH1D[index_temp]->Fill(theta_p);
-				}
-			}
-
-			// Fill the tree
-			d_evt_num = evt_num;
-			d_run_num = run_num;
-			d_pid = 11;
-			d_tid = 2;
-			strcpy(d_vid,"Target");
-			strcpy(d_prid,process.c_str());
-			d_tri_t = 0;
-			d_mot_x = (*McTruth_x)[0];
-			d_mot_y = (*McTruth_y)[0];
-			d_mot_z = (*McTruth_z)[0];
-			d_mot_px = (*McTruth_px)[0];
-			d_mot_py = (*McTruth_py)[0];
-			d_mot_pz = (*McTruth_pz)[0];
-			d_x = 0;
-			d_y = 0;
-			d_z = 0;
-			d_px = 0;
-			d_py = 0;
-			d_pz = 0;
-			if (index_m != -1){
-				d_x = (*McTruth_x)[index_m];
-				d_y = (*McTruth_y)[index_m];
-				d_z = (*McTruth_z)[index_m];
-				d_px = (*McTruth_px)[index_m];
-				d_py = (*McTruth_py)[index_m];
-				d_pz = (*McTruth_pz)[index_m];
-			}
-			d_tree->Fill();
 
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 		}/* end of loop in events*/
@@ -913,7 +842,6 @@ int main(int argc, char* argv[]){
 		c->Print(fileName.c_str());
 	}
 
-	d_tree->Write();
 	file->Close();
 	std::string backupFileName = OutputDir + "backup.root";
 
