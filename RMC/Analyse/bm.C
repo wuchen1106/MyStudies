@@ -540,6 +540,34 @@ int main(int argc, char* argv[]){
 	m_TChain->SetBranchAddress("ProcessCounting_PSDI_ionIoni", &ProcessCounting_PSDI_ionIoni, &bProcessCounting_PSDI_ionIoni);
 	m_TChain->SetBranchAddress("ProcessCounting_volume", &ProcessCounting_volume, &bProcessCounting_volume);
 
+	TTree* d_tree = new TTree( "t", "t" );
+
+	int d_evt_num;
+	int d_run_num;
+	double d_r;
+	double d_x;
+	double d_y;
+	double d_z;
+	double d_t;
+	double d_tcap;
+	double d_relz;
+	int d_i;
+	int d_sto;
+	int d_cap;
+
+	d_tree->Branch("evt_num", &d_evt_num, "evt_num/I");
+	d_tree->Branch("run_num", &d_run_num, "run_num/I");
+	d_tree->Branch("r", &d_r, "r/D");
+	d_tree->Branch("x", &d_x, "x/D");
+	d_tree->Branch("y", &d_y, "y/D");
+	d_tree->Branch("z", &d_z, "z/D");
+	d_tree->Branch("relz", &d_relz, "relz/D");
+	d_tree->Branch("t", &d_t, "t/D");
+	d_tree->Branch("tcap", &d_tcap, "tcap/D");
+	d_tree->Branch("i", &d_i, "i/I");
+	d_tree->Branch("sto", &d_sto, "sto/I");
+	d_tree->Branch("cap", &d_cap, "cap/I");
+
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
@@ -614,28 +642,37 @@ int main(int argc, char* argv[]){
 			m_TChain->GetEntry(iEvent);
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
 
-			// Got captured? which step?
-			int index = -1;
-			for ( int i_step = 0; i_step < ProcessCounting_nSteps; i_step++ ){
-				std::string processName = (*ProcessCounting_process)[i_step];
-				if (processName == "muMinusCaptureAtRest"){
-					index = i_step;
-					break;
-				}
-			}
-			if ( index == -1 )
-				continue;
-			N1++;
-
-			// Position and which plate?
-			double hit_x = (*ProcessCounting_postX)[index];
-			double hit_y = (*ProcessCounting_postY)[index];
-			double hit_z = (*ProcessCounting_postZ)[index];
-			double hit_r = sqrt(hit_x*hit_x+hit_y*hit_y);
-			double hit_relZ = 0;
+			// Got stopped?
 			int nPlates = 17;
 			double thickness = 0.02;
 			double space = 5;
+			double right_most_end = (nPlates+1)/2.*space+thickness/2.;
+			int index_OB = -1;
+			for ( int i_step = 0; i_step < ProcessCounting_nSteps; i_step++ ){
+				double z = (*ProcessCounting_postZ)[i_step];
+				if (z>=right_most_end){
+					index_OB = i_step;
+					break;
+				}
+			}
+
+			// Got captured? which step?
+			int index_cap = -1;
+			for ( int i_step = 0; i_step < ProcessCounting_nSteps; i_step++ ){
+				std::string processName = (*ProcessCounting_process)[i_step];
+				if (processName == "muMinusCaptureAtRest"){
+					index_cap = i_step;
+					break;
+				}
+			}
+
+			// Position and which plate?
+			double hit_x = index_cap==-1?0:(*ProcessCounting_postX)[index_cap];
+			double hit_y = index_cap==-1?0:(*ProcessCounting_postY)[index_cap];
+			double hit_z = index_cap==-1?0:(*ProcessCounting_postZ)[index_cap];
+			double hit_t = index_cap==-1?0:(*ProcessCounting_time)[index_cap];
+			double hit_r = sqrt(hit_x*hit_x+hit_y*hit_y);
+			double hit_relZ = 0;
 			int hit_iPlate = -1;
 			for ( int i_plate = 0; i_plate < nPlates; i_plate++ ){
 				double plateZ = (i_plate*2 - nPlates +1)/2*space;
@@ -648,9 +685,31 @@ int main(int argc, char* argv[]){
 				}
 			}
 
-			if ( hit_iPlate == -1 )
+			// Fill the tree
+			d_evt_num = evt_num;
+			d_run_num = run_num;
+			d_r = hit_r;
+			d_x = hit_x;
+			d_y = hit_y;
+			d_z = hit_z;
+			d_relz = hit_relZ;
+			double decayTime = -880*log(G4UniformRand());
+			d_t = hit_t+decayTime;
+			d_tcap = hit_t;
+			d_i = hit_iPlate;
+			d_sto = (index_OB==-1);
+			d_cap = (index_cap != -1);
+			d_tree->Fill();
+
+			if (index_OB!=-1)
+				continue;
+			N1++;
+			if ( index_cap == -1 )
 				continue;
 			N2++;
+			if ( hit_iPlate == -1 )
+				continue;
+			N3++;
 
 			if ( (index_temp = get_TH1D("relz")) != -1 ){
 				vecH1D[index_temp]->Fill(hit_relZ*10); //cm -> mm
@@ -659,6 +718,18 @@ int main(int argc, char* argv[]){
 				vecH1D[index_temp]->Fill(hit_iPlate);
 			}
 			if ( (index_temp = get_TH1D("r")) != -1 ){
+				vecH1D[index_temp]->Fill(hit_r);
+			}
+			buff.str("");
+			buff.clear();
+			buff<<"relz_"<<hit_iPlate;
+			if ( (index_temp = get_TH1D(buff.str())) != -1 ){
+				vecH1D[index_temp]->Fill(hit_relZ*10); //cm -> mm
+			}
+			buff.str("");
+			buff.clear();
+			buff<<"r_"<<hit_iPlate;
+			if ( (index_temp = get_TH1D(buff.str())) != -1 ){
 				vecH1D[index_temp]->Fill(hit_r);
 			}
 
@@ -842,6 +913,7 @@ int main(int argc, char* argv[]){
 		c->Print(fileName.c_str());
 	}
 
+	d_tree->Write();
 	file->Close();
 	std::string backupFileName = OutputDir + "backup.root";
 

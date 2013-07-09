@@ -1,5 +1,5 @@
 GEOCARDROOT       = geometry_ph2e
-MAGFIELDCARDROOT  = MagField_ph2e
+MAGFIELDCARDROOT  = MagField_1T
 GENFILEROOT       = gen_ph2e
 OUTCARDROOT       = output_ph2e
 
@@ -22,4 +22,4 @@ setCut_default.mac
 #run
 run_configure
 1
-50000000
+1250

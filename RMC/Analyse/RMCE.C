@@ -797,7 +797,7 @@ int main(int argc, char* argv[]){
 			double pz = (*McTruth_pz)[0];
 			double pt = sqrt(px*px+py*py);
 			double pa = sqrt(pt*pt+pz*pz);
-			if (pa<90){ // pa < 90MeV/c
+			if (pa<0.09){ // pa < 90MeV/c
 				continue;
 			}
 			N2++;
@@ -854,9 +854,9 @@ int main(int argc, char* argv[]){
 			d_x = (*McTruth_x)[index];
 			d_y = (*McTruth_y)[index];
 			d_z = (*McTruth_z)[index];
-			d_px = (*McTruth_px)[index]/1000.;
-			d_py = (*McTruth_py)[index]/1000.;
-			d_pz = (*McTruth_pz)[index]/1000.;
+			d_px = (*McTruth_px)[index];
+			d_py = (*McTruth_py)[index];
+			d_pz = (*McTruth_pz)[index];
 
 			if (CdcCell_nHits<=0) // not hit the Cdc
 				continue;
@@ -878,6 +878,10 @@ int main(int argc, char* argv[]){
 				continue;
 			N7++;
 			d_tree->Fill();
+
+			if ( (index_temp = get_TH1D("pa_e")) != -1 ){
+				vecH1D[index_temp]->Fill(pa*1000);
+			}
 
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 		}/* end of loop in events*/

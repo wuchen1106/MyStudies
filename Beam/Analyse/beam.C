@@ -23,6 +23,30 @@
 #include "globals.hh"
 #include "Randomize.hh"
 
+// Fixed size dimensions of array or collections stored in the TTree if any.
+const Int_t kMaxptacs_entry = 404;
+const Int_t kMaxptacs_target = 63;
+const Int_t kMaxptacs_shielding = 45;
+const Int_t kMaxptacs_MARS = 19;
+const Int_t kMaxptacs_proton_target_downstream = 22;
+const Int_t kMaxptacs_proton_target_upstream = 52;
+const Int_t kMaxptacs_proton_target_cylinder = 6337;
+const Int_t kMaxptacs_beampipe = 2276;
+const Int_t kMaxptacs_exit = 6559;
+const Int_t kMaxmt1_entry = 13;
+const Int_t kMaxmt1_22_5 = 2050184;
+const Int_t kMaxmt1_45 = 792107;
+const Int_t kMaxmt1_64_5 = 1547394;
+const Int_t kMaxmt1_exit = 109909;
+const Int_t kMaxblt0 = 52000;
+const Int_t kMaxblt1 = 15;
+const Int_t kMaxts2_0 = 16;
+const Int_t kMaxts2_1 = 9;
+const Int_t kMaxts2_tgt = 18;
+const Int_t kMaxcdc_pre = 231;
+const Int_t kMaxcdc_trigcount = 108;
+const Int_t kMaxcdc_innerwall = 89;
+
 char m_workMode[128];
 int verbose = 0;
 int nEvents = 0;
@@ -349,208 +373,98 @@ int main(int argc, char* argv[]){
 
 	//=======================================================================================================
 	//************SET Branches********************
-	int evt_num = 0;
-	int run_num = 0;
-	int McTruth_nTracks;
-	std::vector<int> *McTruth_pid = 0;
-	std::vector<int> *McTruth_tid = 0;
-	std::vector<int> *McTruth_ptid = 0;
-	std::vector<int> *McTruth_time = 0;
-	std::vector<double> *McTruth_px = 0;
-	std::vector<double> *McTruth_py = 0;
-	std::vector<double> *McTruth_pz = 0;
-	std::vector<double> *McTruth_e = 0;
-	std::vector<double> *McTruth_x = 0;
-	std::vector<double> *McTruth_y = 0;
-	std::vector<double> *McTruth_z = 0;
-	std::vector<int> *McTruth_charge = 0;
-	std::vector<std::string> *McTruth_particleName = 0;
-	std::vector<std::string> *McTruth_process = 0;
-	std::vector<std::string> *McTruth_volume = 0;
+	Int_t           ts2_0_;
+	UInt_t          ts2_0_fUniqueID[kMaxts2_0];   //[ts2_0_]
+	UInt_t          ts2_0_fBits[kMaxts2_0];   //[ts2_0_]
+	Int_t           ts2_0_trackID[kMaxts2_0];   //[ts2_0_]
+	Int_t           ts2_0_parentID[kMaxts2_0];   //[ts2_0_]
+	Int_t           ts2_0_PDGEncoding[kMaxts2_0];   //[ts2_0_]
+	Int_t           ts2_0_parentPDGEncoding[kMaxts2_0];   //[ts2_0_]
+	Int_t           ts2_0_word_padding[kMaxts2_0];   //[ts2_0_]
+	UInt_t          ts2_0_position_fUniqueID[kMaxts2_0];   //[ts2_0_]
+	UInt_t          ts2_0_position_fBits[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_position_fX[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_position_fY[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_position_fZ[kMaxts2_0];   //[ts2_0_]
+	UInt_t          ts2_0_origin_fUniqueID[kMaxts2_0];   //[ts2_0_]
+	UInt_t          ts2_0_origin_fBits[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_origin_fX[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_origin_fY[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_origin_fZ[kMaxts2_0];   //[ts2_0_]
+	UInt_t          ts2_0_direction_fUniqueID[kMaxts2_0];   //[ts2_0_]
+	UInt_t          ts2_0_direction_fBits[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_direction_fX[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_direction_fY[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_direction_fZ[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_globalTime[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_localTime[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_properTime[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_totalEnergy[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_kineticEnergy[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_momentum[kMaxts2_0];   //[ts2_0_]
+	Double_t        ts2_0_mass[kMaxts2_0];   //[ts2_0_]
 
-	int MonitorE_nHits = 0;
-	std::vector<double> *MonitorE_x = 0;
-	std::vector<double> *MonitorE_y = 0;
-	std::vector<double> *MonitorE_z = 0;
-	std::vector<double> *MonitorE_t = 0;
-	std::vector<double> *MonitorE_px = 0;
-	std::vector<double> *MonitorE_py = 0;
-	std::vector<double> *MonitorE_pz = 0;
-	std::vector<double> *MonitorE_e = 0;
-	std::vector<double> *MonitorE_edep = 0;
-	std::vector<double> *MonitorE_stepL = 0;
-	std::vector<int> *MonitorE_volID = 0;
-	std::vector<std::string> *MonitorE_volName = 0;
-	std::vector<int> *MonitorE_tid = 0;
-	std::vector<int> *MonitorE_pid = 0;
-	std::vector<int> *MonitorE_charge = 0;
+   TBranch        *b_ts2_0_;   //!
+   TBranch        *b_ts2_0_fUniqueID;   //!
+   TBranch        *b_ts2_0_fBits;   //!
+   TBranch        *b_ts2_0_trackID;   //!
+   TBranch        *b_ts2_0_parentID;   //!
+   TBranch        *b_ts2_0_PDGEncoding;   //!
+   TBranch        *b_ts2_0_parentPDGEncoding;   //!
+   TBranch        *b_ts2_0_word_padding;   //!
+   TBranch        *b_ts2_0_position_fUniqueID;   //!
+   TBranch        *b_ts2_0_position_fBits;   //!
+   TBranch        *b_ts2_0_position_fX;   //!
+   TBranch        *b_ts2_0_position_fY;   //!
+   TBranch        *b_ts2_0_position_fZ;   //!
+   TBranch        *b_ts2_0_origin_fUniqueID;   //!
+   TBranch        *b_ts2_0_origin_fBits;   //!
+   TBranch        *b_ts2_0_origin_fX;   //!
+   TBranch        *b_ts2_0_origin_fY;   //!
+   TBranch        *b_ts2_0_origin_fZ;   //!
+   TBranch        *b_ts2_0_direction_fUniqueID;   //!
+   TBranch        *b_ts2_0_direction_fBits;   //!
+   TBranch        *b_ts2_0_direction_fX;   //!
+   TBranch        *b_ts2_0_direction_fY;   //!
+   TBranch        *b_ts2_0_direction_fZ;   //!
+   TBranch        *b_ts2_0_globalTime;   //!
+   TBranch        *b_ts2_0_localTime;   //!
+   TBranch        *b_ts2_0_properTime;   //!
+   TBranch        *b_ts2_0_totalEnergy;   //!
+   TBranch        *b_ts2_0_kineticEnergy;   //!
+   TBranch        *b_ts2_0_momentum;   //!
+   TBranch        *b_ts2_0_mass;   //!
 
-	int MonitorB_nHits = 0;
-	std::vector<double> *MonitorB_x = 0;
-	std::vector<double> *MonitorB_y = 0;
-	std::vector<double> *MonitorB_z = 0;
-	std::vector<double> *MonitorB_t = 0;
-	std::vector<double> *MonitorB_px = 0;
-	std::vector<double> *MonitorB_py = 0;
-	std::vector<double> *MonitorB_pz = 0;
-	std::vector<double> *MonitorB_e = 0;
-	std::vector<double> *MonitorB_edep = 0;
-	std::vector<double> *MonitorB_stepL = 0;
-	std::vector<int> *MonitorB_volID = 0;
-	std::vector<std::string> *MonitorB_volName = 0;
-	std::vector<int> *MonitorB_tid = 0;
-	std::vector<int> *MonitorB_pid = 0;
-	std::vector<int> *MonitorB_charge = 0;
-
-	TBranch *bMcTruth_pid = 0;
-	TBranch *bMcTruth_tid = 0;
-	TBranch *bMcTruth_ptid = 0;
-	TBranch *bMcTruth_time = 0;             
-	TBranch *bMcTruth_px = 0;              
-	TBranch *bMcTruth_py = 0;              
-	TBranch *bMcTruth_pz = 0;              
-	TBranch *bMcTruth_e = 0;               
-	TBranch *bMcTruth_x = 0;                
-	TBranch *bMcTruth_y = 0;                
-	TBranch *bMcTruth_z = 0;                
-	TBranch *bMcTruth_charge = 0;
-	TBranch *bMcTruth_particleName = 0;
-	TBranch *bMcTruth_process = 0;
-	TBranch *bMcTruth_volume = 0;
-
-	TBranch *bMonitorE_x = 0;
-	TBranch *bMonitorE_y = 0;
-	TBranch *bMonitorE_z = 0;
-	TBranch *bMonitorE_t = 0;
-	TBranch *bMonitorE_px = 0;
-	TBranch *bMonitorE_py = 0;
-	TBranch *bMonitorE_pz = 0;
-	TBranch *bMonitorE_e = 0;
-	TBranch *bMonitorE_edep = 0;
-	TBranch *bMonitorE_stepL = 0;
-	TBranch *bMonitorE_volID = 0;
-	TBranch *bMonitorE_volName = 0;
-	TBranch *bMonitorE_tid = 0;
-	TBranch *bMonitorE_pid = 0;
-	TBranch *bMonitorE_charge = 0;
-
-	TBranch *bMonitorB_x = 0;
-	TBranch *bMonitorB_y = 0;
-	TBranch *bMonitorB_z = 0;
-	TBranch *bMonitorB_t = 0;
-	TBranch *bMonitorB_px = 0;
-	TBranch *bMonitorB_py = 0;
-	TBranch *bMonitorB_pz = 0;
-	TBranch *bMonitorB_e = 0;
-	TBranch *bMonitorB_edep = 0;
-	TBranch *bMonitorB_stepL = 0;
-	TBranch *bMonitorB_volID = 0;
-	TBranch *bMonitorB_volName = 0;
-	TBranch *bMonitorB_tid = 0;
-	TBranch *bMonitorB_pid = 0;
-	TBranch *bMonitorB_charge = 0;
-
-	m_TChain->SetBranchAddress("evt_num", &evt_num);
-	m_TChain->SetBranchAddress("run_num", &run_num);
-	m_TChain->SetBranchAddress("McTruth_nTracks", &McTruth_nTracks);
-	m_TChain->SetBranchAddress("McTruth_pid", &McTruth_pid, &bMcTruth_pid);
-	m_TChain->SetBranchAddress("McTruth_tid", &McTruth_tid, &bMcTruth_tid);
-	m_TChain->SetBranchAddress("McTruth_ptid", &McTruth_ptid, &bMcTruth_ptid);
-	m_TChain->SetBranchAddress("McTruth_time", &McTruth_time, &bMcTruth_time);             
-	m_TChain->SetBranchAddress("McTruth_px", &McTruth_px, &bMcTruth_px);              
-	m_TChain->SetBranchAddress("McTruth_py", &McTruth_py, &bMcTruth_py);              
-	m_TChain->SetBranchAddress("McTruth_pz", &McTruth_pz, &bMcTruth_pz);              
-	m_TChain->SetBranchAddress("McTruth_e", &McTruth_e, &bMcTruth_e);               
-	m_TChain->SetBranchAddress("McTruth_x", &McTruth_x, &bMcTruth_x);                
-	m_TChain->SetBranchAddress("McTruth_y", &McTruth_y, &bMcTruth_y);                
-	m_TChain->SetBranchAddress("McTruth_z", &McTruth_z, &bMcTruth_z);                
-	m_TChain->SetBranchAddress("McTruth_charge", &McTruth_charge, &bMcTruth_charge);
-	m_TChain->SetBranchAddress("McTruth_particleName", &McTruth_particleName, &bMcTruth_particleName);
-	m_TChain->SetBranchAddress("McTruth_process", &McTruth_process, &bMcTruth_process);
-	m_TChain->SetBranchAddress("McTruth_volume", &McTruth_volume, &bMcTruth_volume);
-
-	m_TChain->SetBranchAddress("MonitorE_nHits", &MonitorE_nHits);
-	m_TChain->SetBranchAddress("MonitorE_x", &MonitorE_x, &bMonitorE_x);
-	m_TChain->SetBranchAddress("MonitorE_y", &MonitorE_y, &bMonitorE_y);
-	m_TChain->SetBranchAddress("MonitorE_z", &MonitorE_z, &bMonitorE_z);
-	m_TChain->SetBranchAddress("MonitorE_t", &MonitorE_t, &bMonitorE_t);
-	m_TChain->SetBranchAddress("MonitorE_px", &MonitorE_px, &bMonitorE_px);
-	m_TChain->SetBranchAddress("MonitorE_py", &MonitorE_py, &bMonitorE_py);
-	m_TChain->SetBranchAddress("MonitorE_pz", &MonitorE_pz, &bMonitorE_pz);
-	m_TChain->SetBranchAddress("MonitorE_e", &MonitorE_e, &bMonitorE_e);
-	m_TChain->SetBranchAddress("MonitorE_edep", &MonitorE_edep, &bMonitorE_edep);
-	m_TChain->SetBranchAddress("MonitorE_stepL", &MonitorE_stepL, &bMonitorE_stepL);
-	m_TChain->SetBranchAddress("MonitorE_volID", &MonitorE_volID, &bMonitorE_volID);
-	m_TChain->SetBranchAddress("MonitorE_volName", &MonitorE_volName, &bMonitorE_volName);
-	m_TChain->SetBranchAddress("MonitorE_tid", &MonitorE_tid, &bMonitorE_tid);
-	m_TChain->SetBranchAddress("MonitorE_pid", &MonitorE_pid, &bMonitorE_pid);
-	m_TChain->SetBranchAddress("MonitorE_charge", &MonitorE_charge, &bMonitorE_charge);
-
-	m_TChain->SetBranchAddress("MonitorB_nHits", &MonitorB_nHits);
-	m_TChain->SetBranchAddress("MonitorB_x", &MonitorB_x, &bMonitorB_x);
-	m_TChain->SetBranchAddress("MonitorB_y", &MonitorB_y, &bMonitorB_y);
-	m_TChain->SetBranchAddress("MonitorB_z", &MonitorB_z, &bMonitorB_z);
-	m_TChain->SetBranchAddress("MonitorB_t", &MonitorB_t, &bMonitorB_t);
-	m_TChain->SetBranchAddress("MonitorB_px", &MonitorB_px, &bMonitorB_px);
-	m_TChain->SetBranchAddress("MonitorB_py", &MonitorB_py, &bMonitorB_py);
-	m_TChain->SetBranchAddress("MonitorB_pz", &MonitorB_pz, &bMonitorB_pz);
-	m_TChain->SetBranchAddress("MonitorB_e", &MonitorB_e, &bMonitorB_e);
-	m_TChain->SetBranchAddress("MonitorB_edep", &MonitorB_edep, &bMonitorB_edep);
-	m_TChain->SetBranchAddress("MonitorB_stepL", &MonitorB_stepL, &bMonitorB_stepL);
-	m_TChain->SetBranchAddress("MonitorB_volID", &MonitorB_volID, &bMonitorB_volID);
-	m_TChain->SetBranchAddress("MonitorB_volName", &MonitorB_volName, &bMonitorB_volName);
-	m_TChain->SetBranchAddress("MonitorB_tid", &MonitorB_tid, &bMonitorB_tid);
-	m_TChain->SetBranchAddress("MonitorB_pid", &MonitorB_pid, &bMonitorB_pid);
-	m_TChain->SetBranchAddress("MonitorB_charge", &MonitorB_charge, &bMonitorB_charge);
-
-	TTree* d_tree = new TTree( "t", "t" );
-
-	int d_evt_num;
-	int d_run_num;
-	int d_pid;
-	int d_tid;
-	char d_vid[124];
-	char d_prid[124];
-	double d_mot_x;
-	double d_mot_y;
-	double d_mot_z;
-	double d_mot_px;
-	double d_mot_py;
-	double d_mot_pz;
-	double d_x;
-	double d_y;
-	double d_z;
-	double d_px;
-	double d_py;
-	double d_pz;
-	int d_nhits;
-	double d_hits_x[1000];
-	double d_hits_y[1000];
-	double d_hits_z[1000];
-	double d_hits_t[1000];
-	double d_hits_px[1000];
-	double d_hits_py[1000];
-	double d_hits_pz[1000];
-	double d_tri_t;
-
-	d_tree->Branch("evt_num", &d_evt_num, "evt_num/I");
-	d_tree->Branch("run_num", &d_run_num, "run_num/I");
-	d_tree->Branch("pid", &d_pid, "pid/I");
-	d_tree->Branch("tid", &d_tid, "tid/I");
-	d_tree->Branch("vid", d_vid, "vid[124]/C");
-	d_tree->Branch("prid", d_prid, "prid[124]/C");
-	d_tree->Branch("mot_x", &d_mot_x, "mot_x/D");
-	d_tree->Branch("mot_y", &d_mot_y, "mot_y/D");
-	d_tree->Branch("mot_z", &d_mot_z, "mot_z/D");
-	d_tree->Branch("mot_px", &d_mot_px, "mot_px/D");
-	d_tree->Branch("mot_py", &d_mot_py, "mot_py/D");
-	d_tree->Branch("mot_pz", &d_mot_pz, "mot_pz/D");
-	d_tree->Branch("x", &d_x, "x/D");
-	d_tree->Branch("y", &d_y, "y/D");
-	d_tree->Branch("z", &d_z, "z/D");
-	d_tree->Branch("px", &d_px, "px/D");
-	d_tree->Branch("py", &d_py, "py/D");
-	d_tree->Branch("pz", &d_pz, "pz/D");
+   m_TChain->SetBranchAddress("ts2_0", &ts2_0_, &b_ts2_0_);
+   m_TChain->SetBranchAddress("ts2_0.fUniqueID", ts2_0_fUniqueID, &b_ts2_0_fUniqueID);
+   m_TChain->SetBranchAddress("ts2_0.fBits", ts2_0_fBits, &b_ts2_0_fBits);
+   m_TChain->SetBranchAddress("ts2_0.trackID", ts2_0_trackID, &b_ts2_0_trackID);
+   m_TChain->SetBranchAddress("ts2_0.parentID", ts2_0_parentID, &b_ts2_0_parentID);
+   m_TChain->SetBranchAddress("ts2_0.PDGEncoding", ts2_0_PDGEncoding, &b_ts2_0_PDGEncoding);
+   m_TChain->SetBranchAddress("ts2_0.parentPDGEncoding", ts2_0_parentPDGEncoding, &b_ts2_0_parentPDGEncoding);
+   m_TChain->SetBranchAddress("ts2_0.word_padding", ts2_0_word_padding, &b_ts2_0_word_padding);
+   m_TChain->SetBranchAddress("ts2_0.position.fUniqueID", ts2_0_position_fUniqueID, &b_ts2_0_position_fUniqueID);
+   m_TChain->SetBranchAddress("ts2_0.position.fBits", ts2_0_position_fBits, &b_ts2_0_position_fBits);
+   m_TChain->SetBranchAddress("ts2_0.position.fX", ts2_0_position_fX, &b_ts2_0_position_fX);
+   m_TChain->SetBranchAddress("ts2_0.position.fY", ts2_0_position_fY, &b_ts2_0_position_fY);
+   m_TChain->SetBranchAddress("ts2_0.position.fZ", ts2_0_position_fZ, &b_ts2_0_position_fZ);
+   m_TChain->SetBranchAddress("ts2_0.origin.fUniqueID", ts2_0_origin_fUniqueID, &b_ts2_0_origin_fUniqueID);
+   m_TChain->SetBranchAddress("ts2_0.origin.fBits", ts2_0_origin_fBits, &b_ts2_0_origin_fBits);
+   m_TChain->SetBranchAddress("ts2_0.origin.fX", ts2_0_origin_fX, &b_ts2_0_origin_fX);
+   m_TChain->SetBranchAddress("ts2_0.origin.fY", ts2_0_origin_fY, &b_ts2_0_origin_fY);
+   m_TChain->SetBranchAddress("ts2_0.origin.fZ", ts2_0_origin_fZ, &b_ts2_0_origin_fZ);
+   m_TChain->SetBranchAddress("ts2_0.direction.fUniqueID", ts2_0_direction_fUniqueID, &b_ts2_0_direction_fUniqueID);
+   m_TChain->SetBranchAddress("ts2_0.direction.fBits", ts2_0_direction_fBits, &b_ts2_0_direction_fBits);
+   m_TChain->SetBranchAddress("ts2_0.direction.fX", ts2_0_direction_fX, &b_ts2_0_direction_fX);
+   m_TChain->SetBranchAddress("ts2_0.direction.fY", ts2_0_direction_fY, &b_ts2_0_direction_fY);
+   m_TChain->SetBranchAddress("ts2_0.direction.fZ", ts2_0_direction_fZ, &b_ts2_0_direction_fZ);
+   m_TChain->SetBranchAddress("ts2_0.globalTime", ts2_0_globalTime, &b_ts2_0_globalTime);
+   m_TChain->SetBranchAddress("ts2_0.localTime", ts2_0_localTime, &b_ts2_0_localTime);
+   m_TChain->SetBranchAddress("ts2_0.properTime", ts2_0_properTime, &b_ts2_0_properTime);
+   m_TChain->SetBranchAddress("ts2_0.totalEnergy", ts2_0_totalEnergy, &b_ts2_0_totalEnergy);
+   m_TChain->SetBranchAddress("ts2_0.kineticEnergy", ts2_0_kineticEnergy, &b_ts2_0_kineticEnergy);
+   m_TChain->SetBranchAddress("ts2_0.momentum", ts2_0_momentum, &b_ts2_0_momentum);
+   m_TChain->SetBranchAddress("ts2_0.mass", ts2_0_mass, &b_ts2_0_mass);
 
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
@@ -562,167 +476,48 @@ int main(int argc, char* argv[]){
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
 			N0++;
 			Long64_t tentry = m_TChain->LoadTree(iEvent);
-			if(bMcTruth_pid) bMcTruth_pid->GetEntry(tentry);
-			if(bMcTruth_tid) bMcTruth_tid->GetEntry(tentry);
-			if(bMcTruth_ptid) bMcTruth_ptid->GetEntry(tentry);
-			if(bMcTruth_time) bMcTruth_time->GetEntry(tentry);             
-			if(bMcTruth_px) bMcTruth_px->GetEntry(tentry);              
-			if(bMcTruth_py) bMcTruth_py->GetEntry(tentry);              
-			if(bMcTruth_pz) bMcTruth_pz->GetEntry(tentry);              
-			if(bMcTruth_e) bMcTruth_e->GetEntry(tentry);               
-			if(bMcTruth_x) bMcTruth_x->GetEntry(tentry);                
-			if(bMcTruth_y) bMcTruth_y->GetEntry(tentry);                
-			if(bMcTruth_z) bMcTruth_z->GetEntry(tentry);                
-			if(bMcTruth_charge) bMcTruth_charge->GetEntry(tentry);
-			if(bMcTruth_particleName) bMcTruth_particleName->GetEntry(tentry);
-			if(bMcTruth_process) bMcTruth_process->GetEntry(tentry);
-			if(bMcTruth_volume) bMcTruth_volume->GetEntry(tentry);
-
-			if(bMonitorE_x) bMonitorE_x->GetEntry(tentry);
-			if(bMonitorE_y) bMonitorE_y->GetEntry(tentry);
-			if(bMonitorE_z) bMonitorE_z->GetEntry(tentry);
-			if(bMonitorE_t) bMonitorE_t->GetEntry(tentry);
-			if(bMonitorE_px) bMonitorE_px->GetEntry(tentry);
-			if(bMonitorE_py) bMonitorE_py->GetEntry(tentry);
-			if(bMonitorE_pz) bMonitorE_pz->GetEntry(tentry);
-			if(bMonitorE_e) bMonitorE_e->GetEntry(tentry);
-			if(bMonitorE_edep) bMonitorE_edep->GetEntry(tentry);
-			if(bMonitorE_stepL) bMonitorE_stepL->GetEntry(tentry);
-			if(bMonitorE_volID) bMonitorE_volID->GetEntry(tentry);
-			if(bMonitorE_volName) bMonitorE_volName->GetEntry(tentry);
-			if(bMonitorE_tid) bMonitorE_tid->GetEntry(tentry);
-			if(bMonitorE_pid) bMonitorE_pid->GetEntry(tentry);
-			if(bMonitorE_charge) bMonitorE_charge->GetEntry(tentry);
-
-			if(bMonitorB_x) bMonitorB_x->GetEntry(tentry);
-			if(bMonitorB_y) bMonitorB_y->GetEntry(tentry);
-			if(bMonitorB_z) bMonitorB_z->GetEntry(tentry);
-			if(bMonitorB_t) bMonitorB_t->GetEntry(tentry);
-			if(bMonitorB_px) bMonitorB_px->GetEntry(tentry);
-			if(bMonitorB_py) bMonitorB_py->GetEntry(tentry);
-			if(bMonitorB_pz) bMonitorB_pz->GetEntry(tentry);
-			if(bMonitorB_e) bMonitorB_e->GetEntry(tentry);
-			if(bMonitorB_edep) bMonitorB_edep->GetEntry(tentry);
-			if(bMonitorB_stepL) bMonitorB_stepL->GetEntry(tentry);
-			if(bMonitorB_volID) bMonitorB_volID->GetEntry(tentry);
-			if(bMonitorB_volName) bMonitorB_volName->GetEntry(tentry);
-			if(bMonitorB_tid) bMonitorB_tid->GetEntry(tentry);
-			if(bMonitorB_pid) bMonitorB_pid->GetEntry(tentry);
-			if(bMonitorB_charge) bMonitorB_charge->GetEntry(tentry);
+			if (b_ts2_0_) b_ts2_0_->GetEntry(tentry);
+			if (b_ts2_0_fUniqueID) b_ts2_0_fUniqueID->GetEntry(tentry);
+			if (b_ts2_0_fBits) b_ts2_0_fBits->GetEntry(tentry);
+			if (b_ts2_0_trackID) b_ts2_0_trackID->GetEntry(tentry);
+			if (b_ts2_0_parentID) b_ts2_0_parentID->GetEntry(tentry);
+			if (b_ts2_0_PDGEncoding) b_ts2_0_PDGEncoding->GetEntry(tentry);
+			if (b_ts2_0_parentPDGEncoding) b_ts2_0_parentPDGEncoding->GetEntry(tentry);
+			if (b_ts2_0_word_padding) b_ts2_0_word_padding->GetEntry(tentry);
+			if (b_ts2_0_position_fUniqueID) b_ts2_0_position_fUniqueID->GetEntry(tentry);
+			if (b_ts2_0_position_fBits) b_ts2_0_position_fBits->GetEntry(tentry);
+			if (b_ts2_0_position_fX) b_ts2_0_position_fX->GetEntry(tentry);
+			if (b_ts2_0_position_fY) b_ts2_0_position_fY->GetEntry(tentry);
+			if (b_ts2_0_position_fZ) b_ts2_0_position_fZ->GetEntry(tentry);
+			if (b_ts2_0_origin_fUniqueID) b_ts2_0_origin_fUniqueID->GetEntry(tentry);
+			if (b_ts2_0_origin_fBits) b_ts2_0_origin_fBits->GetEntry(tentry);
+			if (b_ts2_0_origin_fX) b_ts2_0_origin_fX->GetEntry(tentry);
+			if (b_ts2_0_origin_fY) b_ts2_0_origin_fY->GetEntry(tentry);
+			if (b_ts2_0_origin_fZ) b_ts2_0_origin_fZ->GetEntry(tentry);
+			if (b_ts2_0_direction_fUniqueID) b_ts2_0_direction_fUniqueID->GetEntry(tentry);
+			if (b_ts2_0_direction_fBits) b_ts2_0_direction_fBits->GetEntry(tentry);
+			if (b_ts2_0_direction_fX) b_ts2_0_direction_fX->GetEntry(tentry);
+			if (b_ts2_0_direction_fY) b_ts2_0_direction_fY->GetEntry(tentry);
+			if (b_ts2_0_direction_fZ) b_ts2_0_direction_fZ->GetEntry(tentry);
+			if (b_ts2_0_globalTime) b_ts2_0_globalTime->GetEntry(tentry);
+			if (b_ts2_0_localTime) b_ts2_0_localTime->GetEntry(tentry);
+			if (b_ts2_0_properTime) b_ts2_0_properTime->GetEntry(tentry);
+			if (b_ts2_0_totalEnergy) b_ts2_0_totalEnergy->GetEntry(tentry);
+			if (b_ts2_0_kineticEnergy) b_ts2_0_kineticEnergy->GetEntry(tentry);
+			if (b_ts2_0_momentum) b_ts2_0_momentum->GetEntry(tentry);
+			if (b_ts2_0_mass) b_ts2_0_mass->GetEntry(tentry);
 
 			m_TChain->GetEntry(iEvent);
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
+			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart
+			                                                                      <<"nhits = "<<ts2_0_<<std::endl;
 
-			// find electron, positron, photon
-			int index_g = 0;
-			int index_e = -1;
-			int index_p = -1;
-			for ( int i_par = 0; i_par < McTruth_nTracks; i_par++ ){
-				int pid = (*McTruth_pid)[i_par];
-				int ptid = (*McTruth_ptid)[i_par];
-				if ( pid == 11 && ptid == 1 ) index_e = i_par;
-				if ( pid == -11 && ptid == 1 ) index_p = i_par;
-			}
-			N2++;
+			// Found Muon from upstream?
+			// Found Electron from upstream?
 
-			// get information about them
-			double px_g = (*McTruth_px)[index_g]*1000;// GeV -> MeV 
-			double py_g = (*McTruth_py)[index_g]*1000;// GeV -> MeV 
-			double pz_g = (*McTruth_pz)[index_g]*1000;// GeV -> MeV 
-			double pa_g = sqrt(px_g*px_g+py_g*py_g+pz_g*pz_g);
-			double theta_g = (pa_g==0?2*PI:acos(pz_g/pa_g));
-			double px_e = 0;
-			double py_e = 0;
-			double pz_e = 0;
-			double pa_e = 0;
-			double theta_e = 0;
-			double px_p = 0;
-			double py_p = 0;
-			double pz_p = 0;
-			double pa_p = 0;
-			double theta_p = 0;
-			if (index_e!=-1){
-				px_e = (*McTruth_px)[index_e]*1000;// GeV -> MeV 
-				py_e = (*McTruth_py)[index_e]*1000;// GeV -> MeV 
-				pz_e = (*McTruth_pz)[index_e]*1000;// GeV -> MeV 
-				pa_e = sqrt(px_e*px_e+py_e*py_e+pz_e*pz_e);
-				theta_e = (pa_e==0?2*PI:acos(pz_e/pa_e));
-			}
-			if (index_p!=-1){
-				px_p = (*McTruth_px)[index_p]*1000;// GeV -> MeV 
-				py_p = (*McTruth_py)[index_p]*1000;// GeV -> MeV 
-				pz_p = (*McTruth_pz)[index_p]*1000;// GeV -> MeV 
-				pa_p = sqrt(px_p*px_p+py_p*py_p+pz_p*pz_p);
-				theta_p = (pa_p==0?2*PI:acos(pz_p/pa_p));
-			}
-			int index_m = (pa_e>pa_p?index_e:index_p);
-			std::string process = "Null";
-			//std::cout<<"index_m = "<<index_m<<", nTracks = "<<McTruth_nTracks<<std::endl;
-			if (index_m!=-1){
-				process = (*McTruth_process)[index_m];
-			}
-
-			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0)
-				std::cout<<prefix_EventInfoStart
-					     <<"process = \""<<process
-					     <<"\""
-					     <<std::endl;
-
-			if ( (index_temp = get_TH1D("pa_g")) != -1 ){
-				vecH1D[index_temp]->Fill(pa_g);
-			}
-			if ( (index_temp = get_TH1D("theta_g")) != -1 ){
-				vecH1D[index_temp]->Fill(theta_g);
-			}
-			if (index_e!=-1){
-				if ( (index_temp = get_TH1D("pa_e")) != -1 ){
-					vecH1D[index_temp]->Fill(pa_e);
-				}
-				if ( (index_temp = get_TH1D("theta_e")) != -1 ){
-					vecH1D[index_temp]->Fill(theta_e);
-				}
-				if ( (index_temp = get_TH2D("pa_gVSe")) != -1 ){
-					vecH2D[index_temp]->Fill(pa_g,pa_e);
-				}
-			}
-			if (index_p!=-1){
-				if ( (index_temp = get_TH1D("pa_p")) != -1 ){
-					vecH1D[index_temp]->Fill(pa_p);
-				}
-				if ( (index_temp = get_TH1D("theta_p")) != -1 ){
-					vecH1D[index_temp]->Fill(theta_p);
-				}
-			}
-
-			// Fill the tree
-			d_evt_num = evt_num;
-			d_run_num = run_num;
-			d_pid = 11;
-			d_tid = 2;
-			strcpy(d_vid,"Target");
-			strcpy(d_prid,process.c_str());
-			d_tri_t = 0;
-			d_mot_x = (*McTruth_x)[0];
-			d_mot_y = (*McTruth_y)[0];
-			d_mot_z = (*McTruth_z)[0];
-			d_mot_px = (*McTruth_px)[0];
-			d_mot_py = (*McTruth_py)[0];
-			d_mot_pz = (*McTruth_pz)[0];
-			d_x = 0;
-			d_y = 0;
-			d_z = 0;
-			d_px = 0;
-			d_py = 0;
-			d_pz = 0;
-			if (index_m != -1){
-				d_x = (*McTruth_x)[index_m]*10;// cm->mm
-				d_y = (*McTruth_y)[index_m]*10;
-				d_z = (*McTruth_z)[index_m]*10;
-				d_px = (*McTruth_px)[index_m]*1000;// GeV->MeV
-				d_py = (*McTruth_py)[index_m]*1000;
-				d_pz = (*McTruth_pz)[index_m]*1000;
-			}
-			d_tree->Fill();
+			//if ( (index_temp = get_TH1D("relz")) != -1 ){
+			//	vecH1D[index_temp]->Fill(hit_relZ*10); //cm -> mm
+			//}
 
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 		}/* end of loop in events*/
@@ -904,7 +699,6 @@ int main(int argc, char* argv[]){
 		c->Print(fileName.c_str());
 	}
 
-	d_tree->Write();
 	file->Close();
 	std::string backupFileName = OutputDir + "backup.root";
 
