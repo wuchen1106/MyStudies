@@ -15,8 +15,13 @@
 # Automatically generated files
 currentEvent.rndm
 currentRun.rndm
+beginOfRun.rndm
+endOfRun.rndm
 result/
 .svn/
+configure
+cometg4_configure
 
 # frequently changing files
 histList
+input
