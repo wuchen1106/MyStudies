@@ -229,7 +229,7 @@ class CheckoutTool(object):
 							print "  %-25s @%-15s  !!!is neither a project nor a package" % ('"'+p.name+'"','['+p.version+']')
 			if self.m_DependencyParser.status:
 				if self.m_verbose >= 5:
-					print "WARNING!!! cannnot find dependency of \"%s\" @ \"%s\"!" % (self.m_target,self.m_target_dir)
+					print "WARNING!!! status(%d) cannnot find dependency of \"%s\" @ \"%s\"!" % (self.m_DependencyParser.status,self.m_target,self.m_target_dir)
 					return 0 # cannot get the paser
 					# cannot continue with a further loop, back to upper loop
 					# since this is a minor error, so we have to return successful status so that the upper loop can keep going
