@@ -699,7 +699,6 @@ int main(int argc, char* argv[]){
 			d_i = hit_iPlate;
 			d_sto = (index_OB==-1);
 			d_cap = (index_cap != -1);
-			d_tree->Fill();
 
 			if (index_OB!=-1)
 				continue;
@@ -710,6 +709,7 @@ int main(int argc, char* argv[]){
 			if ( hit_iPlate == -1 )
 				continue;
 			N3++;
+			d_tree->Fill();
 
 			if ( (index_temp = get_TH1D("relz")) != -1 ){
 				vecH1D[index_temp]->Fill(hit_relZ*10); //cm -> mm

@@ -1,0 +1,4 @@
+#proton neutron abundance
+ 14     14      0.9223
+ 14     15      0.0467
+ 14     16      0.031
