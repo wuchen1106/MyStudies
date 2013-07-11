@@ -59,6 +59,11 @@ Detail and result will be shown in following section.
 
 ###Simulation study
 #####Simulation-1: comet_g4 simulation from production target to the entrance of CDC detector
-Results of this part can be found in [Beam](https://github.com/wuchen1106/MyStudies/new/master/Beam)
+Results of this part can be found in [Beam](https://github.com/wuchen1106/MyStudies/tree/master/Beam)
 
+#####Simulation-2: get the profile of stopped &mu
+Results is put in ``MuonStop``
+Got totally 4663123 &mu; stopped out of 800*15M initial protons, so R<sub>&mu;-stop</sub> = 3.886 &times; 10<sup>-4</sup>  
+R<sub>cap</sub> = 61%
 
+#####Simulation-3: get the profile of stopped &mu
