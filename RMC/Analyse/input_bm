@@ -1,0 +1,123 @@
+#	kWhite =0,   kBlack =1,   kGray=920,
+#	kRed   =632, kGreen =416, kBlue=600, kYellow=400, kMagenta=616, kCyan=432,
+#	kOrange=800, kSpring=820, kTeal=840, kAzure =860, kViolet =880, kPink=900
+###########################################################################################################################
+
+#	TYPE     | Name
+	TreeName | t
+
+#	TYPE    | Directory                                                       | runname | #CPU | #job
+#	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/RMC_ph2e                   |         | 8    | 1
+
+#	TYPE    | Path
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/ts2_0.electron.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/ts2_0.muon.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/ts2_0.neutron.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/ts2_0.electron.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/ts2_0.muon.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/ts2_0.neutron.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/ts2_0.pim.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/blt0.electron.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/blt0.muon.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/blt0.neutron.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/blt0.pim.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/blt0.electron.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/blt0.muon.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/blt0.neutron.root
+	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/blt0.pim.root
+
+#	TYPE    | Name                         | Type      | Vector?
+#	                                0:double;1:int;string:2
+	TBranch | x                            | 0         | 0
+	TBranch | y                            | 0         | 0
+	TBranch | z                            | 0         | 0
+	TBranch | px                           | 0         | 0
+	TBranch | py                           | 0         | 0
+	TBranch | pz                           | 0         | 0
+	TBranch | t                            | 0         | 0
+
+#	TYPE    | Directory                                                                               | histoName
+#	refTH1D | /home/chen/MyWorkArea/MyStudies/AntiProton/4BodyPhaseSpace/result/12p5GeV/output.root   | 4PS_theta
+
+#	TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm   |DrawOption
+#	TH1D    | A_e_ts20_pa     | e^{-} at ts2_0 | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
+#	TH1D    | A_e_ts20_r      | e^{-} at ts2_0 | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
+#	TH1D    | A_e_ts20_pt     | e^{-} at ts2_0 | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
+#	TH1D    | A_e_ts20_theta  | e^{-} at ts2_0 | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
+#	TH1D    | A_e_ts20_gTime  | e^{-} at ts2_0 | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
+#	TH1D    | A_m_ts20_pa     | #mu^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_m_ts20_r      | #mu^{-} at ts2_0     | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_m_ts20_pt     | #mu^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_m_ts20_theta  | #mu^{-} at ts2_0     | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_m_ts20_gTime  | #mu^{-} at ts2_0     | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_n_ts20_pa     | n_{0} at ts2_0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_n_ts20_r      | n_{0} at ts2_0  | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_n_ts20_pt     | n_{0} at ts2_0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_n_ts20_theta  | n_{0} at ts2_0  | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_n_ts20_gTime  | n_{0} at ts2_0  | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | C_e_ts20_pa     | e^{-} at ts2_0 | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
+#	TH1D    | C_e_ts20_r      | e^{-} at ts2_0 | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
+#	TH1D    | C_e_ts20_pt     | e^{-} at ts2_0 | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
+#	TH1D    | C_e_ts20_theta  | e^{-} at ts2_0 | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
+#	TH1D    | C_e_ts20_gTime  | e^{-} at ts2_0 | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
+#	TH1D    | C_m_ts20_pa     | #mu^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_m_ts20_r      | #mu^{-} at ts2_0     | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_m_ts20_pt     | #mu^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_m_ts20_theta  | #mu^{-} at ts2_0     | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_m_ts20_gTime  | #mu^{-} at ts2_0     | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_n_ts20_pa     | n_{0} at ts2_0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_n_ts20_r      | n_{0} at ts2_0  | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_n_ts20_pt     | n_{0} at ts2_0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_n_ts20_theta  | n_{0} at ts2_0  | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_n_ts20_gTime  | n_{0} at ts2_0  | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_p_ts20_pa     | #pi^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_p_ts20_r      | #pi^{-} at ts2_0     | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_p_ts20_pt     | #pi^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_p_ts20_theta  | #pi^{-} at ts2_0     | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_p_ts20_gTime  | #pi^{-} at ts2_0     | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | A_e_blt0_pa     | e^{-} at blt0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
+#	TH1D    | A_e_blt0_r      | e^{-} at blt0  | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
+#	TH1D    | A_e_blt0_pt     | e^{-} at blt0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
+#	TH1D    | A_e_blt0_theta  | e^{-} at blt0  | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
+#	TH1D    | A_e_blt0_gTime  | e^{-} at blt0  | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
+#	TH1D    | A_m_blt0_pa     | #mu^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_m_blt0_r      | #mu^{-} at blt0      | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_m_blt0_pt     | #mu^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_m_blt0_theta  | #mu^{-} at blt0      | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_m_blt0_gTime  | #mu^{-} at blt0      | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_n_blt0_pa     | n_{0} at blt0   | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_n_blt0_r      | n_{0} at blt0   | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_n_blt0_pt     | n_{0} at blt0   | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_n_blt0_theta  | n_{0} at blt0   | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_n_blt0_gTime  | n_{0} at blt0   | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_p_blt0_pa     | #pi^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_p_blt0_r      | #pi^{-} at blt0      | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_p_blt0_pt     | #pi^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_p_blt0_theta  | #pi^{-} at blt0      | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | A_p_blt0_gTime  | #pi^{-} at blt0      | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
+#	TH1D    | C_e_blt0_pa     | e^{-} at blt0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
+#	TH1D    | C_e_blt0_r      | e^{-} at blt0  | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
+#	TH1D    | C_e_blt0_pt     | e^{-} at blt0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
+#	TH1D    | C_e_blt0_theta  | e^{-} at blt0  | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
+#	TH1D    | C_e_blt0_gTime  | e^{-} at blt0  | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
+#	TH1D    | C_m_blt0_pa     | #mu^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_m_blt0_r      | #mu^{-} at blt0      | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_m_blt0_pt     | #mu^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_m_blt0_theta  | #mu^{-} at blt0      | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_m_blt0_gTime  | #mu^{-} at blt0      | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_n_blt0_pa     | n_{0} at blt0   | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_n_blt0_r      | n_{0} at blt0   | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_n_blt0_pt     | n_{0} at blt0   | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_n_blt0_theta  | n_{0} at blt0   | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TH1D    | C_n_blt0_gTime  | n_{0} at blt0   | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+	TH1D    | C_p_blt0_pa     | #pi^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+	TH1D    | C_p_blt0_r      | #pi^{-} at blt0      | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+	TH1D    | C_p_blt0_pt     | #pi^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+	TH1D    | C_p_blt0_theta  | #pi^{-} at blt0      | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+	TH1D    | C_p_blt0_gTime  | #pi^{-} at blt0      | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+
+#	TYPE    | NAME           | TITLE                                                | xAxisName         | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
+#	TH2D    | costheta_VS_r  | anti-proton (incident proton @12.5GeV/c on Graphite) | cos#theta         | r(cm)         | 120 | -1    | 1     | 120 | 0    | 0.6
+
+#	TYPE    | NAME           | TITLE                         | xAxisName          | yAxisName     | COL | COM | minX | maxX |minY | LOGX | LOGY | Marker | DrawOption
+#	TGraph  | rate_vs_pa     | PassingRate                   | p_{a}(MeV/c)       | rate          | 1   | 1   | 94   | 99   | 1   | 0    | 1    | 3      | LP

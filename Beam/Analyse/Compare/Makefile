@@ -28,31 +28,20 @@ LIBS += -pthread -lm -ldl -rdynamic
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-RMCE = RMCE
-PH2E = ph2e
-BM = bm
+PROGRAM = Compare
 
 # Object list for user defined packages
 OBJ += $(MYCOMMONTOOLSROOT)/MyRootInterface/MyRootInterface.o
 
-$(RMCE): $(OBJ) $(RMCE).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(RMCE).C $(OBJ) -o $(RMCE)
-
-$(PH2E): $(OBJ) $(PH2E).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PH2E).C $(OBJ) -o $(PH2E)
-
-$(BM): $(OBJ) $(BM).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(BM).C $(OBJ) -o $(BM)
+$(PROGRAM): $(PROGRAM).cc
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).cc $(OBJ) -o $(PROGRAM)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
 # Here is an example showing how to make clean and make a specified user defined package
 .PHONY: clean
 clean:
-	$(RM) $(OBJ)
-	$(RM) $(RMCE)
-	$(RM) $(PH2E)
-	$(RM) $(BM)
+	$(RM) $(PROGRAM)
 
 .PHONY: all
-all: $(RMCE)
+all: $(PROGRAM)

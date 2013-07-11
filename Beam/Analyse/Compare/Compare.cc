@@ -101,7 +101,6 @@ int main(int argc, char** argv){
 	double M_MUON = 105.6584*MeV; //mass of muon in MeV
 	double M_ELE = 0.510999*MeV; //mass of electron in MeV
 	double M_U = 931.494061*MeV; //atomic mass unit in MeV
-	double M_p = 0.9382723*GeV;  // mass of proton// proton mass unit in GeV
 
 	//##########################Prepare histograms############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
@@ -120,49 +119,6 @@ int main(int argc, char** argv){
 	int N5 = 0;
 	int N6 = 0;
 	int N7 = 0;
-
-	//=======================================================================================================
-	//************DO THE DIRTY WORK*******************
-	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK###"<<std::endl;
-	Long64_t nEvent = fMyRootInterface->get_Entries();
-	for( Long64_t iEvent = 0; iEvent < nEvent; iEvent++ ){
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
-		N0++;
-		fMyRootInterface->GetEntry(iEvent);
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
-
-		index_temp = fMyRootInterface->get_TBranch_index("x");
-		double x = fMyRootInterface->get_vec_double(index_temp)*mm;
-		index_temp = fMyRootInterface->get_TBranch_index("y");
-		double y = fMyRootInterface->get_vec_double(index_temp)*mm;
-		index_temp = fMyRootInterface->get_TBranch_index("z");
-		double z = fMyRootInterface->get_vec_double(index_temp)*mm;
-		index_temp = fMyRootInterface->get_TBranch_index("px");
-		double px = fMyRootInterface->get_vec_double(index_temp)*MeV;
-		index_temp = fMyRootInterface->get_TBranch_index("py");
-		double py = fMyRootInterface->get_vec_double(index_temp)*MeV;
-		index_temp = fMyRootInterface->get_TBranch_index("pz");
-		double pz = fMyRootInterface->get_vec_double(index_temp)*MeV;
-		index_temp = fMyRootInterface->get_TBranch_index("t");
-		double t = fMyRootInterface->get_vec_double(index_temp)*ns;
-
-		double pa = sqrt(px*px+py*py+pz*pz);
-		double pt = sqrt(px*px+py*py);
-		double r = sqrt(x*x+y*y);
-		double theta = acos(pz/pa);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"pa");
-		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pa/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"theta");
-		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(theta/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"pt");
-		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pt/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"gTime");
-		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(t/ns);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"r");
-		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(r/cm);
-
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Done"<<std::endl;
-	}
 
 	//=>For output
 	clock_t t_END = clock();
