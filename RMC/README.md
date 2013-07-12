@@ -79,4 +79,4 @@ So **R<sub>time</sub> = 3646/12276 = 29.7%**
 #####Simulation-4: from emitted electrons
 Optional: Use resolution figure to do this study.  
 **E<sub>rec</sub> = 90%.**  
-**R<sub>mom</sub> = 2.67304&times;10<sup>-5</sup>**
+**R<sub>mom</sub> = 2.4841&times;10<sup>-5</sup>**
