@@ -1,197 +1,230 @@
 #include <iostream>
+#include <iomanip>
+#include <fstream>
 #include <sstream>
-
-#include <cstdlib>
 #include <math.h>
 
+#include "globals.hh"
 #include "Randomize.hh"
 
-#include "TStyle.h"
-#include "TCanvas.h"
-#include "TFolder.h"
-#include "TFile.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "Math/DistFunc.h"
 #include "TROOT.h"
 
-using namespace std;
+#include "MyRootInterface.hxx"
 
-int main(int argc, char** argv){
+char m_workMode[128];
+std::string m_runName;
+int verbose = 0;
+int nEvents = 0;
+int printModule = 1;
+bool backup = false;
+double sig_up = 106;
+double sig_low = 103.8;
+
+void init_args();
+void print_usage(char* prog_name);
+
+int main(int argc, char* argv[]){
 
 	clock_t t_START = clock();
+
+	//=======================================
+	//*************read parameter**********
+	init_args();
+	int result;
+	while((result=getopt(argc,argv,"hbv:u:l:n:m:r:p:"))!=-1){
+		switch(result){
+			/* INPUTS */
+			case 'm':
+				strcpy(m_workMode,optarg);
+				printf("work mode: %s\n",m_workMode);
+				break;
+			case 'r':
+				m_runName=optarg;
+				printf("run name: %s\n",m_runName.c_str());
+				break;
+			case 'v':
+				verbose = atoi(optarg);
+				printf("verbose level: %d\n",verbose);
+				break;
+			case 'u':
+				sig_up = atof(optarg)*MeV;
+				printf("up edge of signal window in MeV/c: %d\n",sig_up/MeV);
+				break;
+			case 'l':
+				sig_up = atof(optarg)*MeV;
+				printf("low edge of signal window in MeV/c: %d\n",sig_low/MeV);
+				break;
+			case 'b':
+				backup = true;
+				printf("restore backup file!\n");
+				break;
+			case 'n':
+				nEvents = atoi(optarg);
+				printf("nEvent: %d\n",nEvents);
+				break;
+			case 'p':
+				printModule = atoi(optarg);
+				printf("printModule: %d\n",printModule);
+				break;
+			case '?':
+				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
+				break;
+			case 'h':
+			default:
+				print_usage(argv[0]);
+				return 1;
+		}
+	}
+
+	//=======================================
+	//************Verbose Control***********
+	int Verbose_SectorInfo = 5; //大概的流程情况
+	std::string prefix_SectorInfo = "### ";
+	int Verbose_HistInfo = 10; //有哪些hist,什么时候输出了，参数如何
+	std::string prefix_HistInfo= "  [Histograms] ";
+	int Verbose_Statistics = 10; //跟统计相关的(效率，分辨，粒子鉴别的情况)
+	std::string prefix_Statistics="  [Statistics] ";
+	int Verbose_FileInfo = 10; //有哪些FileList,都有多少file
+	std::string prefix_FileInfo="  [FileInfo] ";
+	int Verbose_EffInfo = 15; //Efficiency info
+	std::string prefix_EffInfo="  [EffInfo] ";
+	int Verbose_EventInfo = 20; //每个event的基本流程
+	std::string prefix_EventInfoStart="    =>[EventInfo] ";
+	std::string prefix_EventInfo="      [EventInfo] ";
+	int Verbose_ParticleInfo=25; //每个particle的基本信息
+	std::string prefix_ParticleInfoStart="    ->[ParticleInfo]";
+	std::string prefix_ParticleInfo="      [ParticleInfo]";
+
 	//##########################PRESET############################
-	stringstream buff;
-
-	//histogram
-	vector<TString> nameForH2D;
-	vector<TString> titleForH2D;
-	vector<int>     bin1ForH2D;
-	vector<double>  left1ForH2D;
-	vector<double>  right1ForH2D;
-	vector<int>     bin2ForH2D;
-	vector<double>  left2ForH2D;
-	vector<double>  right2ForH2D;
-	vector<TH2D*>   vecH2D;
-
-	vector<TString> nameForH1D;
-	vector<TString> titleForH1D;
-	vector<int>     bin1ForH1D;
-	vector<double>  left1ForH1D;
-	vector<double>  right1ForH1D;
-	vector<TH1D*>   vecH1D;
+	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In Preset###"<<std::endl;
+	MyRootInterface *fMyRootInterface = new MyRootInterface(verbose);
+	fMyRootInterface->set_OutputDir("result");
+	int index_temp = 0;
+	TH1D *h1d_temp=0;
+	std::string name_temp = "";
+	std::string title_temp = "";
+	std::string  xName_temp = "";
+	std::string  yName_temp = "";
+	int  bin1_temp = 0;
+	double  left1_temp = 0;
+	double  right1_temp = 0;
+	double  minx_temp = 0;
+	double  miny_temp = 0;
+	int  color_temp = 0;
+	int  compare_temp = 0;
+	int  xlog_temp = 0;
+	int  ylog_temp = 0;
+	int  marker_temp = 0;
+	double  norm_temp = 0;
+	std::string  drawOpt_temp = "";
+	std::stringstream buff;
 
 	//=>About Constant
 	double PI = 3.141592653589793238;
 	double FSC = 1/137.03599911; //fine structure constant
-	double M_MUON = 105.6584; //mass of muon in MeV
-	double M_ELE = 0.510999; //mass of electron in MeV
-	double M_U = 931.494061; //atomic mass unit in MeV
+	double M_MUON = 105.6584*MeV; //mass of muon in MeV
+	double M_ELE = 0.510999*MeV; //mass of electron in MeV
+	double M_U = 931.494061*MeV; //atomic mass unit in MeV
+	double M_p = 0.9382723*GeV;  // mass of proton// proton mass unit in GeV
 
-	//=>About Spectrum
-	int num_bin = 100; //How many bins do you want
-	int num_bin4inte = 1000; //For integration
-	if (argc >= 3){
-		buff.str("");
-		buff.clear();
-		buff<<argv[2];
-		buff>>num_bin;
-	}
+	//##########################Prepare histograms############################
+	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
+	fMyRootInterface->read("input");
+	fMyRootInterface->set_OutputName(m_runName);
+	fMyRootInterface->init();
 
-	//=>About Signal window
-	double sig_up = 106;
-	double sig_low = 103.8;
-
-	//=>Get resolution
-	std::string FN_res = "config/mix2_400um_2.root";
-	std::string HN_res = "hsig_res_sum";
-	TFile* fp_res = new TFile(FN_res.c_str());
-	if (fp_res==NULL) {
-		std::cout<<"ERROR: Can not find file: "<<FN_res<<"!!!"<<std::endl;
-		return -1;
-	}
-	TH1D* h_res = (TH1D*)fp_res->Get(HN_res.c_str());
-	if(h_res==NULL){
-		std::cout<<"ERROR: Can not find histogram \""<<HN_res<<"\"in file : "<<FN_res<<"!!!"<<std::endl;
-		return -1;
-	}
-	int nbin_res = h_res->GetNbinsX();
-	h_res->SetTitle("P(p_{true}-p_{rec})");
-	double binw_res = h_res->GetBinWidth(0);
-	double res_max = h_res->GetBinLowEdge(nbin_res)+binw_res;
-	//std::cout<<"res_max = "<<res_max<<std::endl;
-	double res_min = h_res->GetBinLowEdge(0);
-	//std::cout<<"res_min = "<<res_min<<std::endl;
-	h_res->Scale(1./h_res->Integral());
-
-	//=>Get spectrum
-	std::string FN_SPEC = "config/RMC_e.root";
-	//std::string FN_SPEC = "config/RPC.root";
-	//std::string FN_SPEC = "config/BE_00.root";
-	//std::string FN_SPEC = "config/BE_01.root";
-	//std::string FN_SPEC = "config/BE_02.root";
-	//std::string FN_SPEC = "config/BE_03.root";
-	//std::string FN_SPEC = "config/BE_04.root";
-	//std::string FN_SPEC = "config/BE_05.root";
-	std::string HN_SPEC = "pa_e";
-	TFile* fp_SPEC = new TFile(FN_SPEC.c_str());
-	if (fp_SPEC==NULL) {
-		std::cout<<"ERROR: Can not find file: "<<FN_SPEC<<"!!!"<<std::endl;
-		return -1;
-	}
-	TH1D* h_SPEC = (TH1D*)fp_SPEC->Get(HN_SPEC.c_str());
-	if(h_SPEC==NULL){
-		std::cout<<"ERROR: Can not find histogram \""<<HN_SPEC<<"\"in file : "<<FN_SPEC<<"!!!"<<std::endl;
-		return -1;
-	}
-	h_SPEC->Scale(1./h_SPEC->Integral());
-	int nbin_SPEC = h_SPEC->GetNbinsX();
-	h_SPEC->SetTitle("P_{#mu->#gamma}(E_{#gamma})");
-	double binw_SPEC = h_SPEC->GetBinWidth(0);
-	double SPEC_max = h_SPEC->GetBinLowEdge(nbin_SPEC)+binw_SPEC;
-	//std::cout<<"SPEC_max = "<<SPEC_max<<std::endl;
-	double SPEC_min = h_SPEC->GetBinLowEdge(0);
-	//std::cout<<"SPEC_min = "<<SPEC_min<<std::endl;
-
-	//=>Prepare histograms
-	double SPEC_left = SPEC_min;
-	double SPEC_right = SPEC_max;
-	//std::cout<<"SPEC_right = "<<SPEC_right<<std::endl;
-	nameForH1D.push_back("Spectrum");
-	titleForH1D.push_back("p_{a}/MeV");
-	bin1ForH1D.push_back(num_bin);
-	left1ForH1D.push_back(SPEC_left);
-	right1ForH1D.push_back(SPEC_right);
-
-	nameForH1D.push_back("MisMeas_hist");
-	titleForH1D.push_back("P_{sig/e}(p_{e}/MeV)");
-	bin1ForH1D.push_back(num_bin);
-	left1ForH1D.push_back(SPEC_left);
-	right1ForH1D.push_back(SPEC_right);
-
-	nameForH1D.push_back("contribution");
-	titleForH1D.push_back("contribution per captured muon");
-	bin1ForH1D.push_back(num_bin);
-	left1ForH1D.push_back(SPEC_left);
-	right1ForH1D.push_back(SPEC_right);
-
-	nameForH1D.push_back("TotalContribution");
-	titleForH1D.push_back("Total Contribution VS reslution limit");
-	bin1ForH1D.push_back(10);
-	left1ForH1D.push_back(-3);
-	right1ForH1D.push_back(0);
-
-	for ( int i = 0; i < nameForH2D.size(); i++ ){
-		vecH2D.push_back(new TH2D(nameForH2D[i],titleForH2D[i],bin1ForH2D[i],left1ForH2D[i],right1ForH2D[i],bin2ForH2D[i],left2ForH2D[i],right2ForH2D[i]) );
-	}
-
-	for ( int i = 0; i < nameForH1D.size(); i++ ){
-		vecH1D.push_back(new TH1D(nameForH1D[i],titleForH1D[i],bin1ForH1D[i],left1ForH1D[i],right1ForH1D[i]) );
-		std::cout<<"vecH1D["<<i<<"]: "<<nameForH1D[i]<<", "<<titleForH1D[i]<<", "<<bin1ForH1D[i]<<", "<<left1ForH1D[i]<<", "<<right1ForH1D[i]<<std::endl;
-	}
-	vecH1D.push_back(h_res);
-	vecH1D.push_back(h_SPEC);
-	vecH1D[0] = h_SPEC;
-
+	//************SET Statistics********************
+	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET Statistics###"<<std::endl;
 	//=>About Statistical
 	int N0 = 0;
 	int N1 = 0;
 	int N2 = 0;
 	int N3 = 0;
+	int N4 = 0;
+	int N5 = 0;
+	int N6 = 0;
+	int N7 = 0;
+
+	//=>Get resolution
+	TH1D* h_res = fMyRootInterface->get_TH1D(0);
+	h_res->Scale(1./h_res->Integral());
+
+	//=>Get spectrum
+	int ihist_SPEC = 1;
+	TH1D* h_SPEC = fMyRootInterface->get_TH1D(ihist_SPEC);
+	h_SPEC->Scale(1./h_SPEC->Integral());
+
+	int num_bin = h_SPEC->GetNbinsX(); //How many bins do you want
+	xName_temp = fMyRootInterface->get_xNameForH1D(ihist_SPEC);
+	yName_temp = fMyRootInterface->get_yNameForH1D(ihist_SPEC);
+	bin1_temp = h_SPEC->GetNbinsX();
+	left1_temp = h_SPEC->GetXaxis()->GetXmin();
+	right1_temp = h_SPEC->GetXaxis()->GetXmax();
+	minx_temp = fMyRootInterface->get_minxForH1D(ihist_SPEC);
+	miny_temp = fMyRootInterface->get_minyForH1D(ihist_SPEC);
+	color_temp = fMyRootInterface->get_colorForH1D(ihist_SPEC);
+	compare_temp = fMyRootInterface->get_compareForH1D(ihist_SPEC);
+	xlog_temp = fMyRootInterface->get_xlogForH1D(ihist_SPEC);
+	ylog_temp = fMyRootInterface->get_ylogForH1D(ihist_SPEC);
+	marker_temp = fMyRootInterface->get_markerForH1D(ihist_SPEC);
+	norm_temp = fMyRootInterface->get_normForH1D(ihist_SPEC);
+	drawOpt_temp = fMyRootInterface->get_drawOptForH1D(ihist_SPEC);
+
+	name_temp = "MisMeas_hist";
+	title_temp = "Differential Momentum Cut Efficiency";
+	xName_temp = "p_{a}(MeV/c)";
+	yName_temp = "probability";
+	TH1D* h_MisMeas = fMyRootInterface->add_TH1D(name_temp,title_temp,xName_temp,yName_temp,bin1_temp,left1_temp,right1_temp,minx_temp,miny_temp,color_temp,compare_temp,xlog_temp,ylog_temp,marker_temp,norm_temp,drawOpt_temp);
+
+	name_temp = "contribution";
+	title_temp = "Differential Contribution Probobility";
+	xName_temp = "p_{a}(MeV/c)";
+	yName_temp = "probability";
+	TH1D* h_contri = fMyRootInterface->add_TH1D(name_temp,title_temp,xName_temp,yName_temp,bin1_temp,left1_temp,right1_temp,minx_temp,miny_temp,color_temp,compare_temp,xlog_temp,ylog_temp,marker_temp,norm_temp,drawOpt_temp);
+
+	TH1D* h_conTot = 0; // should use MeV
+	if ( (index_temp = fMyRootInterface->get_TH1D_index("contriTotal")) != -1 ){
+		h_conTot = fMyRootInterface->get_TH1D(index_temp);
+	}
+	else{
+		std::cout<<"ERROR: Can not find contribution total histogram"<<std::endl;
+		return -1;
+	}
+	int nbins_conTot = h_conTot->GetNbinsX();
 
 	//=>Calculate mis-measurement probability
-	for ( int i = 0; i < num_bin; i++ ){
-		double E = SPEC_left + ( (double)i + 0.5 )*(SPEC_right - SPEC_left)/num_bin;
+	for ( int i = 1; i <= num_bin; i++ ){
+		double E = h_SPEC->GetBinCenter(i)*MeV;
 		double probabilityE = 0;
 		double res_min = E - sig_up;
 		double res_max = E - sig_low;
-		int ibinmin_res = h_res->FindBin(res_min);
-		int ibinmax_res = h_res->FindBin(res_max);
+		int ibinmin_res = h_res->FindBin(res_min/MeV);
+		int ibinmax_res = h_res->FindBin(res_max/MeV);
 		probabilityE = h_res->Integral(ibinmin_res,ibinmax_res);
-		vecH1D[1]->Fill(E,probabilityE);
-		//std::cout<<vecH1D[0]->GetName()<<"->Fill("<<E<<", "<<probabilityE<<")"<<std::endl;
+		h_MisMeas->SetBinContent(i,probabilityE/MeV);
 	}
 
 	//=>Calculate total mis-measurement probability
 	double prob_tot = 0;
 	std::vector<double> probs;
-	for ( int i = 0; i < 10; i++ ){
+	for ( int i = 0; i < nbins_conTot; i++ ){
 		probs.push_back(0.);
 	}
 	for ( int i = 0; i < num_bin; i++ ){
-		double E = SPEC_left + ( (double)i + 0.5 )*(SPEC_right - SPEC_left)/num_bin;
-		int ibin_SPECE = vecH1D[0]->FindBin(E);
-		int ibin_mis = vecH1D[1]->FindBin(E);
-		double prob_SPECE = vecH1D[0]->GetBinContent(ibin_SPECE);
-		double prob_mis = vecH1D[1]->GetBinContent(ibin_mis);
-		for (int i = 1; i <= 10; i++){
-			double res_limit = vecH1D[3]->GetBinCenter(i);
+		double E = h_SPEC->GetBinCenter(i)*MeV;
+		double prob_SPECE = h_SPEC->GetBinContent(i);
+		double prob_mis = h_MisMeas->GetBinContent(i);
+		for (int i = 1; i <= nbins_conTot; i++){
+			double res_limit = h_conTot->GetBinCenter(i)*MeV;
 			double res_min = E - sig_up;
 			double res_max = E - sig_low;
-			std::cout<<"    res_min = "<<res_min
-				     <<", res_max = "<<res_max
-				     <<", res_limit = "<<res_limit
-				     <<std::endl;
+			//std::cout<<"    res_min = "<<res_min
+			//	     <<", res_max = "<<res_max
+			//	     <<", res_limit = "<<res_limit
+			//	     <<std::endl;
 			if (res_min<res_limit) res_min = res_limit;
 			double probabilityE = 0;
 			if (res_min>res_max){
@@ -202,33 +235,30 @@ int main(int argc, char** argv){
 				int ibinmax_res = h_res->FindBin(res_max);
 				probabilityE = h_res->Integral(ibinmin_res,ibinmax_res);
 			}
-			std::cout<<"     probabilityE = "<<probabilityE
-				     <<std::endl;
+			//std::cout<<"     probabilityE = "<<probabilityE
+			//	     <<std::endl;
 			probs[i-1]+=prob_SPECE*probabilityE;
 		}
-		std::cout<<"bin["<<i
-			     <<"], E = "<<E
-			     <<", prob_SPECE = "<<prob_SPECE
-			     <<", prob_mis = "<<prob_mis
-			     <<", prob_tot = "<<prob_tot
-			     <<" + "<<prob_SPECE * prob_mis
-			     <<std::endl;
+	//	std::cout<<"bin["<<i
+	//		     <<"], E = "<<E
+	//		     <<", prob_SPECE = "<<prob_SPECE
+	//		     <<", prob_mis = "<<prob_mis
+	//		     <<", prob_tot = "<<prob_tot
+	//		     <<" + "<<prob_SPECE * prob_mis
+	//		     <<std::endl;
 		prob_tot += prob_SPECE * prob_mis; 
-		int ibin = vecH1D[2]->FindBin(E);
-		vecH1D[2]->SetBinContent(ibin,prob_SPECE * prob_mis);
+		h_contri->SetBinContent(i,prob_SPECE * prob_mis);
 	}
-	for ( int i = 1; i <= 10; i++ ){
-		vecH1D[3]->SetBinContent(i,probs[i-1]);
+	for ( int i = 1; i <= nbins_conTot; i++ ){
+		h_conTot->SetBinContent(i,probs[i-1]);
 	}
 	std::cout<<"prob_tot = "<<prob_tot<<std::endl;
 
 	//=>For output
-	std::string output_filename = "output.root";
-	TFile output_file(output_filename.c_str(),"recreate");
-
 	clock_t t_END = clock();
-
 	//#########################THEEND###############################
+	//************WRITE AND OUTPUT********************
+	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In WRITE AND OUTPUT ###"<<std::endl;
 	std::cout<<"\n################BENTCH MARK###################"<<std::endl;
 	std::cout<<"TOTAL TIME COST IS:  "<<(double)(t_END-t_START)/CLOCKS_PER_SEC*1000<<"ms"<<std::endl;
 	//std::cout<<"PRESET:              "<<(double)(t_PRESET-t_START)/CLOCKS_PER_SEC*1000<<"ms"<<std::endl;
@@ -241,31 +271,43 @@ int main(int argc, char** argv){
 	std::cout<<"N2 = "<<N2<<std::endl;
 	std::cout<<"N3 = "<<N3<<std::endl;
 
-	gStyle->SetPalette(1);
-	gStyle->SetOptStat(0);
-	//  gStyle->SetTitleW(0.99);
-	//  gStyle->SetTitleH(0.08);
-
-	for ( int i = 0; i < vecH2D.size(); i++ ){
-		TString name = vecH2D[i]->GetName();
-		TCanvas* c = new TCanvas(name);
-		//gPad->SetLogy(1);
-		vecH2D[i]->Draw("COLZ");
-		vecH2D[i]->Write();
-		TString fileName = name + ".pdf";
-		c->Print(fileName);
-	}
-
-	for ( int i = 0; i < vecH1D.size(); i++ ){
-		TString name = vecH1D[i]->GetName();
-		TCanvas* c = new TCanvas(name);
-		//gPad->SetLogy(1);
-		vecH1D[i]->Draw();
-		vecH1D[i]->Write();
-		TString fileName = name + ".pdf";
-		c->Print(fileName);
-	}
-
-	output_file.Close();
+	fMyRootInterface->dump();
 	return 0;
+}
+
+void init_args()
+{
+	strcpy(m_workMode,"gen");
+	verbose = 0;
+	nEvents = 0;
+	printModule = 10000;
+	backup = false;
+	sig_up = 106*MeV;
+	sig_low = 103.8*MeV;
+}
+
+void print_usage(char* prog_name)
+{
+	fprintf(stderr,"Usage %s [options (args)] [input files]\n",prog_name);
+	fprintf(stderr,"[options]\n");
+	fprintf(stderr,"\t -m\n");
+	fprintf(stderr,"\t\t choose work mode: [gen(default), com]\n");
+	fprintf(stderr,"\t -r\n");
+	fprintf(stderr,"\t\t set run name\n");
+	fprintf(stderr,"\t -v\n");
+	fprintf(stderr,"\t\t verbose level\n");
+	fprintf(stderr,"\t -n\n");
+	fprintf(stderr,"\t\t nEvent\n");
+	fprintf(stderr,"\t -u\n");
+	fprintf(stderr,"\t\t up edge of signal window (in MeV/c)\n");
+	fprintf(stderr,"\t -l\n");
+	fprintf(stderr,"\t\t low edge of signal window (in MeV/c)\n");
+	fprintf(stderr,"\t -p\n");
+	fprintf(stderr,"\t\t printModule\n");
+	fprintf(stderr,"\t -h\n");
+	fprintf(stderr,"\t\t Usage message.\n");
+	fprintf(stderr,"\t -b\n");
+	fprintf(stderr,"\t\t restore backup file.\n");
+	fprintf(stderr,"[example]\n");
+	fprintf(stderr,"\t\t%s -m ab -v 20 -n 100\n",prog_name);
 }

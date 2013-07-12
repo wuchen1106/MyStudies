@@ -1,0 +1,52 @@
+#	kWhite =0,   kBlack =1,   kGray=920,
+#	kRed   =632, kGreen =416, kBlue=600, kYellow=400, kMagenta=616, kCyan=432,
+#	kOrange=800, kSpring=820, kTeal=840, kAzure =860, kViolet =880, kPink=900
+###########################################################################################################################
+
+#	TYPE     | Name
+	TreeName | tree
+
+#	TYPE    | Directory                                                       | runname | #CPU | #job
+	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/RMC_ph2e                   |         | 8    | 1
+
+#	TYPE    | Name                         | Type      | Vector?
+#	                                0:double;1:int;string:2
+	TBranch | evt_num                      | 1         | 0
+	TBranch | run_num                      | 1         | 0
+	TBranch | McTruth_nTracks              | 1         | 0
+	TBranch | McTruth_tid                  | 1         | 1
+	TBranch | McTruth_pid                  | 1         | 1
+	TBranch | McTruth_ptid                 | 1         | 1
+	TBranch | McTruth_px                   | 0         | 1
+	TBranch | McTruth_py                   | 0         | 1
+	TBranch | McTruth_pz                   | 0         | 1
+	TBranch | McTruth_pz                   | 0         | 1
+	TBranch | McTruth_time                 | 0         | 1
+	TBranch | McTruth_process              | 2         | 1
+	TBranch | McTruth_volume               | 2         | 1
+	TBranch | CdcCell_nHits                | 0         | 0
+	TBranch | CdcCell_tid                  | 0         | 1
+	TBranch | CdcCell_t                    | 1         | 1
+	TBranch | Trigger_nHits                | 0         | 0
+	TBranch | Trigger_tid                  | 0         | 1
+	TBranch | Trigger_t                    | 1         | 1
+
+#	TYPE     | Name
+	oTreeName | t
+
+#	TYPE     | Name                         | Type      | Vector?
+#	                                0:double;1:int;string:2
+	oTBranch | evt_num                      | 1         | 0
+	oTBranch | run_num                      | 1         | 0
+	oTBranch | x                            | 0         | 0
+	oTBranch | y                            | 0         | 0
+	oTBranch | z                            | 0         | 0
+	oTBranch | px                           | 0         | 0
+	oTBranch | py                           | 0         | 0
+	oTBranch | pz                           | 0         | 0
+	oTBranch | t                            | 0         | 0
+#	oTBranch | prid                         | 2         | 0
+#	oTBranch | vid                          | 2         | 0
+
+#	TYPE    | NAME            | TITLE                                      | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
+	TH1D    | relz            | z position of Muon Capture point in target | #z(mm)       | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 

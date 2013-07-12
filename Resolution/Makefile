@@ -16,10 +16,13 @@ CXXFLAGS = -g -O2 -W -Wall
   # LIBDIR shows directories which contain library files coresponding to those headers. 
   # LIBS is the list of shared library files you would use.They can be found in LIBDIR. ( Names changing rule: libXXX.so to -lXXX )
 
+# Special packages:
+INCDIR += -I$(MYCOMMONTOOLSROOT)/MyRootInterface
+
 # Take root as an example. ( Root is a widely used package developed by CERN for analysing. )
-INCDIR = -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
-LIBDIR = $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
-LIBS = -pthread -lm -ldl -rdynamic
+INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
+LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
+LIBS += -pthread -lm -ldl -rdynamic
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
 # Names of user defined packages
@@ -28,7 +31,7 @@ LIBS = -pthread -lm -ldl -rdynamic
 PROGRAM = Resolution
 
 # Object list for user defined packages
-OBJ = 
+OBJ += $(MYCOMMONTOOLSROOT)/MyRootInterface/MyRootInterface.o
 
 $(PROGRAM): $(OBJ) $(PROGRAM).C
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).C $(OBJ) -o $(PROGRAM)
