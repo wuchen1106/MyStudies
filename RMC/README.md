@@ -73,8 +73,8 @@ Direction is supposed to be isotopic.
 1.5 &times; 10<sup>8</sup> photons were generated in this simulation and 339204 of them are of above 100MeV/c momentum.
 So **R<sub>HE-e</sub> = 339204/1.5&times;10<sup>8</sup> = 2.26&times;10<sup>-3</sup>**  
 Among them, 92357 hits the CDC, 84632 hits the trigger, and 12276 hit the CDC first so **A<sub>geo</sub> = 12276/339204 = 3.62%**  
-Further applying the signal time window of 700ns to 1314ns and initial proton time spread of 100ns, only 191 electrons of them can survive.
-So **R<sub>time</sub> = 28.98%**
+Further applying the signal time window of 700ns to 1314ns and initial proton time spread of 100ns, only 3646 electrons of them can survive.
+So **R<sub>time</sub> = 3646/12276 = 29.7%**
 
 #####Simulation-4: from emitted electrons
 Optional: Use resolution figure to do this study.  
