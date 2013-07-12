@@ -61,9 +61,22 @@ Detail and result will be shown in following section.
 #####Simulation-1: comet_g4 simulation from production target to the entrance of CDC detector
 Results of this part can be found in [Beam](https://github.com/wuchen1106/MyStudies/tree/master/Beam)
 
-#####Simulation-2: get the profile of stopped &mu
+#####Simulation-2: get the profile of stopped &mu;
 Results is put in ``MuonStop``
+Analyzation is done by ``bm.C``
 Got totally 4663123 &mu; stopped out of 800*15M initial protons, so R<sub>&mu;-stop</sub> = 3.886 &times; 10<sup>-4</sup>  
-R<sub>cap</sub> = 61%
+According to ..., R<sub>cap</sub> = 61%.
 
-#####Simulation-3: get the profile of stopped &mu
+#####Simulation-3: simulation from emitted photons
+Initial position and time can be described by the profile of stopped &mu;
+Energy distribution can be described by ``RMCSpectrum`` I mentioned above.
+Direction is supposed to be isotopic.
+1.5 &times; 10<sup>8</sup> photons were generated in this simulation and 659 of them are of above 100MeV/c momentum and finally accepted by CDC detector.  
+So R<sub>HE-e</sub> &times; A<sub>geo</sub> = 659/1.5 &times; 10<sup>8</sup> = 4.393 &times; 10<sup>-6</sup>  
+Further applying the signal time window of 700ns to 1314ns and initial proton time spread of 100ns, only 191 electrons of them can survive.
+So R<sub>time</sub> = 28.98%
+
+#####Simulation-4: from emitted electrons
+Optional: Use resolution figure to do this study.  
+E<sub>rec</sub> = 90%.  
+R<sub>mom</sub> = 2.67304 &times; 10<sup>5</sup>
