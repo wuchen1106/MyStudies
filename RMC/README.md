@@ -7,9 +7,14 @@ This part is intended for Radiative Muon Capture (RMC) background study in Cylin
 Muon Capture is analogy to electron capture. It is given by  
 &mu;<sup>-</sup> + N(A,Z) &rarr; &nu;<sub>&mu;</sub> + N(A,Z-1)  
 During this process, &gamma;s, neutrons and charged particles may be emitted and would become sources of fake signals.  
-Radiative muon capture (RMC)  
+Radiative muon capture (RMC) (external process) 
 &mu;<sup>-</sup> + N(A,Z) &rarr; &nu;<sub>&mu;</sub> + N(A,Z-1) + &gamma;.  
 followed by asymmetric e<sup>+</sup>e<sup>-</sup> conversion of the photon or Compton Scattering is another source of intrinsic background events.
+
+There is another process of RMC called internal process, which can be shown as:  
+&mu;<sup>-</sup> + N(A,Z) &rarr; &nu;<sub>&mu;</sub> + N(A,Z-1) + e<sup>-</sup> + e<sup>+</sup>.  
+The way how it contribute to sigal event is similar to external process.
+In this study we will concentrate on external process and assume the contribution from internal process is the same as that of external process.
 
 The background contribution during the whole physics run can be estimated as:  
 **N<sub>bkg</sub> = N<sub>p</sub> &times; R<sub>&mu;-stop</sub> &times; R<sub>cap</sub> &times; Br<sub>RMC</sub> &times; R<sub>HE-ph</sub> &times; R<sub>HE-e</sub> &times; A<sub>geo</sub> &times; A<sub>time</sub> &times; E<sub>rec</sub> &times; R<sub>mom</sub>**
@@ -26,24 +31,24 @@ The background contribution during the whole physics run can be estimated as:
 *	**R<sub>mom</sub>**: Momentum selection cut ratio.
 
 Normalized to Single Signal event this number will become:
-**N<sub>bkg_norm</sub> = R<sub>cap</sub> &times; Br<sub>RMC</sub> &times; R<sub>HE-ph</sub> &times; R<sub>HE-e</sub> &times; A<sub>geo</sub> &times; A<sub>time</sub> &times; E<sub>rec</sub> &times; R<sub>mom</sub> / [(1-R<sub>cap</sub>)  &times; A<sub>geo_sig</sub> &times; A<sub>time_sig</sub> &times; E<sub>rec_sig</sub> &times; R<sub>mom_sig</sub> ]**  
+**N<sub>bkg_norm</sub> = R<sub>cap</sub>/(1-R<sub>cap</sub>) &times; (Br<sub>RMC</sub> &times; R<sub>HE-ph</sub> &times; R<sub>HE-e</sub>)/Br<sub>sig</sub> &times; A<sub>geo</sub>/A<sub>geo_sig</sub> &times; A<sub>time</sub>/A<sub>time_sig</sub> &times; E<sub>rec</sub>/E<sub>rec_sig</sub> &times; R<sub>mom</sub>/R<sub>mom_sig</sub>**  
 
 Further study is supposed to estimate **N<sub>bkg_norm</sub>**.
 
 ###Investigation
 
 
-#####R<sub>cap</sub>
+####R<sub>cap</sub>
 This can be found in papar ...  
 **R<sub>cap</sub> = 0.61** for Aluminum.
 
 
-#####Br<sub>RMC</sub>
+####Br<sub>RMC</sub>
 This can be found in papar ...  
 **Br<sub>RMC</sub> = 6.7&times;10<sup>-5</sup>** for Aluminum.
 
 
-#####R<sub>HE-ph</sub>
+####R<sub>HE-ph</sub>
 In order to get this number we have to know the tail shape of RMC spectrum.  
 In paper ... x (x=E/E<sub>max</sub>) in RMC follows this emperical formula ...  
 E<sub>max</sub> can be estimated as: E<sub>max</sub> = m<sub>&mu;</sub> + M<sub>Z</sub> - M<sub>Z-1</sub> - m<sub>e</sub>  - E<sub>bind</sub>  
@@ -57,9 +62,9 @@ Study of this part can be found in ``RMCSpectrum``.
 **R<sub>HE-ph</sub> = 6.613&times;10<sup>-5</sup>**. 
 
 
-#####R<sub>HE-e</sub> &times; A<sub>geo</sub> &times; A<sub>time</sub>
+####R<sub>HE-e</sub> &times; A<sub>geo</sub> &times; A<sub>time</sub>
 According to ... we can get the profile of beam &mu; at the entrance of CDC.  
-... 
+...  
 Starting from this profile, I started a Geant4 simulation of &mu; transportation in CDC region. Configuration of stopping target is  
 <table>
    <tr>
@@ -72,7 +77,7 @@ Starting from this profile, I started a Geant4 simulation of &mu; transportation
    </tr>
    <tr>
       <td>Target Disk Thickness</td>
-      <td>200&mu;m</td>
+      <td>200 &mu;m</td>
    </tr>
    <tr>
       <td>Number of Target Disks</td>
@@ -80,7 +85,7 @@ Starting from this profile, I started a Geant4 simulation of &mu; transportation
    </tr>
    <tr>
       <td>Spacing between Disks</td>
-      <td>5cm</td>
+      <td>50 mm</td>
    </tr>
    <tr>
       <td>Position of Target System</td>
@@ -120,7 +125,7 @@ Configuration of Drift Chamber is:
    </tr>
    <tr>
       <td>Thickness of Outer Wall</td>
-      <td>1 cm</td>
+      <td>10 mm</td>
    </tr>
    <tr>
       <td>Number of Target Disks</td>
@@ -132,38 +137,109 @@ Configuration of Drift Chamber is:
    </tr>
    <tr>
       <td>Length</td>
-      <td>1500mm</td>
+      <td>1500 mm</td>
    </tr>
 </table>
+Two Trigger Counters are placed at the both ends of CDC. Configuration is:  
+<table>
+   <tr>
+      <td>Material</td>
+      <td>Plastic Scintillator</td>
+   </tr>
+   <tr>
+      <td>Starting Radius</td>
+      <td>471.6 mm</td>
+   </tr>
+   <tr>
+      <td>Thickness</td>
+      <td>50 mm</td>
+   </tr>
+   <tr>
+      <td>Width</td>
+      <td>200 mm</td>
+   </tr>
+</table>
+Configuration of End Plates is:  
+<table>
+   <tr>
+      <td>Material</td>
+      <td>Aluminum</td>
+   </tr>
+   <tr>
+      <td>Starting Radius</td>
+      <td>502 mm</td>
+   </tr>
+   <tr>
+      <td>Stopping Radius</td>
+      <td>806 mm</td>
+   </tr>
+   <tr>
+      <td>Thickness</td>
+      <td>20 mm</td>
+   </tr>
+</table>
+Magnetic Field is set to uniformly 1T among z direction.  
+Geant4 version is 4.9.6 and physics model is QGSP_BERT.  
+Within this simulation 3&times;10<sup>8</sup> photons were generated. Consequentially 598904 high energy (momentum higher than 100 MeV/c) electrons were found.  
+Generation point of these elctrons are  
+<table>
+   <tr>
+      <td>Outer Wall</td>
+      <td>313172</td>
+   </tr>
+   <tr>
+      <td>End Plate</td>
+      <td>137655</td>
+   </tr>
+   <tr>
+      <td>Trigger Counter</td>
+      <td>97740</td>
+   </tr>
+   <tr>
+      <td>Stopping Target</td>
+      <td>38692</td>
+   </tr>
+   <tr>
+      <td>Drift Chamber</td>
+      <td>2199</td>
+   </tr>
+   <tr>
+      <td>Inner Wall</td>
+      <td>9446</td>
+   </tr>
+</table>
+Among them, electrons from Outer Wall, End Plate, Trigger Counter, and Drift Chamber can be easiy eliminated. Only electrons from  Stopping Target and Inner Wall are possible to be considered as signal. If we only care about these elctrons, then **R<sub>HE-e</sub>** can be sonsidered as **48138/3&times;10<sup>8</sup> = 1.605&times;10<sup>-4</sup>**  
+
+Considering that to trigger the CDC detector, tracks should hit CDC first and hit trigger counter later, only 21740 electrons of them can be accepted by CDC detector. So **A<sub>geo</sub> = 21740/48138 = 45.16%**  
+
+For these 21740 electrons, the distribution of the time when it first hit CDC (t<sub>hit</sub>) is  
+...  
+Among them, 21286 electrons came from Compton Scattering and 453 from pair production (gamma conversion)  
+
+Assuming the time spread of initial proton beam is 100ns like:  
+...  
+We can get a smeared t<sub>hit</sub> distribution:  
+...  
+Applying signal time window as 700ns to 1314ns, we got only 6536 electrons left. so **A<sub>time</sub> = 6536/21740 = 30.06%**  
 
 
+####E<sub>rec</sub> &times; R<sub>mom</sub>
+To get these two numbers I conducted a rough study with given CDC performance estimation.  
+According to ... momentum resolution of CDC detector can be shown as:  
+...  
+Given the signal window as 103.8 MeV to 106.0 MeV the probability of electrons with different momentum (at the first hit in CDC) can be calculated as:  
+...  
+Given the momentum distribution of the accepted electrons as:  
+...  
+We can see the probability of them to be reconstructed as a signal:  
+...  
+In sum, **R<sub>mom</sub> = 3.59374&times;10<sup>-6</sup>**
+For preleminary study, I'll assume **E<sub>rec</sub> = E<sub>rec_sig</sub>**
 
-#####E<sub>rec</sub> &times; R<sub>mom</sub>
-These factors will be studied as a whole.  
-To get this number we need to do another simulation from those high energy elections accepted by CDC and do a proper reconstruction later.  
-Based on the profile I got from ``simulation-3`` further study is done by Sakamoto-san with his Genfit-Geant3 tool.  
-Detail and result will be shown in following section.
+###Conclusion
+Total RMC background contribution normalized to one single signal event is:  
+**N<sub>bkg_norm</sub> = R<sub>cap</sub>/(1-R<sub>cap</sub>) &times; (Br<sub>RMC</sub> &times; R<sub>HE-ph</sub> &times; R<sub>HE-e</sub>)/Br<sub>sig</sub> &times; A<sub>geo</sub>/A<sub>geo_sig</sub> &times; A<sub>time</sub>/A<sub>time_sig</sub> &times; E<sub>rec</sub>/E<sub>rec_sig</sub> &times; R<sub>mom</sub>/R<sub>mom_sig</sub>**  
+According to ... **A<sub>geo_sig</sub> = 11%**, **A<sub>time</sub> = 39%**, **R<sub>mom_sig</sub> = 80%**  
+So in summary, at **Br<sub>sig</sub> = 3&times;10<sub>-15</sub>**, **N<sub>bkg_norm</sub> = 5.1&times;10<sup>-3</sup>**  
 
-###Simulation study
-#####Simulation-1: comet_g4 simulation from production target to the entrance of CDC detector
-Results of this part can be found in [Beam](https://github.com/wuchen1106/MyStudies/tree/master/Beam)
-
-#####Simulation-2: get the profile of stopped &mu;
-Results is put in ``MuonStop``
-Analyzation is done by ``bm.C``
-Got totally 4663123 &mu; stopped out of 800*15M initial protons, so **R<sub>&mu;-stop</sub> = 3.886&times;10<sup>-4</sup>**
-
-#####Simulation-3: simulation from emitted photons
-Initial position and time can be described by the profile of stopped &mu;
-Energy distribution can be described by ``RMCSpectrum`` I mentioned above.
-Direction is supposed to be isotopic.
-1.5 &times; 10<sup>8</sup> photons were generated in this simulation and 339204 of them are of above 100MeV/c momentum.
-So **R<sub>HE-e</sub> = 339204/1.5&times;10<sup>8</sup> = 2.26&times;10<sup>-3</sup>**  
-Among them, 92357 hits the CDC, 84632 hits the trigger, and 12276 hit the CDC first so **A<sub>geo</sub> = 12276/339204 = 3.62%**  
-Further applying the signal time window of 700ns to 1314ns and initial proton time spread of 100ns, only 3646 electrons of them can survive.
-So **R<sub>time</sub> = 3646/12276 = 29.7%**
-
-#####Simulation-4: from emitted electrons
-Optional: Use resolution figure to do this study.  
-**E<sub>rec</sub> = 90%.**  
-**R<sub>mom</sub> = 2.4841&times;10<sup>-5</sup>**
+If we further include Internal RMC background in and consider the contribution equals to this external one, then the final contribution should be doubled to **N<sub>bkg_norm</sub> = 1.1&times;10<sup>-2</sup>**
