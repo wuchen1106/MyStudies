@@ -21,9 +21,18 @@ int main(int argc, char* argv[]){
 	c->AddFile(file.c_str());
 
 	c->SetScanField(0);
+	// *****************ptacs_shielding*****************************
+	// pion
+	//c->Scan("ptacs_shielding.trackID:ptacs_shielding.position.fX*10:ptacs_shielding.position.fY*10:ptacs_shielding.position.fZ*10-750:ptacs_shielding.direction.fX*ptacs_shielding.momentum:ptacs_shielding.direction.fY*ptacs_shielding.momentum:ptacs_shielding.direction.fZ*ptacs_shielding.momentum:ptacs_shielding.globalTime","ptacs_shielding.PDGEncoding==-211&&ptacs_shielding.direction.fZ>0&&ptacs_shielding.origin.fZ<75.05","colsize=15 precision=14");
+	// electron
+	//c->Scan("ptacs_shielding.trackID:ptacs_shielding.position.fX*10:ptacs_shielding.position.fY*10:ptacs_shielding.position.fZ*10-750:ptacs_shielding.direction.fX*ptacs_shielding.momentum:ptacs_shielding.direction.fY*ptacs_shielding.momentum:ptacs_shielding.direction.fZ*ptacs_shielding.momentum:ptacs_shielding.globalTime","ptacs_shielding.PDGEncoding==11&&ptacs_shielding.direction.fZ>0&&ptacs_shielding.origin.fZ<75.05","colsize=15 precision=14");
+	// neutron
+	//c->Scan("ptacs_shielding.trackID:ptacs_shielding.position.fX*10:ptacs_shielding.position.fY*10:ptacs_shielding.position.fZ*10-750:ptacs_shielding.direction.fX*ptacs_shielding.momentum:ptacs_shielding.direction.fY*ptacs_shielding.momentum:ptacs_shielding.direction.fZ*ptacs_shielding.momentum:ptacs_shielding.globalTime","ptacs_shielding.PDGEncoding==2112&&ptacs_shielding.direction.fZ>0&&ptacs_shielding.origin.fZ<75.05","colsize=15 precision=14");
+	// muon
+	c->Scan("ptacs_shielding.trackID:ptacs_shielding.position.fX*10:ptacs_shielding.position.fY*10:ptacs_shielding.position.fZ*10-750:ptacs_shielding.direction.fX*ptacs_shielding.momentum:ptacs_shielding.direction.fY*ptacs_shielding.momentum:ptacs_shielding.direction.fZ*ptacs_shielding.momentum:ptacs_shielding.globalTime","ptacs_shielding.PDGEncoding==13&&ptacs_shielding.direction.fZ>0&&ptacs_shielding.origin.fZ<75.05","colsize=15 precision=14");
 	// *****************ts2_0*****************************
 	// pion
-	c->Scan("ts2_0.trackID:ts2_0.position.fX*10:ts2_0.position.fY*10:ts2_0.position.fZ*10-750:ts2_0.direction.fX*ts2_0.momentum:ts2_0.direction.fY*ts2_0.momentum:ts2_0.direction.fZ*ts2_0.momentum:ts2_0.globalTime","ts2_0.PDGEncoding==-211&&ts2_0.direction.fZ>0&&ts2_0.origin.fX<450.15","colsize=15 precision=14");
+	//c->Scan("ts2_0.trackID:ts2_0.position.fX*10:ts2_0.position.fY*10:ts2_0.position.fZ*10-750:ts2_0.direction.fX*ts2_0.momentum:ts2_0.direction.fY*ts2_0.momentum:ts2_0.direction.fZ*ts2_0.momentum:ts2_0.globalTime","ts2_0.PDGEncoding==-211&&ts2_0.direction.fZ>0&&ts2_0.origin.fX<450.15","colsize=15 precision=14");
 	// electron
 	//c->Scan("ts2_0.trackID:ts2_0.position.fX*10:ts2_0.position.fY*10:ts2_0.position.fZ*10-750:ts2_0.direction.fX*ts2_0.momentum:ts2_0.direction.fY*ts2_0.momentum:ts2_0.direction.fZ*ts2_0.momentum:ts2_0.globalTime","ts2_0.PDGEncoding==11&&ts2_0.direction.fZ>0&&ts2_0.origin.fX<450.15","colsize=15 precision=14");
 	// neutron
