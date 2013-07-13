@@ -22,7 +22,12 @@ int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
 bool backup = false;
+std::vector<int> Ncut;
+std::vector<std::string> Ncut_message;
 
+void init_Ncut();
+void inc_Ncut(std::string);
+void dump_Ncut();
 void init_args();
 void print_usage(char* prog_name);
 
@@ -117,25 +122,17 @@ int main(int argc, char* argv[]){
 	//************SET Statistics********************
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET Statistics###"<<std::endl;
 	//=>About Statistical
-	int N0 = 0;
-	int N1 = 0;
-	int N2 = 0;
-	int N3 = 0;
-	int N4 = 0;
-	int N5 = 0;
-	int N6 = 0;
-	int N7 = 0;
-	int N8 = 0;
+	init_Ncut();
 
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
-	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
+	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK###"<<std::endl;
 	Long64_t nEvent = fMyRootInterface->get_Entries();
 	for( Long64_t iEvent = 0; iEvent < (nEvents&&nEvents<nEvent?nEvents:nEvent); iEvent++ ){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
-		N0++;
 		fMyRootInterface->GetEntry(iEvent);
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
+		inc_Ncut("Got entries");
 
 		// Get info
 		int evt_num;
@@ -259,7 +256,7 @@ int main(int argc, char* argv[]){
 		}
 		if (index == -1 ) continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron"<<std::endl;
-		N1++;
+		inc_Ncut("Found electrons");
 
 		// get information of this electron
 		double x = McTruth_x[index];
@@ -288,13 +285,13 @@ int main(int argc, char* argv[]){
 
 		if (volume!="Target"&&volume!="InnerCylinder")
 			continue;
-		N2++;
+		inc_Ncut("Electron from target/InnerCylinder");
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Target or InnerCylinder"<<std::endl;
 
 		if (CdcCell_nHits<=0) // not hit the Cdc
 			continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found CDC hits"<<std::endl;
-		N3++;
+		inc_Ncut("Has CDC hits");
 
 		int tid = McTruth_tid[index];
 		int i_CdcHit = -1;
@@ -309,13 +306,13 @@ int main(int argc, char* argv[]){
 		}
 		if ( CdcCell_firstHitTime == -1) // this electron not hit the Cdc
 			continue;
-		N4++;
+		inc_Ncut("CDC hit by this electron");
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC"<<std::endl;
 
 		if (Trigger_nHits<=0) // not hit the trigger
 			continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found Trigger hits"<<std::endl;
-		N5++;
+		inc_Ncut("Has trigger htis");
 
 		double Trigger_firstHitTime = -1;
 		for ( int i_hit = 0; i_hit < Trigger_nHits; i_hit++ ){
@@ -328,12 +325,12 @@ int main(int argc, char* argv[]){
 		if ( Trigger_firstHitTime == -1) // this electron not hit the trigger
 			continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits Trigger"<<std::endl;
-		N6++;
+		inc_Ncut("trigger hit by this electron");
 
 		if ( Trigger_firstHitTime <= CdcCell_firstHitTime ) // hit trigger first
 			continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
-		N7++;
+		inc_Ncut("Hit CDC first");
 
 		// Fill the histogram
 		double deltat = gRandom->Gaus()*100*ns;
@@ -407,7 +404,7 @@ int main(int argc, char* argv[]){
 		if ( smeared_time < 700*ns || smeared_time > 1314*ns ) // hit trigger first
 			continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
-		N8++;
+		inc_Ncut("Time window");
 
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
@@ -425,15 +422,7 @@ int main(int argc, char* argv[]){
 	//std::cout<<"GENERATEEVENTS:      "<<(double)(t_GENERATEEVENTS-t_BUILDHISTOGRAMS)/CLOCKS_PER_SEC*1000<<"ms"<<std::endl;
 	//std::cout<<"TIME COST PER EVENT: "<<(double)(t_GENERATEEVENTS-t_BUILDHISTOGRAMS)/CLOCKS_PER_SEC/num_evt*1000<<"ms"<<std::endl;
 	std::cout<<"##############################################\n"<<std::endl;
-	std::cout<<"N0 = "<<N0<<std::endl;
-	std::cout<<"N1 = "<<N1<<std::endl;
-	std::cout<<"N2 = "<<N2<<std::endl;
-	std::cout<<"N3 = "<<N3<<std::endl;
-	std::cout<<"N4 = "<<N4<<std::endl;
-	std::cout<<"N5 = "<<N5<<std::endl;
-	std::cout<<"N6 = "<<N6<<std::endl;
-	std::cout<<"N7 = "<<N7<<std::endl;
-	std::cout<<"N8 = "<<N8<<std::endl;
+	dump_Ncut();
 
 	fMyRootInterface->dump();
 	return 0;
@@ -468,4 +457,31 @@ void print_usage(char* prog_name)
 	fprintf(stderr,"\t\t restore backup file.\n");
 	fprintf(stderr,"[example]\n");
 	fprintf(stderr,"\t\t%s -m ab -v 20 -n 100\n",prog_name);
+}
+
+void init_Ncut(){
+	Ncut.clear();
+	Ncut_message.clear();
+}
+
+void inc_Ncut(std::string mess){
+	int index = -1;
+	for (int i = 0; i < Ncut_message.size(); i++){
+		if (Ncut_message[i]==mess){
+			index = i;
+			break;
+		}
+	}
+	if (index == -1){
+		index = Ncut_message.size();
+		Ncut_message.push_back(mess);
+		Ncut.push_back(0);
+	}
+	Ncut[index]++;
+}
+
+void dump_Ncut(){
+	for (int i = 0; i < Ncut.size(); i++ ){
+		std::cout<<"  "<<Ncut_message[i]<<": "<<Ncut[i]<<std::endl;
+	}
 }

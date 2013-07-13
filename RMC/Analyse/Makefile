@@ -23,6 +23,8 @@ INCDIR += -I$(MYCOMMONTOOLSROOT)/MyRootInterface
 INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
 LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
 LIBS += -pthread -lm -ldl -rdynamic
+LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
+LIBS += -lMyRootInterface
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
 # Names of user defined packages
@@ -33,16 +35,16 @@ PH2E = ph2e
 BM = bm
 
 # Object list for user defined packages
-OBJ += $(MYCOMMONTOOLSROOT)/MyRootInterface/MyRootInterface.o
+OBJ = 
 
-$(RMCE): $(OBJ) $(RMCE).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(RMCE).C $(OBJ) -o $(RMCE)
+$(RMCE): $(OBJ) $(RMCE).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(RMCE).cxx $(OBJ) -o $(RMCE)
 
-$(PH2E): $(OBJ) $(PH2E).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PH2E).C $(OBJ) -o $(PH2E)
+$(PH2E): $(OBJ) $(PH2E).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PH2E).cxx $(OBJ) -o $(PH2E)
 
-$(BM): $(OBJ) $(BM).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(BM).C $(OBJ) -o $(BM)
+$(BM): $(OBJ) $(BM).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(BM).cxx $(OBJ) -o $(BM)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions

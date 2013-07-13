@@ -23,6 +23,8 @@ INCDIR += -I$(MYCOMMONTOOLSROOT)/MyRootInterface
 INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
 LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
 LIBS += -pthread -lm -ldl -rdynamic
+LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
+LIBS += -lMyRootInterface
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
 # Names of user defined packages
@@ -31,10 +33,10 @@ LIBS += -pthread -lm -ldl -rdynamic
 PROGRAM = Compare
 
 # Object list for user defined packages
-OBJ += $(MYCOMMONTOOLSROOT)/MyRootInterface/MyRootInterface.o
+OBJ = 
 
-$(PROGRAM): $(PROGRAM).cc
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).cc $(OBJ) -o $(PROGRAM)
+$(PROGRAM): $(PROGRAM).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).cxx $(OBJ) -o $(PROGRAM)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
