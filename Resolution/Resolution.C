@@ -149,7 +149,8 @@ int main(int argc, char* argv[]){
 	int N7 = 0;
 
 	//=>Get resolution
-	TH1D* h_res = fMyRootInterface->get_TH1D(0);
+	int ihist_res = 0;
+	TH1D* h_res = fMyRootInterface->get_TH1D(ihist_res);
 	h_res->Scale(1./h_res->Integral());
 
 	//=>Get spectrum
@@ -174,15 +175,19 @@ int main(int argc, char* argv[]){
 	drawOpt_temp = fMyRootInterface->get_drawOptForH1D(ihist_SPEC);
 
 	name_temp = "MisMeas_hist";
-	title_temp = "Differential Momentum Cut Efficiency";
+	title_temp = "Momentum Cut Efficiency";
 	xName_temp = "p_{a}(MeV/c)";
 	yName_temp = "probability";
+	miny_temp = 1e-5;
+	ylog_temp = 1;
 	TH1D* h_MisMeas = fMyRootInterface->add_TH1D(name_temp,title_temp,xName_temp,yName_temp,bin1_temp,left1_temp,right1_temp,minx_temp,miny_temp,color_temp,compare_temp,xlog_temp,ylog_temp,marker_temp,norm_temp,drawOpt_temp);
 
 	name_temp = "contribution";
-	title_temp = "Differential Contribution Probobility";
+	title_temp = "Contribution Probobility";
 	xName_temp = "p_{a}(MeV/c)";
 	yName_temp = "probability";
+	miny_temp = 0;
+	ylog_temp = 0;
 	TH1D* h_contri = fMyRootInterface->add_TH1D(name_temp,title_temp,xName_temp,yName_temp,bin1_temp,left1_temp,right1_temp,minx_temp,miny_temp,color_temp,compare_temp,xlog_temp,ylog_temp,marker_temp,norm_temp,drawOpt_temp);
 
 	TH1D* h_conTot = 0; // should use MeV

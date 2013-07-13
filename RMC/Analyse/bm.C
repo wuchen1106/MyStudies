@@ -221,7 +221,7 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->set_ovec_double(index_temp,hit_y/mm); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("z")) != -1 )
 			fMyRootInterface->set_ovec_double(index_temp,hit_z/mm); 
-		double decayTime = -880*log(G4UniformRand());
+		double decayTime = -864*log(G4UniformRand())*ns;
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("t")) != -1 )
 			fMyRootInterface->set_ovec_double(index_temp,decayTime+hit_t); 
 
@@ -244,6 +244,15 @@ int main(int argc, char* argv[]){
 		}
 		if ( (index_temp = fMyRootInterface->get_TH1D_index("r")) != -1 ){
 			fMyRootInterface->get_TH1D(index_temp)->Fill(hit_r/cm);
+		}
+		if ( (index_temp = fMyRootInterface->get_TH1D_index("t_stop")) != -1 ){
+			fMyRootInterface->get_TH1D(index_temp)->Fill(hit_t/ns);
+		}
+		if ( (index_temp = fMyRootInterface->get_TH1D_index("t_cap")) != -1 ){
+			fMyRootInterface->get_TH1D(index_temp)->Fill(decayTime+hit_t/ns);
+		}
+		if ( (index_temp = fMyRootInterface->get_TH1D_index("t_decay")) != -1 ){
+			fMyRootInterface->get_TH1D(index_temp)->Fill(decayTime/ns);
 		}
 		buff.str("");
 		buff.clear();

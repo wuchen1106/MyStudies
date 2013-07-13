@@ -92,7 +92,7 @@ int main(int argc, char* argv[]){
 
 	//##########################PRESET############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In Preset###"<<std::endl;
-	MyRootInterface *fMyRootInterface = new MyRootInterface(verbose);
+	MyRootInterface *fMyRootInterface = new MyRootInterface(verbose,backup);
 	fMyRootInterface->set_OutputDir("result");
 	int index_temp = 0;
 	TH1D *h1d_temp=0;
@@ -125,12 +125,13 @@ int main(int argc, char* argv[]){
 	int N5 = 0;
 	int N6 = 0;
 	int N7 = 0;
+	int N8 = 0;
 
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
 	Long64_t nEvent = fMyRootInterface->get_Entries();
-	for( Long64_t iEvent = 0; iEvent < nEvent; iEvent++ ){
+	for( Long64_t iEvent = 0; iEvent < (nEvents&&nEvents<nEvent?nEvents:nEvent); iEvent++ ){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
 		N0++;
 		fMyRootInterface->GetEntry(iEvent);
@@ -157,6 +158,12 @@ int main(int argc, char* argv[]){
 		std::vector<int> CdcCell_tid;
 		std::vector<double> CdcCell_t;
 		std::vector<double> CdcCell_e;
+		std::vector<double> CdcCell_x;
+		std::vector<double> CdcCell_y;
+		std::vector<double> CdcCell_z;
+		std::vector<double> CdcCell_px;
+		std::vector<double> CdcCell_py;
+		std::vector<double> CdcCell_pz;
 		int Trigger_nHits = 0;
 		std::vector<int> Trigger_tid;
 		std::vector<double> Trigger_t;
@@ -219,6 +226,24 @@ int main(int argc, char* argv[]){
 		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_tid");
 		if (index_temp!=-1) CdcCell_tid = *(fMyRootInterface->get_vec_vecint(index_temp));
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
+		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_x");
+		if (index_temp!=-1) CdcCell_x = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<CdcCell_x.size();i++) CdcCell_x[i] *= cm;
+		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_y");
+		if (index_temp!=-1) CdcCell_y = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<CdcCell_y.size();i++) CdcCell_y[i] *= cm;
+		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_z");
+		if (index_temp!=-1) CdcCell_z = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<CdcCell_z.size();i++) CdcCell_z[i] *= cm;
+		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_px");
+		if (index_temp!=-1) CdcCell_px = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<CdcCell_px.size();i++) CdcCell_px[i] *= GeV;
+		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_py");
+		if (index_temp!=-1) CdcCell_py = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<CdcCell_py.size();i++) CdcCell_py[i] *= GeV;
+		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_pz");
+		if (index_temp!=-1) CdcCell_pz = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<CdcCell_pz.size();i++) CdcCell_pz[i] *= GeV;
 
 		// find electron
 		int index = -1;
@@ -248,6 +273,9 @@ int main(int argc, char* argv[]){
 		double theta = (pa==0?2*PI:acos(pz/pa));
 		double t = McTruth_time[index];
 		std::string process = McTruth_process[index];
+		int process_id = 0;
+		if (process=="conv") process_id = 1;
+		else if (process=="compt") process_id = 2;
 		std::string volume = McTruth_volume[index];
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0)
@@ -258,10 +286,15 @@ int main(int argc, char* argv[]){
 				<<"\""
 				<<std::endl;
 
+		if (volume!="Target"&&volume!="InnerCylinder")
+			continue;
+		N2++;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Target or InnerCylinder"<<std::endl;
+
 		if (CdcCell_nHits<=0) // not hit the Cdc
 			continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found CDC hits"<<std::endl;
-		N2++;
+		N3++;
 
 		int tid = McTruth_tid[index];
 		int i_CdcHit = -1;
@@ -276,13 +309,13 @@ int main(int argc, char* argv[]){
 		}
 		if ( CdcCell_firstHitTime == -1) // this electron not hit the Cdc
 			continue;
-		N3++;
+		N4++;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC"<<std::endl;
 
 		if (Trigger_nHits<=0) // not hit the trigger
 			continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found Trigger hits"<<std::endl;
-		N4++;
+		N5++;
 
 		double Trigger_firstHitTime = -1;
 		for ( int i_hit = 0; i_hit < Trigger_nHits; i_hit++ ){
@@ -295,27 +328,46 @@ int main(int argc, char* argv[]){
 		if ( Trigger_firstHitTime == -1) // this electron not hit the trigger
 			continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits Trigger"<<std::endl;
-		N5++;
+		N6++;
 
 		if ( Trigger_firstHitTime <= CdcCell_firstHitTime ) // hit trigger first
 			continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
-		N6++;
+		N7++;
 
+		// Fill the histogram
 		double deltat = gRandom->Gaus()*100*ns;
 		double smeared_time = CdcCell_firstHitTime + deltat;
 		double smeared_ini_time = t + deltat;
-		// Fill the histogram
+
 		double e_CdcHit = CdcCell_e[i_CdcHit];
 		double depE = e - e_CdcHit;
+
+		double hit_x = CdcCell_x[i_CdcHit];
+		double hit_y = CdcCell_y[i_CdcHit];
+		double hit_z = CdcCell_z[i_CdcHit];
+		double hit_px = CdcCell_px[i_CdcHit];
+		double hit_py = CdcCell_py[i_CdcHit];
+		double hit_pz = CdcCell_pz[i_CdcHit];
+		double hit_pa = sqrt(hit_px*hit_px+hit_py*hit_py+hit_pz*hit_pz);
+
 		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"pa")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(pa);
+			fMyRootInterface->get_TH1D(index_temp)->Fill(hit_pa/MeV);
 		}
 		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"theta")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(theta);
+			fMyRootInterface->get_TH1D(index_temp)->Fill(theta/rad);
 		}
 		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"depE")) != -1 ){
 			fMyRootInterface->get_TH1D(index_temp)->Fill(depE/MeV);
+		}
+		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"hit_time")) != -1 ){
+			fMyRootInterface->get_TH1D(index_temp)->Fill(CdcCell_firstHitTime/ns);
+		}
+		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"smeared_hit_time")) != -1 ){
+			fMyRootInterface->get_TH1D(index_temp)->Fill(smeared_time/ns);
+		}
+		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"smear_time")) != -1 ){
+			fMyRootInterface->get_TH1D(index_temp)->Fill(deltat/ns);
 		}
 
 		// Fill the tree
@@ -344,7 +396,7 @@ int main(int argc, char* argv[]){
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("sht")) != -1 )
 			fMyRootInterface->set_ovec_double(index_temp,smeared_time); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("prid")) != -1 )
-			fMyRootInterface->set_ovec_string(index_temp,process); 
+			fMyRootInterface->set_ovec_int(index_temp,process_id); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("vid")) != -1 )
 			fMyRootInterface->set_ovec_string(index_temp,volume); 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
@@ -355,7 +407,7 @@ int main(int argc, char* argv[]){
 		if ( smeared_time < 700*ns || smeared_time > 1314*ns ) // hit trigger first
 			continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
-		N7++;
+		N8++;
 
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
@@ -381,6 +433,7 @@ int main(int argc, char* argv[]){
 	std::cout<<"N5 = "<<N5<<std::endl;
 	std::cout<<"N6 = "<<N6<<std::endl;
 	std::cout<<"N7 = "<<N7<<std::endl;
+	std::cout<<"N8 = "<<N8<<std::endl;
 
 	fMyRootInterface->dump();
 	return 0;

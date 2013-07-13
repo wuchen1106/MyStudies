@@ -4,120 +4,86 @@
 ###########################################################################################################################
 
 #	TYPE     | Name
-	TreeName | t
+	TreeName | tree
 
 #	TYPE    | Directory                                                       | runname | #CPU | #job
-#	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/RMC_ph2e                   |         | 8    | 1
-
-#	TYPE    | Path
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/ts2_0.electron.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/ts2_0.muon.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/ts2_0.neutron.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/ts2_0.electron.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/ts2_0.muon.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/ts2_0.neutron.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/ts2_0.pim.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/blt0.electron.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/blt0.muon.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/blt0.neutron.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/blt0.pim.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/blt0.electron.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/blt0.muon.root
-#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/blt0.neutron.root
-	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Chen/blt0.pim.root
+	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/RMC_bm                     |         | 8    | 1
 
 #	TYPE    | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2
-	TBranch | x                            | 0         | 0
-	TBranch | y                            | 0         | 0
-	TBranch | z                            | 0         | 0
-	TBranch | px                           | 0         | 0
-	TBranch | py                           | 0         | 0
-	TBranch | pz                           | 0         | 0
-	TBranch | t                            | 0         | 0
+	TBranch | evt_num                      | 1         | 0
+	TBranch | run_num                      | 1         | 0
+	TBranch | ProcessCounting_nSteps       | 1         | 0 
+	TBranch | ProcessCounting_nSec         | 1         | 1
+	TBranch | ProcessCounting_time         | 0         | 1
+	TBranch | ProcessCounting_stepL        | 0         | 1
+	TBranch | ProcessCounting_prePx        | 0         | 1
+	TBranch | ProcessCounting_prePy        | 0         | 1
+	TBranch | ProcessCounting_prePz        | 0         | 1
+	TBranch | ProcessCounting_postPx       | 0         | 1
+	TBranch | ProcessCounting_postPy       | 0         | 1
+	TBranch | ProcessCounting_postPz       | 0         | 1
+	TBranch | ProcessCounting_dE           | 0         | 1
+	TBranch | ProcessCounting_dTheta       | 0         | 1
+	TBranch | ProcessCounting_e            | 0         | 1
+	TBranch | ProcessCounting_preX         | 0         | 1
+	TBranch | ProcessCounting_preY         | 0         | 1
+	TBranch | ProcessCounting_preZ         | 0         | 1
+	TBranch | ProcessCounting_postX        | 0         | 1
+	TBranch | ProcessCounting_postY        | 0         | 1
+	TBranch | ProcessCounting_postZ        | 0         | 1
+	TBranch | ProcessCounting_process      | 2         | 1
 
-#	TYPE    | Directory                                                                               | histoName
-#	refTH1D | /home/chen/MyWorkArea/MyStudies/AntiProton/4BodyPhaseSpace/result/12p5GeV/output.root   | 4PS_theta
+#	TYPE     | Name
+	oTreeName | t
 
-#	TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm   |DrawOption
-#	TH1D    | A_e_ts20_pa     | e^{-} at ts2_0 | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
-#	TH1D    | A_e_ts20_r      | e^{-} at ts2_0 | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
-#	TH1D    | A_e_ts20_pt     | e^{-} at ts2_0 | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
-#	TH1D    | A_e_ts20_theta  | e^{-} at ts2_0 | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
-#	TH1D    | A_e_ts20_gTime  | e^{-} at ts2_0 | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
-#	TH1D    | A_m_ts20_pa     | #mu^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_m_ts20_r      | #mu^{-} at ts2_0     | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_m_ts20_pt     | #mu^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_m_ts20_theta  | #mu^{-} at ts2_0     | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_m_ts20_gTime  | #mu^{-} at ts2_0     | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_n_ts20_pa     | n_{0} at ts2_0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_n_ts20_r      | n_{0} at ts2_0  | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_n_ts20_pt     | n_{0} at ts2_0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_n_ts20_theta  | n_{0} at ts2_0  | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_n_ts20_gTime  | n_{0} at ts2_0  | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | C_e_ts20_pa     | e^{-} at ts2_0 | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
-#	TH1D    | C_e_ts20_r      | e^{-} at ts2_0 | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
-#	TH1D    | C_e_ts20_pt     | e^{-} at ts2_0 | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
-#	TH1D    | C_e_ts20_theta  | e^{-} at ts2_0 | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
-#	TH1D    | C_e_ts20_gTime  | e^{-} at ts2_0 | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
-#	TH1D    | C_m_ts20_pa     | #mu^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_m_ts20_r      | #mu^{-} at ts2_0     | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_m_ts20_pt     | #mu^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_m_ts20_theta  | #mu^{-} at ts2_0     | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_m_ts20_gTime  | #mu^{-} at ts2_0     | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_n_ts20_pa     | n_{0} at ts2_0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_n_ts20_r      | n_{0} at ts2_0  | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_n_ts20_pt     | n_{0} at ts2_0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_n_ts20_theta  | n_{0} at ts2_0  | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_n_ts20_gTime  | n_{0} at ts2_0  | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_p_ts20_pa     | #pi^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_p_ts20_r      | #pi^{-} at ts2_0     | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_p_ts20_pt     | #pi^{-} at ts2_0     | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_p_ts20_theta  | #pi^{-} at ts2_0     | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_p_ts20_gTime  | #pi^{-} at ts2_0     | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | A_e_blt0_pa     | e^{-} at blt0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
-#	TH1D    | A_e_blt0_r      | e^{-} at blt0  | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
-#	TH1D    | A_e_blt0_pt     | e^{-} at blt0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
-#	TH1D    | A_e_blt0_theta  | e^{-} at blt0  | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
-#	TH1D    | A_e_blt0_gTime  | e^{-} at blt0  | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1e6   | 
-#	TH1D    | A_m_blt0_pa     | #mu^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_m_blt0_r      | #mu^{-} at blt0      | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_m_blt0_pt     | #mu^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_m_blt0_theta  | #mu^{-} at blt0      | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_m_blt0_gTime  | #mu^{-} at blt0      | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_n_blt0_pa     | n_{0} at blt0   | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_n_blt0_r      | n_{0} at blt0   | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_n_blt0_pt     | n_{0} at blt0   | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_n_blt0_theta  | n_{0} at blt0   | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_n_blt0_gTime  | n_{0} at blt0   | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_p_blt0_pa     | #pi^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_p_blt0_r      | #pi^{-} at blt0      | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_p_blt0_pt     | #pi^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_p_blt0_theta  | #pi^{-} at blt0      | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | A_p_blt0_gTime  | #pi^{-} at blt0      | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1e6   | 
-#	TH1D    | C_e_blt0_pa     | e^{-} at blt0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
-#	TH1D    | C_e_blt0_r      | e^{-} at blt0  | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
-#	TH1D    | C_e_blt0_pt     | e^{-} at blt0  | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
-#	TH1D    | C_e_blt0_theta  | e^{-} at blt0  | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
-#	TH1D    | C_e_blt0_gTime  | e^{-} at blt0  | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 1e-7  | 1 | 0 | 0  | 1  | 20   | 1.5e7 | 
-#	TH1D    | C_m_blt0_pa     | #mu^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_m_blt0_r      | #mu^{-} at blt0      | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_m_blt0_pt     | #mu^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_m_blt0_theta  | #mu^{-} at blt0      | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_m_blt0_gTime  | #mu^{-} at blt0      | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_n_blt0_pa     | n_{0} at blt0   | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_n_blt0_r      | n_{0} at blt0   | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_n_blt0_pt     | n_{0} at blt0   | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_n_blt0_theta  | n_{0} at blt0   | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-#	TH1D    | C_n_blt0_gTime  | n_{0} at blt0   | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-	TH1D    | C_p_blt0_pa     | #pi^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-	TH1D    | C_p_blt0_r      | #pi^{-} at blt0      | radius(cm)   | probability   | 120 | 0     | 50    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-	TH1D    | C_p_blt0_pt     | #pi^{-} at blt0      | p_{a}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-	TH1D    | C_p_blt0_theta  | #pi^{-} at blt0      | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
-	TH1D    | C_p_blt0_gTime  | #pi^{-} at blt0      | time(ns)     | probability   | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 1.5e7 | 
+#	TYPE     | Name                         | Type      | Vector?
+#	                                0:double;1:int;string:2
+#	oTBranch | evt_num                      | 1         | 0
+#	oTBranch | run_num                      | 1         | 0
+	oTBranch | x                            | 0         | 0
+	oTBranch | y                            | 0         | 0
+	oTBranch | z                            | 0         | 0
+	oTBranch | t                            | 0         | 0
 
-#	TYPE    | NAME           | TITLE                                                | xAxisName         | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
-#	TH2D    | costheta_VS_r  | anti-proton (incident proton @12.5GeV/c on Graphite) | cos#theta         | r(cm)         | 120 | -1    | 1     | 120 | 0    | 0.6
-
-#	TYPE    | NAME           | TITLE                         | xAxisName          | yAxisName     | COL | COM | minX | maxX |minY | LOGX | LOGY | Marker | DrawOption
-#	TGraph  | rate_vs_pa     | PassingRate                   | p_{a}(MeV/c)       | rate          | 1   | 1   | 94   | 99   | 1   | 0    | 1    | 3      | LP
+	TYPE    | NAME            | TITLE                                   | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
+	TH1D    | relz            | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_0          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_1          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_2          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_3          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_4          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_5          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_6          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_7          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_8          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_9          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_10         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_11         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_12         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_13         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_14         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_15         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_16         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r               | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_0             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_1             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_2             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_3             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_4             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_5             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_6             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_7             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_8             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_9             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_10            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_11            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_12            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_13            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_14            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_15            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_16            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | iplate          | Plate No. of Muon Stop point            | No.          | count         | 34  | 0     | 17    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | t_stop          | Time When Muon Got Stopped              | time(ns)     | count         | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | t_cap           | Time When Muon Got Captured             | time(ns)     | count         | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | t_decay         | Life Time of Muon                       | time(ns)     | count         | 120 | 0     | 2000  | 0    | 1     | 1 | 0 | 0  | 1  | 20   | 0  | 
