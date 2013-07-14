@@ -114,7 +114,7 @@ int main(int argc, char* argv[]){
 		content += ":" + m_monitor + ".position.fZ*10";
 	}
 	else {
-		printf("Cannot recogonize this  monitor plane \"\s\"\n",m_monitor.c_str());
+		printf("Cannot recogonize this  monitor plane \"%s\"\n",m_monitor.c_str());
 		return -1;
 	}
 	content += ":" + m_monitor + ".direction.fX*" + m_monitor + ".momentum";
