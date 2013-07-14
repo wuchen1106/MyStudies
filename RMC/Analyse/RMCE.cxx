@@ -153,6 +153,7 @@ int main(int argc, char* argv[]){
 		std::vector<std::string> McTruth_volume;
 		int CdcCell_nHits = 0;
 		std::vector<int> CdcCell_tid;
+		std::vector<int> CdcCell_layerID;
 		std::vector<double> CdcCell_t;
 		std::vector<double> CdcCell_e;
 		std::vector<double> CdcCell_x;
@@ -222,7 +223,8 @@ int main(int argc, char* argv[]){
 		for (int i = 0; i<CdcCell_e.size();i++) CdcCell_e[i] *= GeV;
 		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_tid");
 		if (index_temp!=-1) CdcCell_tid = *(fMyRootInterface->get_vec_vecint(index_temp));
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
+		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_layerID");
+		if (index_temp!=-1) CdcCell_layerID = *(fMyRootInterface->get_vec_vecint(index_temp));
 		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_x");
 		if (index_temp!=-1) CdcCell_x = *(fMyRootInterface->get_vec_vecdouble(index_temp));
 		for (int i = 0; i<CdcCell_x.size();i++) CdcCell_x[i] *= cm;
@@ -242,18 +244,10 @@ int main(int argc, char* argv[]){
 		if (index_temp!=-1) CdcCell_pz = *(fMyRootInterface->get_vec_vecdouble(index_temp));
 		for (int i = 0; i<CdcCell_pz.size();i++) CdcCell_pz[i] *= GeV;
 
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
+
 		// find electron
-		int index = -1;
-		double maxe = 0;
-		for ( int i_par = 0; i_par < McTruth_nTracks; i_par++ ){
-			int pid = McTruth_pid[i_par];
-			int ptid = McTruth_ptid[i_par];
-			double e = McTruth_e[i_par];
-			if ( pid == 11 && e>maxe ){
-				index = i_par;
-				maxe = e;
-			}
-		}
+		int index = 0;
 		if (index == -1 ) continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron"<<std::endl;
 		inc_Ncut("Found electrons");
@@ -298,19 +292,20 @@ int main(int argc, char* argv[]){
 
 		int tid = McTruth_tid[index];
 		int i_CdcHit = -1;
+		int maxLayer = -1;
 		double CdcCell_firstHitTime = -1;
 		for ( int i_hit = 0; i_hit < CdcCell_nHits; i_hit++ ){
 			int i_tid = CdcCell_tid[i_hit];
 			if (i_tid == tid){
 				CdcCell_firstHitTime = CdcCell_t[i_hit];
 				i_CdcHit = i_hit;
-				break;
+				if (CdcCell_layerID[i_hit] > maxLayer) maxLayer = CdcCell_layerID[i_hit];
 			}
 		}
-		if ( CdcCell_firstHitTime == -1) // this electron not hit the Cdc
+		if ( maxLayer <4 ) // this electron not hit the Cdc
 			continue;
-		inc_Ncut("CDC hit by this electron");
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC"<<std::endl;
+		inc_Ncut("This electron hit the 5th layer of CDC");
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"This electron hit the 5th layer of CDC"<<std::endl;
 
 		if (Trigger_nHits<=0) // not hit the trigger
 			continue;

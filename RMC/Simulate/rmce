@@ -1,13 +1,7 @@
-#this is for RPC
-#GEOCARDROOT       = geometry_CdcWire.txt
-#MAGFIELDCARDROOT  = MagField_default.txt
-#GENFILEROOT       = gen_RPC.txt
-#OUTCARDROOT       = output_CdcWire.txt
-#GEOCARDROOT       = geometry_CdcWire.txt
 GEOCARDROOT       = geometry_cdc_130629
 MAGFIELDCARDROOT  = MagField_1T
-GENFILEROOT       = gen_Signal
-OUTCARDROOT       = output_Signal
+GENFILEROOT       = gen_rmce
+OUTCARDROOT       = output_rmce
 
 ##geometry preset
 #detector_configure
@@ -28,4 +22,4 @@ setCut_default.mac
 #run
 run_configure
 1
-2500
+1250

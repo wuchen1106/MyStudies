@@ -145,6 +145,12 @@ int main(int argc, char** argv){
 		double pz = fMyRootInterface->get_vec_double(index_temp)*MeV;
 		index_temp = fMyRootInterface->get_TBranch_index("t");
 		double t = fMyRootInterface->get_vec_double(index_temp)*ns;
+		index_temp = fMyRootInterface->get_TBranch_index("ox");
+		double ox = fMyRootInterface->get_vec_double(index_temp)*mm;
+		index_temp = fMyRootInterface->get_TBranch_index("oy");
+		double oy = fMyRootInterface->get_vec_double(index_temp)*mm;
+		index_temp = fMyRootInterface->get_TBranch_index("oz");
+		double oz = fMyRootInterface->get_vec_double(index_temp)*mm;
 
 		double pa = sqrt(px*px+py*py+pz*pz);
 		double pt = sqrt(px*px+py*py);
@@ -152,14 +158,35 @@ int main(int argc, char** argv){
 		double theta = acos(pz/pa);
 		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"pa");
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pa/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"theta");
-		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(theta/MeV);
 		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"pt");
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pt/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"pz");
+		if (index_temp!=-1)	fMyRootInterface->get_TH1D(index_temp)->Fill(pz/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"theta");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(theta/MeV);
 		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"gTime");
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(t/ns);
 		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"r");
-		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(r/cm);
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(r/mm);
+		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"ox");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(ox/mm);
+		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"oy");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(oy/mm);
+		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"oz");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(oz/mm);
+
+		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"pax");
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,x/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"ptx");
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,x/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"pzx");
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,x/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"paz");
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,z/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"ptz");
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,z/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"pzz");
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,z/mm);
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Done"<<std::endl;
 	}
