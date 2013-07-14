@@ -25,13 +25,13 @@ LIBS = -pthread -lm -ldl -rdynamic
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-PROGRAM = a
+PROGRAM = Scan
 
 # Object list for user defined packages
 OBJ = 
 
-$(PROGRAM): $(OBJ) $(PROGRAM).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).C $(OBJ) -o $(PROGRAM)
+$(PROGRAM): $(OBJ) $(PROGRAM).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).cxx $(OBJ) -o $(PROGRAM)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions

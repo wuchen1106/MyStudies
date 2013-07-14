@@ -23,12 +23,11 @@ configure
 cometg4_configure
 
 Beam/Analyse/BeamProfile/BeamProfile
-Beam/Analyse/Scan/a
-Beam/Analyse/Scan/a.C
 Beam/Analyse/Compare/Compare
 RMC/Analyse/bm
 RMC/Analyse/ph2e
 Resolution/Resolution
+Beam/Analyse/Scan/Scan
 
 # frequently changing files
 histList
