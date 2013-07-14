@@ -141,7 +141,7 @@ int main(int argc, char* argv[]){
 		cutcont += "&&" + m_monitor + ".origin.fZ<75.05";
 	}
 	else {
-		printf("Cannot recogonize this  monitor plane \"\s\"\n",m_monitor.c_str());
+		printf("Cannot recogonize this  monitor plane \"%s\"\n",m_monitor.c_str());
 		return -1;
 	}
 
