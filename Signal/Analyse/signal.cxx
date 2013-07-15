@@ -294,8 +294,10 @@ int main(int argc, char* argv[]){
 		for ( int i_hit = 0; i_hit < CdcCell_nHits; i_hit++ ){
 			int i_tid = CdcCell_tid[i_hit];
 			if (i_tid == tid){
-				CdcCell_firstHitTime = CdcCell_t[i_hit];
-				i_CdcHit = i_hit;
+				if (i_CdcHit == -1){
+					CdcCell_firstHitTime = CdcCell_t[i_hit];
+					i_CdcHit = i_hit;
+				}
 				if (CdcCell_layerID[i_hit] > maxLayer) maxLayer = CdcCell_layerID[i_hit];
 			}
 		}
@@ -327,11 +329,21 @@ int main(int argc, char* argv[]){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
 		inc_Ncut("Hit CDC first");
 
-		// Fill the histogram
 		double deltat = gRandom->Gaus()*100*ns;
 		double smeared_time = CdcCell_firstHitTime + deltat;
 		double smeared_ini_time = t + deltat;
+		bool inside = false;
+		double tsep = 1470*ns;
+		for ( int i = -10; i < 10 && !inside ; i++ ){
+			if ( smeared_time+i*tsep > 700*ns && smeared_time+i*tsep < 1314*ns ) // hit trigger first
+				inside = true;
+		}
+		if (!inside)
+			continue;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
+		inc_Ncut("Time window");
 
+		// Fill the histogram
 		double e_CdcHit = CdcCell_e[i_CdcHit];
 		double depE = e - e_CdcHit;
 
@@ -395,12 +407,6 @@ int main(int argc, char* argv[]){
 
 		fMyRootInterface->Fill();
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
-
-		if ( smeared_time < 700*ns || smeared_time > 1314*ns ) // hit trigger first
-			continue;
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
-		inc_Ncut("Time window");
-
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 	}/* end of loop in events*/

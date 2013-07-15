@@ -28,6 +28,9 @@ Beam/Analyse/Scan/Scan
 RMC/Analyse/bm
 RMC/Analyse/ph2e
 RMC/Analyse/RMCE
+RMC/Analyse/fit
+RMC/Analyse/hit
+RPC/Analyse/RPC
 RMC/RMCSpectrum/RMCSpectrum
 Resolution/Resolution
 Signal/Analyse/signal

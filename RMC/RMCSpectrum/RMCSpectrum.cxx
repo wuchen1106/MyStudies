@@ -29,7 +29,6 @@ int main(int argc, char** argv){
 	double M_MUON = 105.6584*MeV; //mass of muon in MeV
 	double M_ELE = 0.510999*MeV; //mass of electron in MeV
 	double M_U = 931.494061*MeV; //atomic mass unit in MeV
-	double E_BIND = 460.4*keV; //Binding energy of muon in Aluminum atom
 
 	//=>About Atom
 	int AtomIndex = 13; //default value is Al;
@@ -89,7 +88,7 @@ int main(int argc, char** argv){
 	std::string Mass_FileName = "config/Isotope_Mass.txt";
 	fp_temp = fopen(Mass_FileName.c_str(),"r");
 	if (fp_temp==NULL) {
-		std::cout<<"ERROR: Can not find file: "<<Abundance_fileName<<"!!!"<<std::endl;
+		std::cout<<"ERROR: Can not find file: "<<Mass_FileName<<"!!!"<<std::endl;
 		return -1;
 	}
 	line[128];
@@ -107,6 +106,28 @@ int main(int argc, char** argv){
 	for ( int i = 0; i < dict_mass.size(); i++ ){
 		std::cout<<"Np("<<dict_p[i]<<"), Nn("<<dict_n[i]<<"), Atom Mass = "<<std::setprecision(14)<<dict_mass[i]/M_U<<" u"<<std::endl;
 	}
+	//Read BindE Info
+	std::string Eb_FileName = "config/Binding_Energy_1s.txt";
+	fp_temp = fopen(Eb_FileName.c_str(),"r");
+	if (fp_temp==NULL) {
+		std::cout<<"ERROR: Can not find file: "<<Eb_FileName<<"!!!"<<std::endl;
+		return -1;
+	}
+	line[128];
+	double E_bind = 0; //Binding energy of electron in Aluminum atom
+	double M_bind = 0; //Binding energy of muon in Aluminum atom
+	int temp_p = 0;
+	fgets(line,sizeof(line),fp_temp); //comment line
+	while (fgets(line,sizeof(line),fp_temp)) {
+		sscanf(line,"%i %lf",&temp_p,&E_bind);
+		if ( vec_num_p[0] == temp_p ) {
+			M_bind = E_bind /1.e6 * M_MUON / M_ELE;
+			break;
+		}
+	}
+	fclose(fp_temp);
+	//check
+	std::cout<<"Np("<<vec_num_p[0]<<"), Nn("<<num_n<<"), Bind Energy = "<<std::setprecision(14)<<M_bind<<" MeV"<<std::endl;
 	//Get Kmax
 	std::vector<double> vec_kmax;
 	double maxK = 0;
@@ -125,9 +146,9 @@ int main(int argc, char** argv){
 			std::cout<<"Cannot find mass of this atom in "<<Mass_FileName<<std::endl;
 			return -1;
 		}
-		double kmi = M_MUON+(Mass_initial-Mass_final)-M_ELE - E_BIND;
+		double kmi = M_MUON+(Mass_initial-Mass_final)-M_ELE - M_bind;
 		double km = kmi*(1-kmi/(Mass_final-(vec_num_p[i]-1)*M_ELE+kmi)/2);
-		std::cout<<"km = "<<kmi<<"*(1-"<<kmi<<"/("<<Mass_final<<"-"<<(vec_num_p[i]-1)<<"*"<<M_ELE<<"+"<<kmi<<")/2) = "<<km<<std::endl;
+		//std::cout<<"km = "<<kmi<<"*(1-"<<kmi<<"/("<<Mass_final<<"-"<<(vec_num_p[i]-1)<<"*"<<M_ELE<<"+"<<kmi<<")/2) = "<<km<<std::endl;
 		if (km>maxK) maxK = km;
 		vec_kmax.push_back(km);
 	}

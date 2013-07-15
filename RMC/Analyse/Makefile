@@ -33,6 +33,8 @@ LIBS += -lMyRootInterface
 RMCE = RMCE
 PH2E = ph2e
 BM = bm
+FIT = fit
+HIT = hit
 
 # Object list for user defined packages
 OBJ = 
@@ -46,6 +48,12 @@ $(PH2E): $(OBJ) $(PH2E).cxx
 $(BM): $(OBJ) $(BM).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(BM).cxx $(OBJ) -o $(BM)
 
+$(FIT): $(OBJ) $(FIT).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(FIT).cxx $(OBJ) -o $(FIT)
+
+$(HIT): $(OBJ) $(HIT).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(HIT).cxx $(OBJ) -o $(HIT)
+
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
 # Here is an example showing how to make clean and make a specified user defined package
@@ -55,6 +63,8 @@ clean:
 	$(RM) $(RMCE)
 	$(RM) $(PH2E)
 	$(RM) $(BM)
+	$(RM) $(FIT)
+	$(RM) $(HIT)
 
 .PHONY: all
 all: $(RMCE)

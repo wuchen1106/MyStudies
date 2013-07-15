@@ -247,7 +247,17 @@ int main(int argc, char* argv[]){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
 
 		// find electron
-		int index = 0;
+		int index = -1;
+		double maxe = 0;
+		for ( int i_par = 0; i_par < McTruth_nTracks; i_par++ ){
+			int pid = McTruth_pid[i_par];
+			int ptid = McTruth_ptid[i_par];
+			double e = McTruth_e[i_par];
+			if ( pid == 11 && e>maxe ){
+				index = i_par;
+				maxe = e;
+			}
+		}
 		if (index == -1 ) continue;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron"<<std::endl;
 		inc_Ncut("Found electrons");
@@ -297,9 +307,12 @@ int main(int argc, char* argv[]){
 		for ( int i_hit = 0; i_hit < CdcCell_nHits; i_hit++ ){
 			int i_tid = CdcCell_tid[i_hit];
 			if (i_tid == tid){
-				CdcCell_firstHitTime = CdcCell_t[i_hit];
-				i_CdcHit = i_hit;
+				if (i_CdcHit == -1){
+					CdcCell_firstHitTime = CdcCell_t[i_hit];
+					i_CdcHit = i_hit;
+				}
 				if (CdcCell_layerID[i_hit] > maxLayer) maxLayer = CdcCell_layerID[i_hit];
+				//std::cout<<"layerID["<<i_hit<<"] = "<< CdcCell_layerID[i_hit]<<std::endl;
 			}
 		}
 		if ( maxLayer <4 ) // this electron not hit the Cdc
@@ -330,11 +343,22 @@ int main(int argc, char* argv[]){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
 		inc_Ncut("Hit CDC first");
 
-		// Fill the histogram
+		// time window
 		double deltat = gRandom->Gaus()*100*ns;
 		double smeared_time = CdcCell_firstHitTime + deltat;
 		double smeared_ini_time = t + deltat;
+		bool inside = false;
+		double tsep = 1470*ns;
+		for ( int i = -10; i < 10 && !inside ; i++ ){
+			if ( smeared_time+i*tsep > 700*ns && smeared_time+i*tsep < 1314*ns ) // hit trigger first
+				inside = true;
+		}
+		if (!inside)
+			continue;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
+		inc_Ncut("Time window");
 
+		// Fill the histogram
 		double e_CdcHit = CdcCell_e[i_CdcHit];
 		double depE = e - e_CdcHit;
 
@@ -345,6 +369,9 @@ int main(int argc, char* argv[]){
 		double hit_py = CdcCell_py[i_CdcHit];
 		double hit_pz = CdcCell_pz[i_CdcHit];
 		double hit_pa = sqrt(hit_px*hit_px+hit_py*hit_py+hit_pz*hit_pz);
+
+		double Egamma = McTruth_e[0];
+		double pOe = pa/Egamma;
 
 		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"pa")) != -1 ){
 			fMyRootInterface->get_TH1D(index_temp)->Fill(hit_pa/MeV);
@@ -384,6 +411,20 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->set_ovec_double(index_temp,pz/MeV); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("t")) != -1 )
 			fMyRootInterface->set_ovec_double(index_temp,t); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_x")) != -1 )
+			fMyRootInterface->set_ovec_double(index_temp,hit_x/mm); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_y")) != -1 )
+			fMyRootInterface->set_ovec_double(index_temp,hit_y/mm); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_z")) != -1 )
+			fMyRootInterface->set_ovec_double(index_temp,hit_z/mm); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_px")) != -1 )
+			fMyRootInterface->set_ovec_double(index_temp,hit_px/MeV); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_py")) != -1 )
+			fMyRootInterface->set_ovec_double(index_temp,hit_py/MeV); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_pz")) != -1 )
+			fMyRootInterface->set_ovec_double(index_temp,hit_pz/MeV); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("pOe")) != -1 )
+			fMyRootInterface->set_ovec_double(index_temp,pOe); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("dt")) != -1 )
 			fMyRootInterface->set_ovec_double(index_temp,deltat); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("st")) != -1 )
@@ -398,12 +439,6 @@ int main(int argc, char* argv[]){
 
 		fMyRootInterface->Fill();
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
-
-		if ( smeared_time < 700*ns || smeared_time > 1314*ns ) // hit trigger first
-			continue;
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
-		inc_Ncut("Time window");
-
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 	}/* end of loop in events*/

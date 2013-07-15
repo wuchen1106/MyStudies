@@ -759,7 +759,6 @@ int main(int argc, char* argv[]){
 			d_px = (*McTruth_px)[index]/1000.;
 			d_py = (*McTruth_py)[index]/1000.;
 			d_pz = (*McTruth_pz)[index]/1000.;
-			d_tree->Fill();
 
 			if (CdcCell_nHits<=0) // not hit the Cdc
 				continue;
@@ -784,6 +783,7 @@ int main(int argc, char* argv[]){
 			if ( i_layer_max < 4 ) // at least 4 layers
 				continue;
 			N8++;
+			d_tree->Fill();
 
 			if ( (index_temp = get_TH1D("pa")) != -1 ){
 				vecH1D[index_temp]->Fill(pa_max);
