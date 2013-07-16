@@ -1,0 +1,25 @@
+GEOCARDROOT       = geometry_PrTgt
+MAGFIELDCARDROOT  = MagField_0T
+GENFILEROOT       = gen_ip
+OUTCARDROOT       = output_ip
+
+##geometry preset
+#detector_configure
+#
+##magnet field (uniform file)
+#magField_configure
+#
+##generator
+#gen_configure
+#
+#verbose
+#verbose_configure_setCut
+#setCut_default.mac
+#
+##output
+#output_configure
+
+#run
+run_configure
+1
+1250
