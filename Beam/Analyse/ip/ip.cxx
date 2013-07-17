@@ -134,6 +134,26 @@ int main(int argc, char* argv[]){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
 		inc_Ncut("Got entries");
 
+		// For output
+		std::vector<int> pid;
+		std::vector<int> ppid;
+		std::vector<double> x;
+		std::vector<double> y;
+		std::vector<double> z;
+		std::vector<double> px;
+		std::vector<double> py;
+		std::vector<double> pz;
+		std::vector<double> t;
+		std::vector<std::string> process;
+		std::vector<std::string> volume;
+		std::vector<double> hit_x;
+		std::vector<double> hit_y;
+		std::vector<double> hit_z;
+		std::vector<double> hit_px;
+		std::vector<double> hit_py;
+		std::vector<double> hit_pz;
+		std::vector<double> hit_t;
+
 		// Get info
 		int evt_num;
 		int run_num;
@@ -153,7 +173,7 @@ int main(int argc, char* argv[]){
 		std::vector<std::string> McTruth_volume;
 		int MonitorE_nHits = 0;
 		std::vector<int> MonitorE_tid;
-		std::vector<int> MonitorE_layerID;
+		std::vector<int> MonitorE_pid;
 		std::vector<double> MonitorE_t;
 		std::vector<double> MonitorE_e;
 		std::vector<double> MonitorE_x;
@@ -162,9 +182,17 @@ int main(int argc, char* argv[]){
 		std::vector<double> MonitorE_px;
 		std::vector<double> MonitorE_py;
 		std::vector<double> MonitorE_pz;
-		int Trigger_nHits = 0;
-		std::vector<int> Trigger_tid;
-		std::vector<double> Trigger_t;
+		int MonitorC_nHits = 0;
+		std::vector<int> MonitorC_tid;
+		std::vector<int> MonitorC_pid;
+		std::vector<double> MonitorC_t;
+		std::vector<double> MonitorC_e;
+		std::vector<double> MonitorC_x;
+		std::vector<double> MonitorC_y;
+		std::vector<double> MonitorC_z;
+		std::vector<double> MonitorC_px;
+		std::vector<double> MonitorC_py;
+		std::vector<double> MonitorC_pz;
 
 		index_temp = fMyRootInterface->get_TBranch_index("evt_num");
 		if (index_temp!=-1) evt_num = fMyRootInterface->get_vec_int(index_temp);
@@ -206,13 +234,6 @@ int main(int argc, char* argv[]){
 		if (index_temp!=-1) McTruth_process = *(fMyRootInterface->get_vec_vecstring(index_temp));
 		index_temp = fMyRootInterface->get_TBranch_index("McTruth_volume");
 		if (index_temp!=-1) McTruth_volume = *(fMyRootInterface->get_vec_vecstring(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("Trigger_nHits");
-		if (index_temp!=-1) Trigger_nHits = fMyRootInterface->get_vec_int(index_temp);
-		index_temp = fMyRootInterface->get_TBranch_index("Trigger_t");
-		if (index_temp!=-1) Trigger_t = *(fMyRootInterface->get_vec_vecdouble(index_temp));
-		for (int i = 0; i<Trigger_t.size();i++) Trigger_t[i] *= ns;
-		index_temp = fMyRootInterface->get_TBranch_index("Trigger_tid");
-		if (index_temp!=-1) Trigger_tid = *(fMyRootInterface->get_vec_vecint(index_temp));
 		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_nHits");
 		if (index_temp!=-1) MonitorE_nHits = fMyRootInterface->get_vec_int(index_temp);
 		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_t");
@@ -223,8 +244,8 @@ int main(int argc, char* argv[]){
 		for (int i = 0; i<MonitorE_e.size();i++) MonitorE_e[i] *= GeV;
 		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_tid");
 		if (index_temp!=-1) MonitorE_tid = *(fMyRootInterface->get_vec_vecint(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_layerID");
-		if (index_temp!=-1) MonitorE_layerID = *(fMyRootInterface->get_vec_vecint(index_temp));
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_pid");
+		if (index_temp!=-1) MonitorE_pid = *(fMyRootInterface->get_vec_vecint(index_temp));
 		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_x");
 		if (index_temp!=-1) MonitorE_x = *(fMyRootInterface->get_vec_vecdouble(index_temp));
 		for (int i = 0; i<MonitorE_x.size();i++) MonitorE_x[i] *= cm;
@@ -243,198 +264,157 @@ int main(int argc, char* argv[]){
 		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_pz");
 		if (index_temp!=-1) MonitorE_pz = *(fMyRootInterface->get_vec_vecdouble(index_temp));
 		for (int i = 0; i<MonitorE_pz.size();i++) MonitorE_pz[i] *= GeV;
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_nHits");
+		if (index_temp!=-1) MonitorC_nHits = fMyRootInterface->get_vec_int(index_temp);
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_t");
+		if (index_temp!=-1) MonitorC_t = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<MonitorC_t.size();i++) MonitorC_t[i] *= ns;
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_e");
+		if (index_temp!=-1) MonitorC_e = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<MonitorC_e.size();i++) MonitorC_e[i] *= GeV;
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_tid");
+		if (index_temp!=-1) MonitorC_tid = *(fMyRootInterface->get_vec_vecint(index_temp));
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_pid");
+		if (index_temp!=-1) MonitorC_pid = *(fMyRootInterface->get_vec_vecint(index_temp));
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_x");
+		if (index_temp!=-1) MonitorC_x = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<MonitorC_x.size();i++) MonitorC_x[i] *= cm;
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_y");
+		if (index_temp!=-1) MonitorC_y = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<MonitorC_y.size();i++) MonitorC_y[i] *= cm;
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_z");
+		if (index_temp!=-1) MonitorC_z = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<MonitorC_z.size();i++) MonitorC_z[i] *= cm;
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_px");
+		if (index_temp!=-1) MonitorC_px = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<MonitorC_px.size();i++) MonitorC_px[i] *= GeV;
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_py");
+		if (index_temp!=-1) MonitorC_py = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<MonitorC_py.size();i++) MonitorC_py[i] *= GeV;
+		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_pz");
+		if (index_temp!=-1) MonitorC_pz = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		for (int i = 0; i<MonitorC_pz.size();i++) MonitorC_pz[i] *= GeV;
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
 
-		// find electron
-		int index = -1;
-		double maxe = 0;
-		for ( int i_par = 0; i_par < McTruth_nTracks; i_par++ ){
-			int pid = McTruth_pid[i_par];
-			int ptid = McTruth_ptid[i_par];
-			double e = McTruth_e[i_par];
-			if ( pid == 11 && e>maxe ){
-				index = i_par;
-				maxe = e;
+		// find muon
+		std::vector<int> i_mon; // 0: no hit. 1: MonitorC. 2: MonitorE
+		std::vector<int> i_hit;
+		std::vector<int> tid;
+		for ( int i = 0; i < MonitorC_nHits; i++ ){
+			int pid = MonitorC_pid[i]; 
+			if ( pid == -13 || pid == 13 || pid == 211 || pid == -211 || pid == 321 || pid == -321){
+				i_hit.push_back(i);
+				i_mon.push_back(1);
+				tid.push_back(MonitorC_tid[i]);
 			}
 		}
-		if (index == -1 ) continue;
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron"<<std::endl;
-		inc_Ncut("Found electrons");
+		for ( int i = 0; i < MonitorE_nHits; i++ ){
+			int pid = MonitorE_pid[i];
+			if ( pid == -13 || pid == 13 || pid == 211 || pid == -211 || pid == 321 || pid == -321){
+				i_hit.push_back(i);
+				i_mon.push_back(2);
+				tid.push_back(MonitorE_tid[i]);
+			}
+		}
+		if (i_hit.size()==0) continue;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found muon"<<std::endl;
+		inc_Ncut("Found muon");
 
-		// get information of this electron
-		double x = McTruth_x[index];
-		double y = McTruth_y[index];
-		double z = McTruth_z[index];
-		double px = McTruth_px[index];
-		double py = McTruth_py[index];
-		double pz = McTruth_pz[index];
-		double e = McTruth_e[index];
-		double pa = sqrt(px*px+py*py+pz*pz);
-		double theta = (pa==0?2*PI:acos(pz/pa));
-		double t = McTruth_time[index];
-		std::string process = McTruth_process[index];
-		int process_id = 0;
-		int volume_id = 0;
-		if (process=="conv") process_id = 1;
-		else if (process=="compt") process_id = 2;
-		std::string volume = McTruth_volume[index];
-		if (volume=="InnerCylinder") volume_id = 1;
-		else if (volume=="Target") volume_id = 2;
-
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0)
-			std::cout<<prefix_EventInfoStart
-				<<" pa = "<<pa/MeV
-				<<"MeV, process = \""<<process
-				<<"\", volume = \""<<volume
-				<<"\""
-				<<std::endl;
-
-		if (volume!="Target"&&volume!="InnerCylinder")
-			continue;
-		inc_Ncut("Electron from target/InnerCylinder");
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Target or InnerCylinder"<<std::endl;
-
-		if (MonitorE_nHits<=0) // not hit the Cdc
-			continue;
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found CDC hits"<<std::endl;
-		inc_Ncut("Has CDC hits");
-
-		int tid = McTruth_tid[index];
-		int i_CdcHit = -1;
-		int maxLayer = -1;
-		double MonitorE_firstHitTime = -1;
-		for ( int i_hit = 0; i_hit < MonitorE_nHits; i_hit++ ){
-			int i_tid = MonitorE_tid[i_hit];
-			if (i_tid == tid){
-				if (i_CdcHit == -1){
-					MonitorE_firstHitTime = MonitorE_t[i_hit];
-					i_CdcHit = i_hit;
+		// get information of this muon 
+		for (int i_par = 0; i_par < i_hit.size(); i_par++){
+			int i_McTruth = -1;
+			int i_ppid = 0;
+			int i_ptid = 0;
+			for ( int i = 0; i < McTruth_nTracks; i++ ){
+				int i_tid = McTruth_tid[i];
+				if ( i_tid == tid[i_par] ){
+					i_McTruth = i;
+					i_ptid = McTruth_ptid[i_par];
+					break;
 				}
-				if (MonitorE_layerID[i_hit] > maxLayer) maxLayer = MonitorE_layerID[i_hit];
-				//std::cout<<"layerID["<<i_hit<<"] = "<< MonitorE_layerID[i_hit]<<std::endl;
 			}
-		}
-		if ( maxLayer <4 ) // this electron not hit the Cdc
-			continue;
-		inc_Ncut("This electron hit the 5th layer of CDC");
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"This electron hit the 5th layer of CDC"<<std::endl;
-
-		if (Trigger_nHits<=0) // not hit the trigger
-			continue;
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found Trigger hits"<<std::endl;
-		inc_Ncut("Has trigger htis");
-
-		double Trigger_firstHitTime = -1;
-		for ( int i_hit = 0; i_hit < Trigger_nHits; i_hit++ ){
-			int i_tid = Trigger_tid[i_hit];
-			if (i_tid == tid){
-				Trigger_firstHitTime = Trigger_t[i_hit];
-				break;
+			for ( int i = 0; i < McTruth_nTracks; i++ ){
+				int i_tid = McTruth_tid[i];
+				if ( i_tid == i_ptid ){
+					i_ppid = McTruth_pid[i];
+					break;
+				}
 			}
-		}
-		if ( Trigger_firstHitTime == -1) // this electron not hit the trigger
-			continue;
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits Trigger"<<std::endl;
-		inc_Ncut("trigger hit by this electron");
-
-		if ( Trigger_firstHitTime <= MonitorE_firstHitTime ) // hit trigger first
-			continue;
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
-		inc_Ncut("Hit CDC first");
-
-		// time window
-		double deltat = gRandom->Gaus()*100*ns;
-		double smeared_time = MonitorE_firstHitTime + deltat;
-		double smeared_ini_time = t + deltat;
-		bool inside = false;
-		double tsep = 1470*ns;
-		for ( int i = -10; i < 10 && !inside ; i++ ){
-			if ( smeared_time+i*tsep > 700*ns && smeared_time+i*tsep < 1314*ns ) // hit trigger first
-				inside = true;
-		}
-		if (!inside)
-			continue;
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found electron hits CDC first"<<std::endl;
-		inc_Ncut("Time window");
-
-		// Fill the histogram
-		double e_CdcHit = MonitorE_e[i_CdcHit];
-		double depE = e - e_CdcHit;
-
-		double hit_x = MonitorE_x[i_CdcHit];
-		double hit_y = MonitorE_y[i_CdcHit];
-		double hit_z = MonitorE_z[i_CdcHit];
-		double hit_px = MonitorE_px[i_CdcHit];
-		double hit_py = MonitorE_py[i_CdcHit];
-		double hit_pz = MonitorE_pz[i_CdcHit];
-		double hit_pa = sqrt(hit_px*hit_px+hit_py*hit_py+hit_pz*hit_pz);
-
-		double Egamma = McTruth_e[0];
-		double pOe = pa/Egamma;
-
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"pa")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(hit_pa/MeV);
-		}
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"theta")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(theta/rad);
-		}
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"depE")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(depE/MeV);
-		}
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"hit_time")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(MonitorE_firstHitTime/ns);
-		}
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"smeared_hit_time")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(smeared_time/ns);
-		}
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"smear_time")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(deltat/ns);
+			pid.push_back(McTruth_pid[i_McTruth]);
+			ppid.push_back(i_ppid);
+			x.push_back(McTruth_x[i_McTruth]/mm);
+			y.push_back(McTruth_y[i_McTruth]/mm);
+			z.push_back(McTruth_z[i_McTruth]/mm);
+			px.push_back(McTruth_px[i_McTruth]/MeV);
+			py.push_back(McTruth_py[i_McTruth]/MeV);
+			pz.push_back(McTruth_pz[i_McTruth]/MeV);
+			t.push_back(McTruth_time[i_McTruth]/ns);
+			process.push_back(McTruth_process[i_McTruth]);
+			volume.push_back(McTruth_volume[i_McTruth]);
+			if (i_mon[i_par]==1){
+				hit_x.push_back(MonitorC_x[i_hit[i_par]]/mm);
+				hit_y.push_back(MonitorC_y[i_hit[i_par]]/mm);
+				hit_z.push_back(MonitorC_z[i_hit[i_par]]/mm);
+				hit_px.push_back(MonitorC_px[i_hit[i_par]]/MeV);
+				hit_py.push_back(MonitorC_py[i_hit[i_par]]/MeV);
+				hit_pz.push_back(MonitorC_pz[i_hit[i_par]]/MeV);
+				hit_t.push_back(MonitorC_t[i_hit[i_par]]/ns);
+			}
+			else if (i_mon[i_par]==2){
+				hit_x.push_back(MonitorE_x[i_hit[i_par]]/mm);
+				hit_y.push_back(MonitorE_y[i_hit[i_par]]/mm);
+				hit_z.push_back(MonitorE_z[i_hit[i_par]]/mm);
+				hit_px.push_back(MonitorE_px[i_hit[i_par]]/MeV);
+				hit_py.push_back(MonitorE_py[i_hit[i_par]]/MeV);
+				hit_pz.push_back(MonitorE_pz[i_hit[i_par]]/MeV);
+				hit_t.push_back(MonitorE_t[i_hit[i_par]]/ns);
+			}
 		}
 
 		// Fill the tree
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("evt_num")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,evt_num); 
+			fMyRootInterface->set_ovec_int(index_temp,evt_num); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("run_num")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,run_num); 
+			fMyRootInterface->set_ovec_int(index_temp,run_num); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("nPar")) != -1 )
+			fMyRootInterface->set_ovec_int(index_temp,i_hit.size()); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("pid")) != -1 )
+			fMyRootInterface->set_ovec_vecint(index_temp,pid); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("ppid")) != -1 )
+			fMyRootInterface->set_ovec_vecint(index_temp,ppid); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("x")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,x/mm); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,x); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("y")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,y/mm); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,y); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("z")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,z/mm); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,z); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("px")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,px/MeV); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,px); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("py")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,py/MeV); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,py); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("pz")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,pz/MeV); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,pz); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("t")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,t); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,t); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_x")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,hit_x/mm); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_x); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_y")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,hit_y/mm); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_y); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_z")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,hit_z/mm); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_z); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_px")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,hit_px/MeV); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_px); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_py")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,hit_py/MeV); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_py); 
 		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_pz")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,hit_pz/MeV); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("pOe")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,pOe); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("dt")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,deltat); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("st")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,smeared_ini_time); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("sht")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,smeared_time); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("prid")) != -1 )
-			fMyRootInterface->set_ovec_int(index_temp,process_id); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("vid")) != -1 )
-			fMyRootInterface->set_ovec_int(index_temp,volume_id); 
+			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_pz); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_t")) != -1 )
+			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_t); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("process")) != -1 )
+			fMyRootInterface->set_ovec_vecstring(index_temp,process); 
+		if ( (index_temp = fMyRootInterface->get_oTBranch_index("volume")) != -1 )
+			fMyRootInterface->set_ovec_vecstring(index_temp,volume); 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
 
 		fMyRootInterface->Fill();
@@ -498,19 +478,19 @@ void init_Ncut(){
 }
 
 void inc_Ncut(std::string mess){
-	int index = -1;
+	int iCut = -1;
 	for (int i = 0; i < Ncut_message.size(); i++){
 		if (Ncut_message[i]==mess){
-			index = i;
+			iCut = i;
 			break;
 		}
 	}
-	if (index == -1){
-		index = Ncut_message.size();
+	if (iCut == -1){
+		iCut = Ncut_message.size();
 		Ncut_message.push_back(mess);
 		Ncut.push_back(0);
 	}
-	Ncut[index]++;
+	Ncut[iCut]++;
 }
 
 void dump_Ncut(){
