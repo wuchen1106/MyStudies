@@ -14,6 +14,8 @@
 #include "TH2D.h"
 #include "TRandom.h"
 
+#include "CdcGeometryParameter.hh"
+
 #include "MyRootInterface.hxx"
 
 char m_workMode[128];
@@ -113,6 +115,11 @@ int main(int argc, char* argv[]){
 	double M_U = 931.494061*MeV; //atomic mass unit in MeV
 	double M_p = 0.9382723*GeV;  // mass of proton// proton mass unit in GeV
 
+	//*********If you have to read a histogram************************
+	int ihist_RATE = 0;
+	TH1D* h_RATE = fMyRootInterface->get_TH1D(ihist_RATE);
+	int nbin1_RATE = h_RATE->GetNbinsX(); //How many bins do you want
+
 	//##########################Prepare histograms############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
 	fMyRootInterface->read("input");
@@ -124,7 +131,7 @@ int main(int argc, char* argv[]){
 	//=>About Statistical
 	init_Ncut();
 	std::vector<int> nhits;
-	for (int i = 0; i < 18; i++ ){
+	for (int i = 0; i < nbin1_RATE; i++){
 		nhits.push_back(0);
 	}
 
@@ -144,14 +151,10 @@ int main(int argc, char* argv[]){
 		std::vector<int> CdcCell_cellID;
 		int Trigger_nHits = 0;
 
-		index_temp = fMyRootInterface->get_TBranch_index("Trigger_nHits");
-		if (index_temp!=-1) Trigger_nHits = fMyRootInterface->get_vec_int(index_temp);
-		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_nHits");
-		if (index_temp!=-1) CdcCell_nHits = fMyRootInterface->get_vec_int(index_temp);
-		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_layerID");
-		if (index_temp!=-1) CdcCell_layerID = *(fMyRootInterface->get_vec_vecint(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("CdcCell_cellID");
-		if (index_temp!=-1) CdcCell_cellID = *(fMyRootInterface->get_vec_vecint(index_temp));
+		fMyRootInterface->get_value("Trigger_nHits",Trigger_nHits);
+		fMyRootInterface->get_value("CdcCell_nHits",CdcCell_nHits);
+		fMyRootInterface->get_value("CdcCell_layerID",CdcCell_layerID);
+		fMyRootInterface->get_value("CdcCell_cellID",CdcCell_cellID);
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
 
@@ -164,6 +167,34 @@ int main(int argc, char* argv[]){
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 	}/* end of loop in events*/
+
+	//=> For Statistical
+	//=>Read file
+	std::ifstream fin_card("input");
+	if(!fin_card){
+		std::cout<<"Cannot find input"<<std::endl;
+		return -1;
+	}
+	std::string s_card;
+	// read file
+	std::string CdcFile;
+	while(getline(fin_card,s_card)){
+		if ( fMyRootInterface->ISEMPTY(s_card) ) continue;
+		//if (m_verbose >= Verbose_InputInfo) std::cout<<prefix_InputInfo<<": \""<<s_card<<"\""<<std::endl;
+		std::vector<std::string> segments;
+		fMyRootInterface->seperate_string(s_card,segments,'|');
+		int iterator = 1;
+		if ( segments[0] == "CdcFile" ){
+			if(iterator<segments.size()) CdcFile=segments[iterator++]; else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+		}
+	}
+	CdcGeometryParameter *pCdcGeometryParameter = new CdcGeometryParameter("cdc");
+	pCdcGeometryParameter->InitFromFile(CdcFile);
+	for (int i = 0; i < n_tracksVSlayer.size(); i++ ){
+		int nCell = pCdcGeometryParameter->get_layer_cell_num(i);
+		double rate = (double)(n_tracksVSlayer[i])/nCell;
+		h_RATE->SetBinContent(i+1,rate);
+	}
 
 	//=>For output
 	clock_t t_END = clock();

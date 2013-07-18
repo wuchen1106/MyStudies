@@ -373,48 +373,28 @@ int main(int argc, char* argv[]){
 		}
 
 		// Fill the tree
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("evt_num")) != -1 )
-			fMyRootInterface->set_ovec_int(index_temp,evt_num); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("run_num")) != -1 )
-			fMyRootInterface->set_ovec_int(index_temp,run_num); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("nPar")) != -1 )
-			fMyRootInterface->set_ovec_int(index_temp,i_hit.size()); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("pid")) != -1 )
-			fMyRootInterface->set_ovec_vecint(index_temp,pid); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("ppid")) != -1 )
-			fMyRootInterface->set_ovec_vecint(index_temp,ppid); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("x")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,x); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("y")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,y); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("z")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,z); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("px")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,px); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("py")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,py); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("pz")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,pz); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("t")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,t); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_x")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_x); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_y")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_y); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_z")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_z); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_px")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_px); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_py")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_py); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_pz")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_pz); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("hit_t")) != -1 )
-			fMyRootInterface->set_ovec_vecdouble(index_temp,hit_t); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("process")) != -1 )
-			fMyRootInterface->set_ovec_vecstring(index_temp,process); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("volume")) != -1 )
-			fMyRootInterface->set_ovec_vecstring(index_temp,volume); 
+		fMyRootInterface->set_ovalue("evt_num",evt_num);
+		fMyRootInterface->set_ovalue("run_num",run_num);
+		fMyRootInterface->set_ovalue("nPar",i_hit.size());
+		fMyRootInterface->set_ovalue("pid",pid);
+		fMyRootInterface->set_ovalue("ppid",ppid);
+		fMyRootInterface->set_ovalue("ptid",ptid);
+		fMyRootInterface->set_ovalue("x",x);
+		fMyRootInterface->set_ovalue("y",y);
+		fMyRootInterface->set_ovalue("z",z);
+		fMyRootInterface->set_ovalue("px",px);
+		fMyRootInterface->set_ovalue("py",py);
+		fMyRootInterface->set_ovalue("pz",pz);
+		fMyRootInterface->set_ovalue("t",t);
+		fMyRootInterface->set_ovalue("hit_x",hit_x);
+		fMyRootInterface->set_ovalue("hit_y",hit_y);
+		fMyRootInterface->set_ovalue("hit_z",hit_z);
+		fMyRootInterface->set_ovalue("hit_px",hit_px);
+		fMyRootInterface->set_ovalue("hit_py",hit_py);
+		fMyRootInterface->set_ovalue("hit_pz",hit_pz);
+		fMyRootInterface->set_ovalue("hit_t",hit_t);
+		fMyRootInterface->set_ovalue("process",process);
+		fMyRootInterface->set_ovalue("volume",volume);
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
 
 		fMyRootInterface->Fill();

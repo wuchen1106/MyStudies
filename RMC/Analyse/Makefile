@@ -18,13 +18,17 @@ CXXFLAGS = -g -O2 -W -Wall
 
 # Special packages:
 INCDIR += -I$(MYCOMMONTOOLSROOT)/MyRootInterface
+LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
+LIBS += -lMyRootInterface
+
+INCDIR += -I$(MYG4SIMROOT)/MyRootInterface
+LIBDIR += -L$(MYG4SIMROOT)/libs
+LIBS += -lMyRootInterface
 
 # Take root as an example. ( Root is a widely used package developed by CERN for analysing. )
 INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
 LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
 LIBS += -pthread -lm -ldl -rdynamic
-LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
-LIBS += -lMyRootInterface
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
 # Names of user defined packages
@@ -38,6 +42,9 @@ HIT = hit
 
 # Object list for user defined packages
 OBJ = 
+
+.PHONY: all
+all: $(RMCE) $(PH2E) $(BM) $(FIT) $(HIT)
 
 $(RMCE): $(OBJ) $(RMCE).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(RMCE).cxx $(OBJ) -o $(RMCE)
@@ -65,6 +72,3 @@ clean:
 	$(RM) $(BM)
 	$(RM) $(FIT)
 	$(RM) $(HIT)
-
-.PHONY: all
-all: $(RMCE)

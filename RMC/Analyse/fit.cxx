@@ -180,13 +180,13 @@ int main(int argc, char* argv[]){
 		ini_pa = sqrt(ini_px*ini_px+ini_py*ini_py+ini_pz*ini_pz);
 		fit_pa = sqrt(fit_px*fit_px+fit_py*fit_py+fit_pz*fit_pz);
 
-		std::cout<<"error = "<<error
-			     <<", nfail = "<<nfail
-			     <<",chi2 = "<<chi2
-			     <<", tailfit_1_fit_pa = "<<tailfit_1_fit_pa
-			     <<", fit_pa = "<<fit_pa
-			     <<", ini_pa = "<<ini_pa
-			     <<std::endl;
+		//std::cout<<"error = "<<error
+		//	     <<", nfail = "<<nfail
+		//	     <<",chi2 = "<<chi2
+		//	     <<", tailfit_1_fit_pa = "<<tailfit_1_fit_pa
+		//	     <<", fit_pa = "<<fit_pa
+		//	     <<", ini_pa = "<<ini_pa
+		//	     <<std::endl;
 		if ( error==0 && nfail==0 && chi2>0 && chi2<2 && abs(tailfit_1_fit_pa-fit_pa)<2.0*MeV ){
 			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_runName+"fitpa")) != -1 ){
 				fMyRootInterface->get_TH1D(index_temp)->Fill(fit_pa/MeV);

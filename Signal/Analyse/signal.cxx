@@ -119,10 +119,19 @@ int main(int argc, char* argv[]){
 	fMyRootInterface->set_OutputName(m_runName);
 	fMyRootInterface->init();
 
+	//*********If you have to read a histogram************************
+	int ihist_AGEO = 0;
+	TH1D* h_AGEO = fMyRootInterface->get_TH1D(ihist_AGEO);
+	int nbin1_AGEO = h_AGEO->GetNbinsX(); //How many bins do you want
+
 	//************SET Statistics********************
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET Statistics###"<<std::endl;
 	//=>About Statistical
 	init_Ncut();
+	std::vector<int> n_tracksVSlayer;
+	for (int i = 0; i < nbin1_AGEO; i++){
+		n_tracksVSlayer.push_back(0);
+	}
 
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
@@ -301,6 +310,9 @@ int main(int argc, char* argv[]){
 				if (CdcCell_layerID[i_hit] > maxLayer) maxLayer = CdcCell_layerID[i_hit];
 			}
 		}
+		for (int i = 0; i < n_tracksVSlayer.size(); i++){
+			if (maxLayer>=i) n_tracksVSlayer[i]++;
+		}
 		if ( maxLayer <4 ) // this electron not hit the Cdc
 			continue;
 		inc_Ncut("This electron hit the 5th layer of CDC");
@@ -410,6 +422,12 @@ int main(int argc, char* argv[]){
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 	}/* end of loop in events*/
+
+	//=> For Statistical
+	for (int i = 0; i < n_tracksVSlayer.size(); i++ ){
+		double acc = (double)(n_tracksVSlayer[i])/Ncut[0];
+		h_AGEO->SetBinContent(i+1,acc);
+	}
 
 	//=>For output
 	clock_t t_END = clock();

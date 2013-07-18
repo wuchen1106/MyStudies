@@ -46,7 +46,7 @@
 	oTBranch | z                            | 0         | 0
 	oTBranch | t                            | 0         | 0
 
-	TYPE    | NAME            | TITLE                                   | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
+#	TYPE    | NAME            | TITLE                                   | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
 	TH1D    | relz            | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
 	TH1D    | relz_0          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
 	TH1D    | relz_1          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
