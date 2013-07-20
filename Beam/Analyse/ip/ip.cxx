@@ -136,7 +136,9 @@ int main(int argc, char* argv[]){
 
 		// For output
 		std::vector<int> pid;
+		std::vector<int> tid;
 		std::vector<int> ppid;
+		std::vector<int> ptid;
 		std::vector<double> x;
 		std::vector<double> y;
 		std::vector<double> z;
@@ -194,105 +196,67 @@ int main(int argc, char* argv[]){
 		std::vector<double> MonitorC_py;
 		std::vector<double> MonitorC_pz;
 
-		index_temp = fMyRootInterface->get_TBranch_index("evt_num");
-		if (index_temp!=-1) evt_num = fMyRootInterface->get_vec_int(index_temp);
-		index_temp = fMyRootInterface->get_TBranch_index("run_num");
-		if (index_temp!=-1) run_num = fMyRootInterface->get_vec_int(index_temp);
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_nTracks");
-		if (index_temp!=-1) McTruth_nTracks = fMyRootInterface->get_vec_int(index_temp);
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_pid");
-		if (index_temp!=-1) McTruth_pid = *(fMyRootInterface->get_vec_vecint(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_tid");
-		if (index_temp!=-1) McTruth_tid = *(fMyRootInterface->get_vec_vecint(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_ptid");
-		if (index_temp!=-1) McTruth_ptid = *(fMyRootInterface->get_vec_vecint(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_x");
-		if (index_temp!=-1) McTruth_x = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("evt_num",evt_num);
+		fMyRootInterface->get_value("run_num",run_num);
+		fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
+		fMyRootInterface->get_value("McTruth_pid",McTruth_pid);
+		fMyRootInterface->get_value("McTruth_tid",McTruth_tid);
+		fMyRootInterface->get_value("McTruth_ptid",McTruth_ptid);
+		fMyRootInterface->get_value("McTruth_x",McTruth_x);
 		for (int i = 0; i<McTruth_x.size();i++) McTruth_x[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_y");
-		if (index_temp!=-1) McTruth_y = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("McTruth_y",McTruth_y);
 		for (int i = 0; i<McTruth_y.size();i++) McTruth_y[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_z");
-		if (index_temp!=-1) McTruth_z = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("McTruth_z",McTruth_z);
 		for (int i = 0; i<McTruth_z.size();i++) McTruth_z[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_px");
-		if (index_temp!=-1) McTruth_px = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("McTruth_px",McTruth_px);
 		for (int i = 0; i<McTruth_px.size();i++) McTruth_px[i] *= GeV;
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_py");
-		if (index_temp!=-1) McTruth_py = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("McTruth_py",McTruth_py);
 		for (int i = 0; i<McTruth_py.size();i++) McTruth_py[i] *= GeV;
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_pz");
-		if (index_temp!=-1) McTruth_pz = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("McTruth_pz",McTruth_pz);
 		for (int i = 0; i<McTruth_pz.size();i++) McTruth_pz[i] *= GeV;
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_time");
-		if (index_temp!=-1) McTruth_time = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("McTruth_time",McTruth_time);
 		for (int i = 0; i<McTruth_time.size();i++) McTruth_time[i] *= ns;
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_e");
-		if (index_temp!=-1) McTruth_e = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("McTruth_e",McTruth_e);
 		for (int i = 0; i<McTruth_e.size();i++) McTruth_e[i] *= GeV;
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_process");
-		if (index_temp!=-1) McTruth_process = *(fMyRootInterface->get_vec_vecstring(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("McTruth_volume");
-		if (index_temp!=-1) McTruth_volume = *(fMyRootInterface->get_vec_vecstring(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_nHits");
-		if (index_temp!=-1) MonitorE_nHits = fMyRootInterface->get_vec_int(index_temp);
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_t");
-		if (index_temp!=-1) MonitorE_t = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("McTruth_process",McTruth_process);
+		fMyRootInterface->get_value("McTruth_volume",McTruth_volume);
+		fMyRootInterface->get_value("MonitorE_nHits",MonitorE_nHits);
+		fMyRootInterface->get_value("MonitorE_t",MonitorE_t);
 		for (int i = 0; i<MonitorE_t.size();i++) MonitorE_t[i] *= ns;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_e");
-		if (index_temp!=-1) MonitorE_e = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorE_e",MonitorE_e);
 		for (int i = 0; i<MonitorE_e.size();i++) MonitorE_e[i] *= GeV;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_tid");
-		if (index_temp!=-1) MonitorE_tid = *(fMyRootInterface->get_vec_vecint(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_pid");
-		if (index_temp!=-1) MonitorE_pid = *(fMyRootInterface->get_vec_vecint(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_x");
-		if (index_temp!=-1) MonitorE_x = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorE_tid",MonitorE_tid);
+		fMyRootInterface->get_value("MonitorE_pid",MonitorE_pid);
+		fMyRootInterface->get_value("MonitorE_x",MonitorE_x);
 		for (int i = 0; i<MonitorE_x.size();i++) MonitorE_x[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_y");
-		if (index_temp!=-1) MonitorE_y = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorE_y",MonitorE_y);
 		for (int i = 0; i<MonitorE_y.size();i++) MonitorE_y[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_z");
-		if (index_temp!=-1) MonitorE_z = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorE_z",MonitorE_z);
 		for (int i = 0; i<MonitorE_z.size();i++) MonitorE_z[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_px");
-		if (index_temp!=-1) MonitorE_px = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorE_px",MonitorE_px);
 		for (int i = 0; i<MonitorE_px.size();i++) MonitorE_px[i] *= GeV;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_py");
-		if (index_temp!=-1) MonitorE_py = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorE_py",MonitorE_py);
 		for (int i = 0; i<MonitorE_py.size();i++) MonitorE_py[i] *= GeV;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorE_pz");
-		if (index_temp!=-1) MonitorE_pz = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorE_pz",MonitorE_pz);
 		for (int i = 0; i<MonitorE_pz.size();i++) MonitorE_pz[i] *= GeV;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_nHits");
-		if (index_temp!=-1) MonitorC_nHits = fMyRootInterface->get_vec_int(index_temp);
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_t");
-		if (index_temp!=-1) MonitorC_t = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorC_nHits",MonitorC_nHits);
+		fMyRootInterface->get_value("MonitorC_t",MonitorC_t);
 		for (int i = 0; i<MonitorC_t.size();i++) MonitorC_t[i] *= ns;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_e");
-		if (index_temp!=-1) MonitorC_e = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorC_e",MonitorC_e);
 		for (int i = 0; i<MonitorC_e.size();i++) MonitorC_e[i] *= GeV;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_tid");
-		if (index_temp!=-1) MonitorC_tid = *(fMyRootInterface->get_vec_vecint(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_pid");
-		if (index_temp!=-1) MonitorC_pid = *(fMyRootInterface->get_vec_vecint(index_temp));
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_x");
-		if (index_temp!=-1) MonitorC_x = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorC_tid",MonitorC_tid);
+		fMyRootInterface->get_value("MonitorC_pid",MonitorC_pid);
+		fMyRootInterface->get_value("MonitorC_x",MonitorC_x);
 		for (int i = 0; i<MonitorC_x.size();i++) MonitorC_x[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_y");
-		if (index_temp!=-1) MonitorC_y = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorC_y",MonitorC_y);
 		for (int i = 0; i<MonitorC_y.size();i++) MonitorC_y[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_z");
-		if (index_temp!=-1) MonitorC_z = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorC_z",MonitorC_z);
 		for (int i = 0; i<MonitorC_z.size();i++) MonitorC_z[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_px");
-		if (index_temp!=-1) MonitorC_px = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorC_px",MonitorC_px);
 		for (int i = 0; i<MonitorC_px.size();i++) MonitorC_px[i] *= GeV;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_py");
-		if (index_temp!=-1) MonitorC_py = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorC_py",MonitorC_py);
 		for (int i = 0; i<MonitorC_py.size();i++) MonitorC_py[i] *= GeV;
-		index_temp = fMyRootInterface->get_TBranch_index("MonitorC_pz");
-		if (index_temp!=-1) MonitorC_pz = *(fMyRootInterface->get_vec_vecdouble(index_temp));
+		fMyRootInterface->get_value("MonitorC_pz",MonitorC_pz);
 		for (int i = 0; i<MonitorC_pz.size();i++) MonitorC_pz[i] *= GeV;
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
@@ -300,7 +264,6 @@ int main(int argc, char* argv[]){
 		// find muon
 		std::vector<int> i_mon; // 0: no hit. 1: MonitorC. 2: MonitorE
 		std::vector<int> i_hit;
-		std::vector<int> tid;
 		for ( int i = 0; i < MonitorC_nHits; i++ ){
 			int pid = MonitorC_pid[i]; 
 			if ( pid == -13 || pid == 13 || pid == 211 || pid == -211 || pid == 321 || pid == -321){
@@ -330,7 +293,7 @@ int main(int argc, char* argv[]){
 				int i_tid = McTruth_tid[i];
 				if ( i_tid == tid[i_par] ){
 					i_McTruth = i;
-					i_ptid = McTruth_ptid[i_par];
+					i_ptid = McTruth_ptid[i];
 					break;
 				}
 			}
@@ -343,6 +306,7 @@ int main(int argc, char* argv[]){
 			}
 			pid.push_back(McTruth_pid[i_McTruth]);
 			ppid.push_back(i_ppid);
+			ptid.push_back(i_ptid);
 			x.push_back(McTruth_x[i_McTruth]/mm);
 			y.push_back(McTruth_y[i_McTruth]/mm);
 			z.push_back(McTruth_z[i_McTruth]/mm);
@@ -375,8 +339,9 @@ int main(int argc, char* argv[]){
 		// Fill the tree
 		fMyRootInterface->set_ovalue("evt_num",evt_num);
 		fMyRootInterface->set_ovalue("run_num",run_num);
-		fMyRootInterface->set_ovalue("nPar",i_hit.size());
+		fMyRootInterface->set_ovalue("nPar", (int)i_hit.size() );
 		fMyRootInterface->set_ovalue("pid",pid);
+		fMyRootInterface->set_ovalue("tid",tid);
 		fMyRootInterface->set_ovalue("ppid",ppid);
 		fMyRootInterface->set_ovalue("ptid",ptid);
 		fMyRootInterface->set_ovalue("x",x);

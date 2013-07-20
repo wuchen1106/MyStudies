@@ -12,11 +12,14 @@
 
 #include "MyRootInterface.hxx"
 
-char m_workMode[128];
-std::string m_runName;
+std::string m_rootfile;
+std::string m_label;
+std::string m_workMode;
+std::string m_title;
 int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
+int m_scale = 0;
 bool backup = false;
 
 void init_args();
@@ -30,16 +33,16 @@ int main(int argc, char** argv){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hbv:n:m:r:p:"))!=-1){
+	while((result=getopt(argc,argv,"hbv:n:m:t:s:p:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
-				strcpy(m_workMode,optarg);
-				printf("work mode: %s\n",m_workMode);
+				m_workMode = optarg;
+				printf("work mode: %s\n",m_workMode.c_str());
 				break;
-			case 'r':
-				m_runName=optarg;
-				printf("run name: %s\n",m_runName.c_str());
+			case 't':
+				m_title=optarg;
+				printf("run name: %s\n",m_title.c_str());
 				break;
 			case 'v':
 				verbose = atoi(optarg);
@@ -57,6 +60,10 @@ int main(int argc, char** argv){
 				printModule = atoi(optarg);
 				printf("printModule: %d\n",printModule);
 				break;
+			case 's':
+				m_scale = atoi(optarg);
+				printf("scale factor (inverse): %d\n",m_scale);
+				break;
 			case '?':
 				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
 				break;
@@ -65,6 +72,17 @@ int main(int argc, char** argv){
 				print_usage(argv[0]);
 				return 1;
 		}
+	}
+	if (m_workMode == "argu"){
+		if (argc-optind<2){
+			std::cout<<"This is \"argu\" mode which need two arguments: (rootfile,label)"<<std::endl;
+			std::cout<<"Insufficient names!"<<std::endl;
+			return -1;
+		}
+		m_label = argv[optind++];
+		m_rootfile = argv[optind++];
+		std::cout<<"m_label = "<<m_label<<std::endl;
+		std::cout<<"m_rootfile= "<<m_rootfile<<std::endl;
 	}
 
 	//=======================================
@@ -106,7 +124,21 @@ int main(int argc, char** argv){
 	//##########################Prepare histograms############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
 	fMyRootInterface->read("input");
-	fMyRootInterface->set_OutputName(m_runName);
+	fMyRootInterface->add_oFileName(m_rootfile);
+	int nHists = fMyRootInterface->get_TH1D_size();
+	for (int iHist = 0; iHist < nHists; iHist++ ){
+		fMyRootInterface->set_titleForH1D(iHist,m_title);
+		std::string name = fMyRootInterface->get_nameForH1D(iHist);
+		fMyRootInterface->set_nameForH1D(iHist,m_label+"_"+name);
+		fMyRootInterface->set_normForH1D(iHist,m_scale);
+	}
+	nHists = fMyRootInterface->get_TH2D_size();
+	for (int iHist = 0; iHist < nHists; iHist++ ){
+		fMyRootInterface->set_titleForH2D(iHist,m_title);
+		std::string name = fMyRootInterface->get_nameForH2D(iHist);
+		fMyRootInterface->set_nameForH2D(iHist,m_label+"_"+name);
+	}
+	fMyRootInterface->set_OutputName(m_label+"_");
 	fMyRootInterface->init();
 
 	//************SET Statistics********************
@@ -125,67 +157,87 @@ int main(int argc, char** argv){
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK###"<<std::endl;
 	Long64_t nEvent = fMyRootInterface->get_Entries();
-	for( Long64_t iEvent = 0; iEvent < nEvent; iEvent++ ){
+	for( Long64_t iEvent = 0; iEvent < (nEvents&&nEvents<nEvent?nEvents:nEvent); iEvent++ ){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
 		N0++;
 		fMyRootInterface->GetEntry(iEvent);
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
 
-		index_temp = fMyRootInterface->get_TBranch_index("x");
-		double x = fMyRootInterface->get_vec_double(index_temp)*mm;
-		index_temp = fMyRootInterface->get_TBranch_index("y");
-		double y = fMyRootInterface->get_vec_double(index_temp)*mm;
-		index_temp = fMyRootInterface->get_TBranch_index("z");
-		double z = fMyRootInterface->get_vec_double(index_temp)*mm;
-		index_temp = fMyRootInterface->get_TBranch_index("px");
-		double px = fMyRootInterface->get_vec_double(index_temp)*MeV;
-		index_temp = fMyRootInterface->get_TBranch_index("py");
-		double py = fMyRootInterface->get_vec_double(index_temp)*MeV;
-		index_temp = fMyRootInterface->get_TBranch_index("pz");
-		double pz = fMyRootInterface->get_vec_double(index_temp)*MeV;
-		index_temp = fMyRootInterface->get_TBranch_index("t");
-		double t = fMyRootInterface->get_vec_double(index_temp)*ns;
-		index_temp = fMyRootInterface->get_TBranch_index("ox");
-		double ox = fMyRootInterface->get_vec_double(index_temp)*mm;
-		index_temp = fMyRootInterface->get_TBranch_index("oy");
-		double oy = fMyRootInterface->get_vec_double(index_temp)*mm;
-		index_temp = fMyRootInterface->get_TBranch_index("oz");
-		double oz = fMyRootInterface->get_vec_double(index_temp)*mm;
+		double x;
+		double y;
+		double z;
+		double px;
+		double py;
+		double pz;
+		double t;
+		double ox;
+		double oy;
+		double oz;
+
+		fMyRootInterface->get_value("x",x,mm);
+		fMyRootInterface->get_value("y",y,mm);
+		fMyRootInterface->get_value("z",z,mm);
+		fMyRootInterface->get_value("px",px,MeV);
+		fMyRootInterface->get_value("py",py,MeV);
+		fMyRootInterface->get_value("pz",pz,MeV);
+		fMyRootInterface->get_value("t",t,ns);
+		fMyRootInterface->get_value("ox",ox,mm);
+		fMyRootInterface->get_value("oy",oy,mm);
+		fMyRootInterface->get_value("oz",oz,mm);
 
 		double pa = sqrt(px*px+py*py+pz*pz);
 		double pt = sqrt(px*px+py*py);
 		double r = sqrt(x*x+y*y);
 		double theta = acos(pz/pa);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"pa");
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"pa");
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pa/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"pt");
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"pt");
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pt/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"pz");
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"pz");
 		if (index_temp!=-1)	fMyRootInterface->get_TH1D(index_temp)->Fill(pz/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"theta");
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"theta");
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(theta/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"gTime");
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"gTime");
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(t/ns);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"r");
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"r");
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(r/mm);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"ox");
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"ox");
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(ox/mm);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"oy");
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"oy");
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(oy/mm);
-		index_temp = fMyRootInterface->get_TH1D_index(m_runName+"oz");
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"oz");
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(oz/mm);
 
-		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"pax");
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"pa");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pa/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"pt");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pt/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"pz");
+		if (index_temp!=-1)	fMyRootInterface->get_TH1D(index_temp)->Fill(pz/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"theta");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(theta/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"gTime");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(t/ns);
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"r");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(r/mm);
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"ox");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(ox/mm);
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"oy");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(oy/mm);
+		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"oz");
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(oz/mm);
+
+		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"pax");
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,x/mm);
-		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"ptx");
+		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"ptx");
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,x/mm);
-		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"pzx");
+		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"pzx");
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,x/mm);
-		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"paz");
+		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"paz");
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,z/mm);
-		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"ptz");
+		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"ptz");
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,z/mm);
-		index_temp = fMyRootInterface->get_TH2D_index(m_runName+"pzz");
+		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"pzz");
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,z/mm);
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Done"<<std::endl;
@@ -213,10 +265,14 @@ int main(int argc, char** argv){
 
 void init_args()
 {
-	strcpy(m_workMode,"gen");
+	m_rootfile="";
+	m_label="";
+	m_title="";
+	m_workMode="file";
 	verbose = 0;
 	nEvents = 0;
 	printModule = 10000;
+	m_scale = 0;
 	backup = false;
 }
 
@@ -226,14 +282,16 @@ void print_usage(char* prog_name)
 	fprintf(stderr,"[options]\n");
 	fprintf(stderr,"\t -m\n");
 	fprintf(stderr,"\t\t choose work mode: [gen(default), com]\n");
-	fprintf(stderr,"\t -r\n");
-	fprintf(stderr,"\t\t set run name\n");
+	fprintf(stderr,"\t -t\n");
+	fprintf(stderr,"\t\t set title\n");
 	fprintf(stderr,"\t -v\n");
 	fprintf(stderr,"\t\t verbose level\n");
 	fprintf(stderr,"\t -n\n");
 	fprintf(stderr,"\t\t nEvent\n");
 	fprintf(stderr,"\t -p\n");
 	fprintf(stderr,"\t\t printModule\n");
+	fprintf(stderr,"\t -s\n");
+	fprintf(stderr,"\t\t m_scale\n");
 	fprintf(stderr,"\t -h\n");
 	fprintf(stderr,"\t\t Usage message.\n");
 	fprintf(stderr,"\t -b\n");
