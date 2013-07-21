@@ -13,14 +13,16 @@
 #include "MyRootInterface.hxx"
 
 std::string m_rootfile;
-std::string m_label;
+std::string m_prefix;
+std::string m_suffix;
 std::string m_workMode;
 std::string m_title;
 int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
-int m_scale = 0;
+double m_scale = 0;
 bool backup = false;
+double m_miny = 0;
 
 void init_args();
 void print_usage(char* prog_name);
@@ -33,12 +35,20 @@ int main(int argc, char** argv){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hbv:n:m:t:s:p:"))!=-1){
+	while((result=getopt(argc,argv,"hbv:n:m:t:s:x:y:p:l:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
 				m_workMode = optarg;
 				printf("work mode: %s\n",m_workMode.c_str());
+				break;
+			case 'x':
+				m_prefix = optarg;
+				printf("m_prefix: %s\n",m_prefix.c_str());
+				break;
+			case 'y':
+				m_suffix = optarg;
+				printf("m_suffix: %s\n",m_suffix.c_str());
 				break;
 			case 't':
 				m_title=optarg;
@@ -61,8 +71,12 @@ int main(int argc, char** argv){
 				printf("printModule: %d\n",printModule);
 				break;
 			case 's':
-				m_scale = atoi(optarg);
-				printf("scale factor (inverse): %d\n",m_scale);
+				m_scale = atof(optarg);
+				printf("scale factor (inverse): %e\n",m_scale);
+				break;
+			case 'l':
+				m_miny = atof(optarg);
+				printf("minimum y (for log style only): %e\n",m_miny);
 				break;
 			case '?':
 				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
@@ -74,14 +88,12 @@ int main(int argc, char** argv){
 		}
 	}
 	if (m_workMode == "argu"){
-		if (argc-optind<2){
-			std::cout<<"This is \"argu\" mode which need two arguments: (rootfile,label)"<<std::endl;
+		if (argc-optind<1){
+			std::cout<<"This is \"argu\" mode which need arguments: rootfile"<<std::endl;
 			std::cout<<"Insufficient names!"<<std::endl;
 			return -1;
 		}
-		m_label = argv[optind++];
 		m_rootfile = argv[optind++];
-		std::cout<<"m_label = "<<m_label<<std::endl;
 		std::cout<<"m_rootfile= "<<m_rootfile<<std::endl;
 	}
 
@@ -112,6 +124,21 @@ int main(int argc, char** argv){
 	TH1D *h1d_temp=0;
 	int bin_temp = 0;
 	std::string name_temp = "";
+	std::string title_temp = "";
+	std::string  xName_temp = "";
+	std::string  yName_temp = "";
+	int  bin1_temp = 0;
+	double  left1_temp = 0;
+	double  right1_temp = 0;
+	double  minx_temp = 0;
+	double  miny_temp = 0;
+	int  color_temp = 0;
+	int  compare_temp = 0;
+	int  xlog_temp = 0;
+	int  ylog_temp = 0;
+	int  marker_temp = 0;
+	double  norm_temp = 0;
+	std::string  drawOpt_temp = "";
 
 	//=>About Constant
 	double PI = 3.141592653589793238;
@@ -129,16 +156,38 @@ int main(int argc, char** argv){
 	for (int iHist = 0; iHist < nHists; iHist++ ){
 		fMyRootInterface->set_titleForH1D(iHist,m_title);
 		std::string name = fMyRootInterface->get_nameForH1D(iHist);
-		fMyRootInterface->set_nameForH1D(iHist,m_label+"_"+name);
+		fMyRootInterface->set_nameForH1D(iHist,m_prefix+"_"+name+"_"+m_suffix);
 		fMyRootInterface->set_normForH1D(iHist,m_scale);
+		// add log style
+		name_temp = fMyRootInterface->get_nameForH1D(iHist);
+		title_temp = fMyRootInterface->get_titleForH1D(iHist);
+		xName_temp = fMyRootInterface->get_xNameForH1D(iHist);
+		yName_temp = fMyRootInterface->get_yNameForH1D(iHist);
+		bin1_temp = fMyRootInterface->get_bin1ForH1D(iHist);
+		left1_temp = fMyRootInterface->get_left1ForH1D(iHist);
+		right1_temp = fMyRootInterface->get_right1ForH1D(iHist);
+		minx_temp = fMyRootInterface->get_minxForH1D(iHist);
+		miny_temp = fMyRootInterface->get_minyForH1D(iHist);
+		color_temp = fMyRootInterface->get_colorForH1D(iHist);
+		compare_temp = fMyRootInterface->get_compareForH1D(iHist);
+		xlog_temp = fMyRootInterface->get_xlogForH1D(iHist);
+		ylog_temp = fMyRootInterface->get_ylogForH1D(iHist);
+		marker_temp = fMyRootInterface->get_markerForH1D(iHist);
+		norm_temp = fMyRootInterface->get_normForH1D(iHist);
+		drawOpt_temp = fMyRootInterface->get_drawOptForH1D(iHist);
+
+		name_temp = m_prefix+"_"+name+"_log_"+m_suffix;
+		miny_temp = m_miny;
+		ylog_temp = 1;
+		fMyRootInterface->add_TH1D(name_temp,title_temp,xName_temp,yName_temp,bin1_temp,left1_temp,right1_temp,minx_temp,miny_temp,color_temp,compare_temp,xlog_temp,ylog_temp,marker_temp,norm_temp,drawOpt_temp);
 	}
 	nHists = fMyRootInterface->get_TH2D_size();
 	for (int iHist = 0; iHist < nHists; iHist++ ){
 		fMyRootInterface->set_titleForH2D(iHist,m_title);
 		std::string name = fMyRootInterface->get_nameForH2D(iHist);
-		fMyRootInterface->set_nameForH2D(iHist,m_label+"_"+name);
+		fMyRootInterface->set_nameForH2D(iHist,m_prefix+"_"+name+"_"+m_suffix);
 	}
-	fMyRootInterface->set_OutputName(m_label+"_");
+	fMyRootInterface->set_OutputName(m_prefix+"_"+m_suffix+"_");
 	fMyRootInterface->init();
 
 	//************SET Statistics********************
@@ -189,56 +238,108 @@ int main(int argc, char** argv){
 		double pt = sqrt(px*px+py*py);
 		double r = sqrt(x*x+y*y);
 		double theta = acos(pz/pa);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"pa");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pa/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"pt");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pt/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"pz");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz"+"_"+m_suffix);
 		if (index_temp!=-1)	fMyRootInterface->get_TH1D(index_temp)->Fill(pz/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"theta");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pa/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pt/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_tail"+"_"+m_suffix);
+		if (index_temp!=-1)	fMyRootInterface->get_TH1D(index_temp)->Fill(pz/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"theta"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(theta/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"gTime");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"gTime"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(t/ns);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"r");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"gTime_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(t/ns);
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"r"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(r/mm);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"ox");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"ox"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(ox/mm);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"oy");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"oy"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(oy/mm);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_"+"oz");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"oz"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(oz/mm);
 
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"pa");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa"+"_log_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pa/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"pt");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt"+"_log_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pt/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"pz");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz"+"_log_"+m_suffix);
 		if (index_temp!=-1)	fMyRootInterface->get_TH1D(index_temp)->Fill(pz/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"theta");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_tail"+"_log_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pa/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_tail"+"_log_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pt/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_tail"+"_log_"+m_suffix);
+		if (index_temp!=-1)	fMyRootInterface->get_TH1D(index_temp)->Fill(pz/MeV);
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"theta"+"_log_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(theta/MeV);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"gTime");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"gTime"+"_log_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(t/ns);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"r");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"gTime_tail"+"_log_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(t/ns);
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"r"+"_log_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(r/mm);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"ox");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"ox"+"_log_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(ox/mm);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"oy");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"oy"+"_log_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(oy/mm);
-		index_temp = fMyRootInterface->get_TH1D_index(m_label+"_log_"+"oz");
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"oz"+"_log_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(oz/mm);
 
-		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"pax");
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paox"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,ox/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"ptox"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,ox/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pzox"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,ox/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paoz"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,oz/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"ptoz"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,oz/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pzoz"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,oz/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paox_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,ox/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"ptox_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,ox/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pzox_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,ox/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paoz_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,oz/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"ptoz_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,oz/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pzoz_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,oz/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pax"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,x/mm);
-		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"ptx");
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"ptx"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,x/mm);
-		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"pzx");
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pzx"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,x/mm);
-		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"paz");
-		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,z/mm);
-		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"ptz");
-		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,z/mm);
-		index_temp = fMyRootInterface->get_TH2D_index(m_label+"_"+"pzz");
-		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,z/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pax_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,x/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"ptx_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,x/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pzx_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,y/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pay"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,y/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pty"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,y/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pzy"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,y/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pay_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,y/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pty_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,y/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pzy_tail"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,y/mm);
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Done"<<std::endl;
 	}
@@ -266,13 +367,15 @@ int main(int argc, char** argv){
 void init_args()
 {
 	m_rootfile="";
-	m_label="";
+	m_prefix="";
+	m_suffix="";
 	m_title="";
 	m_workMode="file";
 	verbose = 0;
 	nEvents = 0;
 	printModule = 10000;
 	m_scale = 0;
+	m_miny= 0;
 	backup = false;
 }
 
@@ -292,6 +395,12 @@ void print_usage(char* prog_name)
 	fprintf(stderr,"\t\t printModule\n");
 	fprintf(stderr,"\t -s\n");
 	fprintf(stderr,"\t\t m_scale\n");
+	fprintf(stderr,"\t -l\n");
+	fprintf(stderr,"\t\t m_miny\n");
+	fprintf(stderr,"\t -x\n");
+	fprintf(stderr,"\t\t m_prefix\n");
+	fprintf(stderr,"\t -y\n");
+	fprintf(stderr,"\t\t m_suffix\n");
 	fprintf(stderr,"\t -h\n");
 	fprintf(stderr,"\t\t Usage message.\n");
 	fprintf(stderr,"\t -b\n");

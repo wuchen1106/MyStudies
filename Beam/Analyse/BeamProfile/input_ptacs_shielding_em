@@ -1,0 +1,70 @@
+#	kWhite =0,   kBlack =1,   kGray=920,
+#	kRed   =632, kGreen =416, kBlue=600, kYellow=400, kMagenta=616, kCyan=432,
+#	kOrange=800, kSpring=820, kTeal=840, kAzure =860, kViolet =880, kPink=900
+###########################################################################################################################
+
+#	TYPE     | Name
+	TreeName | t
+
+#	TYPE    | Path
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g60cm6mm/Andy/ts2_0.em.root
+
+#	TYPE    | Name                         | Type      | Vector?
+#	                                0:double;1:int;string:2
+	TBranch | x                            | 0         | 0
+	TBranch | y                            | 0         | 0
+	TBranch | z                            | 0         | 0
+	TBranch | px                           | 0         | 0
+	TBranch | py                           | 0         | 0
+	TBranch | pz                           | 0         | 0
+	TBranch | t                            | 0         | 0
+	TBranch | ox                           | 0         | 0
+	TBranch | oy                           | 0         | 0
+	TBranch | oz                           | 0         | 0
+
+#	TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm |DrawOption
+	TH1D    | pa              | e^{-} at ts20      | p_{a}(MeV/c) | probability   | 120 | 0     | 20    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | pa_tail         | e^{-} at ts20      | p_{a}(MeV/c) | probability   | 120 | 0     | 250   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | pz              | e^{-} at ts20      | p_{z}(MeV/c) | probability   | 120 | 0     | 20    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | pz_tail         | e^{-} at ts20      | p_{z}(MeV/c) | probability   | 120 | 0     | 250   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | pt              | e^{-} at ts20      | p_{t}(MeV/c) | probability   | 120 | 0     | 20    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | pt_tail         | e^{-} at ts20      | p_{t}(MeV/c) | probability   | 120 | 0     | 250   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | theta           | e^{-} at ts20      | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | r               | e^{-} at ts20      | radius(mm)   | probability   | 120 | 0     | 350   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | ox              | e^{-} at ts20      | x(mm) origin | probability   | 120 | -400  | 400   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | oy              | e^{-} at ts20      | y(mm) origin | probability   | 120 | -400  | 400   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | oz              | e^{-} at ts20      | z(mm) origin | probability   | 120 | -1000 | 800   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | gTime           | e^{-} at ts20      | time(ns)     | probability   | 120 | 0     | 100   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | gTime_tail      | e^{-} at ts20      | time(ns)     | probability   | 120 | 0     | 4000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+
+#	TYPE    | NAME            | TITLE              | xAxisName         | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
+	TH2D    | pax             | e^{-} at ts20      | p_{a}(MeV/c)      | x(mm)         | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | pax_tail        | e^{-} at ts20      | p_{a}(MeV/c)      | x(mm)         | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | pzx             | e^{-} at ts20      | p_{z}(MeV/c)      | x(mm)         | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | pzx_tail        | e^{-} at ts20      | p_{z}(MeV/c)      | x(mm)         | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | ptx             | e^{-} at ts20      | p_{t}(MeV/c)      | x(mm)         | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | ptx_tail        | e^{-} at ts20      | p_{t}(MeV/c)      | x(mm)         | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | pay             | e^{-} at ts20      | p_{a}(MeV/c)      | y(mm)         | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | pay_tail        | e^{-} at ts20      | p_{a}(MeV/c)      | y(mm)         | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | pzy             | e^{-} at ts20      | p_{z}(MeV/c)      | y(mm)         | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | pzy_tail        | e^{-} at ts20      | p_{z}(MeV/c)      | y(mm)         | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | pty             | e^{-} at ts20      | p_{t}(MeV/c)      | y(mm)         | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | pty_tail        | e^{-} at ts20      | p_{t}(MeV/c)      | y(mm)         | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | paox            | e^{-} at ts20      | p_{a}(MeV/c)      | ox(mm)        | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | paox_tail       | e^{-} at ts20      | p_{a}(MeV/c)      | ox(mm)        | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | pzox            | e^{-} at ts20      | p_{z}(MeV/c)      | ox(mm)        | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | pzox_tail       | e^{-} at ts20      | p_{z}(MeV/c)      | ox(mm)        | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | ptox            | e^{-} at ts20      | p_{t}(MeV/c)      | ox(mm)        | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | ptox_tail       | e^{-} at ts20      | p_{t}(MeV/c)      | ox(mm)        | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | paoy            | e^{-} at ts20      | p_{a}(MeV/c)      | oy(mm)        | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | paoy_tail       | e^{-} at ts20      | p_{a}(MeV/c)      | oy(mm)        | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | pzoy            | e^{-} at ts20      | p_{z}(MeV/c)      | oy(mm)        | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | pzoy_tail       | e^{-} at ts20      | p_{z}(MeV/c)      | oy(mm)        | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | ptoy            | e^{-} at ts20      | p_{t}(MeV/c)      | oy(mm)        | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | ptoy_tail       | e^{-} at ts20      | p_{t}(MeV/c)      | oy(mm)        | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | paoz            | e^{-} at ts20      | p_{a}(MeV/c)      | oz(mm)        | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | paoz_tail       | e^{-} at ts20      | p_{a}(MeV/c)      | oz(mm)        | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | pzoz            | e^{-} at ts20      | p_{z}(MeV/c)      | oz(mm)        | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | pzoz_tail       | e^{-} at ts20      | p_{z}(MeV/c)      | oz(mm)        | 240 | 0     | 250   | 240 | -400 | 400 
+	TH2D    | ptoz            | e^{-} at ts20      | p_{t}(MeV/c)      | oz(mm)        | 240 | 0     | 20    | 240 | -400 | 400 
+	TH2D    | ptoz_tail       | e^{-} at ts20      | p_{t}(MeV/c)      | oz(mm)        | 240 | 0     | 250   | 240 | -400 | 400 

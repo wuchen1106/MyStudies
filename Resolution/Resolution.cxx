@@ -134,36 +134,20 @@ int main(int argc, char* argv[]){
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
 	fMyRootInterface->read("input");
 	fMyRootInterface->set_OutputName(m_runName);
-	fMyRootInterface->init();
 
-	//************SET Statistics********************
-	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET Statistics###"<<std::endl;
-	//=>About Statistical
-	int N0 = 0;
-	int N1 = 0;
-	int N2 = 0;
-	int N3 = 0;
-	int N4 = 0;
-	int N5 = 0;
-	int N6 = 0;
-	int N7 = 0;
+	//=>Add histograms
 
-	//=>Get resolution
 	int ihist_res = 0;
-	TH1D* h_res = fMyRootInterface->get_TH1D(ihist_res);
-	h_res->Scale(1./h_res->Integral());
-
-	//=>Get spectrum
 	int ihist_SPEC = 1;
-	TH1D* h_SPEC = fMyRootInterface->get_TH1D(ihist_SPEC);
-	h_SPEC->Scale(1./h_SPEC->Integral());
 
-	int num_bin = h_SPEC->GetNbinsX(); //How many bins do you want
+	int num_bin = fMyRootInterface->get_bin1ForH1D(ihist_SPEC); //How many bins do you want
+	name_temp = fMyRootInterface->get_nameForH1D(ihist_SPEC);
+	title_temp = fMyRootInterface->get_titleForH1D(ihist_SPEC);
 	xName_temp = fMyRootInterface->get_xNameForH1D(ihist_SPEC);
 	yName_temp = fMyRootInterface->get_yNameForH1D(ihist_SPEC);
-	bin1_temp = h_SPEC->GetNbinsX();
-	left1_temp = h_SPEC->GetXaxis()->GetXmin();
-	right1_temp = h_SPEC->GetXaxis()->GetXmax();
+	bin1_temp = fMyRootInterface->get_bin1ForH1D(ihist_SPEC);
+	left1_temp = fMyRootInterface->get_left1ForH1D(ihist_SPEC);
+	right1_temp = fMyRootInterface->get_right1ForH1D(ihist_SPEC);
 	minx_temp = fMyRootInterface->get_minxForH1D(ihist_SPEC);
 	miny_temp = fMyRootInterface->get_minyForH1D(ihist_SPEC);
 	color_temp = fMyRootInterface->get_colorForH1D(ihist_SPEC);
@@ -180,7 +164,7 @@ int main(int argc, char* argv[]){
 	yName_temp = "probability";
 	miny_temp = 1e-5;
 	ylog_temp = 1;
-	TH1D* h_MisMeas = fMyRootInterface->add_TH1D(name_temp,title_temp,xName_temp,yName_temp,bin1_temp,left1_temp,right1_temp,minx_temp,miny_temp,color_temp,compare_temp,xlog_temp,ylog_temp,marker_temp,norm_temp,drawOpt_temp);
+	int ihist_MisMeas = fMyRootInterface->add_TH1D(name_temp,title_temp,xName_temp,yName_temp,bin1_temp,left1_temp,right1_temp,minx_temp,miny_temp,color_temp,compare_temp,xlog_temp,ylog_temp,marker_temp,norm_temp,drawOpt_temp);
 
 	name_temp = "contribution";
 	title_temp = "Contribution Probobility";
@@ -188,7 +172,32 @@ int main(int argc, char* argv[]){
 	yName_temp = "probability";
 	miny_temp = 0;
 	ylog_temp = 0;
-	TH1D* h_contri = fMyRootInterface->add_TH1D(name_temp,title_temp,xName_temp,yName_temp,bin1_temp,left1_temp,right1_temp,minx_temp,miny_temp,color_temp,compare_temp,xlog_temp,ylog_temp,marker_temp,norm_temp,drawOpt_temp);
+	int ihist_contri = fMyRootInterface->add_TH1D(name_temp,title_temp,xName_temp,yName_temp,bin1_temp,left1_temp,right1_temp,minx_temp,miny_temp,color_temp,compare_temp,xlog_temp,ylog_temp,marker_temp,norm_temp,drawOpt_temp);
+
+	// Initialize
+	fMyRootInterface->init();
+
+	// get histograms
+	TH1D* h_res = fMyRootInterface->get_TH1D(ihist_res);
+	h_res->Scale(1./h_res->Integral());
+
+	TH1D* h_SPEC = fMyRootInterface->get_TH1D(ihist_SPEC);
+	h_SPEC->Scale(1./h_SPEC->Integral());
+
+	TH1D* h_contri = fMyRootInterface->get_TH1D(ihist_contri);
+	TH1D* h_MisMeas = fMyRootInterface->get_TH1D(ihist_MisMeas);
+
+	//************SET Statistics********************
+	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET Statistics###"<<std::endl;
+	//=>About Statistical
+	int N0 = 0;
+	int N1 = 0;
+	int N2 = 0;
+	int N3 = 0;
+	int N4 = 0;
+	int N5 = 0;
+	int N6 = 0;
+	int N7 = 0;
 
 	TH1D* h_conTot = 0; // should use MeV
 	if ( (index_temp = fMyRootInterface->get_TH1D_index("contriTotal")) != -1 ){

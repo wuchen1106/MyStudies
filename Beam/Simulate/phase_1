@@ -27,4 +27,4 @@ dump.mac
 #run
 run_configure
 1
-5000
+30000

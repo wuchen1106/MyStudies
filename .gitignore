@@ -15,12 +15,14 @@
 # Automatically generated files
 currentEvent.rndm
 currentRun.rndm
+G4History.macro
 beginOfRun.rndm
 endOfRun.rndm
 result/
 .svn/
 configure
 cometg4_configure
+cometg4_run.sh
 
 Beam/Analyse/BeamProfile/BeamProfile
 Beam/Analyse/Compare/Compare

@@ -159,16 +159,13 @@ int main(int argc, char** argv){
 
 	//##########################Prepare histograms############################
 	fMyRootInterface->read("input");
-	fMyRootInterface->init();
 
-	//=>Get histograms parameters
-	// RMC
+	//=>Add more histograms
 	int ihist_RMC = fMyRootInterface->get_TH1D_index("RMC");
 	if (ihist_RMC==-1){
 		std::cout<<"Cannnot find RMC! Please add it in MyRootInterface"<<std::endl;
 		return -1;
 	}
-	// get useful info
 	std::string  xName = fMyRootInterface->get_xNameForH1D(ihist_RMC);
 	std::string  yName = fMyRootInterface->get_yNameForH1D(ihist_RMC);
 	int  bin1 = fMyRootInterface->get_bin1ForH1D(ihist_RMC);
@@ -183,6 +180,25 @@ int main(int argc, char** argv){
 	int  marker = fMyRootInterface->get_markerForH1D(ihist_RMC);
 	double  norm = fMyRootInterface->get_normForH1D(ihist_RMC);
 	std::string  drawOpt = fMyRootInterface->get_drawOptForH1D(ihist_RMC);
+	std::vector<int> ihist_iso;
+	for ( int i = 0; i < vec_Abundance.size(); i++ ){
+		buff.str("");
+		buff.clear();
+		buff<<"RMC_"<<vec_num_p[i]<<"_"<<vec_num_n[i];
+		std::string name = buff.str();
+		buff.str("");
+		buff.clear();
+		buff<<"Radiative Muon Capture Spectrum for N_{p} = "<<vec_num_p[i]<<" N_{n} = "<<vec_num_n[i];
+		std::string title = buff.str();
+		int index = fMyRootInterface->add_TH1D(name,title,xName,yName,bin1,left1,right1,minx,miny,color,compare,xlog,ylog,marker,norm,drawOpt);
+		ihist_iso.push_back(index);
+	}
+
+	// init
+	fMyRootInterface->init();
+
+	//=>Get histograms parameters
+	// get useful info
 	// integrated RMC, should be the same with RMC
 	int ihist_RMC_integral = fMyRootInterface->get_TH1D_index("RMC_integral");
 	if (ihist_RMC_integral==-1){
@@ -198,21 +214,6 @@ int main(int argc, char** argv){
 	int bin1_hRMC = fMyRootInterface->get_bin1ForH1D(ihist_hRMC);
 	int left1_hRMC = fMyRootInterface->get_left1ForH1D(ihist_hRMC);
 	int right1_hRMC = fMyRootInterface->get_right1ForH1D(ihist_hRMC);
-
-	//=>Add more histograms
-	std::vector<int> ihist_iso;
-	for ( int i = 0; i < vec_Abundance.size(); i++ ){
-		buff.str("");
-		buff.clear();
-		buff<<"RMC_"<<vec_num_p[i]<<"_"<<vec_num_n[i];
-		std::string name = buff.str();
-		buff.str("");
-		buff.clear();
-		buff<<"Radiative Muon Capture Spectrum for N_{p} = "<<vec_num_p[i]<<" N_{n} = "<<vec_num_n[i];
-		std::string title = buff.str();
-		fMyRootInterface->add_TH1D(name,title,xName,yName,bin1,left1,right1,minx,miny,color,compare,xlog,ylog,marker,norm,drawOpt);
-		ihist_iso.push_back(fMyRootInterface->get_TH1D_size()-1);
-	}
 
 	//##########################Calculation############################
 	//=>About Model
