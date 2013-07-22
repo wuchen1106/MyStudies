@@ -7,7 +7,7 @@ do
 		rootfile="result/"$configName"*_"$runname"_output.root"
 		pdffile="result/"$configName"*_"$runname".pdf"
 		directory="../../result/$configName/$runname/result/"
-		cp $rootfile $directory
-		cp $pdffile $directory
+		mv $rootfile $directory
+		mv $pdffile $directory
 	done
 done

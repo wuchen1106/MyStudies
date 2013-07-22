@@ -35,15 +35,17 @@
 	TH1D    | gTime_tail      | e^{-} at ts20      | time(ns)     | probability   | 120 | 0     | 600   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
 
 #	TYPE    | NAME            | TITLE              | xAxisName         | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
-	TH2D    | pax             | e^{-} at ts20      | p_{a}(MeV/c)      | x(mm)         | 240 | 0     | 100   | 240 | -400 | 400 
-	TH2D    | pzx             | e^{-} at ts20      | p_{z}(MeV/c)      | x(mm)         | 240 | 0     | 100   | 240 | -400 | 400 
-	TH2D    | ptx             | e^{-} at ts20      | p_{t}(MeV/c)      | x(mm)         | 240 | 0     | 100   | 240 | -400 | 400 
-	TH2D    | pay             | e^{-} at ts20      | p_{a}(MeV/c)      | y(mm)         | 240 | 0     | 100   | 240 | -400 | 400 
-	TH2D    | pzy             | e^{-} at ts20      | p_{z}(MeV/c)      | y(mm)         | 240 | 0     | 100   | 240 | -400 | 400 
-	TH2D    | pty             | e^{-} at ts20      | p_{t}(MeV/c)      | y(mm)         | 240 | 0     | 100   | 240 | -400 | 400 
-	TH2D    | paox            | e^{-} at ts20      | p_{a}(MeV/c)      | ox(mm)        | 240 | 0     | 100   | 240 | -400 | 400 
-	TH2D    | paoz            | e^{-} at ts20      | p_{a}(MeV/c)      | oz(mm)        | 240 | 0     | 100   | 240 | -800 | 800 
-	TH2D    | pzox            | e^{-} at ts20      | p_{z}(MeV/c)      | ox(mm)        | 240 | 0     | 100   | 240 | -400 | 400 
-	TH2D    | pzoz            | e^{-} at ts20      | p_{z}(MeV/c)      | oz(mm)        | 240 | 0     | 100   | 240 | -800 | 800  
-	TH2D    | ptox            | e^{-} at ts20      | p_{t}(MeV/c)      | ox(mm)        | 240 | 0     | 100   | 240 | -400 | 400 
-	TH2D    | ptoz            | e^{-} at ts20      | p_{t}(MeV/c)      | oz(mm)        | 240 | 0     | 100   | 240 | -800 | 800 
+	TH2D    | par             | e^{-} at ts20      | p_{a}(MeV/c)      | r(mm)         | 240 | 0     | 100   | 240 | 0    | 350 
+	TH2D    | pzr             | e^{-} at ts20      | p_{z}(MeV/c)      | r(mm)         | 240 | 0     | 100   | 240 | 0    | 350 
+	TH2D    | ptr             | e^{-} at ts20      | p_{t}(MeV/c)      | r(mm)         | 240 | 0     | 100   | 240 | 0    | 350 
+	TH2D    | thetar          | e^{-} at ts20      | #theta(rad)       | r(mm)         | 240 | 0     | 1.6   | 240 | 0    | 350 
+	TH2D    | patheta         | e^{-} at ts20      | p_{a}(MeV/c)      | #theta(rad)   | 240 | 0     | 6     | 240 | 0    | 1.6
+	TH2D    | paox            | e^{-} at ts20      | p_{a}(MeV/c)      | x(mm) origin  | 240 | 0     | 100   | 240 | -400 | 400 
+	TH2D    | pzox            | e^{-} at ts20      | p_{z}(MeV/c)      | x(mm) origin  | 240 | 0     | 100   | 240 | -400 | 400 
+	TH2D    | ptox            | e^{-} at ts20      | p_{t}(MeV/c)      | x(mm) origin  | 240 | 0     | 100   | 240 | -400 | 400 
+	TH2D    | paoy            | e^{-} at ts20      | p_{a}(MeV/c)      | y(mm) origin  | 240 | 0     | 6     | 240 | -10  | 10  
+	TH2D    | pzoy            | e^{-} at ts20      | p_{z}(MeV/c)      | y(mm) origin  | 240 | 0     | 6     | 240 | -10  | 10  
+	TH2D    | ptoy            | e^{-} at ts20      | p_{t}(MeV/c)      | y(mm) origin  | 240 | 0     | 6     | 240 | -10  | 10  
+	TH2D    | paoz            | e^{-} at ts20      | p_{a}(MeV/c)      | z(mm) origin  | 240 | 0     | 100   | 240 | -800 | 800 
+	TH2D    | pzoz            | e^{-} at ts20      | p_{z}(MeV/c)      | z(mm) origin  | 240 | 0     | 100   | 240 | -800 | 800  
+	TH2D    | ptoz            | e^{-} at ts20      | p_{t}(MeV/c)      | z(mm) origin  | 240 | 0     | 100   | 240 | -800 | 800 
