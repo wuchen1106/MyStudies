@@ -35,11 +35,9 @@ do
 				nEvents=100000
 			fi
 		fi
-#		for monitor in "ts2_0" "blt0" "ptacs_shielding"
-		for monitor in "ptacs_shielding"
+		for monitor in "blt0" "ptacs_shielding"
 		do
-#			for pname in "em" "mum" "pim" "n0"
-			for pname in "mum"
+			for pname in "em" "mum" "pim" "n0"
 			do
 				if [ $pname = em ]; then pname_inTitle="e^{-}";
 				elif [ $pname = mum ]; then pname_inTitle="#mu^{-}";
@@ -50,6 +48,7 @@ do
 				prefix=$configName"_"$monitor"_"$pname
 				suffix=$runname
 				if [ -e $rootfile ]; then
+					cp "input_"$monitor"_"$pname "input"
 					./BeamProfile -t "$pname_inTitle on $monitor" -s $nEvents -m argu -x $prefix -y $suffix -l 1e-7 $rootfile
 				fi
 			done
