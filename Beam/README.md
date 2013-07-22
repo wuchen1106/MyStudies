@@ -90,5 +90,24 @@ Analysation area
 ###Analyzation
 ####``g60cm6mm``: 
 #####e<sup>-</sup>
+Overview: (According to ``Chen``)  
+* at `ptacs_shielding`:
+  * Most of them are of low energy: with momentum smaller than 2 MeV/c.
+  * Tail is approximately exponential.
+  * Most of them came from the target region.
+  * Direction distribution is almost isotopical and shows no significant realtion with momentum or position
+* at `blt0`:
+  * Most of them are of low energy: with momentum smaller than 2 MeV/c.
+  * Tail ends at arround 125 MeV/c.
+  * Most of them came from the target region.
+  * Energetic electron tends to have a small r position and small polar angle &theta; of mementum direction.  
+
+Comparison:
+* at `ptacs_shielding`:
+  * p<sub>a</sub>: ``Andy`` and ``Hayashi`` are similar, having a sharper peak arround 400 keV/c than ``Chen``, ``QGSPBERT`` and ``QGSPBERTHP``.  
+    This is probably caused by the difference of &mu; Capture Weight.
+    Tail shapes of them are all approximately exponential, while ``Chen`` has a strange hump between 20 MeV/c to 50 MeV/c.
+  * origin point: ``Andy`` and ``Hayashi`` are similar, while ``Chen``, ``QGSPBERT`` and ``QGSPBERTHP`` appear to have more electrons generated at the downstream end of the target.  
+  
 
 ####``t16cm6mm``: 
