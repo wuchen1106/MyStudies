@@ -20,9 +20,12 @@ var_process(){
 			histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
 			if [ -e $rootfile ]; then
 				((nfiles++))
+			else
+				echo $rootfile does not exist!
 			fi
 		done
 		if [ $nfiles -lt 1 ]; then
+			echo "nfiles = $nfiles"
 			continue
 		fi
 		iFile=0
@@ -52,8 +55,6 @@ var_process(){
 					echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-7  | $COL | 0 | 0  | $LOG  | 3   | 0 | LP       |   1  |$runname  |0.75 |0.75 |0.95 |0.95 " >> $input
 				fi
 				((iFile++))
-			else
-				echo $rootfile does not exist!
 			fi
 		done
 	done
@@ -61,10 +62,10 @@ var_process(){
 
 input="input"
 #for configName in "g60cm6mm" "t16cm6mm"
-for configName in "g60cm6mm"
+for configName in "t16cm6mm"
 do
 #	for monitor in "ts2_0" "blt0" "ptacs_shielding"
-	for monitor in "ptacs_shielding"
+	for monitor in "blt0" "ptacs_shielding"
 	do
 		for pname in "em" "mum" "pim" "n0"
 		do
