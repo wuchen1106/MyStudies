@@ -1,6 +1,7 @@
 #!/bin/bash
 
-for configName in "g60cm6mm" "t16cm6mm"
+#for configName in "g60cm6mm" "t16cm6mm"
+for configName in "t16cm6mm"
 do
 	for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi"
 	do
@@ -48,7 +49,7 @@ do
 				prefix=$configName"_"$monitor"_"$pname
 				suffix=$runname
 				if [ -e $rootfile ]; then
-					cp "input_"$monitor"_"$pname "input"
+					cp "input_"$configName"_"$monitor"_"$pname "input"
 					./BeamProfile -t "$pname_inTitle on $monitor" -s $nEvents -m argu -x $prefix -y $suffix -l 1e-7 $rootfile
 				fi
 			done
