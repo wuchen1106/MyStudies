@@ -111,7 +111,7 @@ Comparison:
   * momentum direction &theta;: ``Andy`` has less electrons with &theta; lager than 0.6 rad, ``QGSPBERT`` has more electrons with &theta; between 0.3 rad and 1 rad, while ``QGSPBERTHP``, ``Hayashi`` and ``Chen`` are the same.
   * origin point: ``Chen``, ``QGSPBERT`` and ``QGSPBERTHP`` appear to have more electrons generated at the downstream end of the target than ``Andy``. ``Hayashi`` seems to be a mixture of ``Chen`` and ``Andy``.  
 * at `blt0`:
-  * momentum amplitude p<sub>a</sub>: ``Hayashi`` is limited by statistics while ``Andy`` is distinctively different from others in the region below 0.3 MeV/c.
+  * momentum amplitude p<sub>a</sub>: ``Hayashi`` is limited by statistics while ``Andy`` is distinctively different from others in the region below 0.7 MeV/c.
     Geant4 version &mu; Capture Weight or Physics list?  
     Tails all end at arround 125 MeV/c, while ``Chen`` and ``Hayashi`` have a strange bump between 20 MeV/c to 50 MeV/c.
     This must be caused by the customised physics list in ``comet_g4``.
@@ -140,6 +140,30 @@ Comparison:
   * origin point: `Same shape while ``Andy`` has less &mu;s. Probably because of Graphite density difference.
 
   
+#####n<sub>0</sub>
+Overview: (According to ``QGSPBERT``)  
+* at `ptacs_shielding`:
+  * momentum amplitude peaks at arround 15 MeV/c, with a pike right below the peak.
+  * Most of them were generated inside the target or the solenoid.
+  * Tend to have a small polar angle &theta; of mementum direction (peak at 0.4 rad).
+* at `blt0`:
+  * momentum amplitude is mainly constrained below 60 MeV/c with no clear pattern.
+  * Most of them were generated in the beam pipe near the monitor plain.
+  * Tend to have two peaks, 0.3 rad and  1.0 rad for polar angle &theta; of mementum direction.
+
+Comparison:
+* at `ptacs_shielding`:
+  * momentum amplitude p<sub>a</sub>: ``QGSPBERTHP`` has the largest yeild due to it's distinct Hadron Physics model.  
+    ``QGSPBERT`` and ``Chen`` are similar but ``QGSPBERT`` has a strange pike and lower tail.  
+    ``Hayashi`` tends to have two pikes at 14 MeV/c and 23 MeV/c. Reason?  
+    ``Andy`` has a flat distribution peaking at 26 MeV/c.  
+  * momentum direction &theta;: ``Hayashi`` and ``Andy`` are basically the same. The other 3 have similar shape but different peak position and tail component.
+  * origin point: ``Hayashi`` and ``Andy`` are basically the same. The other 3 have same shape but different height.   
+* at `blt0`:
+  * momentum amplitude p<sub>a</sub>: ``Andy`` and ``Chen`` peak at 28 MeV/c while ``Andy``'s peak is sharper. The other 3 are rather flat.  
+  * momentum direction &theta;: ``Andy`` and ``Chen`` have two peaks at 1.15 rad and 1.25 rad while ``Andy``'s peaks are higher. The other 3 are rather flat.    
+  * origin point: Same shape while ``Andy`` has less neutrons from pipe line but more from target region.
+
 #####&pi;<sup>-</sup>
 Overview: (According to ``QGSPBERT``)  
 * at `ptacs_shielding`:
