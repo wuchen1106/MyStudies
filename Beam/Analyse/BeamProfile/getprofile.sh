@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #for configName in "g60cm6mm" "t16cm6mm"
-for configName in "t16cm6mm"
+for configName in "g60cm6mm"
 do
 	for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi"
 	do
@@ -25,20 +25,21 @@ do
 			fi
 		elif [ $runname == "QGSPBERTHP" ]; then
 			if [ $configName == "g60cm6mm" ]; then
-				nEvents=60000
+				nEvents=250000
 			elif [ $configName == "t16cm6mm" ]; then
-				nEvents=60000
+				nEvents=250000
 			fi
 		elif [ $runname == "Hayashi" ]; then
 			if [ $configName == "g60cm6mm" ]; then
-				nEvents=50000
+				nEvents=100000
 			elif [ $configName == "t16cm6mm" ]; then
 				nEvents=100000
 			fi
 		fi
 		for monitor in "blt0" "ptacs_shielding"
 		do
-			for pname in "em" "mum" "pim" "n0"
+#			for pname in "em" "mum" "pim" "n0"
+			for pname in "em"
 			do
 				if [ $pname = em ]; then pname_inTitle="e^{-}";
 				elif [ $pname = mum ]; then pname_inTitle="#mu^{-}";

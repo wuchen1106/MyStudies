@@ -37,6 +37,8 @@
 #	TYPE    | NAME            | TITLE              | xAxisName         | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
 	TH2D    | thetar          | e^{-} at ts20      | #theta(rad)       | r(mm)         | 240 | 0     | 1.6   | 240 | 0    | 200 
 	TH2D    | patheta         | e^{-} at ts20      | p_{a}(MeV/c)      | #theta(rad)   | 240 | 0     | 150   | 240 | 0    | 1.6
+	TH2D    | oxoz            | e^{-} at ts20      | x(mm) origin      | z(mm) origin  | 240 | -80   | 80    | 240 | -300 | 350 
+	TH2D    | oxoy            | e^{-} at ts20      | x(mm) origin      | y(mm) origin  | 240 | -80   | 80    | 240 | -10  | 10  
 	TH2D    | par             | e^{-} at ts20      | p_{a}(MeV/c)      | r(mm)         | 240 | 0     | 150   | 240 | 0    | 200 
 	TH2D    | pzr             | e^{-} at ts20      | p_{z}(MeV/c)      | r(mm)         | 240 | 0     | 150   | 240 | 0    | 200 
 	TH2D    | ptr             | e^{-} at ts20      | p_{t}(MeV/c)      | r(mm)         | 240 | 0     | 150   | 240 | 0    | 200 

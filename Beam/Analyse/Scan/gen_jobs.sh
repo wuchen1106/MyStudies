@@ -46,11 +46,11 @@ do
 					if [ -d $directory ]; then
 						fileexist=true
 					fi
-					njobs=2
+					njobs=6
 					echo "((time $PWD/../Scan -d $directory -j $njobs -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
 				elif [ $runname == "Hayashi" ]; then
 					if [ $configName == "g60cm6mm" ]; then
-						file="$MYDATA/other/Hayashi/test0618_Gra60cm_2.root"
+						file="$MYDATA/other/Hayashi/test0722_2mmGra1.2cm_60cm.root"
 					elif [ $configName == "t16cm6mm" ]; then
 						file="$MYDATA/other/Hayashi/test0622_Tun16cm.root"
 					fi

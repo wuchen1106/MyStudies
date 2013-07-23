@@ -14,7 +14,8 @@ var_process(){
 			LOG=1
 		fi
 		nfiles=-1
-		for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi"
+#		for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi"
+		for runname in "Andy" "Chen" "QGSPBERT"
 		do
 			rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname""_output.root"
 			histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
@@ -29,7 +30,8 @@ var_process(){
 			continue
 		fi
 		iFile=0
-		for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi"
+#		for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi"
+		for runname in "Andy" "Chen" "QGSPBERT"
 		do
 			if [ $iFile = 0 ]; then
 				COL=1
@@ -50,9 +52,9 @@ var_process(){
 				echo "    refTH1D | "$rootfile" | "$histo >> $input
 				echo "#   TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm   |DrawOption|UseLeg|legendName|legx1|legy1|legx2|legy2" >> $input
 				if [ $iFile = 0 ]; then
-					echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-7  | $COL | $nfiles | 0  | $LOG  | 3   | 0 | LP       |   1  |$runname  |0.75 |0.75 |0.95 |0.95 " >> $input
+					echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-7  | $COL | $nfiles | 0  | $LOG  | 3   | 0 | LP       |   1  |$runname  |0.8 |0.8 |1 |1 " >> $input
 				else
-					echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-7  | $COL | 0 | 0  | $LOG  | 3   | 0 | LP       |   1  |$runname  |0.75 |0.75 |0.95 |0.95 " >> $input
+					echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-7  | $COL | 0 | 0  | $LOG  | 3   | 0 | LP       |   1  |$runname  |0.8 |0.8 |1 |1 " >> $input
 				fi
 				((iFile++))
 			fi
@@ -62,12 +64,13 @@ var_process(){
 
 input="input"
 #for configName in "g60cm6mm" "t16cm6mm"
-for configName in "t16cm6mm"
+for configName in "g60cm6mm"
 do
 #	for monitor in "ts2_0" "blt0" "ptacs_shielding"
-	for monitor in "blt0" "ptacs_shielding"
+	for monitor in "blt0"
 	do
-		for pname in "em" "mum" "pim" "n0"
+#		for pname in "em" "mum" "pim" "n0"
+		for pname in "pim"
 		do
 			if [ $pname = em ]; then pname_inTitle="e^{-}";
 			elif [ $pname = mum ]; then pname_inTitle="#mu^{-}";

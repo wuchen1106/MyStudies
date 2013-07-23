@@ -22,16 +22,14 @@ do_trans(){
 }
 
 #for configName in "g60cm6mm" "t16cm6mm"
-for configName in "t16cm6mm"
+for configName in "g60cm6mm"
 do
 #	for runname in "Andy" "Chen" "Hayashi" "QGSPBERT" "QGSPBERTHP"
-	for runname in "Chen"
+	for runname in "Hayashi"
 	do
-#		for monitor in "ts2_0" "blt0" "ptacs_shielding"
-		for monitor in "ptacs_shielding"
+		for monitor in "ts2_0" "blt0" "ptacs_shielding"
 		do
-#			for pname in "em" "mum" "n0" "pim"
-			for pname in "n0"
+			for pname in "em" "mum" "n0" "pim"
 			do
 				logfile="../../result/$configName/$runname/$configName.$monitor.$pname.$runname.bosslog"
 				output="../../result/$configName/$runname/$monitor.$pname.txt"

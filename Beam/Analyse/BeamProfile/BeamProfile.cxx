@@ -296,6 +296,10 @@ int main(int argc, char** argv){
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(theta/rad,r/mm);
 		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"patheta"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,theta/rad);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"oxoy"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(ox/mm,oy/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"oxoz"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(ox/mm,oz/mm);
 		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paox"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,ox/mm);
 		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"ptox"+"_"+m_suffix);
