@@ -24,8 +24,8 @@ do_trans(){
 #for configName in "g60cm6mm" "t16cm6mm"
 for configName in "g60cm6mm"
 do
-#	for runname in "Andy" "Chen" "Hayashi" "QGSPBERT" "QGSPBERTHP"
-	for runname in "Hayashi"
+#	for runname in "Andy" "Chen" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "nomuec" "QGSP_BERT" "real"
+	for runname in "real"
 	do
 		for monitor in "ts2_0" "blt0" "ptacs_shielding"
 		do

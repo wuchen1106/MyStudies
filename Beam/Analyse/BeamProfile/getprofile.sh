@@ -3,13 +3,20 @@
 #for configName in "g60cm6mm" "t16cm6mm"
 for configName in "g60cm6mm"
 do
-	for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi"
+#	for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi" "original" "nomuec" "QGSP_BERT" "real"
+	for runname in "nomuec" "QGSP_BERT" "real"
 	do
 		if [ $runname == "Andy" ]; then
 			if [ $configName == "g60cm6mm" ]; then
 				nEvents=1000000
 			elif [ $configName == "t16cm6mm" ]; then
 				nEvents=1000000
+			fi
+		elif [ $runname == "Hayashi" ]; then
+			if [ $configName == "g60cm6mm" ]; then
+				nEvents=100000
+			elif [ $configName == "t16cm6mm" ]; then
+				nEvents=100000
 			fi
 		elif [ $runname == "Chen" ]; then
 			if [ $configName == "g60cm6mm" ]; then
@@ -29,17 +36,16 @@ do
 			elif [ $configName == "t16cm6mm" ]; then
 				nEvents=250000
 			fi
-		elif [ $runname == "Hayashi" ]; then
+		else
 			if [ $configName == "g60cm6mm" ]; then
-				nEvents=100000
+				nEvents=1000000
 			elif [ $configName == "t16cm6mm" ]; then
-				nEvents=100000
+				nEvents=1000000
 			fi
 		fi
 		for monitor in "blt0" "ptacs_shielding"
 		do
-#			for pname in "em" "mum" "pim" "n0"
-			for pname in "em"
+			for pname in "em" "mum" "pim" "n0"
 			do
 				if [ $pname = em ]; then pname_inTitle="e^{-}";
 				elif [ $pname = mum ]; then pname_inTitle="#mu^{-}";

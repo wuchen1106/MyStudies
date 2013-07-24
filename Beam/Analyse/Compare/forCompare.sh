@@ -14,8 +14,8 @@ var_process(){
 			LOG=1
 		fi
 		nfiles=-1
-#		for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi"
-		for runname in "Andy" "Chen" "QGSPBERT"
+#		for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi" "original"
+		for runname in "Andy" "original" "nomuec" "real" "QGSP_BERT"
 		do
 			rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname""_output.root"
 			histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
@@ -30,8 +30,8 @@ var_process(){
 			continue
 		fi
 		iFile=0
-#		for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi"
-		for runname in "Andy" "Chen" "QGSPBERT"
+#		for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi" "original"
+		for runname in "Andy" "original" "nomuec" "real" "QGSP_BERT"
 		do
 			if [ $iFile = 0 ]; then
 				COL=1
@@ -67,10 +67,9 @@ input="input"
 for configName in "g60cm6mm"
 do
 #	for monitor in "ts2_0" "blt0" "ptacs_shielding"
-	for monitor in "blt0"
+	for monitor in "blt0" "ptacs_shielding"
 	do
-#		for pname in "em" "mum" "pim" "n0"
-		for pname in "pim"
+		for pname in "em" "mum" "pim" "n0"
 		do
 			if [ $pname = em ]; then pname_inTitle="e^{-}";
 			elif [ $pname = mum ]; then pname_inTitle="#mu^{-}";

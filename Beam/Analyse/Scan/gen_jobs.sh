@@ -11,7 +11,7 @@ do
 			elif [ $pid = -211 ]; then pname="pim";
 			elif [ $pid = 2112 ]; then pname="n0";
 			fi
-			for runname in "Andy" "Chen" "Hayashi" "QGSPBERT" "QGSPBERTHP";
+			for runname in "Andy" "Chen" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "nomuec" "QGSP_BERT" "real";
 			do
 				pbsfile=$configName.$monitor.$pname.$runname.boss
 				echo "#!/bin/bash" > $pbsfile
@@ -27,27 +27,6 @@ do
 						fileexist=true
 					fi
 					echo "((time $PWD/../Scan -f $file -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
-				elif [ $runname == "Chen" ]; then
-					directory="$MYDATA/raw/comet_g4/$configName""_""$runname"
-					njobs=150
-					if [ -d $directory ]; then
-						fileexist=true
-					fi
-					echo "((time $PWD/../Scan -d $directory -j $njobs -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
-				elif [ $runname == "QGSPBERT" ]; then
-					directory="$MYDATA/raw/comet_g4/$configName""_""$runname"
-					if [ -d $directory ]; then
-						fileexist=true
-					fi
-					njobs=150
-					echo "((time $PWD/../Scan -d $directory -j $njobs -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
-				elif [ $runname == "QGSPBERTHP" ]; then
-					directory="$MYDATA/raw/comet_g4/$configName""_""$runname"
-					if [ -d $directory ]; then
-						fileexist=true
-					fi
-					njobs=6
-					echo "((time $PWD/../Scan -d $directory -j $njobs -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
 				elif [ $runname == "Hayashi" ]; then
 					if [ $configName == "g60cm6mm" ]; then
 						file="$MYDATA/other/Hayashi/test0722_2mmGra1.2cm_60cm.root"
@@ -58,6 +37,27 @@ do
 						fileexist=true
 					fi
 					echo "((time $PWD/../Scan -f $file -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
+				elif [ $runname == "QGSPBERTHP" ]; then
+					directory="$MYDATA/raw/comet_g4/$configName""_""$runname"
+					if [ -d $directory ]; then
+						fileexist=true
+					fi
+					njobs=6
+					echo "((time $PWD/../Scan -d $directory -j $njobs -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
+				elif [ $runname == "Chen" -o $runname == "QGSPBERT" ]; then
+					directory="$MYDATA/raw/comet_g4/$configName""_""$runname"
+					njobs=150
+					if [ -d $directory ]; then
+						fileexist=true
+					fi
+					echo "((time $PWD/../Scan -d $directory -j $njobs -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
+				else
+					directory="$MYDATA/raw/comet_g4/$configName""_""$runname"
+					if [ -d $directory ]; then
+						fileexist=true
+					fi
+					njobs=100
+					echo "((time $PWD/../Scan -d $directory -j $njobs -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
 				fi
 				if [ $fileexist = false ]; then
 					rm $pbsfile

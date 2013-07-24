@@ -9,8 +9,8 @@ verbose_configure_verbose
 verbose_default.mac
 
 #verbose
-verbose_configure_process
-process_default.mac
+#verbose_configure_process
+#process_default.mac
 
 #verbose
 verbose_configure_cut
@@ -27,4 +27,4 @@ dump.mac
 #run
 run_configure
 1
-30000
+10000
