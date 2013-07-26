@@ -2,8 +2,7 @@
 
 for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
 do
-#	for configName in "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
-	for configName in "g60cm6mm_170gcm3"
+	for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
 	do
 		for pid in 11 13 -211 2112;
 		do
@@ -12,8 +11,7 @@ do
 			elif [ $pid = -211 ]; then pname="pim";
 			elif [ $pid = 2112 ]; then pname="n0";
 			fi
-#			for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302"
-			for runname in "QGSPBERT49302"
+			for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302"
 			do
 				pbsfile=$configName.$monitor.$pname.$runname.boss
 				echo "#!/bin/bash" > $pbsfile
@@ -22,7 +20,7 @@ do
 				if [ $runname == "Andy" ]; then
 					if [ $configName == "g60cm6mm_170gcm3" ]; then
 						file="$MYDATA/other/Andy/graphite-proton-target_length-60cm.root"
-					elif [ $configName == "t16cm6mm" ]; then
+					else
 						file="DUMMY"
 					fi
 					if [ -e $file ]; then
@@ -34,6 +32,8 @@ do
 						file="$MYDATA/other/Hayashi/test0722_2mmGra1.2cm_60cm.root"
 					elif [ $configName == "t16cm6mm" ]; then
 						file="$MYDATA/other/Hayashi/test0622_Tun16cm.root"
+					else
+						file="DUMMY"
 					fi
 					if [ -e $file ]; then
 						fileexist=true
