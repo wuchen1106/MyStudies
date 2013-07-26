@@ -31,7 +31,7 @@ do
 		else
 			nEvents=1000000
 		fi
-		for monitor in "blt0" "ptacs_shielding"
+		for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
 		do
 			for pname in "em" "mum" "pim" "n0"
 			do

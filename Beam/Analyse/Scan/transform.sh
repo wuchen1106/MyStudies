@@ -27,7 +27,7 @@ do
 #	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302"
 	for runname in "QGSPBERT49302"
 	do
-		for monitor in "ts2_0" "blt0" "ptacs_shielding"
+		for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
 		do
 			for pname in "em" "mum" "n0" "pim"
 			do
