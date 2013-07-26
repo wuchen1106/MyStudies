@@ -1,8 +1,9 @@
 #!/bin/bash
 
-for monitor in "ts2_0" "blt0" "ptacs_shielding";
+for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
 do
-	for configName in "t16cm6mm" "g60cm6mm";
+#	for configName in "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
+	for configName in "g60cm6mm_170gcm3"
 	do
 		for pid in 11 13 -211 2112;
 		do
@@ -11,14 +12,15 @@ do
 			elif [ $pid = -211 ]; then pname="pim";
 			elif [ $pid = 2112 ]; then pname="n0";
 			fi
-			for runname in "Andy" "Chen" "Hayashi" "QGSPBERT" "QGSPBERTHP";
+#			for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302"
+			for runname in "QGSPBERT49302"
 			do
 				pbsfile=$configName.$monitor.$pname.$runname.boss
 				echo "#!/bin/bash" > $pbsfile
 				echo "source $MYHOME/.setana.sh" >> $pbsfile
 				fileexist=false
 				if [ $runname == "Andy" ]; then
-					if [ $configName == "g60cm6mm" ]; then
+					if [ $configName == "g60cm6mm_170gcm3" ]; then
 						file="$MYDATA/other/Andy/graphite-proton-target_length-60cm.root"
 					elif [ $configName == "t16cm6mm" ]; then
 						file="DUMMY"
@@ -27,30 +29,9 @@ do
 						fileexist=true
 					fi
 					echo "((time $PWD/../Scan -f $file -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
-				elif [ $runname == "Chen" ]; then
-					directory="$MYDATA/raw/comet_g4/$configName""_""$runname"
-					njobs=150
-					if [ -d $directory ]; then
-						fileexist=true
-					fi
-					echo "((time $PWD/../Scan -d $directory -j $njobs -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
-				elif [ $runname == "QGSPBERT" ]; then
-					directory="$MYDATA/raw/comet_g4/$configName""_""$runname"
-					if [ -d $directory ]; then
-						fileexist=true
-					fi
-					njobs=150
-					echo "((time $PWD/../Scan -d $directory -j $njobs -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
-				elif [ $runname == "QGSPBERTHP" ]; then
-					directory="$MYDATA/raw/comet_g4/$configName""_""$runname"
-					if [ -d $directory ]; then
-						fileexist=true
-					fi
-					njobs=2
-					echo "((time $PWD/../Scan -d $directory -j $njobs -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
 				elif [ $runname == "Hayashi" ]; then
-					if [ $configName == "g60cm6mm" ]; then
-						file="$MYDATA/other/Hayashi/test0618_Gra60cm_2.root"
+					if [ $configName == "g60cm6mm_200gcm3" ]; then
+						file="$MYDATA/other/Hayashi/test0722_2mmGra1.2cm_60cm.root"
 					elif [ $configName == "t16cm6mm" ]; then
 						file="$MYDATA/other/Hayashi/test0622_Tun16cm.root"
 					fi
@@ -58,6 +39,13 @@ do
 						fileexist=true
 					fi
 					echo "((time $PWD/../Scan -f $file -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
+				else
+					directory="$MYDATA/raw/comet_g4/$configName""_""$runname"
+					if [ -d $directory ]; then
+						fileexist=true
+					fi
+					njobs=`ls $directory/*.raw | wc -l`
+					echo "((time $PWD/../Scan -d $directory -j $njobs -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
 				fi
 				if [ $fileexist = false ]; then
 					rm $pbsfile

@@ -101,17 +101,27 @@ int main(int argc, char* argv[]){
 	if (m_monitor == "ts2_0"){
 		content += ":" + m_monitor + ".position.fX*10";
 		content += ":" + m_monitor + ".position.fY*10";
-		content += ":" + m_monitor + ".position.fZ*10-758.5";
+		content += ":" + m_monitor + ".position.fZ*10-1389.5"; // to CdcWithBLT
+	}
+	else if (m_monitor == "blt1"){
+		content += ":" + m_monitor + ".position.fX*10";
+		content += ":" + m_monitor + ".position.fY*10";
+		content += ":" + m_monitor + ".position.fZ*10-2390.5"; // to CdcWithBLT
 	}
 	else if (m_monitor == "blt0"){
 		content += ":" + m_monitor + ".position.fX*10";
 		content += ":" + m_monitor + ".position.fY*10";
-		content += ":" + m_monitor + ".position.fZ*10-2259.5";
+		content += ":" + m_monitor + ".position.fZ*10-2790.5"; // to CdcWithBLT
+	}
+	else if (m_monitor == "ptacs_beampipe"){
+		content += ":" + m_monitor + ".position.fX*10";
+		content += ":" + m_monitor + ".position.fY*10";
+		content += ":" + m_monitor + ".position.fZ*10i+2844.5"; // to comet_g4 coordinate
 	}
 	else if (m_monitor == "ptacs_shielding"){
 		content += ":" + m_monitor + ".position.fX*10";
 		content += ":" + m_monitor + ".position.fY*10";
-		content += ":" + m_monitor + ".position.fZ*10";
+		content += ":" + m_monitor + ".position.fZ*10"; // to comet_g4 coordinate
 	}
 	else {
 		printf("Cannot recogonize this  monitor plane \"%s\"\n",m_monitor.c_str());
@@ -134,8 +144,14 @@ int main(int argc, char* argv[]){
 	if (m_monitor == "ts2_0"){
 		cutcont += "&&" + m_monitor + ".origin.fX<450.15";
 	}
+	else if (m_monitor == "blt1"){
+		cutcont += "&&" + m_monitor + ".origin.fX<340.05";
+	}
 	else if (m_monitor == "blt0"){
 		cutcont += "&&" + m_monitor + ".origin.fX<300.05";
+	}
+	else if (m_monitor == "ptacs_beampipe"){
+		cutcont += "&&" + m_monitor + ".origin.fZ<2844.5";
 	}
 	else if (m_monitor == "ptacs_shielding"){
 		cutcont += "&&" + m_monitor + ".origin.fZ<75.05";
