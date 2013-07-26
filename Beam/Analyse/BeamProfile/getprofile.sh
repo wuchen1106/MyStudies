@@ -1,47 +1,35 @@
 #!/bin/bash
 
-#for configName in "g60cm6mm" "t16cm6mm"
-for configName in "g60cm6mm"
+#for configName in "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
+for configName in "g60cm6mm_170gcm3"
 do
-#	for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi" "original" "nomuec" "QGSP_BERT" "real"
-	for runname in "nomuec" "QGSP_BERT" "real"
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302"
+	for runname in "QGSPBERT49302"
 	do
 		if [ $runname == "Andy" ]; then
-			if [ $configName == "g60cm6mm" ]; then
-				nEvents=1000000
-			elif [ $configName == "t16cm6mm" ]; then
-				nEvents=1000000
-			fi
+			nEvents=1000000
 		elif [ $runname == "Hayashi" ]; then
-			if [ $configName == "g60cm6mm" ]; then
-				nEvents=100000
-			elif [ $configName == "t16cm6mm" ]; then
-				nEvents=100000
-			fi
-		elif [ $runname == "Chen" ]; then
-			if [ $configName == "g60cm6mm" ]; then
+			nEvents=100000
+		elif [ $runname == "modified" ]; then
+			if [ $configName = "g60cm6mm_200gcm3" -o $configName = "t16cm6mm" ]; then
 				nEvents=15000000
-			elif [ $configName == "t16cm6mm" ]; then
-				nEvents=15000000
-			fi
-		elif [ $runname == "QGSPBERT" ]; then
-			if [ $configName == "g60cm6mm" ]; then
-				nEvents=1500000
-			elif [ $configName == "t16cm6mm" ]; then
-				nEvents=1500000
+			else
+				nEvents=1000000
 			fi
 		elif [ $runname == "QGSPBERTHP" ]; then
-			if [ $configName == "g60cm6mm" ]; then
+			if [ $configName = "g60cm6mm_200gcm3" -o $configName = "t16cm6mm" ]; then
 				nEvents=250000
-			elif [ $configName == "t16cm6mm" ]; then
-				nEvents=250000
+			else
+				nEvents=1000000
+			fi
+		elif [ $runname == "QGSPBERT49302" ]; then
+			if [ $configName = "g60cm6mm_170gcm3" ]; then
+				nEvents=990000
+			else
+				nEvents=0
 			fi
 		else
-			if [ $configName == "g60cm6mm" ]; then
-				nEvents=1000000
-			elif [ $configName == "t16cm6mm" ]; then
-				nEvents=1000000
-			fi
+			nEvents=1000000
 		fi
 		for monitor in "blt0" "ptacs_shielding"
 		do
@@ -55,8 +43,14 @@ do
 				rootfile="../../result/$configName/$runname/$monitor.$pname.txt.root"
 				prefix=$configName"_"$monitor"_"$pname
 				suffix=$runname
+				condensedConfigName=$configName
+				if [ $configName = "g60cm6mm_170gcm3" -o $configName = "g60cm6mm_200gcm3" ]; then
+					condensedConfigName="g60cm6mm"
+				fi
 				if [ -e $rootfile ]; then
-					cp "input_"$configName"_"$monitor"_"$pname "input"
+					echo "Processing $rootfile"
+					cp "input_"$condensedConfigName"_"$monitor"_"$pname "input"
+					echo ./BeamProfile -t "$pname_inTitle on $monitor" -s $nEvents -m argu -x $prefix -y $suffix -l 1e-7 $rootfile
 					./BeamProfile -t "$pname_inTitle on $monitor" -s $nEvents -m argu -x $prefix -y $suffix -l 1e-7 $rootfile
 				fi
 			done

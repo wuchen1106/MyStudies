@@ -6,65 +6,65 @@ var_process(){
 	pname=$3
 	pname_inTitle=$4
 	var=$5
-	for vartype in "_" "_log_"
+	vartype=$6
+	nx=$7
+	ny=$8
+	if [ $vartype = "_" ]; then
+		LOG=0
+	else
+		LOG=1
+	fi
+	nfiles=-1
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302"
+	for runname in "Andy" "QGSPBERT" "QGSPBERTHP" "modified" "QGSPBERT49302"
 	do
-		if [ $vartype = "_" ]; then
-			LOG=0
+		rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname""_output.root"
+		histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
+		if [ -e $rootfile ]; then
+			((nfiles++))
 		else
-			LOG=1
+			echo $rootfile does not exist!
 		fi
-		nfiles=-1
-#		for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi" "original"
-		for runname in "Andy" "original" "nomuec" "real" "QGSP_BERT"
-		do
-			rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname""_output.root"
-			histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
-			if [ -e $rootfile ]; then
-				((nfiles++))
-			else
-				echo $rootfile does not exist!
-			fi
-		done
-		if [ $nfiles -lt 1 ]; then
-			echo "nfiles = $nfiles"
-			continue
+	done
+	if [ $nfiles -lt 1 ]; then
+		echo "nfiles = $nfiles"
+		continue
+	fi
+	iFile=0
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302"
+	for runname in "Andy" "QGSPBERT" "QGSPBERTHP" "modified" "QGSPBERT49302"
+	do
+		if [ $iFile = 0 ]; then
+			COL=1
+		elif [ $iFile = 1 ]; then
+			COL=632
+		elif [ $iFile = 2 ]; then
+			COL=600
+		elif [ $iFile = 3 ]; then
+			COL=416
+		elif [ $iFile = 4 ]; then
+			COL=800
 		fi
-		iFile=0
-#		for runname in "Andy" "Chen" "QGSPBERT" "QGSPBERTHP" "Hayashi" "original"
-		for runname in "Andy" "original" "nomuec" "real" "QGSP_BERT"
-		do
+		rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname""_output.root"
+		histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
+		if [ -e $rootfile ]; then
+			echo "" >> $input
+			echo "#   TYPE    | Directory                                                            | histoName" >> $input
+			echo "    refTH1D | "$rootfile" | "$histo >> $input
+			echo "#   TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm   |DrawOption|UseLeg|legendName|legx1|legy1|legx2|legy2|npadx|npady" >> $input
 			if [ $iFile = 0 ]; then
-				COL=1
-			elif [ $iFile = 1 ]; then
-				COL=632
-			elif [ $iFile = 2 ]; then
-				COL=600
-			elif [ $iFile = 3 ]; then
-				COL=416
-			elif [ $iFile = 4 ]; then
-				COL=800
+				echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-6  | $COL | $nfiles | 0  | $LOG  | 3   | 0 | LP       |   1  |$runname  |0.8 |0.8 |1 |1 |$nx |$ny " >> $input
+			else
+				echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-6  | $COL | 0 | 0  | $LOG  | 3   | 0 | LP       |   1  |$runname  |0.8 |0.8 |1 |1 " >> $input
 			fi
-			rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname""_output.root"
-			histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
-			if [ -e $rootfile ]; then
-				echo "" >> $input
-				echo "#   TYPE    | Directory                                                            | histoName" >> $input
-				echo "    refTH1D | "$rootfile" | "$histo >> $input
-				echo "#   TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm   |DrawOption|UseLeg|legendName|legx1|legy1|legx2|legy2" >> $input
-				if [ $iFile = 0 ]; then
-					echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-7  | $COL | $nfiles | 0  | $LOG  | 3   | 0 | LP       |   1  |$runname  |0.8 |0.8 |1 |1 " >> $input
-				else
-					echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-7  | $COL | 0 | 0  | $LOG  | 3   | 0 | LP       |   1  |$runname  |0.8 |0.8 |1 |1 " >> $input
-				fi
-				((iFile++))
-			fi
-		done
+			((iFile++))
+		fi
 	done
 }
 
 input="input"
-#for configName in "g60cm6mm" "t16cm6mm"
-for configName in "g60cm6mm"
+#for configName in "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
+for configName in "g60cm6mm_170gcm3"
 do
 #	for monitor in "ts2_0" "blt0" "ptacs_shielding"
 	for monitor in "blt0" "ptacs_shielding"
@@ -76,17 +76,32 @@ do
 			elif [ $pname = pim ]; then pname_inTitle="#pi^{-}";
 			elif [ $pname = n0 ]; then pname_inTitle="n_{0}";
 			fi
-			if [ $pname = em ]; then
-				for var in "pa" "pt" "pz" "gTime" "pa_tail" "pt_tail" "pz_tail" "gTime_tail" "r" "theta" "ox" "oy" "oz"
-				do
-					var_process $configName $monitor $pname $pname_inTitle $var
-				done
-			else
-				for var in "pa" "pt" "pz" "gTime" "gTime_tail" "r" "theta" "ox" "oy" "oz"
-				do
-					var_process $configName $monitor $pname $pname_inTitle $var
-				done
-			fi
+			for vartype in "_" "_log_"
+			do
+				if [ $pname = em ]; then
+					for var in "pa" "pt" "pz" "theta" "pa_tail" "pt_tail" "pz_tail" "gTime_tail" "gTime" "ox" "oy" "oz" "r"
+					do
+						nx=1
+						ny=1
+						if [ $var = "pa" -o $var = "pa_tail" -o $var = "gTime" ]; then
+							nx=2
+							ny=2
+						fi
+						var_process $configName $monitor $pname $pname_inTitle $var $vartype $nx $ny
+					done
+				else
+					for var in "pa" "pt" "pz" "theta" "gTime" "ox" "oy" "oz" "gTime_tail" "r"
+					do
+						nx=1
+						ny=1
+						if [ $var = "pa" -o $var = "gTime" ]; then
+							nx=2
+							ny=2
+						fi
+						var_process $configName $monitor $pname $pname_inTitle $var $vartype $nx $ny
+					done
+				fi
+			done
 		done
 	done
 done

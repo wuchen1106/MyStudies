@@ -18,7 +18,7 @@ cut_default.mac
 
 #verbose
 verbose_configure_gun
-gun_default.mac
+gun_g60cm6mm.mac
 
 #verbose
 verbose_configure_dump
