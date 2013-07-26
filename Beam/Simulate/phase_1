@@ -9,8 +9,8 @@ verbose_configure_verbose
 verbose_default.mac
 
 #verbose
-verbose_configure_process
-process_default.mac
+#verbose_configure_process
+#process_original.mac
 
 #verbose
 verbose_configure_cut
@@ -18,7 +18,7 @@ cut_default.mac
 
 #verbose
 verbose_configure_gun
-gun_default.mac
+gun_g40cm10mm.mac
 
 #verbose
 verbose_configure_dump
@@ -27,4 +27,4 @@ dump.mac
 #run
 run_configure
 1
-30000
+100000

@@ -23,6 +23,7 @@ result/
 configure
 cometg4_configure
 cometg4_run.sh
+cmdlog
 
 Beam/Analyse/BeamProfile/BeamProfile
 Beam/Analyse/Compare/Compare
