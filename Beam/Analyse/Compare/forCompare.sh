@@ -63,7 +63,7 @@ var_process(){
 }
 
 input="input"
-#for configName in "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
+#for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
 for configName in "g60cm6mm_170gcm3"
 do
 #	for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
