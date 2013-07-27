@@ -116,7 +116,7 @@ int main(int argc, char* argv[]){
 	else if (m_monitor == "ptacs_beampipe"){
 		content += ":" + m_monitor + ".position.fX*10";
 		content += ":" + m_monitor + ".position.fY*10";
-		content += ":" + m_monitor + ".position.fZ*10i+2844.5"; // to comet_g4 coordinate
+		content += ":" + m_monitor + ".position.fZ*10+2844.5"; // to comet_g4 coordinate
 	}
 	else if (m_monitor == "ptacs_shielding"){
 		content += ":" + m_monitor + ".position.fX*10";
