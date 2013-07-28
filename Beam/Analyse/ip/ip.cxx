@@ -16,11 +16,12 @@
 
 #include "MyRootInterface.hxx"
 
-char m_workMode[128];
+std::string m_MonitorPlane;
 std::string m_runName;
 int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
+int PDGEncoding = 13;
 bool backup = false;
 std::vector<int> Ncut;
 std::vector<std::string> Ncut_message;
@@ -39,12 +40,12 @@ int main(int argc, char* argv[]){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hbv:n:m:r:p:"))!=-1){
+	while((result=getopt(argc,argv,"hbv:n:m:r:p:P:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
-				strcpy(m_workMode,optarg);
-				printf("work mode: %s\n",m_workMode);
+				m_MonitorPlane = optarg;
+				printf("Monitor plane: %s\n",m_MonitorPlane.c_str());
 				break;
 			case 'r':
 				m_runName=optarg;
@@ -65,6 +66,10 @@ int main(int argc, char* argv[]){
 			case 'p':
 				printModule = atoi(optarg);
 				printf("printModule: %d\n",printModule);
+				break;
+			case 'P':
+				PDGEncoding = atoi(optarg);
+				printf("PDGEncoding: %d\n",PDGEncoding);
 				break;
 			case '?':
 				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
@@ -135,26 +140,25 @@ int main(int argc, char* argv[]){
 		inc_Ncut("Got entries");
 
 		// For output
-		std::vector<int> pid;
-		std::vector<int> tid;
-		std::vector<int> ppid;
-		std::vector<int> ptid;
-		std::vector<double> x;
-		std::vector<double> y;
-		std::vector<double> z;
-		std::vector<double> px;
-		std::vector<double> py;
-		std::vector<double> pz;
-		std::vector<double> t;
-		std::vector<std::string> process;
-		std::vector<std::string> volume;
-		std::vector<double> hit_x;
-		std::vector<double> hit_y;
-		std::vector<double> hit_z;
-		std::vector<double> hit_px;
-		std::vector<double> hit_py;
-		std::vector<double> hit_pz;
-		std::vector<double> hit_t;
+		int pid;
+		int tid;
+		int ppid;
+		double x;
+		double y;
+		double z;
+		double px;
+		double py;
+		double pz;
+		double t;
+		std::string process;
+		std::string volume;
+		double ox;
+		double oy;
+		double oz;
+		double opx;
+		double opy;
+		double opz;
+		double ot;
 
 		// Get info
 		int evt_num;
@@ -173,28 +177,17 @@ int main(int argc, char* argv[]){
 		std::vector<double> McTruth_time;
 		std::vector<std::string> McTruth_process;
 		std::vector<std::string> McTruth_volume;
-		int MonitorE_nHits = 0;
-		std::vector<int> MonitorE_tid;
-		std::vector<int> MonitorE_pid;
-		std::vector<double> MonitorE_t;
-		std::vector<double> MonitorE_e;
-		std::vector<double> MonitorE_x;
-		std::vector<double> MonitorE_y;
-		std::vector<double> MonitorE_z;
-		std::vector<double> MonitorE_px;
-		std::vector<double> MonitorE_py;
-		std::vector<double> MonitorE_pz;
-		int MonitorC_nHits = 0;
-		std::vector<int> MonitorC_tid;
-		std::vector<int> MonitorC_pid;
-		std::vector<double> MonitorC_t;
-		std::vector<double> MonitorC_e;
-		std::vector<double> MonitorC_x;
-		std::vector<double> MonitorC_y;
-		std::vector<double> MonitorC_z;
-		std::vector<double> MonitorC_px;
-		std::vector<double> MonitorC_py;
-		std::vector<double> MonitorC_pz;
+		int Monitor_nHits = 0;
+		std::vector<int> Monitor_tid;
+		std::vector<int> Monitor_pid;
+		std::vector<double> Monitor_t;
+		std::vector<double> Monitor_e;
+		std::vector<double> Monitor_x;
+		std::vector<double> Monitor_y;
+		std::vector<double> Monitor_z;
+		std::vector<double> Monitor_px;
+		std::vector<double> Monitor_py;
+		std::vector<double> Monitor_pz;
 
 		fMyRootInterface->get_value("evt_num",evt_num);
 		fMyRootInterface->get_value("run_num",run_num);
@@ -202,168 +195,207 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("McTruth_pid",McTruth_pid);
 		fMyRootInterface->get_value("McTruth_tid",McTruth_tid);
 		fMyRootInterface->get_value("McTruth_ptid",McTruth_ptid);
-		fMyRootInterface->get_value("McTruth_x",McTruth_x);
-		for (int i = 0; i<McTruth_x.size();i++) McTruth_x[i] *= cm;
-		fMyRootInterface->get_value("McTruth_y",McTruth_y);
-		for (int i = 0; i<McTruth_y.size();i++) McTruth_y[i] *= cm;
-		fMyRootInterface->get_value("McTruth_z",McTruth_z);
-		for (int i = 0; i<McTruth_z.size();i++) McTruth_z[i] *= cm;
-		fMyRootInterface->get_value("McTruth_px",McTruth_px);
-		for (int i = 0; i<McTruth_px.size();i++) McTruth_px[i] *= GeV;
-		fMyRootInterface->get_value("McTruth_py",McTruth_py);
-		for (int i = 0; i<McTruth_py.size();i++) McTruth_py[i] *= GeV;
-		fMyRootInterface->get_value("McTruth_pz",McTruth_pz);
-		for (int i = 0; i<McTruth_pz.size();i++) McTruth_pz[i] *= GeV;
-		fMyRootInterface->get_value("McTruth_time",McTruth_time);
-		for (int i = 0; i<McTruth_time.size();i++) McTruth_time[i] *= ns;
-		fMyRootInterface->get_value("McTruth_e",McTruth_e);
-		for (int i = 0; i<McTruth_e.size();i++) McTruth_e[i] *= GeV;
+		fMyRootInterface->get_value("McTruth_x",McTruth_x,cm);
+		fMyRootInterface->get_value("McTruth_y",McTruth_y,cm);
+		fMyRootInterface->get_value("McTruth_z",McTruth_z,cm);
+		fMyRootInterface->get_value("McTruth_px",McTruth_px,GeV);
+		fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
+		fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
+		fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
+		fMyRootInterface->get_value("McTruth_e",McTruth_e,GeV);
 		fMyRootInterface->get_value("McTruth_process",McTruth_process);
 		fMyRootInterface->get_value("McTruth_volume",McTruth_volume);
-		fMyRootInterface->get_value("MonitorE_nHits",MonitorE_nHits);
-		fMyRootInterface->get_value("MonitorE_t",MonitorE_t);
-		for (int i = 0; i<MonitorE_t.size();i++) MonitorE_t[i] *= ns;
-		fMyRootInterface->get_value("MonitorE_e",MonitorE_e);
-		for (int i = 0; i<MonitorE_e.size();i++) MonitorE_e[i] *= GeV;
-		fMyRootInterface->get_value("MonitorE_tid",MonitorE_tid);
-		fMyRootInterface->get_value("MonitorE_pid",MonitorE_pid);
-		fMyRootInterface->get_value("MonitorE_x",MonitorE_x);
-		for (int i = 0; i<MonitorE_x.size();i++) MonitorE_x[i] *= cm;
-		fMyRootInterface->get_value("MonitorE_y",MonitorE_y);
-		for (int i = 0; i<MonitorE_y.size();i++) MonitorE_y[i] *= cm;
-		fMyRootInterface->get_value("MonitorE_z",MonitorE_z);
-		for (int i = 0; i<MonitorE_z.size();i++) MonitorE_z[i] *= cm;
-		fMyRootInterface->get_value("MonitorE_px",MonitorE_px);
-		for (int i = 0; i<MonitorE_px.size();i++) MonitorE_px[i] *= GeV;
-		fMyRootInterface->get_value("MonitorE_py",MonitorE_py);
-		for (int i = 0; i<MonitorE_py.size();i++) MonitorE_py[i] *= GeV;
-		fMyRootInterface->get_value("MonitorE_pz",MonitorE_pz);
-		for (int i = 0; i<MonitorE_pz.size();i++) MonitorE_pz[i] *= GeV;
-		fMyRootInterface->get_value("MonitorC_nHits",MonitorC_nHits);
-		fMyRootInterface->get_value("MonitorC_t",MonitorC_t);
-		for (int i = 0; i<MonitorC_t.size();i++) MonitorC_t[i] *= ns;
-		fMyRootInterface->get_value("MonitorC_e",MonitorC_e);
-		for (int i = 0; i<MonitorC_e.size();i++) MonitorC_e[i] *= GeV;
-		fMyRootInterface->get_value("MonitorC_tid",MonitorC_tid);
-		fMyRootInterface->get_value("MonitorC_pid",MonitorC_pid);
-		fMyRootInterface->get_value("MonitorC_x",MonitorC_x);
-		for (int i = 0; i<MonitorC_x.size();i++) MonitorC_x[i] *= cm;
-		fMyRootInterface->get_value("MonitorC_y",MonitorC_y);
-		for (int i = 0; i<MonitorC_y.size();i++) MonitorC_y[i] *= cm;
-		fMyRootInterface->get_value("MonitorC_z",MonitorC_z);
-		for (int i = 0; i<MonitorC_z.size();i++) MonitorC_z[i] *= cm;
-		fMyRootInterface->get_value("MonitorC_px",MonitorC_px);
-		for (int i = 0; i<MonitorC_px.size();i++) MonitorC_px[i] *= GeV;
-		fMyRootInterface->get_value("MonitorC_py",MonitorC_py);
-		for (int i = 0; i<MonitorC_py.size();i++) MonitorC_py[i] *= GeV;
-		fMyRootInterface->get_value("MonitorC_pz",MonitorC_pz);
-		for (int i = 0; i<MonitorC_pz.size();i++) MonitorC_pz[i] *= GeV;
+		if (m_MonitorPlane=="ptacs_shielding"){
+			fMyRootInterface->get_value("PTACSMonitor_nHits",Monitor_nHits);
+			fMyRootInterface->get_value("PTACSMonitor_t",Monitor_t,ns);
+			fMyRootInterface->get_value("PTACSMonitor_e",Monitor_e,GeV);
+			fMyRootInterface->get_value("PTACSMonitor_tid",Monitor_tid);
+			fMyRootInterface->get_value("PTACSMonitor_pid",Monitor_pid);
+			fMyRootInterface->get_value("PTACSMonitor_x",Monitor_x,cm);
+			fMyRootInterface->get_value("PTACSMonitor_y",Monitor_y,cm);
+			fMyRootInterface->get_value("PTACSMonitor_z",Monitor_z,cm);
+			fMyRootInterface->get_value("PTACSMonitor_px",Monitor_px,GeV);
+			fMyRootInterface->get_value("PTACSMonitor_py",Monitor_py,GeV);
+			fMyRootInterface->get_value("PTACSMonitor_pz",Monitor_pz,GeV);
+		}
+		else if (m_MonitorPlane=="blt0"){
+			fMyRootInterface->get_value("MT1Monitor_nHits",Monitor_nHits);
+			fMyRootInterface->get_value("MT1Monitor_t",Monitor_t,ns);
+			fMyRootInterface->get_value("MT1Monitor_e",Monitor_e,GeV);
+			fMyRootInterface->get_value("MT1Monitor_tid",Monitor_tid);
+			fMyRootInterface->get_value("MT1Monitor_pid",Monitor_pid);
+			fMyRootInterface->get_value("MT1Monitor_x",Monitor_x,cm);
+			fMyRootInterface->get_value("MT1Monitor_y",Monitor_y,cm);
+			fMyRootInterface->get_value("MT1Monitor_z",Monitor_z,cm);
+			fMyRootInterface->get_value("MT1Monitor_px",Monitor_px,GeV);
+			fMyRootInterface->get_value("MT1Monitor_py",Monitor_py,GeV);
+			fMyRootInterface->get_value("MT1Monitor_pz",Monitor_pz,GeV);
+		}
+		else{
+			std::cout<<"Cannot recognize this Monitor plane: \""<<m_MonitorPlane<<"\"!!!"<<std::endl;
+			return -1;
+		}
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
 
-		// find muon
-		std::vector<int> i_mon; // 0: no hit. 1: MonitorC. 2: MonitorE
-		std::vector<int> i_hit;
-		for ( int i = 0; i < MonitorC_nHits; i++ ){
-			int pid = MonitorC_pid[i]; 
-			if ( pid == -13 || pid == 13 || pid == 211 || pid == -211 || pid == 321 || pid == -321){
-				i_hit.push_back(i);
-				i_mon.push_back(1);
-				tid.push_back(MonitorC_tid[i]);
-			}
-		}
-		for ( int i = 0; i < MonitorE_nHits; i++ ){
-			int pid = MonitorE_pid[i];
-			if ( pid == -13 || pid == 13 || pid == 211 || pid == -211 || pid == 321 || pid == -321){
-				i_hit.push_back(i);
-				i_mon.push_back(2);
-				tid.push_back(MonitorE_tid[i]);
-			}
-		}
-		if (i_hit.size()==0) continue;
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Found muon"<<std::endl;
-		inc_Ncut("Found muon");
-
-		// get information of this muon 
-		for (int i_par = 0; i_par < i_hit.size(); i_par++){
-			int i_McTruth = -1;
-			int i_ppid = 0;
-			int i_ptid = 0;
-			for ( int i = 0; i < McTruth_nTracks; i++ ){
-				int i_tid = McTruth_tid[i];
-				if ( i_tid == tid[i_par] ){
-					i_McTruth = i;
-					i_ptid = McTruth_ptid[i];
-					break;
+		// find particles
+		std::vector<int> hit_iMon;
+		std::vector<bool> goot_hit;
+		std::vector<int> hit_iMc;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"###Searching particles in Monitor"<<std::endl;
+		for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
+			if (Monitor_pid[i_mon] == PDGEncoding ){
+				if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+					std::cout<<prefix_ParticleInfoStart
+				             <<"  Found Particle! i_mon = "<<i_mon
+				             <<", pid = "<<Monitor_pid[i_mon]
+				             <<", tid = "<<Monitor_tid[i_mon]
+				             <<", px = "<<Monitor_px[i_mon]
+				             <<"MeV, py = "<<Monitor_py[i_mon]
+				             <<"MeV, pz = "<<Monitor_pz[i_mon]
+				             <<"MeV"
+						     <<std::endl;
+				bool going_downstream=false;
+				if (m_MonitorPlane=="blt0"){
+					if (Monitor_pz[i_mon]>0){
+						going_downstream=true;
+					}
+				}
+				else if (m_MonitorPlane=="ptacs_shielding"){
+					if (Monitor_px[i_mon]<0){
+						going_downstream=true;
+					}
+				}
+				if (going_downstream){
+					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+						std::cout<<prefix_ParticleInfoStart
+						         <<"going downstream"<<std::endl;
+					hit_iMon.push_back(i_mon);
+					hit_iMc.push_back(-1);
+					goot_hit.push_back(true);
 				}
 			}
-			for ( int i = 0; i < McTruth_nTracks; i++ ){
-				int i_tid = McTruth_tid[i];
-				if ( i_tid == i_ptid ){
-					i_ppid = McTruth_pid[i];
-					break;
+		}
+		// come from upsteam or not?
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"###Searching particles in McTruth"<<std::endl;
+		for ( int i_hit = 0; i_hit < hit_iMon.size(); i_hit++ ){
+			for ( int i_McT = 0; i_McT < McTruth_nTracks; i_McT++ ){
+				if (Monitor_tid[hit_iMon[i_hit]]==McTruth_tid[i_McT]){
+					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+						std::cout<<prefix_ParticleInfoStart
+					         <<"  Found hit["<<i_hit<<"] in McTruth!"
+						     <<", McTruth_tid["<<i_McT<<"] = "<<McTruth_tid[i_McT]
+						     <<", McTruth_pid["<<i_McT<<"] = "<<McTruth_pid[i_McT]
+						     <<std::endl;
+					hit_iMc[i_hit]=i_McT;
+					if (m_MonitorPlane=="blt0"){
+						if (McTruth_z[i_McT]>-2791.5*mm) goot_hit[i_hit]=false;
+					}
+					else if (m_MonitorPlane=="ptacs_shielding"){
+						if (McTruth_x[i_McT]<6500*mm) goot_hit[i_hit] = false;
+					}
+					if (goot_hit[i_hit])
+						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+							std::cout<<prefix_ParticleInfoStart
+								 <<"Comes from upstream"
+								 <<std::endl;
 				}
 			}
-			pid.push_back(McTruth_pid[i_McTruth]);
-			ppid.push_back(i_ppid);
-			ptid.push_back(i_ptid);
-			x.push_back(McTruth_x[i_McTruth]/mm);
-			y.push_back(McTruth_y[i_McTruth]/mm);
-			z.push_back(McTruth_z[i_McTruth]/mm);
-			px.push_back(McTruth_px[i_McTruth]/MeV);
-			py.push_back(McTruth_py[i_McTruth]/MeV);
-			pz.push_back(McTruth_pz[i_McTruth]/MeV);
-			t.push_back(McTruth_time[i_McTruth]/ns);
-			process.push_back(McTruth_process[i_McTruth]);
-			volume.push_back(McTruth_volume[i_McTruth]);
-			if (i_mon[i_par]==1){
-				hit_x.push_back(MonitorC_x[i_hit[i_par]]/mm);
-				hit_y.push_back(MonitorC_y[i_hit[i_par]]/mm);
-				hit_z.push_back(MonitorC_z[i_hit[i_par]]/mm);
-				hit_px.push_back(MonitorC_px[i_hit[i_par]]/MeV);
-				hit_py.push_back(MonitorC_py[i_hit[i_par]]/MeV);
-				hit_pz.push_back(MonitorC_pz[i_hit[i_par]]/MeV);
-				hit_t.push_back(MonitorC_t[i_hit[i_par]]/ns);
-			}
-			else if (i_mon[i_par]==2){
-				hit_x.push_back(MonitorE_x[i_hit[i_par]]/mm);
-				hit_y.push_back(MonitorE_y[i_hit[i_par]]/mm);
-				hit_z.push_back(MonitorE_z[i_hit[i_par]]/mm);
-				hit_px.push_back(MonitorE_px[i_hit[i_par]]/MeV);
-				hit_py.push_back(MonitorE_py[i_hit[i_par]]/MeV);
-				hit_pz.push_back(MonitorE_pz[i_hit[i_par]]/MeV);
-				hit_t.push_back(MonitorE_t[i_hit[i_par]]/ns);
-			}
 		}
-
-		// Fill the tree
-		fMyRootInterface->set_ovalue("evt_num",evt_num);
-		fMyRootInterface->set_ovalue("run_num",run_num);
-		fMyRootInterface->set_ovalue("nPar", (int)i_hit.size() );
-		fMyRootInterface->set_ovalue("pid",pid);
-		fMyRootInterface->set_ovalue("tid",tid);
-		fMyRootInterface->set_ovalue("ppid",ppid);
-		fMyRootInterface->set_ovalue("ptid",ptid);
-		fMyRootInterface->set_ovalue("x",x);
-		fMyRootInterface->set_ovalue("y",y);
-		fMyRootInterface->set_ovalue("z",z);
-		fMyRootInterface->set_ovalue("px",px);
-		fMyRootInterface->set_ovalue("py",py);
-		fMyRootInterface->set_ovalue("pz",pz);
-		fMyRootInterface->set_ovalue("t",t);
-		fMyRootInterface->set_ovalue("hit_x",hit_x);
-		fMyRootInterface->set_ovalue("hit_y",hit_y);
-		fMyRootInterface->set_ovalue("hit_z",hit_z);
-		fMyRootInterface->set_ovalue("hit_px",hit_px);
-		fMyRootInterface->set_ovalue("hit_py",hit_py);
-		fMyRootInterface->set_ovalue("hit_pz",hit_pz);
-		fMyRootInterface->set_ovalue("hit_t",hit_t);
-		fMyRootInterface->set_ovalue("process",process);
-		fMyRootInterface->set_ovalue("volume",volume);
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
-
-		fMyRootInterface->Fill();
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
+		
+		bool filled = false;
+		// Fill
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"###Getting information"<<std::endl;
+		for (int i_hit = 0; i_hit < hit_iMon.size(); i_hit++){
+			pid=Monitor_pid[hit_iMon[i_hit]];
+			tid=Monitor_tid[hit_iMon[i_hit]];
+			if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+				std::cout<<prefix_ParticleInfoStart
+					 <<"==>Info for hit["<<i_hit<<"]"
+					 <<", iMc = "<<hit_iMc[i_hit]
+					 <<", iMon = "<<hit_iMon[i_hit]
+					 <<", pid = "<<pid
+					 <<", tid = "<<tid
+					 <<std::endl;
+			if (!goot_hit[i_hit]) continue;
+			if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+				std::cout<<prefix_ParticleInfoStart
+					 <<"This comes from upstream and is going downstream"
+					 <<std::endl;
+			if (hit_iMc[i_hit]<0){
+				//std::cout<<"Hey you found a hit which was not recorded by McTruth!"<<std::endl;
+				//std::cout<<"    evt_num="<<evt_num<<", run_num = "<<run_num<<", tid = "<<Monitor_tid[hit_iMon[i_hit]]<<", pid = "<<Monitor_pid[hit_iMon[i_hit]]<<std::endl;;
+				continue;
+			}
+			if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+				std::cout<<prefix_ParticleInfoStart
+					 <<"We do have McTruth info for it"
+					 <<std::endl;
+			//std::cout<<"  McTruth_pid["<<hit_iMc[i_hit]<<"] = "<<McTruth_pid[hit_iMc[i_hit]]<<std::endl;
+			ppid=0;
+			for (int i_McT = 0; i_McT < McTruth_nTracks; i_McT++){
+				if (McTruth_tid[i_McT]==McTruth_pid[hit_iMc[i_hit]]){
+					ppid=McTruth_pid[i_McT];
+					break;
+					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+						std::cout<<prefix_ParticleInfoStart
+							 <<"Found its mother! ppid = "<<McTruth_pid[i_McT]
+							 <<std::endl;
+				}
+			}
+			if (m_MonitorPlane=="blt0"){
+				x=Monitor_x[hit_iMon[i_hit]];
+				y=Monitor_y[hit_iMon[i_hit]];
+				z=Monitor_z[hit_iMon[i_hit]]+2791.5;
+				px=Monitor_px[hit_iMon[i_hit]];
+				py=Monitor_py[hit_iMon[i_hit]];
+				pz=Monitor_pz[hit_iMon[i_hit]];
+			}
+			else if (m_MonitorPlane == "ptacs_shielding"){
+				x=Monitor_z[hit_iMon[i_hit]]+5790.5*mm;
+				y=Monitor_y[hit_iMon[i_hit]];
+				z=-Monitor_x[hit_iMon[i_hit]]+6400*mm;
+				px=Monitor_pz[hit_iMon[i_hit]];
+				py=Monitor_py[hit_iMon[i_hit]];
+				pz=-Monitor_px[hit_iMon[i_hit]];
+			}
+			t=Monitor_t[hit_iMon[i_hit]];
+			ox=McTruth_z[hit_iMc[i_hit]]+5790.5*mm;
+			oy=McTruth_y[hit_iMc[i_hit]];
+			oz=-McTruth_x[hit_iMc[i_hit]]+7350*mm;
+			opx=McTruth_pz[hit_iMon[i_hit]];
+			opy=McTruth_py[hit_iMon[i_hit]];
+			opz=-McTruth_px[hit_iMon[i_hit]];
+			ot=McTruth_time[hit_iMc[i_hit]];
+			process=McTruth_process[hit_iMc[i_hit]];
+			volume=McTruth_volume[hit_iMc[i_hit]];
+			fMyRootInterface->set_ovalue("evt_num",evt_num);
+			fMyRootInterface->set_ovalue("run_num",run_num);
+			fMyRootInterface->set_ovalue("pid",pid);
+			fMyRootInterface->set_ovalue("tid",tid);
+			fMyRootInterface->set_ovalue("ppid",ppid);
+			fMyRootInterface->set_ovalue("x",x/mm);
+			fMyRootInterface->set_ovalue("y",y/mm);
+			fMyRootInterface->set_ovalue("z",z/mm);
+			fMyRootInterface->set_ovalue("px",px/MeV);
+			fMyRootInterface->set_ovalue("py",py/MeV);
+			fMyRootInterface->set_ovalue("pz",pz/MeV);
+			fMyRootInterface->set_ovalue("t",t/ns);
+			fMyRootInterface->set_ovalue("ox",ox/mm);
+			fMyRootInterface->set_ovalue("oy",oy/mm);
+			fMyRootInterface->set_ovalue("oz",oz/mm);
+			fMyRootInterface->set_ovalue("opx",opx/MeV);
+			fMyRootInterface->set_ovalue("opy",opy/MeV);
+			fMyRootInterface->set_ovalue("opz",opz/MeV);
+			fMyRootInterface->set_ovalue("ot",ot/ns);
+			fMyRootInterface->set_ovalue("process",process);
+			fMyRootInterface->set_ovalue("volume",volume);
+			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
+			fMyRootInterface->Fill();
+			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
+			filled=true;
+		}
+		if (filled)	inc_Ncut("Got particles");
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 	}/* end of loop in events*/
@@ -388,10 +420,11 @@ int main(int argc, char* argv[]){
 
 void init_args()
 {
-	strcpy(m_workMode,"gen");
+	m_MonitorPlane="blt0";
 	verbose = 0;
 	nEvents = 0;
 	printModule = 10000;
+	PDGEncoding = 13;
 	backup = false;
 }
 
@@ -409,6 +442,8 @@ void print_usage(char* prog_name)
 	fprintf(stderr,"\t\t nEvent\n");
 	fprintf(stderr,"\t -p\n");
 	fprintf(stderr,"\t\t printModule\n");
+	fprintf(stderr,"\t -P\n");
+	fprintf(stderr,"\t\t PDGEncoding\n");
 	fprintf(stderr,"\t -h\n");
 	fprintf(stderr,"\t\t Usage message.\n");
 	fprintf(stderr,"\t -b\n");
