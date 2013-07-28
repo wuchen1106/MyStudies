@@ -1,6 +1,6 @@
-GEOCARDROOT       = geometry_PrTgt
-MAGFIELDCARDROOT  = MagField_0T
-GENFILEROOT       = gen_ip
+GEOCARDROOT       = geometry_CometPhase1_UK
+MAGFIELDCARDROOT  = MagField_UK
+GENFILEROOT       = gen_ip_g60cm6mm
 OUTCARDROOT       = output_ip
 
 ##geometry preset
@@ -13,8 +13,8 @@ OUTCARDROOT       = output_ip
 #gen_configure
 #
 #verbose
-#verbose_configure_setCut
-#setCut_default.mac
+verbose_configure_setCut
+setCut_default.mac
 #
 ##output
 #output_configure
@@ -22,4 +22,4 @@ OUTCARDROOT       = output_ip
 #run
 run_configure
 1
-50000
+20000
