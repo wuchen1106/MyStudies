@@ -3,8 +3,8 @@
 #for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
 for configName in "g60cm6mm_170gcm3"
 do
-#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302"
-	for runname in "QGSPBERT49302"
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201"
+	for runname in "QGSPBERT49201"
 	do
 		if [ $runname == "Andy" ]; then
 			nEvents=1000000
@@ -12,6 +12,14 @@ do
 			nEvents=100000
 		elif [ $runname == "modified" ]; then
 			if [ $configName = "g60cm6mm_200gcm3" -o $configName = "t16cm6mm" ]; then
+				nEvents=15000000
+			else
+				nEvents=1000000
+			fi
+		elif [ $runname == "QGSPBERT" ]; then
+			if [ $configName = "g60cm6mm_200gcm3" -o $configName = "t16cm6mm" ]; then
+				nEvents=250000
+			elif [ $configName = "g40cm10mm182gcm3" ]; then
 				nEvents=15000000
 			else
 				nEvents=1000000

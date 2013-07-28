@@ -11,7 +11,7 @@ do
 			elif [ $pid = -211 ]; then pname="pim";
 			elif [ $pid = 2112 ]; then pname="n0";
 			fi
-			for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302"
+			for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201"
 			do
 				pbsfile=$configName.$monitor.$pname.$runname.boss
 				echo "#!/bin/bash" > $pbsfile
