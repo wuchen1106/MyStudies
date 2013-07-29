@@ -21,7 +21,7 @@ INCDIR += -I$(MYCOMMONTOOLSROOT)/MyRootInterface
 LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
 LIBS += -lMyRootInterface
 
-INCDIR += -I$(MYG4SIMROOT)/MyRootInterface
+INCDIR += -I$(MYG4SIMROOT)/include
 LIBDIR += -L$(MYG4SIMROOT)/libs
 LIBS += -lMyRootInterface
 
@@ -39,12 +39,13 @@ PH2E = ph2e
 BM = bm
 FIT = fit
 HIT = hit
+COMPARE = Compare
 
 # Object list for user defined packages
 OBJ = 
 
 .PHONY: all
-all: $(RMCE) $(PH2E) $(BM) $(FIT) $(HIT)
+all: $(RMCE) $(PH2E) $(BM) $(FIT) $(HIT) $(COMPARE)
 
 $(RMCE): $(OBJ) $(RMCE).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(RMCE).cxx $(OBJ) -o $(RMCE)
@@ -61,6 +62,9 @@ $(FIT): $(OBJ) $(FIT).cxx
 $(HIT): $(OBJ) $(HIT).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(HIT).cxx $(OBJ) -o $(HIT)
 
+$(COMPARE): $(OBJ) $(COMPARE).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(COMPARE).cxx $(OBJ) -o $(COMPARE)
+
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
 # Here is an example showing how to make clean and make a specified user defined package
@@ -72,3 +76,4 @@ clean:
 	$(RM) $(BM)
 	$(RM) $(FIT)
 	$(RM) $(HIT)
+	$(RM) $(COMPARE)

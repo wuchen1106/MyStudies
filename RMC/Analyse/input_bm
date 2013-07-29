@@ -7,83 +7,105 @@
 	TreeName | tree
 
 #	TYPE    | Directory                                                       | runname | #CPU | #job
-	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/RMC_bm                     |         | 8    | 1
+	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/BM_g40cm10mm182gcm3_QGSPBERT |       | 50   | 1
+
+#	TYPE    | Path
+#	oFILE   | /home/chen/MyWorkArea/g4sim/output/raw_g4sim.root
 
 #	TYPE    | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2
 	TBranch | evt_num                      | 1         | 0
 	TBranch | run_num                      | 1         | 0
-	TBranch | ProcessCounting_nSteps       | 1         | 0 
-	TBranch | ProcessCounting_nSec         | 1         | 1
-	TBranch | ProcessCounting_time         | 0         | 1
-	TBranch | ProcessCounting_stepL        | 0         | 1
-	TBranch | ProcessCounting_prePx        | 0         | 1
-	TBranch | ProcessCounting_prePy        | 0         | 1
-	TBranch | ProcessCounting_prePz        | 0         | 1
-	TBranch | ProcessCounting_postPx       | 0         | 1
-	TBranch | ProcessCounting_postPy       | 0         | 1
-	TBranch | ProcessCounting_postPz       | 0         | 1
-	TBranch | ProcessCounting_dE           | 0         | 1
-	TBranch | ProcessCounting_dTheta       | 0         | 1
-	TBranch | ProcessCounting_e            | 0         | 1
-	TBranch | ProcessCounting_preX         | 0         | 1
-	TBranch | ProcessCounting_preY         | 0         | 1
-	TBranch | ProcessCounting_preZ         | 0         | 1
-	TBranch | ProcessCounting_postX        | 0         | 1
-	TBranch | ProcessCounting_postY        | 0         | 1
-	TBranch | ProcessCounting_postZ        | 0         | 1
-	TBranch | ProcessCounting_process      | 2         | 1
+	TBranch | McTruth_nTracks              | 1         | 0
+	TBranch | McTruth_tid                  | 1         | 1
+	TBranch | McTruth_pid                  | 1         | 1
+	TBranch | McTruth_ptid                 | 1         | 1
+	TBranch | McTruth_x                    | 0         | 1
+	TBranch | McTruth_y                    | 0         | 1
+	TBranch | McTruth_z                    | 0         | 1
+	TBranch | McTruth_px                   | 0         | 1
+	TBranch | McTruth_py                   | 0         | 1
+	TBranch | McTruth_pz                   | 0         | 1
+	TBranch | McTruth_e                    | 0         | 1
+	TBranch | McTruth_time                 | 0         | 1
+	TBranch | McTruth_process              | 2         | 1
+	TBranch | McTruth_volume               | 2         | 1
+	TBranch | BLTMonitor_nHits             | 1         | 0
+	TBranch | BLTMonitor_t                 | 0         | 1
+	TBranch | BLTMonitor_e                 | 0         | 1
+	TBranch | BLTMonitor_tid               | 1         | 1
+	TBranch | BLTMonitor_pid               | 1         | 1
+	TBranch | BLTMonitor_x                 | 0         | 1
+	TBranch | BLTMonitor_y                 | 0         | 1
+	TBranch | BLTMonitor_z                 | 0         | 1
+	TBranch | BLTMonitor_px                | 0         | 1
+	TBranch | BLTMonitor_py                | 0         | 1
+	TBranch | BLTMonitor_pz                | 0         | 1
+	TBranch | Target_nHits                 | 1         | 0
+	TBranch | Target_t                     | 0         | 1
+	TBranch | Target_e                     | 0         | 1
+	TBranch | Target_tid                   | 1         | 1
+	TBranch | Target_pid                   | 1         | 1
+	TBranch | Target_x                     | 0         | 1
+	TBranch | Target_y                     | 0         | 1
+	TBranch | Target_z                     | 0         | 1
+	TBranch | Target_px                    | 0         | 1
+	TBranch | Target_py                    | 0         | 1
+	TBranch | Target_pz                    | 0         | 1
+	TBranch | Target_stopped               | 1         | 1
+	TBranch | CDCMonitor_nHits             | 1         | 0
+	TBranch | CDCMonitor_t                 | 0         | 1
+	TBranch | CDCMonitor_e                 | 0         | 1
+	TBranch | CDCMonitor_tid               | 1         | 1
+	TBranch | CDCMonitor_pid               | 1         | 1
+	TBranch | CDCMonitor_x                 | 0         | 1
+	TBranch | CDCMonitor_y                 | 0         | 1
+	TBranch | CDCMonitor_z                 | 0         | 1
+	TBranch | CDCMonitor_px                | 0         | 1
+	TBranch | CDCMonitor_py                | 0         | 1
+	TBranch | CDCMonitor_pz                | 0         | 1
 
 #	TYPE     | Name
 	oTreeName | t
 
 #	TYPE     | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2
-#	oTBranch | evt_num                      | 1         | 0
-#	oTBranch | run_num                      | 1         | 0
+	oTBranch | evt_num                      | 1         | 0
+	oTBranch | run_num                      | 1         | 0
+	oTBranch | pid                          | 1         | 0
 	oTBranch | x                            | 0         | 0
 	oTBranch | y                            | 0         | 0
 	oTBranch | z                            | 0         | 0
+	oTBranch | px                           | 0         | 0
+	oTBranch | py                           | 0         | 0
+	oTBranch | pz                           | 0         | 0
 	oTBranch | t                            | 0         | 0
 
-#	TYPE    | NAME            | TITLE                                   | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
-	TH1D    | relz            | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_0          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_1          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_2          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_3          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_4          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_5          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_6          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_7          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_8          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_9          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_10         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_11         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_12         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_13         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_14         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_15         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | relz_16         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r               | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_0             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_1             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_2             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_3             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_4             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_5             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_6             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_7             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_8             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_9             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_10            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_11            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_12            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_13            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_14            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_15            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | r_16            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | iplate          | Plate No. of Muon Stop point            | No.          | count         | 34  | 0     | 17    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | t_stop          | Time When Muon Got Stopped              | time(ns)     | count         | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | t_cap           | Time When Muon Got Captured             | time(ns)     | count         | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
-	TH1D    | t_decay         | Life Time of Muon                       | time(ns)     | count         | 120 | 0     | 2000  | 0    | 1     | 1 | 0 | 0  | 1  | 20   | 0  | 
+#	TYPE    | NAME            | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
+	TH1D    | pa_total        | Total Beam #mu^{-}s                       | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pt_total        | Total Beam #mu^{-}s                       | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pz_total        | Total Beam #mu^{-}s                       | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | y_total         | Total Beam #mu^{-}s                       |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pa_CDC          | #mu^{-}s Reached CDC Region               | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pt_CDC          | #mu^{-}s Reached CDC Region               | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pz_CDC          | #mu^{-}s Reached CDC Region               | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | y_CDC           | #mu^{-}s Reached CDC Region               |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pa_Target       | #mu^{-}s Reached Stopping Target          | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pt_Target       | #mu^{-}s Reached Stopping Target          | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pz_Target       | #mu^{-}s Reached Stopping Target          | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | y_Target        | #mu^{-}s Reached Stopping Target          |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pa_stop         | #mu^{-}s Got Stopped in Stopping Target   | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pt_stop         | #mu^{-}s Got Stopped in Stopping Target   | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pz_stop         | #mu^{-}s Got Stopped in Stopping Target   | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | y_stop          | #mu^{-}s Got Stopped in Stopping Target   |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pa_recoil       | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pt_recoil       | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pz_recoil       | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | y_recoil        | #mu^{-}s Got Recoiled Back to BLT Monitor |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+
+#	TYPE    | NAME            | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
+	TH2D    | paVSy_total     | Total Beam #mu^{-}s                       | p_{a}(MeV/c) |y position(mm) | 240 | 0     | 150   | 240 | -180 | 180
+	TH2D    | paVSy_CDC       | #mu^{-}s Reached CDC Region               | p_{a}(MeV/c) |y position(mm) | 240 | 0     | 150   | 240 | -180 | 180
+	TH2D    | paVSy_Target    | #mu^{-}s Reached Stopping Target          | p_{a}(MeV/c) |y position(mm) | 240 | 0     | 150   | 240 | -180 | 180
+	TH2D    | paVSy_stop      | #mu^{-}s Got Stopped in Stopping Target   | p_{a}(MeV/c) |y position(mm) | 240 | 0     | 150   | 240 | -180 | 180
+	TH2D    | paVSy_recoil    | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{a}(MeV/c) |y position(mm) | 240 | 0     | 150   | 240 | -180 | 180

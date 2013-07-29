@@ -19,5 +19,8 @@
 	TBranch | CdcCell_cellID               | 1         | 0
 	TBranch | Trigger_nHits                | 1         | 0
 
+#	TYPE    | NAME            | TITLE                                   | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
+	TH1D    | hitratio        | Hit Rate Per Wire @ Each Layer          | Layer ID     | Hit Rate (Hz) | 18  | 0     | 18    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+
 #	TYPE    | NAME           | TITLE               | xAxisName         | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
 	TH2D    | layerVScell    | CellID vs LayerID   | CellID            | LayerID       | 576 | 0     | 288   | 36  | 0    | 18

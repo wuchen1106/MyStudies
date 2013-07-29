@@ -12,16 +12,23 @@
 
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TRandom.h"
 
 #include "MyRootInterface.hxx"
 
-char m_workMode[128];
+std::string m_MonitorPlane;
 std::string m_runName;
 int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
+int PDGEncoding = 13;
 bool backup = false;
+std::vector<int> Ncut;
+std::vector<std::string> Ncut_message;
 
+void init_Ncut();
+void inc_Ncut(std::string);
+void dump_Ncut();
 void init_args();
 void print_usage(char* prog_name);
 
@@ -33,12 +40,12 @@ int main(int argc, char* argv[]){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hbv:n:m:r:p:"))!=-1){
+	while((result=getopt(argc,argv,"hbv:n:m:r:p:P:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
-				strcpy(m_workMode,optarg);
-				printf("work mode: %s\n",m_workMode);
+				m_MonitorPlane = optarg;
+				printf("Monitor plane: %s\n",m_MonitorPlane.c_str());
 				break;
 			case 'r':
 				m_runName=optarg;
@@ -59,6 +66,10 @@ int main(int argc, char* argv[]){
 			case 'p':
 				printModule = atoi(optarg);
 				printf("printModule: %d\n",printModule);
+				break;
+			case 'P':
+				PDGEncoding = atoi(optarg);
+				printf("PDGEncoding: %d\n",PDGEncoding);
 				break;
 			case '?':
 				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
@@ -91,7 +102,7 @@ int main(int argc, char* argv[]){
 
 	//##########################PRESET############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In Preset###"<<std::endl;
-	MyRootInterface *fMyRootInterface = new MyRootInterface(verbose);
+	MyRootInterface *fMyRootInterface = new MyRootInterface(verbose,backup);
 	fMyRootInterface->set_OutputDir("result");
 	int index_temp = 0;
 	TH1D *h1d_temp=0;
@@ -116,154 +127,254 @@ int main(int argc, char* argv[]){
 	//************SET Statistics********************
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET Statistics###"<<std::endl;
 	//=>About Statistical
-	int N0 = 0;
-	int N1 = 0;
-	int N2 = 0;
-	int N3 = 0;
-	int N4 = 0;
-	int N5 = 0;
-	int N6 = 0;
-	int N7 = 0;
+	init_Ncut();
 
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
-	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK ###"<<std::endl;
+	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK###"<<std::endl;
 	Long64_t nEvent = fMyRootInterface->get_Entries();
-	for( Long64_t iEvent = 0; iEvent < nEvent; iEvent++ ){
+	for( Long64_t iEvent = 0; iEvent < (nEvents&&nEvents<nEvent?nEvents:nEvent); iEvent++ ){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
-		N0++;
 		fMyRootInterface->GetEntry(iEvent);
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
+		inc_Ncut("Got entries");
+
+		// For output
+		double x;
+		double y;
+		double z;
+		double px;
+		double py;
+		double pz;
+		double t;
 
 		// Get info
 		int evt_num;
 		int run_num;
-		int nSteps = 0;
-		std::vector<double> postX;
-		std::vector<double> postY;
-		std::vector<double> postZ;
-		std::vector<double> time;
-		std::vector<std::string> process;
-		index_temp = fMyRootInterface->get_TBranch_index("evt_num");
-		if (index_temp!=-1) evt_num = fMyRootInterface->get_vec_int(index_temp);
-		index_temp = fMyRootInterface->get_TBranch_index("run_num");
-		if (index_temp!=-1) run_num = fMyRootInterface->get_vec_int(index_temp);
-		index_temp = fMyRootInterface->get_TBranch_index("ProcessCounting_nSteps");
-		if (index_temp!=-1) nSteps = fMyRootInterface->get_vec_int(index_temp);
-		index_temp = fMyRootInterface->get_TBranch_index("ProcessCounting_postX");
-		if (index_temp!=-1) postX = *(fMyRootInterface->get_vec_vecdouble(index_temp));
-		for (int i = 0; i<postX.size();i++) postX[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("ProcessCounting_postY");
-		if (index_temp!=-1) postY = *(fMyRootInterface->get_vec_vecdouble(index_temp));
-		for (int i = 0; i<postY.size();i++) postY[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("ProcessCounting_postZ");
-		if (index_temp!=-1) postZ = *(fMyRootInterface->get_vec_vecdouble(index_temp));
-		for (int i = 0; i<postZ.size();i++) postZ[i] *= cm;
-		index_temp = fMyRootInterface->get_TBranch_index("ProcessCounting_time");
-		if (index_temp!=-1) time = *(fMyRootInterface->get_vec_vecdouble(index_temp));
-		for (int i = 0; i<time.size();i++) time[i] *= ns;
-		index_temp = fMyRootInterface->get_TBranch_index("ProcessCounting_process");
-		if (index_temp!=-1) process = *(fMyRootInterface->get_vec_vecstring(index_temp));
+		int McTruth_nTracks = 0;
+		std::vector<int> McTruth_tid;
+		std::vector<int> McTruth_pid;
+		std::vector<int> McTruth_ptid;
+		std::vector<double> McTruth_x;
+		std::vector<double> McTruth_y;
+		std::vector<double> McTruth_z;
+		std::vector<double> McTruth_px;
+		std::vector<double> McTruth_py;
+		std::vector<double> McTruth_pz;
+		std::vector<double> McTruth_e;
+		std::vector<double> McTruth_time;
+		std::vector<std::string> McTruth_process;
+		std::vector<std::string> McTruth_volume;
+		int CDCMonitor_nHits = 0;
+		std::vector<int> CDCMonitor_tid;
+		std::vector<int> CDCMonitor_pid;
+		std::vector<double> CDCMonitor_t;
+		std::vector<double> CDCMonitor_e;
+		std::vector<double> CDCMonitor_x;
+		std::vector<double> CDCMonitor_y;
+		std::vector<double> CDCMonitor_z;
+		std::vector<double> CDCMonitor_px;
+		std::vector<double> CDCMonitor_py;
+		std::vector<double> CDCMonitor_pz;
+		int BLTMonitor_nHits = 0;
+		std::vector<int> BLTMonitor_tid;
+		std::vector<int> BLTMonitor_pid;
+		std::vector<double> BLTMonitor_t;
+		std::vector<double> BLTMonitor_e;
+		std::vector<double> BLTMonitor_x;
+		std::vector<double> BLTMonitor_y;
+		std::vector<double> BLTMonitor_z;
+		std::vector<double> BLTMonitor_px;
+		std::vector<double> BLTMonitor_py;
+		std::vector<double> BLTMonitor_pz;
+		int Target_nHits = 0;
+		std::vector<int> Target_tid;
+		std::vector<int> Target_pid;
+		std::vector<double> Target_t;
+		std::vector<double> Target_e;
+		std::vector<double> Target_x;
+		std::vector<double> Target_y;
+		std::vector<double> Target_z;
+		std::vector<double> Target_px;
+		std::vector<double> Target_py;
+		std::vector<double> Target_pz;
+		std::vector<int> Target_stopped;
 
+		fMyRootInterface->get_value("evt_num",evt_num);
+		fMyRootInterface->get_value("run_num",run_num);
+		fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
+		fMyRootInterface->get_value("McTruth_pid",McTruth_pid);
+		fMyRootInterface->get_value("McTruth_tid",McTruth_tid);
+		fMyRootInterface->get_value("McTruth_ptid",McTruth_ptid);
+		fMyRootInterface->get_value("McTruth_x",McTruth_x,cm);
+		fMyRootInterface->get_value("McTruth_y",McTruth_y,cm);
+		fMyRootInterface->get_value("McTruth_z",McTruth_z,cm);
+		fMyRootInterface->get_value("McTruth_px",McTruth_px,GeV);
+		fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
+		fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
+		fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
+		fMyRootInterface->get_value("McTruth_e",McTruth_e,GeV);
+		fMyRootInterface->get_value("McTruth_process",McTruth_process);
+		fMyRootInterface->get_value("McTruth_volume",McTruth_volume);
+		fMyRootInterface->get_value("CDCMonitor_nHits",CDCMonitor_nHits);
+		fMyRootInterface->get_value("CDCMonitor_t",CDCMonitor_t,ns);
+		fMyRootInterface->get_value("CDCMonitor_e",CDCMonitor_e,GeV);
+		fMyRootInterface->get_value("CDCMonitor_tid",CDCMonitor_tid);
+		fMyRootInterface->get_value("CDCMonitor_pid",CDCMonitor_pid);
+		fMyRootInterface->get_value("CDCMonitor_x",CDCMonitor_x,cm);
+		fMyRootInterface->get_value("CDCMonitor_y",CDCMonitor_y,cm);
+		fMyRootInterface->get_value("CDCMonitor_z",CDCMonitor_z,cm);
+		fMyRootInterface->get_value("CDCMonitor_px",CDCMonitor_px,GeV);
+		fMyRootInterface->get_value("CDCMonitor_py",CDCMonitor_py,GeV);
+		fMyRootInterface->get_value("CDCMonitor_pz",CDCMonitor_pz,GeV);
+		fMyRootInterface->get_value("BLTMonitor_nHits",BLTMonitor_nHits);
+		fMyRootInterface->get_value("BLTMonitor_t",BLTMonitor_t,ns);
+		fMyRootInterface->get_value("BLTMonitor_e",BLTMonitor_e,GeV);
+		fMyRootInterface->get_value("BLTMonitor_tid",BLTMonitor_tid);
+		fMyRootInterface->get_value("BLTMonitor_pid",BLTMonitor_pid);
+		fMyRootInterface->get_value("BLTMonitor_x",BLTMonitor_x,cm);
+		fMyRootInterface->get_value("BLTMonitor_y",BLTMonitor_y,cm);
+		fMyRootInterface->get_value("BLTMonitor_z",BLTMonitor_z,cm);
+		fMyRootInterface->get_value("BLTMonitor_px",BLTMonitor_px,GeV);
+		fMyRootInterface->get_value("BLTMonitor_py",BLTMonitor_py,GeV);
+		fMyRootInterface->get_value("BLTMonitor_pz",BLTMonitor_pz,GeV);
+		fMyRootInterface->get_value("Target_nHits",Target_nHits);
+		fMyRootInterface->get_value("Target_t",Target_t,ns);
+		fMyRootInterface->get_value("Target_e",Target_e,GeV);
+		fMyRootInterface->get_value("Target_tid",Target_tid);
+		fMyRootInterface->get_value("Target_pid",Target_pid);
+		fMyRootInterface->get_value("Target_x",Target_x,cm);
+		fMyRootInterface->get_value("Target_y",Target_y,cm);
+		fMyRootInterface->get_value("Target_z",Target_z,cm);
+		fMyRootInterface->get_value("Target_px",Target_px,GeV);
+		fMyRootInterface->get_value("Target_py",Target_py,GeV);
+		fMyRootInterface->get_value("Target_pz",Target_pz,GeV);
+		fMyRootInterface->get_value("Target_stopped",Target_stopped);
+
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
+
+		// Get info
+		double opx = McTruth_px[0];
+		double opy = McTruth_py[0];
+		double opz = McTruth_pz[0];
+		double opa = sqrt(opx*opx+opy*opy+opz*opz);
+		double opt = sqrt(opx*opx+opy*opy);
+		double oy = McTruth_y[0];
+		if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_total")) != -1 ){
+			fMyRootInterface->get_TH1D(index_temp)->Fill(opa/MeV);
+		}
+		if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_total")) != -1 ){
+			fMyRootInterface->get_TH1D(index_temp)->Fill(opt/MeV);
+		}
+		if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_total")) != -1 ){
+			fMyRootInterface->get_TH1D(index_temp)->Fill(opz/MeV);
+		}
+		if ( (index_temp = fMyRootInterface->get_TH1D_index("y_total")) != -1 ){
+			fMyRootInterface->get_TH1D(index_temp)->Fill(oy/mm);
+		}
+		if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_total")) != -1 ){
+			fMyRootInterface->get_TH2D(index_temp)->Fill(opa/MeV,oy/mm);
+		}
+		// Got Cdc Region?
+		bool got_CDC = false;
+		for ( int i_mon = 0; i_mon < CDCMonitor_nHits; i_mon++ ){
+			if (CDCMonitor_tid[i_mon]==1)
+				got_CDC = true;
+		}
+		// Got Target Region?
 		// Got stopped?
-		int nPlates = 17;
-		double thickness = 0.2*mm;
-		double space = 5*cm;
-		double right_most_end = (nPlates+1)/2.*space+thickness/2.;
-		int index_OB = -1;
-		for ( int i_step = 0; i_step < nSteps; i_step++ ){
-			double z = postZ[i_step];
-			if (z>=right_most_end){
-				index_OB = i_step;
-				break;
+		bool got_Target = false;
+		bool got_stopped = false;
+		for ( int i_mon = 0; i_mon < Target_nHits; i_mon++ ){
+			if (Target_tid[i_mon]==1){
+				got_Target = true;
+				if (Target_stopped[i_mon]){
+					got_stopped = true;
+				}
+			}
+			else if (Target_pid[i_mon]==13){
+				std::cout<<"Hey a moun from else where!"<<std::endl;
+				std::cout<<"  px = "<<Target_px[i_mon]/MeV<<"MeV"
+				         <<", py = "<<Target_py[i_mon]/MeV<<"MeV"
+				         <<", pz = "<<Target_pz[i_mon]/MeV<<"MeV"
+				         <<", tid = "<<Target_tid[i_mon]
+				         <<", stopped?"<<Target_stopped[i_mon]
+				         <<std::endl;
 			}
 		}
-
-		// Got captured? which step?
-		int index_cap = -1;
-		for ( int i_step = 0; i_step < nSteps; i_step++ ){
-			std::string processName = process[i_step];
-			if (processName == "muMinusCaptureAtRest"){
-				index_cap = i_step;
-				break;
+		// Got recoiled?
+		bool got_recoiled = false;
+		for ( int i_mon = 0; i_mon < BLTMonitor_nHits; i_mon++ ){
+			if (BLTMonitor_tid[i_mon]==1&&BLTMonitor_pz[i_mon]<0)
+				got_recoiled = true;
+		}
+		if (got_CDC){
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_CDC")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opa/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_CDC")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opt/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_CDC")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opz/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("y_CDC")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(oy/mm);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_CDC")) != -1 ){
+				fMyRootInterface->get_TH2D(index_temp)->Fill(opa/MeV,oy/mm);
 			}
 		}
-
-		// Position and which plate?
-		double hit_x = index_cap==-1?0:postX[index_cap];
-		double hit_y = index_cap==-1?0:postY[index_cap];
-		double hit_z = index_cap==-1?0:postZ[index_cap];
-		double hit_t = index_cap==-1?0:time[index_cap];
-		double hit_r = sqrt(hit_x*hit_x+hit_y*hit_y);
-		double hit_relZ = 0;
-		int hit_iPlate = -1;
-		for ( int i_plate = 0; i_plate < nPlates; i_plate++ ){
-			double plateZ = (i_plate*2 - nPlates +1)/2*space;
-			double leftEnd = plateZ - thickness/2;
-			double rightEnd = plateZ + thickness/2;
-			if ( hit_z >= leftEnd && hit_z <= rightEnd){
-				hit_iPlate = i_plate;
-				hit_relZ = hit_z - plateZ;
-				break;
+		if (got_Target){
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_Target")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opa/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_Target")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opt/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_Target")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opz/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("y_Target")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(oy/mm);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_Target")) != -1 ){
+				fMyRootInterface->get_TH2D(index_temp)->Fill(opa/MeV,oy/mm);
 			}
 		}
-
-		// Fill the tree
-		// for g4sim input, should use mm, MeV, ns
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("evt_num")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,evt_num); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("run_num")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,run_num); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("x")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,hit_x/mm); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("y")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,hit_y/mm); 
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("z")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,hit_z/mm); 
-		double decayTime = -864*log(G4UniformRand())*ns;
-		if ( (index_temp = fMyRootInterface->get_oTBranch_index("t")) != -1 )
-			fMyRootInterface->set_ovec_double(index_temp,decayTime+hit_t); 
-
-		if (index_OB!=-1)
-			continue;
-		N1++;
-		if ( index_cap == -1 )
-			continue;
-		N2++;
-		if ( hit_iPlate == -1 )
-			continue;
-		N3++;
-		fMyRootInterface->Fill();
-
-		if ( (index_temp = fMyRootInterface->get_TH1D_index("relz")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(hit_relZ/mm);
+		if (got_stopped){
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_stop")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opa/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_stop")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opt/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_stop")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opz/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("y_stop")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(oy/mm);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_stop")) != -1 ){
+				fMyRootInterface->get_TH2D(index_temp)->Fill(opa/MeV,oy/mm);
+			}
 		}
-		if ( (index_temp = fMyRootInterface->get_TH1D_index("iplate")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(hit_iPlate);
-		}
-		if ( (index_temp = fMyRootInterface->get_TH1D_index("r")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(hit_r/cm);
-		}
-		if ( (index_temp = fMyRootInterface->get_TH1D_index("t_stop")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(hit_t/ns);
-		}
-		if ( (index_temp = fMyRootInterface->get_TH1D_index("t_cap")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(decayTime+hit_t/ns);
-		}
-		if ( (index_temp = fMyRootInterface->get_TH1D_index("t_decay")) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(decayTime/ns);
-		}
-		buff.str("");
-		buff.clear();
-		buff<<"relz_"<<hit_iPlate;
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(hit_relZ/mm);
-		}
-		buff.str("");
-		buff.clear();
-		buff<<"r_"<<hit_iPlate;
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
-			fMyRootInterface->get_TH1D(index_temp)->Fill(hit_r/cm);
+		if (got_recoiled){
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_recoil")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opa/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_recoil")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opt/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_recoil")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(opz/MeV);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index("y_recoil")) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(oy/mm);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_recoil")) != -1 ){
+				fMyRootInterface->get_TH2D(index_temp)->Fill(opa/MeV,oy/mm);
+			}
 		}
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
@@ -281,14 +392,7 @@ int main(int argc, char* argv[]){
 	//std::cout<<"GENERATEEVENTS:      "<<(double)(t_GENERATEEVENTS-t_BUILDHISTOGRAMS)/CLOCKS_PER_SEC*1000<<"ms"<<std::endl;
 	//std::cout<<"TIME COST PER EVENT: "<<(double)(t_GENERATEEVENTS-t_BUILDHISTOGRAMS)/CLOCKS_PER_SEC/num_evt*1000<<"ms"<<std::endl;
 	std::cout<<"##############################################\n"<<std::endl;
-	std::cout<<"N0 = "<<N0<<std::endl;
-	std::cout<<"N1 = "<<N1<<std::endl;
-	std::cout<<"N2 = "<<N2<<std::endl;
-	std::cout<<"N3 = "<<N3<<std::endl;
-	std::cout<<"N4 = "<<N4<<std::endl;
-	std::cout<<"N5 = "<<N5<<std::endl;
-	std::cout<<"N6 = "<<N6<<std::endl;
-	std::cout<<"N7 = "<<N7<<std::endl;
+	dump_Ncut();
 
 	fMyRootInterface->dump();
 	return 0;
@@ -296,10 +400,11 @@ int main(int argc, char* argv[]){
 
 void init_args()
 {
-	strcpy(m_workMode,"gen");
+	m_MonitorPlane="blt0";
 	verbose = 0;
 	nEvents = 0;
 	printModule = 10000;
+	PDGEncoding = 13;
 	backup = false;
 }
 
@@ -317,10 +422,39 @@ void print_usage(char* prog_name)
 	fprintf(stderr,"\t\t nEvent\n");
 	fprintf(stderr,"\t -p\n");
 	fprintf(stderr,"\t\t printModule\n");
+	fprintf(stderr,"\t -P\n");
+	fprintf(stderr,"\t\t PDGEncoding\n");
 	fprintf(stderr,"\t -h\n");
 	fprintf(stderr,"\t\t Usage message.\n");
 	fprintf(stderr,"\t -b\n");
 	fprintf(stderr,"\t\t restore backup file.\n");
 	fprintf(stderr,"[example]\n");
 	fprintf(stderr,"\t\t%s -m ab -v 20 -n 100\n",prog_name);
+}
+
+void init_Ncut(){
+	Ncut.clear();
+	Ncut_message.clear();
+}
+
+void inc_Ncut(std::string mess){
+	int iCut = -1;
+	for (int i = 0; i < Ncut_message.size(); i++){
+		if (Ncut_message[i]==mess){
+			iCut = i;
+			break;
+		}
+	}
+	if (iCut == -1){
+		iCut = Ncut_message.size();
+		Ncut_message.push_back(mess);
+		Ncut.push_back(0);
+	}
+	Ncut[iCut]++;
+}
+
+void dump_Ncut(){
+	for (int i = 0; i < Ncut.size(); i++ ){
+		std::cout<<"  "<<Ncut_message[i]<<": "<<Ncut[i]<<std::endl;
+	}
 }

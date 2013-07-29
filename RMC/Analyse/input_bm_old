@@ -1,0 +1,89 @@
+#	kWhite =0,   kBlack =1,   kGray=920,
+#	kRed   =632, kGreen =416, kBlue=600, kYellow=400, kMagenta=616, kCyan=432,
+#	kOrange=800, kSpring=820, kTeal=840, kAzure =860, kViolet =880, kPink=900
+###########################################################################################################################
+
+#	TYPE     | Name
+	TreeName | tree
+
+#	TYPE    | Directory                                                       | runname | #CPU | #job
+	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/RMC_bm                     |         | 8    | 1
+
+#	TYPE    | Name                         | Type      | Vector?
+#	                                0:double;1:int;string:2
+	TBranch | evt_num                      | 1         | 0
+	TBranch | run_num                      | 1         | 0
+	TBranch | ProcessCounting_nSteps       | 1         | 0 
+	TBranch | ProcessCounting_nSec         | 1         | 1
+	TBranch | ProcessCounting_time         | 0         | 1
+	TBranch | ProcessCounting_stepL        | 0         | 1
+	TBranch | ProcessCounting_prePx        | 0         | 1
+	TBranch | ProcessCounting_prePy        | 0         | 1
+	TBranch | ProcessCounting_prePz        | 0         | 1
+	TBranch | ProcessCounting_postPx       | 0         | 1
+	TBranch | ProcessCounting_postPy       | 0         | 1
+	TBranch | ProcessCounting_postPz       | 0         | 1
+	TBranch | ProcessCounting_dE           | 0         | 1
+	TBranch | ProcessCounting_dTheta       | 0         | 1
+	TBranch | ProcessCounting_e            | 0         | 1
+	TBranch | ProcessCounting_preX         | 0         | 1
+	TBranch | ProcessCounting_preY         | 0         | 1
+	TBranch | ProcessCounting_preZ         | 0         | 1
+	TBranch | ProcessCounting_postX        | 0         | 1
+	TBranch | ProcessCounting_postY        | 0         | 1
+	TBranch | ProcessCounting_postZ        | 0         | 1
+	TBranch | ProcessCounting_process      | 2         | 1
+
+#	TYPE     | Name
+	oTreeName | t
+
+#	TYPE     | Name                         | Type      | Vector?
+#	                                0:double;1:int;string:2
+#	oTBranch | evt_num                      | 1         | 0
+#	oTBranch | run_num                      | 1         | 0
+	oTBranch | x                            | 0         | 0
+	oTBranch | y                            | 0         | 0
+	oTBranch | z                            | 0         | 0
+	oTBranch | t                            | 0         | 0
+
+#	TYPE    | NAME            | TITLE                                   | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
+	TH1D    | relz            | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_0          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_1          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_2          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_3          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_4          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_5          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_6          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_7          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_8          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_9          | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_10         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_11         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_12         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_13         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_14         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_15         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | relz_16         | z position of Muon Stop point in target | z(mm)        | count         | 120 | -0.1  | 0.1   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r               | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_0             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_1             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_2             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_3             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_4             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_5             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_6             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_7             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_8             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_9             | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_10            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_11            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_12            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_13            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_14            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_15            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | r_16            | r position of Muon Stop point in target | r(cm)        | count         | 120 | 0     | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | iplate          | Plate No. of Muon Stop point            | No.          | count         | 34  | 0     | 17    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | t_stop          | Time When Muon Got Stopped              | time(ns)     | count         | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | t_cap           | Time When Muon Got Captured             | time(ns)     | count         | 120 | 0     | 2000  | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D    | t_decay         | Life Time of Muon                       | time(ns)     | count         | 120 | 0     | 2000  | 0    | 1     | 1 | 0 | 0  | 1  | 20   | 0  | 

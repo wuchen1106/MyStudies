@@ -38,6 +38,7 @@ RMC/RMCSpectrum/RMCSpectrum
 Resolution/Resolution
 Signal/Analyse/signal
 Beam/Analyse/ip/ip
+RMC/Analyse/Compare
 
 # frequently changing files
 histList

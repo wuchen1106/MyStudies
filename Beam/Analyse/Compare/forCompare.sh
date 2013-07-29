@@ -15,8 +15,8 @@ var_process(){
 		LOG=1
 	fi
 	nfiles=-1
-#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201"
-	for runname in "Andy" "QGSPBERT" "QGSPBERT49302" "QGSPBERT49201"
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim"
+	for runname in "QGSPBERT" "QGSPBERTg4sim"
 	do
 		rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname""_output.root"
 		histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
@@ -31,8 +31,8 @@ var_process(){
 		continue
 	fi
 	iFile=0
-#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201"
-	for runname in "Andy" "QGSPBERT" "QGSPBERT49302" "QGSPBERT49201"
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim"
+	for runname in "QGSPBERT" "QGSPBERTg4sim"
 	do
 		if [ $iFile = 0 ]; then
 			COL=1

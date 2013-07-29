@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
-for configName in "g60cm6mm_170gcm3"
+for configName in "t16cm6mm"
 do
-#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201"
-	for runname in "QGSPBERT49201"
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim"
+	for runname in "modified" "Hayashi"
 	do
 		if [ $runname == "Andy" ]; then
 			nEvents=1000000
@@ -52,7 +52,7 @@ do
 				prefix=$configName"_"$monitor"_"$pname
 				suffix=$runname
 				condensedConfigName=$configName
-				if [ $configName = "g60cm6mm_170gcm3" -o $configName = "g60cm6mm_200gcm3" ]; then
+				if [ $configName = "g60cm6mm_170gcm3" -o $configName = "g60cm6mm_200gcm3" -o $configName = "g40cm10mm182gcm3" ]; then
 					condensedConfigName="g60cm6mm"
 				fi
 				if [ -e $rootfile ]; then

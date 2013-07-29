@@ -1,0 +1,47 @@
+
+#   TYPE    | Directory                                           | histoName
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pa_total
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pz_total
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | y_total
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pt_total
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pa_CDC
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pz_CDC
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | y_CDC
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pt_CDC
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pa_Target
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pz_Target
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | y_Target
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pt_Target
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pa_stop
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pz_stop
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | y_stop
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pt_stop
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pa_recoil
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pz_recoil
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | y_recoil
+    refTH1D | ../result/MuonStop/sakakiMap/output.root            | pt_recoil
+
+#   TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm   |DrawOption|UseLeg|legendName                  |legx1|legy1|legx2|legy2|npadx|npady
+    TH1D    | pa_total        | Beam #mu^{-}s      |              |               | 120 |   1   |   1   | 0    | 0     | 1 | 4 | 0  | 0  | 3    | 0     | LP       |   1  | Total Beam #mu^{-}s        |0.8 |0.8 |1 |1 |2 |2 
+    TH1D    | pa_CDC          |                    |              |               | 120 |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Reached CDC
+    TH1D    | pa_Target       |                    |              |               | 120 |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Reached Target
+    TH1D    | pa_stop         |                    |              |               | 120 |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Stopped
+    TH1D    | pa_recoil       |                    |              |               | 120 |   1   |   1   | 0    | 0     |880| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Recoiled
+
+    TH1D    | pt_total        | Beam #mu^{-}s      |              |               | 120 |   1   |   1   | 0    | 0     | 1 | 4 | 0  | 0  | 3    | 0     | LP       |   1  | Total Beam #mu^{-}s        |0.8 |0.8 |1 |1 |1 |1 
+    TH1D    | pt_CDC          |                    |              |               | 120 |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Reached CDC
+    TH1D    | pt_Target       |                    |              |               | 120 |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Reached Target
+    TH1D    | pt_stop         |                    |              |               | 120 |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Stopped
+    TH1D    | pt_recoil       |                    |              |               | 120 |   1   |   1   | 0    | 0     |880| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Recoiled
+
+    TH1D    | pz_total        | Beam #mu^{-}s      |              |               | 120 |   1   |   1   | 0    | 0     | 1 | 4 | 0  | 0  | 3    | 0     | LP       |   1  | Total Beam #mu^{-}s        |0.8 |0.8 |1 |1 |1 |1 
+    TH1D    | pz_CDC          |                    |              |               | 120 |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Reached CDC
+    TH1D    | pz_Target       |                    |              |               | 120 |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Reached Target
+    TH1D    | pz_stop         |                    |              |               | 120 |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Stopped
+    TH1D    | pz_recoil       |                    |              |               | 120 |   1   |   1   | 0    | 0     |880| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Recoiled
+
+    TH1D    | y_total         | Beam #mu^{-}s      |              |               | 120 |   1   |   1   | 0    | 0     | 1 | 4 | 0  | 0  | 3    | 0     | LP       |   1  | Total Beam #mu^{-}s        |0.8 |0.8 |1 |1 |1 |1 
+    TH1D    | y_CDC           |                    |              |               | 120 |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Reached CDC
+    TH1D    | y_Target        |                    |              |               | 120 |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Reached Target
+    TH1D    | y_stop          |                    |              |               | 120 |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Stopped
+    TH1D    | y_recoil        |                    |              |               | 120 |   1   |   1   | 0    | 0     |880| 0 | 0  | 0  | 3    | 0     | LP       |   1  | #mu^{-}s Recoiled

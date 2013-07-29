@@ -258,6 +258,8 @@ int main(int argc, char** argv){
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(t/ns);
 		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"r"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(r/mm);
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(y/mm);
 		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"ox"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(ox/mm);
 		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"oy"+"_"+m_suffix);
@@ -285,6 +287,8 @@ int main(int argc, char** argv){
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(t/ns);
 		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"r"+"_log_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(r/mm);
+		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y"+"_log_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(y/mm);
 		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"ox"+"_log_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(ox/mm);
 		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"oy"+"_log_"+m_suffix);
@@ -308,6 +312,8 @@ int main(int argc, char** argv){
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pz/MeV,ox/mm);
 		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paoy"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,oy/mm);
+		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pay"+"_"+m_suffix);
+		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pa/MeV,y/mm);
 		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"ptoy"+"_"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->Fill(pt/MeV,oy/mm);
 		index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"pzoy"+"_"+m_suffix);

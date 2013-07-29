@@ -31,6 +31,7 @@
 	TH1D    | pt_tail         | e^{-} at ts20      | p_{t}(MeV/c) | probability   | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
 	TH1D    | theta           | e^{-} at ts20      | #theta(rad)  | probability   | 120 | 0     | 1.6   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
 	TH1D    | r               | e^{-} at ts20      | radius(mm)   | probability   | 120 | 0     | 350   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
+	TH1D    | y               | e^{-} at blt0      |y position(mm)| probability   | 120 | -200  | 200   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
 	TH1D    | ox              | e^{-} at ts20      | x(mm) origin | probability   | 120 | -40   | 40    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
 	TH1D    | oy              | e^{-} at ts20      | y(mm) origin | probability   | 120 | -10   | 10    | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
 	TH1D    | oz              | e^{-} at ts20      | z(mm) origin | probability   | 120 | -100  | 100   | 0    | 0     | 1 | 0 | 0  | 0  | 20   | 0   | 
@@ -43,6 +44,7 @@
 	TH2D    | par             | e^{-} at ts20      | p_{a}(MeV/c)      | r(mm)         | 240 | 0     | 6     | 240 | 0    | 350 
 	TH2D    | pzr             | e^{-} at ts20      | p_{z}(MeV/c)      | r(mm)         | 240 | 0     | 6     | 240 | 0    | 350 
 	TH2D    | ptr             | e^{-} at ts20      | p_{t}(MeV/c)      | r(mm)         | 240 | 0     | 6     | 240 | 0    | 350 
+	TH2D    | pay             | e^{-} at blt0      | p_{a}(MeV/c)      | y(mm)         | 240 | 0     | 150   | 240 | -180 | 180 
 	TH2D    | paox            | e^{-} at ts20      | p_{a}(MeV/c)      | x(mm) origin  | 240 | 0     | 6     | 240 | -40  | 40  
 	TH2D    | pzox            | e^{-} at ts20      | p_{z}(MeV/c)      | x(mm) origin  | 240 | 0     | 6     | 240 | -40  | 40  
 	TH2D    | ptox            | e^{-} at ts20      | p_{t}(MeV/c)      | x(mm) origin  | 240 | 0     | 6     | 240 | -40  | 40  
