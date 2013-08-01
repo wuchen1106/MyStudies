@@ -1,0 +1,42 @@
+#	kWhite =0,   kBlack =1,   kGray=920,
+#	kRed   =632, kGreen =416, kBlue=600, kYellow=400, kMagenta=616, kCyan=432,
+#	kOrange=800, kSpring=820, kTeal=840, kAzure =860, kViolet =880, kPink=900
+###########################################################################################################################
+
+#	TYPE     | Name
+	TreeName | t
+
+#	TYPE    | Path
+#	130701
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130701/BessArea130701fm.txt.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130701/DetectorArea130701fm.txt.root
+
+#	130720
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130720/BessArea130720fm.txt.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130720/DetectorArea130720fm.txt.root
+
+#	130731
+	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130731/TS3Area130731fm.txt.root
+	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130731/BESSArea130731fm.txt.root
+	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130731/DetArea130731fm.txt.root
+
+#	TYPE    | Name                         | Type      | Vector?
+#	                                0:double;1:int;string:2
+	TBranch | x                            | 0         | 0
+	TBranch | y                            | 0         | 0
+	TBranch | z                            | 0         | 0
+	TBranch | bx                           | 0         | 0
+	TBranch | by                           | 0         | 0
+	TBranch | bz                           | 0         | 0
+
+#	TYPE    | NAME            | TITLE                             | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm |DrawOption
+	TH1D    | br              | B_{r} along The Beam in The Center| z(m)         | B_{y}(tesla)  |1000 | 9.46  | 14    | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | bz              | B_{z} along The Beam in The Center| z(m)         | B_{z}(tesla)  |1000 | 9.46  | 14    | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | BESS_br_r       | B_{r} in BESS Area                | r(m)         | B_{y}(tesla)  |180  | 0     | 0.4   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | BESS_bz_r       | B_{z} in BESS Area                | r(m)         | B_{z}(tesla)  |180  | 0     | 0.4   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | CDC_br_r        | B_{r} in CDC Area                 | r(m)         | B_{y}(tesla)  |180  | 0     | 0.9   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | CDC_bz_r        | B_{z} in CDC Area                 | r(m)         | B_{z}(tesla)  |180  | 0     | 0.9   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+
+#	TYPE    | NAME            | TITLE              | xAxisName         | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
+	TH2D    | br_zr           | B_{y}              | z(m)              | r(m)          | 455 | 9.46  | 14    | 90  | 0    | 0.9 
+	TH2D    | bz_zr           | B_{z}              | z(m)              | r(m)          | 455 | 9.46  | 14    | 90  | 0    | 0.9 
