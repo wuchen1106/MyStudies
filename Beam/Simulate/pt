@@ -1,7 +1,7 @@
-GEOCARDROOT       = geometry_CometPhase1_UK
-MAGFIELDCARDROOT  = MagField_UK_03T
-GENFILEROOT       = gen_ip_t16cm6mm
-OUTCARDROOT       = output_ip
+GEOCARDROOT       = geometry_ip
+MAGFIELDCARDROOT  = MagField_PT
+GENFILEROOT       = gen_ip_g40cm6mm
+OUTCARDROOT       = output_beam
 
 ##geometry preset
 #detector_configure
@@ -22,4 +22,4 @@ setCut_default.mac
 #run
 run_configure
 1
-40000
+500000

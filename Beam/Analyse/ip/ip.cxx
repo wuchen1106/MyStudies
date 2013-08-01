@@ -18,6 +18,7 @@
 
 std::string m_MonitorPlane;
 std::string m_runName;
+std::string m_OutputDir;
 int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
@@ -40,7 +41,7 @@ int main(int argc, char* argv[]){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hbv:n:m:r:p:P:"))!=-1){
+	while((result=getopt(argc,argv,"hbv:n:m:r:d:p:P:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -49,7 +50,9 @@ int main(int argc, char* argv[]){
 				break;
 			case 'r':
 				m_runName=optarg;
-				printf("run name: %s\n",m_runName.c_str());
+			case 'd':
+				m_OutputDir=optarg;
+				printf("Output Directroy: %s\n",m_OutputDir.c_str());
 				break;
 			case 'v':
 				verbose = atoi(optarg);
@@ -103,7 +106,7 @@ int main(int argc, char* argv[]){
 	//##########################PRESET############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In Preset###"<<std::endl;
 	MyRootInterface *fMyRootInterface = new MyRootInterface(verbose,backup);
-	fMyRootInterface->set_OutputDir("result");
+	fMyRootInterface->set_OutputDir(m_OutputDir);
 	int index_temp = 0;
 	TH1D *h1d_temp=0;
 	int bin_temp = 0;
@@ -421,6 +424,7 @@ int main(int argc, char* argv[]){
 void init_args()
 {
 	m_MonitorPlane="blt0";
+	m_OutputDir="result";
 	verbose = 0;
 	nEvents = 0;
 	printModule = 10000;
