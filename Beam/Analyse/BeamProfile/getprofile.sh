@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
-for configName in "t16cm6mm"
+for configName in "g60cm6mm_170gcm3"
 do
-#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim"
-	for runname in "modified" "Hayashi"
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
+	for runname in "QGSPBERTg4sim_NK"
 	do
 		if [ $runname == "Andy" ]; then
 			nEvents=1000000
@@ -58,8 +58,10 @@ do
 				if [ -e $rootfile ]; then
 					echo "Processing $rootfile"
 					cp "input_"$condensedConfigName"_"$monitor"_"$pname "input"
-					echo ./BeamProfile -t "$pname_inTitle on $monitor" -s $nEvents -m argu -x $prefix -y $suffix -l 1e-7 $rootfile
 					./BeamProfile -t "$pname_inTitle on $monitor" -s $nEvents -m argu -x $prefix -y $suffix -l 1e-7 $rootfile
+#					./BeamProfile -t "$pname_inTitle on $monitor" -s $nEvents -m argu -x $prefix -y $suffix -l 1e-7 -n 1 -v 25 $rootfile
+				else
+					echo $rootfile does not exit!
 				fi
 			done
 		done

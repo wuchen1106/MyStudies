@@ -15,10 +15,10 @@ var_process(){
 		LOG=1
 	fi
 	nfiles=-1
-#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim"
-	for runname in "QGSPBERT" "QGSPBERTg4sim"
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
+	for runname in "QGSPBERT" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
 	do
-		rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname""_output.root"
+		rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname"".root"
 		histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
 		if [ -e $rootfile ]; then
 			((nfiles++))
@@ -31,8 +31,8 @@ var_process(){
 		continue
 	fi
 	iFile=0
-#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim"
-	for runname in "QGSPBERT" "QGSPBERTg4sim"
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
+	for runname in "QGSPBERT" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
 	do
 		if [ $iFile = 0 ]; then
 			COL=1
@@ -45,7 +45,7 @@ var_process(){
 		elif [ $iFile = 4 ]; then
 			COL=800
 		fi
-		rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname""_output.root"
+		rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname"".root"
 		histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
 		if [ -e $rootfile ]; then
 			echo "" >> $input
