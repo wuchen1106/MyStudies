@@ -51,11 +51,11 @@
 	TBranch | bz                           | 0         | 0
 
 #	TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm |DrawOption
-	TH1D    | bx              | B_{x}              | x(mm)        | B_{x}(tesla)  |1000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
-	TH1D    | by              | B^{y}              | y(mm)        | B_{y}(tesla)  |1000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
-	TH1D    | bz              | B^{z}              | z(mm)        | B_{z}(tesla)  |1000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
-	TH1D    | MT1_by_x        | B_{y} in MT1       | x(mm)        | B_{y}(tesla)  |50   | -400  | 400   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
-	TH1D    | MT1_by_y        | B_{y} in MT1       | y(mm)        | B_{y}(tesla)  |50   | -400  | 400   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | bx              | B_{x}              | z(mm)        | B_{x}(tesla)  |2000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | by              | B^{y}              | z(mm)        | B_{y}(tesla)  |2000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | bz              | B^{z}              | z(mm)        | B_{z}(tesla)  |2000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | MT1_by_x        | B_{y} in MT1       | x(mm)        | B_{y}(tesla)  |100  | -400  | 400   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | MT1_by_y        | B_{y} in MT1       | y(mm)        | B_{y}(tesla)  |100  | -400  | 400   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
 
 #	TYPE    | NAME            | TITLE              | xAxisName         | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
 	TH2D    | bx_zx           | B_{x}              | z(mm)             | x(mm)         |1400 | -1000 | 13200 | 130 | -650 | 650
