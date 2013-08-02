@@ -20,8 +20,8 @@ std::string m_MonitorPlane;
 std::string m_runName;
 std::string m_input;
 std::string m_OutputDir;
-int m_beginNo = 0;
-int m_totalNo = 0;
+int m_beginNo = -1;
+int m_totalNo = -1;
 int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
@@ -135,7 +135,7 @@ int main(int argc, char* argv[]){
 	//##########################Prepare histograms############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
 	fMyRootInterface->read(m_input);
-	if (m_beginNo!=m_totalNo){
+	if (m_beginNo!=-1&&m_totalNo!=-1){
 		fMyRootInterface->set_beginCPU(0,m_beginNo);
 		fMyRootInterface->set_NCPU(0,m_totalNo);
 	}
