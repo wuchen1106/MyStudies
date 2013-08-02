@@ -20,6 +20,8 @@ std::string m_MonitorPlane;
 std::string m_runName;
 std::string m_input;
 std::string m_OutputDir;
+int m_beginNo = 0;
+int m_totalNo = 0;
 int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
@@ -42,7 +44,7 @@ int main(int argc, char* argv[]){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hbv:n:m:r:d:p:P:i:"))!=-1){
+	while((result=getopt(argc,argv,"hb:t:v:n:m:r:d:p:P:i:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -64,8 +66,12 @@ int main(int argc, char* argv[]){
 				printf("verbose level: %d\n",verbose);
 				break;
 			case 'b':
-				backup = true;
-				printf("restore backup file!\n");
+				m_beginNo = atoi(optarg);
+				printf("CPU index starts from%d\n",m_beginNo);
+				break;
+			case 't':
+				m_totalNo = atoi(optarg);
+				printf("Total CPU numbers%d\n",m_totalNo);
 				break;
 			case 'n':
 				nEvents = atoi(optarg);
@@ -129,6 +135,10 @@ int main(int argc, char* argv[]){
 	//##########################Prepare histograms############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
 	fMyRootInterface->read(m_input);
+	if (m_beginNo!=m_totalNo){
+		fMyRootInterface->set_beginCPU(0,m_beginNo);
+		fMyRootInterface->set_NCPU(0,m_totalNo);
+	}
 	fMyRootInterface->set_OutputName(m_runName);
 	fMyRootInterface->init();
 
@@ -157,25 +167,9 @@ int main(int argc, char* argv[]){
 		double t;
 
 		// Get info
-		int McTruth_nTracks = 0;
-		std::vector<int> McTruth_tid;
-		std::vector<int> McTruth_pid;
-		std::vector<int> McTruth_ptid;
-		std::vector<double> McTruth_x;
-		std::vector<double> McTruth_y;
-		std::vector<double> McTruth_z;
-		std::vector<double> McTruth_px;
-		std::vector<double> McTruth_py;
-		std::vector<double> McTruth_pz;
-		std::vector<double> McTruth_e;
-		std::vector<double> McTruth_time;
-		std::vector<std::string> McTruth_process;
-		std::vector<std::string> McTruth_volume;
 		int MonitorC_nHits = 0;
-		std::vector<int> MonitorC_tid;
 		std::vector<int> MonitorC_pid;
 		std::vector<double> MonitorC_t;
-		std::vector<double> MonitorC_e;
 		std::vector<double> MonitorC_x;
 		std::vector<double> MonitorC_y;
 		std::vector<double> MonitorC_z;
@@ -183,10 +177,8 @@ int main(int argc, char* argv[]){
 		std::vector<double> MonitorC_py;
 		std::vector<double> MonitorC_pz;
 		int MonitorE_nHits = 0;
-		std::vector<int> MonitorE_tid;
 		std::vector<int> MonitorE_pid;
 		std::vector<double> MonitorE_t;
-		std::vector<double> MonitorE_e;
 		std::vector<double> MonitorE_x;
 		std::vector<double> MonitorE_y;
 		std::vector<double> MonitorE_z;
@@ -196,8 +188,6 @@ int main(int argc, char* argv[]){
 
 		fMyRootInterface->get_value("MonitorE_nHits",MonitorE_nHits);
 		fMyRootInterface->get_value("MonitorE_t",MonitorE_t,ns);
-		fMyRootInterface->get_value("MonitorE_e",MonitorE_e,GeV);
-		fMyRootInterface->get_value("MonitorE_tid",MonitorE_tid);
 		fMyRootInterface->get_value("MonitorE_pid",MonitorE_pid);
 		fMyRootInterface->get_value("MonitorE_x",MonitorE_x,cm);
 		fMyRootInterface->get_value("MonitorE_y",MonitorE_y,cm);
@@ -207,8 +197,6 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("MonitorE_pz",MonitorE_pz,GeV);
 		fMyRootInterface->get_value("MonitorC_nHits",MonitorC_nHits);
 		fMyRootInterface->get_value("MonitorC_t",MonitorC_t,ns);
-		fMyRootInterface->get_value("MonitorC_e",MonitorC_e,GeV);
-		fMyRootInterface->get_value("MonitorC_tid",MonitorC_tid);
 		fMyRootInterface->get_value("MonitorC_pid",MonitorC_pid);
 		fMyRootInterface->get_value("MonitorC_x",MonitorC_x,cm);
 		fMyRootInterface->get_value("MonitorC_y",MonitorC_y,cm);
@@ -230,7 +218,6 @@ int main(int argc, char* argv[]){
 					std::cout<<prefix_ParticleInfoStart
 				             <<"  Found Particle! i_mon = "<<i_mon
 				             <<", pid = "<<MonitorE_pid[i_mon]
-				             <<", tid = "<<MonitorE_tid[i_mon]
 				             <<", px = "<<MonitorE_px[i_mon]
 				             <<"MeV, py = "<<MonitorE_py[i_mon]
 				             <<"MeV, pz = "<<MonitorE_pz[i_mon]
@@ -250,6 +237,9 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->set_ovalue("py",py/MeV);
 				fMyRootInterface->set_ovalue("pz",pz/MeV);
 				fMyRootInterface->set_ovalue("t",t/ns);
+				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
+				fMyRootInterface->Fill();
+				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
 			}
 		}
 		for ( int i_mon = 0; i_mon < MonitorC_nHits; i_mon++ ){
@@ -259,7 +249,6 @@ int main(int argc, char* argv[]){
 					std::cout<<prefix_ParticleInfoStart
 				             <<"  Found Particle! i_mon = "<<i_mon
 				             <<", pid = "<<MonitorC_pid[i_mon]
-				             <<", tid = "<<MonitorC_tid[i_mon]
 				             <<", px = "<<MonitorC_px[i_mon]
 				             <<"MeV, py = "<<MonitorC_py[i_mon]
 				             <<"MeV, pz = "<<MonitorC_pz[i_mon]
@@ -279,6 +268,9 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->set_ovalue("py",py/MeV);
 				fMyRootInterface->set_ovalue("pz",pz/MeV);
 				fMyRootInterface->set_ovalue("t",t/ns);
+				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
+				fMyRootInterface->Fill();
+				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
 			}
 		}
 		if (filled)	inc_Ncut("Got particles");
@@ -335,7 +327,9 @@ void print_usage(char* prog_name)
 	fprintf(stderr,"\t -h\n");
 	fprintf(stderr,"\t\t Usage message.\n");
 	fprintf(stderr,"\t -b\n");
-	fprintf(stderr,"\t\t restore backup file.\n");
+	fprintf(stderr,"\t\tCPU index starts from\n");
+	fprintf(stderr,"\t -t\n");
+	fprintf(stderr,"\t\tTotal CPU numbers\n");
 	fprintf(stderr,"[example]\n");
 	fprintf(stderr,"\t\t%s -m ab -v 20 -n 100\n",prog_name);
 }
