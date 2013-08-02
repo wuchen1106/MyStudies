@@ -18,6 +18,7 @@
 
 std::string m_MonitorPlane;
 std::string m_runName;
+std::string m_input;
 std::string m_OutputDir;
 int verbose = 0;
 int nEvents = 0;
@@ -41,7 +42,7 @@ int main(int argc, char* argv[]){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hbv:n:m:r:d:p:P:"))!=-1){
+	while((result=getopt(argc,argv,"hbv:n:m:r:d:p:P:i:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -50,6 +51,10 @@ int main(int argc, char* argv[]){
 				break;
 			case 'r':
 				m_runName=optarg;
+			case 'i':
+				m_input=optarg;
+				printf("input configuration file: %s\n",m_input.c_str());
+				break;
 			case 'd':
 				m_OutputDir=optarg;
 				printf("Output Directroy: %s\n",m_OutputDir.c_str());
@@ -123,7 +128,7 @@ int main(int argc, char* argv[]){
 
 	//##########################Prepare histograms############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
-	fMyRootInterface->read("input");
+	fMyRootInterface->read(m_input);
 	fMyRootInterface->set_OutputName(m_runName);
 	fMyRootInterface->init();
 
@@ -425,6 +430,7 @@ void init_args()
 {
 	m_MonitorPlane="blt0";
 	m_OutputDir="result";
+	m_input="input";
 	verbose = 0;
 	nEvents = 0;
 	printModule = 10000;
