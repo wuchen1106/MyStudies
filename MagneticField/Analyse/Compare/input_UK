@@ -1,0 +1,86 @@
+
+#   TYPE    | Directory                                           | histoName
+#	refTH1D | ../../result/130117/result/output.root              | cg4_130117_bx
+#	refTH1D | ../../result/130117/result/output.root              | cg4_130117_by
+#	refTH1D | ../../result/130117/result/output.root              | cg4_130117_bz
+#	refTH1D | ../../result/130117/result/output.root              | cg4_130117_MT1_by_y
+#
+#	refTH1D | ../../result/120822/result/output.root              | cg4_120822_bx
+#	refTH1D | ../../result/120822/result/output.root              | cg4_120822_by
+#	refTH1D | ../../result/120822/result/output.root              | cg4_120822_bz
+#	refTH1D | ../../result/120822/result/output.root              | cg4_120822_MT1_by_y
+#
+#	refTH1D | ../../result/110812/result/devided/output.root      | cg4_110812_devided_bx
+#	refTH1D | ../../result/110812/result/devided/output.root      | cg4_110812_devided_by
+#	refTH1D | ../../result/110812/result/devided/output.root      | cg4_110812_devided_bz
+#	refTH1D | ../../result/110812/result/devided/output.root      | cg4_110812_devided_MT1_by_y
+
+	refTH1D | ../../result/111216/result/defaultFieldMap-0.0000T-0.0000T-0.17T.dat/output.root      | cg4_111216_0000T_0000T_17T_bx
+	refTH1D | ../../result/111216/result/defaultFieldMap-0.0000T-0.0000T-0.17T.dat/output.root      | cg4_111216_0000T_0000T_17T_by
+	refTH1D | ../../result/111216/result/defaultFieldMap-0.0000T-0.0000T-0.17T.dat/output.root      | cg4_111216_0000T_0000T_17T_bz
+	refTH1D | ../../result/111216/result/defaultFieldMap-0.0000T-0.0000T-0.17T.dat/output.root      | cg4_111216_0000T_0000T_17T_MT1_by_y
+
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0090T-0.0150T-0.17T.dat/output.root      | cg4_111216_0090T_0150T_17T_bx
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0090T-0.0150T-0.17T.dat/output.root      | cg4_111216_0090T_0150T_17T_by
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0090T-0.0150T-0.17T.dat/output.root      | cg4_111216_0090T_0150T_17T_bz
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0090T-0.0150T-0.17T.dat/output.root      | cg4_111216_0090T_0150T_17T_MT1_by_y
+
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0180T-0.0300T-0.17T.dat/output.root      | cg4_111216_0180T_0300T_17T_bx
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0180T-0.0300T-0.17T.dat/output.root      | cg4_111216_0180T_0300T_17T_by
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0180T-0.0300T-0.17T.dat/output.root      | cg4_111216_0180T_0300T_17T_bz
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0180T-0.0300T-0.17T.dat/output.root      | cg4_111216_0180T_0300T_17T_MT1_by_y
+
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0300T-0.0500T-0.17T.dat/output.root      | cg4_111216_0300T_0500T_17T_bx
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0300T-0.0500T-0.17T.dat/output.root      | cg4_111216_0300T_0500T_17T_by
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0300T-0.0500T-0.17T.dat/output.root      | cg4_111216_0300T_0500T_17T_bz
+	refTH1D | ../../result/111216/result/defaultFieldMap-positive-0.0300T-0.0500T-0.17T.dat/output.root      | cg4_111216_0300T_0500T_17T_MT1_by_y
+
+#   TYPE    | NAME                        | TITLE | xAxisName | yAxisName | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm   |DrawOption|UseLeg|legendName      |legx1|legy1|legx2|legy2|npadx|npady|SEP 
+#	TH1D    | cg4_130117_bx               |       |z(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 3 | 0  | 0  | 8    | 0     | P        |   1  | 130117         |0.8 |0.8 |1 |1 |2 |2               |
+#	TH1D    | cg4_120822_bx               |       |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 120822
+#	TH1D    |cg4_111216_0000T_0000T_17T_bx|       |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 111216
+#	TH1D    | cg4_110812_devided_bx       |       |           |           |  1  |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 110812
+#
+#	TH1D    | cg4_130117_by               |       |z(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 3 | 0  | 0  | 8    | 0     | P        |   1  | 130117         |0.8 |0.8 |1 |1 |1 |1               |
+#	TH1D    | cg4_120822_by               |       |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 120822
+#	TH1D    |cg4_111216_0000T_0000T_17T_by|       |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 111216
+#	TH1D    | cg4_110812_devided_by       |       |           |           |  1  |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 110812
+#
+#	TH1D    | cg4_130117_bz               |       |z(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 3 | 0  | 0  | 8    | 0     | P        |   1  | 130117         |0.8 |0.8 |1 |1 |1 |1               |
+#	TH1D    | cg4_120822_bz               |       |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 120822
+#	TH1D    |cg4_111216_0000T_0000T_17T_bz|       |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 111216
+#	TH1D    | cg4_110812_devided_bz       |       |           |           |  1  |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 110812
+#
+#	TH1D    | cg4_130117_MT1_by_y         |       |y(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 3 | 0  | 0  | 8    | 0     | P        |   1  | 130117         |0.8 |0.8 |1 |1 |1 |1               |
+#	TH1D    | cg4_120822_MT1_by_y         |       |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 120822
+#	TH1D    |cg4_111216_0000T_0000T_17T_MT1_by_y| |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 111216
+#	TH1D    | cg4_110812_devided_MT1_by_y |       |           |           |  1  |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 110812
+
+	TH1D    |cg4_111216_0000T_0000T_17T_bz|       |z(mm)      |           |  1  | -1000 | 10000 | 0    | 0     | 1 | 3 | 0  | 0  | 8    | 0     | P        |   1  | 0000T_0000T    |0.8 |0.8 |1 |1 |2 |2               |
+	TH1D    |cg4_111216_0090T_0150T_17T_bz|       |           |           |  1  | -1000 | 10000 | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0090T_0150T
+	TH1D    |cg4_111216_0180T_0300T_17T_bz|       |           |           |  1  | -1000 | 10000 | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0180T_0300T
+	TH1D    |cg4_111216_0300T_0500T_17T_bz|       |           |           |  1  | -1000 | 10000 | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0300T_0500T
+
+	TH1D    |cg4_111216_0000T_0000T_17T_by|       |z(mm)      |           |  1  | -1000 | 10000 | 0    | 0     | 1 | 3 | 0  | 0  | 8    | 0     | P        |   1  | 0000T_0000T    |0.8 |0.8 |1 |1 |2 |2               |
+	TH1D    |cg4_111216_0090T_0150T_17T_by|       |           |           |  1  | -1000 | 10000 | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0090T_0150T
+	TH1D    |cg4_111216_0180T_0300T_17T_by|       |           |           |  1  | -1000 | 10000 | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0180T_0300T
+	TH1D    |cg4_111216_0300T_0500T_17T_by|       |           |           |  1  | -1000 | 10000 | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0300T_0500T
+
+	TH1D    |cg4_111216_0000T_0000T_17T_bx|       |z(mm)      |           |  1  | -1000 | 10000 | 0    | 0     | 1 | 3 | 0  | 0  | 8    | 0     | P        |   1  | 0000T_0000T    |0.8 |0.8 |1 |1 |2 |2               |
+	TH1D    |cg4_111216_0090T_0150T_17T_bx|       |           |           |  1  | -1000 | 10000 | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0090T_0150T
+	TH1D    |cg4_111216_0180T_0300T_17T_bx|       |           |           |  1  | -1000 | 10000 | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0180T_0300T
+	TH1D    |cg4_111216_0300T_0500T_17T_bx|       |           |           |  1  | -1000 | 10000 | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0300T_0500T
+
+	TH1D    |cg4_111216_0000T_0000T_17T_MT1_by_y| |y(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 3 | 0  | 0  | 8    | 0     | P        |   1  | 0000T_0000T    |0.8 |0.8 |1 |1 |2 |2               |
+	TH1D    |cg4_111216_0090T_0150T_17T_MT1_by_y| |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0090T_0150T
+	TH1D    |cg4_111216_0180T_0300T_17T_MT1_by_y| |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0180T_0300T
+	TH1D    |cg4_111216_0300T_0500T_17T_MT1_by_y| |           |           |  1  |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 0300T_0500T
+
+#	TH1D    | cg4_130117_bz               |       |z(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0     | P        |   0  |                |0.8 |0.8 |1 |1 |1 |2               |
+#	TH1D    | cg4_130117_by               |       |z(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0     | P        |   0  |                |0.8 |0.8 |1 |1 |1 |1               |
+#	TH1D    |cg4_111216_0000T_0000T_17T_bz|       |z(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0     | P        |   0  |                |0.8 |0.8 |1 |1 |1 |2               | 
+#	TH1D    |cg4_111216_0000T_0000T_17T_by|       |z(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0     | P        |   0  |                |0.8 |0.8 |1 |1 |1 |1               | 
+#	TH1D    | cg4_120822_bz               |       |z(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0     | P        |   0  |                |0.8 |0.8 |1 |1 |1 |2               | 
+#	TH1D    | cg4_120822_by               |       |z(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0     | P        |   0  |                |0.8 |0.8 |1 |1 |1 |1               | 
+#	TH1D    | cg4_110812_devided_bz       |       |z(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0     | P        |   0  |                |0.8 |0.8 |1 |1 |1 |2               | 
+#	TH1D    | cg4_110812_devided_by       |       |z(mm)      |           |  1  |   1   |   1   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0     | P        |   0  |                |0.8 |0.8 |1 |1 |1 |1               | 

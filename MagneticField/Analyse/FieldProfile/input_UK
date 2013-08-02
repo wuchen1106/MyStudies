@@ -1,0 +1,84 @@
+#	kWhite =0,   kBlack =1,   kGray=920,
+#	kRed   =632, kGreen =416, kBlue=600, kYellow=400, kMagenta=616, kCyan=432,
+#	kOrange=800, kSpring=820, kTeal=840, kAzure =860, kViolet =880, kPink=900
+###########################################################################################################################
+
+#	TYPE     | Name
+	TreeName | t
+
+#	TYPE    | Path
+#	cg4_110812
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/110812/defaultFieldMap.dat.root
+#	cg4_110812_devided
+	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/110812/arc_1.map.root
+	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/110812/seg_1.map.root
+	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/110812/seg_2.map.root
+
+#	cg4_111026
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111026/defaultFieldMap.dat.root
+
+#	cg4_111120
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111120/01-seg-1.table.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111120/02-seg-2.table.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111120/03-arc-1.table.root
+
+#	cg4_111216_devided
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111216/arc_1.map.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111216/seg_1.map.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111216/seg_2.map.root
+#	cg4_111216_0000T_0000T_17T
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111216/defaultFieldMap-0.0000T-0.0000T-0.17T.dat.root
+#	cg4_111216_0090T_0150T_17T
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111216/defaultFieldMap-positive-0.0090T-0.0150T-0.17T.dat.root
+#	cg4_111216_0180T_0300T_17T
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111216/defaultFieldMap-positive-0.0180T-0.0300T-0.17T.dat.root
+#	cg4_111216_0300T_0500T_17T
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111216/defaultFieldMap-positive-0.0300T-0.0500T-0.17T.dat.root
+
+#	cg4_120822
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/120822/default_phase-1_fieldmap_0.018T.dat.root
+
+#	cg4_130117
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/130117/Phase1Field.dat.root
+
+#	TYPE    | Name                         | Type      | Vector?
+#	                                0:double;1:int;string:2
+	TBranch | x                            | 0         | 0
+	TBranch | y                            | 0         | 0
+	TBranch | z                            | 0         | 0
+	TBranch | bx                           | 0         | 0
+	TBranch | by                           | 0         | 0
+	TBranch | bz                           | 0         | 0
+
+#	TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm |DrawOption
+	TH1D    | bx              | B_{x}              | z(mm)        | B_{x}(tesla)  |2000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | by              | B^{y}              | z(mm)        | B_{y}(tesla)  |2000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | bz              | B^{z}              | z(mm)        | B_{z}(tesla)  |2000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | MT1_by_x        | B_{y} in MT1       | x(mm)        | B_{y}(tesla)  |100  | -400  | 400   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | MT1_by_y        | B_{y} in MT1       | y(mm)        | B_{y}(tesla)  |100  | -400  | 400   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+
+#	TYPE    | NAME            | TITLE              | xAxisName         | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
+	TH2D    | bx_zx           | B_{x}              | z(mm)             | x(mm)         |1400 | -1000 | 13200 | 130 | -650 | 650
+	TH2D    | by_zx           | B_{y}              | z(mm)             | x(mm)         |1400 | -1000 | 13200 | 130 | -650 | 650
+	TH2D    | bz_zx           | B_{z}              | z(mm)             | x(mm)         |1400 | -1000 | 13200 | 130 | -650 | 650
+	TH2D    | bx_zy           | B_{x}              | z(mm)             | y(mm)         |1400 | -1000 | 13200 | 130 | -650 | 650
+	TH2D    | by_zy           | B_{y}              | z(mm)             | y(mm)         |1400 | -1000 | 13200 | 130 | -650 | 650
+	TH2D    | bz_zy           | B_{z}              | z(mm)             | y(mm)         |1400 | -1000 | 13200 | 130 | -650 | 650
+	TH2D    | PTS_bx          | B_{x} in PTS       | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PTS_by          | B_{y} in PTS       | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PTS_bz          | B_{z} in PTS       | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PCS1_bx         | B_{x} in PCS1      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PCS1_by         | B_{y} in PCS1      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PCS1_bz         | B_{z} in PCS1      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PCS2_bx         | B_{x} in PCS2      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PCS2_by         | B_{y} in PCS2      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PCS2_bz         | B_{z} in PCS2      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | BP_bx           | B_{x} in BP        | x(mm)             | y(mm)         |80   | -400  | 400   | 80  | -400 | 400
+	TH2D    | BP_by           | B_{y} in BP        | x(mm)             | y(mm)         |80   | -400  | 400   | 80  | -400 | 400
+	TH2D    | BP_bz           | B_{z} in BP        | x(mm)             | y(mm)         |80   | -400  | 400   | 80  | -400 | 400
+	TH2D    | MT1_bx          | B_{x} in MT1       | x(mm)             | y(mm)         |50   | -400  | 400   | 50  | -400 | 400
+	TH2D    | MT1_by          | B_{y} in MT1       | x(mm)             | y(mm)         |50   | -400  | 400   | 50  | -400 | 400
+	TH2D    | MT1_bz          | B_{z} in MT1       | x(mm)             | y(mm)         |50   | -400  | 400   | 50  | -400 | 400
+	TH2D    | BLT_bx          | B_{x} in BLT       | x(mm)             | y(mm)         |110  | -550  | 550   | 110 | -550 | 550
+	TH2D    | BLT_by          | B_{y} in BLT       | x(mm)             | y(mm)         |110  | -550  | 550   | 110 | -550 | 550
+	TH2D    | BLT_bz          | B_{z} in BLT       | x(mm)             | y(mm)         |110  | -550  | 550   | 110 | -550 | 550
