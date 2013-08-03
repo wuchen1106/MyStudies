@@ -1,8 +1,8 @@
 #!/bin/bash
 
-for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm" "t16cm6mm_03T"
+for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm" "t16cm6mm_03T" "g40cm10mm182gcm3_03T"
 do
-	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
+	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK" "QGSPBERTHPg4sim"
 	do
 		rootfile="result/"$configName"*_"$runname".root"
 		pdffile="result/"$configName"*_"$runname".pdf"

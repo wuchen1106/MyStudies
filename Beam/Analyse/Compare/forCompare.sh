@@ -1,7 +1,7 @@
 #!/bin/bash
 
 var_process(){
-	configNam=$1
+	configName=$1
 	monitor=$2
 	pname=$3
 	pname_inTitle=$4
@@ -15,10 +15,10 @@ var_process(){
 		LOG=1
 	fi
 	nfiles=-1
-#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
-	for runname in "QGSPBERT"
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK" "QGSPBERTHPg4sim"
+	for runname in "QGSPBERTg4sim" "QGSPBERTHPg4sim"
 	do
-	for configName in "g60cm6mm_170gcm3" "g40cm10mm182gcm3"
+	for configName in "t16cm6mm_03T" "g40cm10mm182gcm3_03T"
 	do
 		rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname"".root"
 		histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
@@ -34,10 +34,10 @@ var_process(){
 		continue
 	fi
 	iFile=0
-#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
-	for runname in "QGSPBERT"
+#	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK" "QGSPBERTHPg4sim"
+	for runname in "QGSPBERTg4sim" "QGSPBERTHPg4sim"
 	do
-	for configName in "g60cm6mm_170gcm3" "g40cm10mm182gcm3"
+	for configName in "t16cm6mm_03T" "g40cm10mm182gcm3_03T"
 	do
 		if [ $iFile = 0 ]; then
 			COL=1
@@ -71,7 +71,7 @@ var_process(){
 }
 
 input="input"
-#for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
+#for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm" "t16cm6mm_03T" "g40cm10mm182gcm3_03T"
 for configName in "g60cm6mm_170gcm3"
 do
 #	for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
