@@ -16,7 +16,9 @@ var_process(){
 	fi
 	nfiles=-1
 #	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
-	for runname in "QGSPBERT" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
+	for runname in "QGSPBERT"
+	do
+	for configName in "g60cm6mm_170gcm3" "g40cm10mm182gcm3"
 	do
 		rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname"".root"
 		histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
@@ -26,13 +28,16 @@ var_process(){
 			echo $rootfile does not exist!
 		fi
 	done
+	done
 	if [ $nfiles -lt 1 ]; then
 		echo "nfiles = $nfiles"
 		continue
 	fi
 	iFile=0
 #	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
-	for runname in "QGSPBERT" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
+	for runname in "QGSPBERT"
+	do
+	for configName in "g60cm6mm_170gcm3" "g40cm10mm182gcm3"
 	do
 		if [ $iFile = 0 ]; then
 			COL=1
@@ -48,17 +53,20 @@ var_process(){
 		rootfile="../../result/$configName/$runname/result/""$configName""_""$monitor""_""$pname""_""$runname"".root"
 		histo="$configName""_""$monitor""_""$pname""_""$var""$vartype""$runname"
 		if [ -e $rootfile ]; then
+#			legendName=$runname
+			legendName=$configName
 			echo "" >> $input
 			echo "#   TYPE    | Directory                                                            | histoName" >> $input
 			echo "    refTH1D | "$rootfile" | "$histo >> $input
 			echo "#   TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm   |DrawOption|UseLeg|legendName|legx1|legy1|legx2|legy2|npadx|npady" >> $input
 			if [ $iFile = 0 ]; then
-				echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-6  | $COL | $nfiles | 0  | $LOG  | 3   | 0 | LP       |   1  |$runname  |0.8 |0.8 |1 |1 |$nx |$ny " >> $input
+				echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-6  | $COL | $nfiles | 0  | $LOG  | 3   | 0 | LP       |   1  |$legendName  |0.8 |0.8 |1 |1 |$nx |$ny " >> $input
 			else
-				echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-6  | $COL | 0 | 0  | $LOG  | 3   | 0 | LP       |   1  |$runname  |0.8 |0.8 |1 |1 " >> $input
+				echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-6  | $COL | 0 | 0  | $LOG  | 3   | 0 | LP       |   1  |$legendName  |0.8 |0.8 |1 |1 " >> $input
 			fi
 			((iFile++))
 		fi
+	done
 	done
 }
 

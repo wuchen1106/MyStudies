@@ -187,7 +187,7 @@ int main(int argc, char** argv){
 		std::string name = fMyRootInterface->get_nameForH2D(iHist);
 		fMyRootInterface->set_nameForH2D(iHist,m_prefix+"_"+name+"_"+m_suffix);
 	}
-	fMyRootInterface->set_OutputName(m_prefix+"_"+m_suffix+"_");
+	fMyRootInterface->set_OutputName(m_prefix+"_"+m_suffix);
 	fMyRootInterface->init();
 
 	//************SET Statistics********************

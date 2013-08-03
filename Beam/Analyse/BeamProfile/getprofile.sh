@@ -1,10 +1,10 @@
 #!/bin/bash
 
-#for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
-for configName in "g60cm6mm_170gcm3"
+#for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm" "t16cm6mm_03T"
+for configName in "g40cm10mm182gcm3"
 do
 #	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim" "QGSPBERTg4sim_NK"
-	for runname in "QGSPBERTg4sim_NK"
+	for runname in "QGSPBERT"
 	do
 		if [ $runname == "Andy" ]; then
 			nEvents=1000000
@@ -54,6 +54,8 @@ do
 				condensedConfigName=$configName
 				if [ $configName = "g60cm6mm_170gcm3" -o $configName = "g60cm6mm_200gcm3" -o $configName = "g40cm10mm182gcm3" ]; then
 					condensedConfigName="g60cm6mm"
+				elif [ $configName = "t16cm6mm_03T" -o $configName = "t16cm6mm" ]; then
+					condensedConfigName="t16cm6mm"
 				fi
 				if [ -e $rootfile ]; then
 					echo "Processing $rootfile"
