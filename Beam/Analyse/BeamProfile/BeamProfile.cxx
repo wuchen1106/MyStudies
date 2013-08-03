@@ -234,6 +234,23 @@ int main(int argc, char** argv){
 		fMyRootInterface->get_value("oy",oy,mm);
 		fMyRootInterface->get_value("oz",oz,mm);
 
+		double xp = x;
+		double yp = y;
+		double zp = z-2791.5*mm;
+		double pxp = px;
+		double pyp = py;
+		double pzp = pz;
+		double tp = t;
+
+		fMyRootInterface->set_ovalue("x",xp/mm);
+		fMyRootInterface->set_ovalue("y",yp/mm);
+		fMyRootInterface->set_ovalue("z",zp/mm);
+		fMyRootInterface->set_ovalue("px",pxp/MeV);
+		fMyRootInterface->set_ovalue("py",pyp/MeV);
+		fMyRootInterface->set_ovalue("pz",pzp/MeV);
+		fMyRootInterface->set_ovalue("t",tp/ns);
+		fMyRootInterface->Fill();
+
 		double pa = sqrt(px*px+py*py+pz*pz);
 		double pt = sqrt(px*px+py*py);
 		double r = sqrt(x*x+y*y);

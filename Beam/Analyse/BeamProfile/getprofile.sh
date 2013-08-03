@@ -39,9 +39,11 @@ do
 		else
 			nEvents=1000000
 		fi
-		for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
+#		for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
+		for monitor in "blt0"
 		do
-			for pname in "em" "mum" "pim" "n0"
+#			for pname in "em" "mum" "pim" "n0"
+			for pname in "mum"
 			do
 				if [ $pname = em ]; then pname_inTitle="e^{-}";
 				elif [ $pname = mum ]; then pname_inTitle="#mu^{-}";
@@ -59,7 +61,7 @@ do
 				fi
 				if [ -e $rootfile ]; then
 					echo "Processing $rootfile"
-					cp "input_"$condensedConfigName"_"$monitor"_"$pname "input"
+#					cp "input_"$condensedConfigName"_"$monitor"_"$pname "input"
 					./BeamProfile -t "$pname_inTitle on $monitor" -s $nEvents -m argu -x $prefix -y $suffix -l 1e-7 $rootfile
 #					./BeamProfile -t "$pname_inTitle on $monitor" -s $nEvents -m argu -x $prefix -y $suffix -l 1e-7 -n 1 -v 25 $rootfile
 				else
