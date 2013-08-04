@@ -45,3 +45,4 @@ MagneticField/Analyse/Compare/Compare
 MagneticField/Analyse/FieldProfile/FieldProfile
 Beam/Analyse/bp_PT/bp
 Beam/Analyse/bp_beam/bp
+RPC/Analyse/bp
