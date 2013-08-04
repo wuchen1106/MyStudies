@@ -121,7 +121,7 @@ int main(int argc, char* argv[]){
 	//##########################Prepare histograms############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
 	fMyRootInterface->read("input");
-	fMyRootInterface->set_OutputName(m_runName);
+	fMyRootInterface->set_OutputName("output");
 	fMyRootInterface->init();
 
 	//************SET Statistics********************
