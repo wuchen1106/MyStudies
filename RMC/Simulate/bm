@@ -1,5 +1,5 @@
-GEOCARDROOT       = geometry_CometPhase1_sakaki
-MAGFIELDCARDROOT  = MagField_sakaki
+GEOCARDROOT       = geometry_CometPhase1
+MAGFIELDCARDROOT  = MagField_sasaki_130731
 GENFILEROOT       = gen_bm
 OUTCARDROOT       = output_bm
 

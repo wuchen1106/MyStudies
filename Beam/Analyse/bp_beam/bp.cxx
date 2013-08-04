@@ -168,6 +168,8 @@ int main(int argc, char* argv[]){
 
 		// Get info
 		int MT1Monitor_nHits = 0;
+		int evt_num = -1;
+		int run_num = -1;
 		std::vector<double> MT1Monitor_t;
 		std::vector<double> MT1Monitor_x;
 		std::vector<double> MT1Monitor_y;
@@ -176,6 +178,8 @@ int main(int argc, char* argv[]){
 		std::vector<double> MT1Monitor_py;
 		std::vector<double> MT1Monitor_pz;
 
+		fMyRootInterface->get_value("evt_num",evt_num);
+		fMyRootInterface->get_value("run_num",run_num);
 		fMyRootInterface->get_value("MT1Monitor_nHits",MT1Monitor_nHits);
 		fMyRootInterface->get_value("MT1Monitor_t",MT1Monitor_t,ns);
 		fMyRootInterface->get_value("MT1Monitor_x",MT1Monitor_x,cm);
@@ -208,6 +212,8 @@ int main(int argc, char* argv[]){
 			py=MT1Monitor_py[i_mon];
 			pz=MT1Monitor_pz[i_mon];
 			t=MT1Monitor_t[i_mon];
+			fMyRootInterface->set_ovalue("evt_num",evt_num);
+			fMyRootInterface->set_ovalue("run_num",run_num);
 			fMyRootInterface->set_ovalue("x",x/mm);
 			fMyRootInterface->set_ovalue("y",y/mm);
 			fMyRootInterface->set_ovalue("z",z/mm);

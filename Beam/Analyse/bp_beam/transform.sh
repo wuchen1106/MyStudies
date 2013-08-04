@@ -33,8 +33,8 @@ do
 					echo "source $MYHOME/.setana.sh" >> $pbsfile
 					echo $PWD'/bp -b '$beginNo' -t '$totalNo' -m '$monitor' -P '$pid' -r '$monitor'.'$pname'.'$iSplit'.txt -i '$PWD'/input -d '$PWD'/result -p 100000 -v 5 > '$pbsfile'.log 2> '$pbsfile'.err' >> $pbsfile
 					chmod +x $pbsfile
-#					qsub -j oe -o /dev/null -q besq $pbsfile
-					nohup $pbsfile &
+					qsub -j oe -o /dev/null -q besq $pbsfile
+#					nohup $pbsfile &
 				done
 			done
 		done

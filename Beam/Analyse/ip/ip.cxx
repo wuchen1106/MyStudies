@@ -354,7 +354,7 @@ int main(int argc, char* argv[]){
 			if (m_MonitorPlane=="blt0"){
 				x=Monitor_x[hit_iMon[i_hit]];
 				y=Monitor_y[hit_iMon[i_hit]];
-				z=Monitor_z[hit_iMon[i_hit]]+2791.5;
+				z=Monitor_z[hit_iMon[i_hit]];
 				px=Monitor_px[hit_iMon[i_hit]];
 				py=Monitor_py[hit_iMon[i_hit]];
 				pz=Monitor_pz[hit_iMon[i_hit]];
