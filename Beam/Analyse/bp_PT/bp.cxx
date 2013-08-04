@@ -167,8 +167,12 @@ int main(int argc, char* argv[]){
 		double t;
 
 		// Get info
+		int McTruth_nTracks = 0;
+		std::vector<int> McTruth_tid;
+		std::vector<double> McTruth_time;
 		int MonitorC_nHits = 0;
 		std::vector<int> MonitorC_pid;
+		std::vector<int> MonitorC_tid;
 		std::vector<double> MonitorC_t;
 		std::vector<double> MonitorC_x;
 		std::vector<double> MonitorC_y;
@@ -178,6 +182,7 @@ int main(int argc, char* argv[]){
 		std::vector<double> MonitorC_pz;
 		int MonitorE_nHits = 0;
 		std::vector<int> MonitorE_pid;
+		std::vector<int> MonitorE_tid;
 		std::vector<double> MonitorE_t;
 		std::vector<double> MonitorE_x;
 		std::vector<double> MonitorE_y;
@@ -186,9 +191,13 @@ int main(int argc, char* argv[]){
 		std::vector<double> MonitorE_py;
 		std::vector<double> MonitorE_pz;
 
+		fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
+		fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
+		fMyRootInterface->get_value("McTruth_tid",McTruth_tid);
 		fMyRootInterface->get_value("MonitorE_nHits",MonitorE_nHits);
 		fMyRootInterface->get_value("MonitorE_t",MonitorE_t,ns);
 		fMyRootInterface->get_value("MonitorE_pid",MonitorE_pid);
+		fMyRootInterface->get_value("MonitorE_tid",MonitorE_tid);
 		fMyRootInterface->get_value("MonitorE_x",MonitorE_x,cm);
 		fMyRootInterface->get_value("MonitorE_y",MonitorE_y,cm);
 		fMyRootInterface->get_value("MonitorE_z",MonitorE_z,cm);
@@ -198,6 +207,7 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("MonitorC_nHits",MonitorC_nHits);
 		fMyRootInterface->get_value("MonitorC_t",MonitorC_t,ns);
 		fMyRootInterface->get_value("MonitorC_pid",MonitorC_pid);
+		fMyRootInterface->get_value("MonitorC_tid",MonitorC_tid);
 		fMyRootInterface->get_value("MonitorC_x",MonitorC_x,cm);
 		fMyRootInterface->get_value("MonitorC_y",MonitorC_y,cm);
 		fMyRootInterface->get_value("MonitorC_z",MonitorC_z,cm);
@@ -218,6 +228,7 @@ int main(int argc, char* argv[]){
 					std::cout<<prefix_ParticleInfoStart
 				             <<"  Found Particle! i_mon = "<<i_mon
 				             <<", pid = "<<MonitorE_pid[i_mon]
+				             <<", tid = "<<MonitorE_tid[i_mon]
 				             <<", px = "<<MonitorE_px[i_mon]
 				             <<"MeV, py = "<<MonitorE_py[i_mon]
 				             <<"MeV, pz = "<<MonitorE_pz[i_mon]
@@ -230,6 +241,13 @@ int main(int argc, char* argv[]){
 				py=MonitorE_py[i_mon];
 				pz=MonitorE_pz[i_mon];
 				t=MonitorE_t[i_mon];
+				double t0 = 0;
+				for (int iMc = 0; iMc < McTruth_nTracks; iMc++){
+					if (McTruth_tid[iMc]==MonitorE_tid[i_mon]){
+						t0 = McTruth_time[iMc];
+						break;
+					}
+				}
 				fMyRootInterface->set_ovalue("x",x/mm);
 				fMyRootInterface->set_ovalue("y",y/mm);
 				fMyRootInterface->set_ovalue("z",z/mm);
@@ -237,6 +255,7 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->set_ovalue("py",py/MeV);
 				fMyRootInterface->set_ovalue("pz",pz/MeV);
 				fMyRootInterface->set_ovalue("t",t/ns);
+				fMyRootInterface->set_ovalue("t0",t0/ns);
 				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
 				fMyRootInterface->Fill();
 				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
@@ -249,6 +268,7 @@ int main(int argc, char* argv[]){
 					std::cout<<prefix_ParticleInfoStart
 				             <<"  Found Particle! i_mon = "<<i_mon
 				             <<", pid = "<<MonitorC_pid[i_mon]
+				             <<", tid = "<<MonitorC_tid[i_mon]
 				             <<", px = "<<MonitorC_px[i_mon]
 				             <<"MeV, py = "<<MonitorC_py[i_mon]
 				             <<"MeV, pz = "<<MonitorC_pz[i_mon]
@@ -261,6 +281,13 @@ int main(int argc, char* argv[]){
 				py=MonitorC_py[i_mon];
 				pz=MonitorC_pz[i_mon];
 				t=MonitorC_t[i_mon];
+				double t0 = 0;
+				for (int iMc = 0; iMc < McTruth_nTracks; iMc++){
+					if (McTruth_tid[iMc]==MonitorE_tid[i_mon]){
+						t0 = McTruth_time[iMc];
+						break;
+					}
+				}
 				fMyRootInterface->set_ovalue("x",x/mm);
 				fMyRootInterface->set_ovalue("y",y/mm);
 				fMyRootInterface->set_ovalue("z",z/mm);
@@ -268,6 +295,7 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->set_ovalue("py",py/MeV);
 				fMyRootInterface->set_ovalue("pz",pz/MeV);
 				fMyRootInterface->set_ovalue("t",t/ns);
+				fMyRootInterface->set_ovalue("t0",t0/ns);
 				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
 				fMyRootInterface->Fill();
 				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;

@@ -1,0 +1,111 @@
+#	kWhite =0,   kBlack =1,   kGray=920,
+#	kRed   =632, kGreen =416, kBlue=600, kYellow=400, kMagenta=616, kCyan=432,
+#	kOrange=800, kSpring=820, kTeal=840, kAzure =860, kViolet =880, kPink=900
+###########################################################################################################################
+
+#	TYPE     | Name
+	TreeName | tree
+
+#	TYPE    | Directory                                                                   | runname | #CPU | #job
+	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/BP2_g40cm10mm182gcm3_03T_QGSPBERTg4sim |         | 100  | 1
+
+#	TYPE    | Path
+#	oFILE   | /home/chen/MyWorkArea/g4sim/output/raw_g4sim.root
+
+#	TYPE    | Name                         | Type      | Vector?
+#	                                0:double;1:int;string:2
+	TBranch | evt_num                      | 1         | 0
+	TBranch | run_num                      | 1         | 0
+	TBranch | McTruth_nTracks              | 1         | 0
+	TBranch | McTruth_tid                  | 1         | 1
+	TBranch | McTruth_pid                  | 1         | 1
+	TBranch | McTruth_ptid                 | 1         | 1
+	TBranch | McTruth_x                    | 0         | 1
+	TBranch | McTruth_y                    | 0         | 1
+	TBranch | McTruth_z                    | 0         | 1
+	TBranch | McTruth_px                   | 0         | 1
+	TBranch | McTruth_py                   | 0         | 1
+	TBranch | McTruth_pz                   | 0         | 1
+	TBranch | McTruth_e                    | 0         | 1
+	TBranch | McTruth_time                 | 0         | 1
+	TBranch | McTruth_process              | 2         | 1
+	TBranch | McTruth_volume               | 2         | 1
+	TBranch | BLTMonitor_nHits             | 1         | 0
+	TBranch | BLTMonitor_t                 | 0         | 1
+	TBranch | BLTMonitor_e                 | 0         | 1
+	TBranch | BLTMonitor_tid               | 1         | 1
+	TBranch | BLTMonitor_pid               | 1         | 1
+	TBranch | BLTMonitor_x                 | 0         | 1
+	TBranch | BLTMonitor_y                 | 0         | 1
+	TBranch | BLTMonitor_z                 | 0         | 1
+	TBranch | BLTMonitor_px                | 0         | 1
+	TBranch | BLTMonitor_py                | 0         | 1
+	TBranch | BLTMonitor_pz                | 0         | 1
+	TBranch | Target_nHits                 | 1         | 0
+	TBranch | Target_t                     | 0         | 1
+	TBranch | Target_e                     | 0         | 1
+	TBranch | Target_tid                   | 1         | 1
+	TBranch | Target_pid                   | 1         | 1
+	TBranch | Target_x                     | 0         | 1
+	TBranch | Target_y                     | 0         | 1
+	TBranch | Target_z                     | 0         | 1
+	TBranch | Target_px                    | 0         | 1
+	TBranch | Target_py                    | 0         | 1
+	TBranch | Target_pz                    | 0         | 1
+	TBranch | Target_stopped               | 1         | 1
+	TBranch | CDCMonitor_nHits             | 1         | 0
+	TBranch | CDCMonitor_t                 | 0         | 1
+	TBranch | CDCMonitor_e                 | 0         | 1
+	TBranch | CDCMonitor_tid               | 1         | 1
+	TBranch | CDCMonitor_pid               | 1         | 1
+	TBranch | CDCMonitor_x                 | 0         | 1
+	TBranch | CDCMonitor_y                 | 0         | 1
+	TBranch | CDCMonitor_z                 | 0         | 1
+	TBranch | CDCMonitor_px                | 0         | 1
+	TBranch | CDCMonitor_py                | 0         | 1
+	TBranch | CDCMonitor_pz                | 0         | 1
+
+#	TYPE     | Name
+	oTreeName | t
+
+#	TYPE     | Name                         | Type      | Vector?
+#	                                0:double;1:int;string:2
+	oTBranch | evt_num                      | 1         | 0
+	oTBranch | run_num                      | 1         | 0
+	oTBranch | pid                          | 1         | 0
+	oTBranch | x                            | 0         | 0
+	oTBranch | y                            | 0         | 0
+	oTBranch | z                            | 0         | 0
+	oTBranch | px                           | 0         | 0
+	oTBranch | py                           | 0         | 0
+	oTBranch | pz                           | 0         | 0
+	oTBranch | t                            | 0         | 0
+
+#	TYPE    | NAME            | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
+	TH1D    | pa_total        | Total Beam #mu^{-}s                       | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pt_total        | Total Beam #mu^{-}s                       | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pz_total        | Total Beam #mu^{-}s                       | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | y_total         | Total Beam #mu^{-}s                       |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pa_CDC          | #mu^{-}s Reached CDC Region               | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pt_CDC          | #mu^{-}s Reached CDC Region               | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pz_CDC          | #mu^{-}s Reached CDC Region               | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | y_CDC           | #mu^{-}s Reached CDC Region               |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pa_Target       | #mu^{-}s Reached Stopping Target          | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pt_Target       | #mu^{-}s Reached Stopping Target          | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pz_Target       | #mu^{-}s Reached Stopping Target          | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | y_Target        | #mu^{-}s Reached Stopping Target          |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pa_stop         | #mu^{-}s Got Stopped in Stopping Target   | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pt_stop         | #mu^{-}s Got Stopped in Stopping Target   | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pz_stop         | #mu^{-}s Got Stopped in Stopping Target   | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | y_stop          | #mu^{-}s Got Stopped in Stopping Target   |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pa_recoil       | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pt_recoil       | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | pz_recoil       | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+	TH1D    | y_recoil        | #mu^{-}s Got Recoiled Back to BLT Monitor |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+
+#	TYPE    | NAME            | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
+	TH2D    | paVSy_total     | Total Beam #mu^{-}s                       | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
+	TH2D    | paVSy_CDC       | #mu^{-}s Reached CDC Region               | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
+	TH2D    | paVSy_Target    | #mu^{-}s Reached Stopping Target          | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
+	TH2D    | paVSy_stop      | #mu^{-}s Got Stopped in Stopping Target   | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
+	TH2D    | paVSy_recoil    | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180

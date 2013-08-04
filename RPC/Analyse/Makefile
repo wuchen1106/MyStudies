@@ -16,22 +16,39 @@ CXXFLAGS = -g -O2 -W -Wall
   # LIBDIR shows directories which contain library files coresponding to those headers. 
   # LIBS is the list of shared library files you would use.They can be found in LIBDIR. ( Names changing rule: libXXX.so to -lXXX )
 
+# Special packages:
+INCDIR += -I$(MYCOMMONTOOLSROOT)/MyRootInterface
+LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
+LIBS += -lMyRootInterface
+
+INCDIR += -I$(MYG4SIMROOT)/include
+LIBDIR += -L$(MYG4SIMROOT)/libs
+LIBS += -lMyRootInterface
+
 # Take root as an example. ( Root is a widely used package developed by CERN for analysing. )
-INCDIR = -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
-LIBDIR = $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
-LIBS = -pthread -lm -ldl -rdynamic
+INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
+LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
+LIBS += -pthread -lm -ldl -rdynamic
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-PROGRAM = RPC
+RPC = RPC
+BP = bp
 
 # Object list for user defined packages
 OBJ = 
 
-$(PROGRAM): $(OBJ) $(PROGRAM).C
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).C $(OBJ) -o $(PROGRAM)
+.PHONY: all
+all: $(RPC) $(BP)
+
+$(RPC): $(OBJ) $(RPC).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(RPC).cxx $(OBJ) -o $(RPC)
+
+$(BP): $(OBJ) $(BP).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(BP).cxx $(OBJ) -o $(BP)
+
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
@@ -39,7 +56,5 @@ $(PROGRAM): $(OBJ) $(PROGRAM).C
 .PHONY: clean
 clean:
 	$(RM) $(OBJ)
-	$(RM) $(PROGRAM)
-
-.PHONY: all
-all: $(PROGRAM)
+	$(RM) $(RPC)
+	$(RM) $(BP)

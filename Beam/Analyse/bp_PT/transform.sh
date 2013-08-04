@@ -1,7 +1,7 @@
 #!/bin/bash
 
 nFiles=100
-nSplit=1
+nSplit=50
 
 #for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
 for configName in "TPg40cm10mm182gcm3"
@@ -34,7 +34,7 @@ do
 					echo $PWD'/bp -b '$beginNo' -t '$totalNo' -m '$monitor' -P '$pid' -r '$monitor'.'$pname'.'$iSplit'.txt -i '$PWD'/input -d '$PWD'/result -p 100000 -v 5 > '$pbsfile'.log 2> '$pbsfile'.err' >> $pbsfile
 					chmod +x $pbsfile
 #					qsub -j oe -o /dev/null -q besq $pbsfile
-					nohup $pbsfile &
+					$pbsfile
 				done
 			done
 		done
