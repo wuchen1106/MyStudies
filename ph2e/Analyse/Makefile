@@ -18,32 +18,41 @@ CXXFLAGS = -g -O2 -W -Wall
 
 # Special packages:
 INCDIR += -I$(MYCOMMONTOOLSROOT)/MyRootInterface
+LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
+LIBS += -lMyRootInterface
+
+INCDIR += -I$(MYG4SIMROOT)/include
+LIBDIR += -L$(MYG4SIMROOT)/libs
+LIBS += -lMyRootInterface
 
 # Take root as an example. ( Root is a widely used package developed by CERN for analysing. )
 INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
 LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
 LIBS += -pthread -lm -ldl -rdynamic
-LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
-LIBS += -lMyRootInterface
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-PROGRAM = BeamProfile
+RMCE = RMCE
+PH2E = ph2e
+BM = bm
+FIT = fit
+HIT = hit
+COMPARE = Compare
 
 # Object list for user defined packages
 OBJ = 
 
 .PHONY: all
-all: $(PROGRAM)
+all: $(BM)
 
-$(PROGRAM): $(PROGRAM).cxx
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).cxx $(OBJ) -o $(PROGRAM)
+$(BM): $(OBJ) $(BM).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(BM).cxx $(OBJ) -o $(BM)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
 # Here is an example showing how to make clean and make a specified user defined package
 .PHONY: clean
 clean:
-	$(RM) $(PROGRAM)
+	$(RM) $(BM)
