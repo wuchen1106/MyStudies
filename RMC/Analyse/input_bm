@@ -6,9 +6,13 @@
 #	TYPE     | Name
 	TreeName | tree
 
-#	TYPE    | Directory                                                                                 | runname | #CPU | #job
-#	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/BM_g40cm10mm182gcm3_QGSPBERT                         |       | 50   | 1
-	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/BM_g40cm10mm182gcm3_03T_QGSPBERTHPg4sim_sasaki130731 |       | 50   | 1
+#	TYPE    | Directory                                                                                     | runname | #CPU | #job
+#	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/BM_g40cm10mm182gcm3_QGSPBERT                             |       | 50   | 1
+#	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/BM_g40cm10mm182gcm3_03T_QGSPBERTHPg4sim_sasaki130731     |       | 50   | 1
+#	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/BM_g40cm10mm182gcm3_03T_QGSPBERTHPg4sim_sasaki130731_675 |       | 50   | 1
+	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/BM_g40cm10mm182gcm3_03T_QGSPBERTHPg4sim_sasaki130731_750 |       | 50   | 1
+#	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/BM_g50cm10mm182gcm3_03T_QGSPBERTHPg4sim_sasaki130731_750 |       | 50   | 1
+#	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/BM_g30cm10mm182gcm3_03T_QGSPBERTHPg4sim_sasaki130731_750 |       | 50   | 1
 
 #	TYPE    | Path
 #	oFILE   | /home/chen/MyWorkArea/g4sim/output/raw_g4sim.root
