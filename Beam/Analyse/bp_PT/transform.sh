@@ -26,12 +26,10 @@ do
 					elif [ $pid = 211 ]; then pname="pip";
 					elif [ $pid = 22 ]; then pname="gamma";
 					fi
-#					./bp -m $monitor -P $pid -r $monitor"."$pname".txt" -n 1000 -p 1 -v 25 > result/$monitor"."$pname".txt.log"
-#					./bp -m $monitor -P $pid -r $monitor"."$pname".txt" -p 10000 -v 5 > result/$monitor"."$pname".txt.log"
 					pbsfile=$PWD'/result/'$configName'_'$monitor'_'$pname'_'$runname'_'$iSplit'.boss'
 					echo "#!/bin/bash" > $pbsfile
 					echo "source $MYHOME/.setana.sh" >> $pbsfile
-					echo $PWD'/bp -b '$beginNo' -t '$totalNo' -m '$monitor' -P '$pid' -r '$monitor'.'$pname'.'$iSplit'.txt -i '$PWD'/input -d '$PWD'/result -p 100000 -v 5 > '$pbsfile'.log 2> '$pbsfile'.err' >> $pbsfile
+					echo $PWD'/ip -b '$beginNo' -t '$totalNo' -m '$monitor' -P '$pid' -r '$monitor'.'$pname'.'$iSplit'.txt -i '$PWD'/input -d '$PWD'/result -p 100000 -v 5 > '$pbsfile'.log 2> '$pbsfile'.err' >> $pbsfile
 					chmod +x $pbsfile
 #					qsub -j oe -o /dev/null -q besq $pbsfile
 					$pbsfile

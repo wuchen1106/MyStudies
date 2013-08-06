@@ -20,6 +20,8 @@ std::string m_MonitorPlane;
 std::string m_runName;
 std::string m_input;
 std::string m_OutputDir;
+int m_beginNo = -1;
+int m_totalNo = -1;
 int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
@@ -42,7 +44,7 @@ int main(int argc, char* argv[]){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hbv:n:m:r:d:p:P:i:"))!=-1){
+	while((result=getopt(argc,argv,"hb:t:v:n:m:r:d:p:P:i:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -64,8 +66,12 @@ int main(int argc, char* argv[]){
 				printf("verbose level: %d\n",verbose);
 				break;
 			case 'b':
-				backup = true;
-				printf("restore backup file!\n");
+				m_beginNo = atoi(optarg);
+				printf("CPU index starts from%d\n",m_beginNo);
+				break;
+			case 't':
+				m_totalNo = atoi(optarg);
+				printf("Total CPU numbers%d\n",m_totalNo);
 				break;
 			case 'n':
 				nEvents = atoi(optarg);
@@ -129,6 +135,10 @@ int main(int argc, char* argv[]){
 	//##########################Prepare histograms############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
 	fMyRootInterface->read(m_input);
+	if (m_beginNo!=-1&&m_totalNo!=-1){
+		fMyRootInterface->set_beginCPU(0,m_beginNo);
+		fMyRootInterface->set_NCPU(0,m_totalNo);
+	}
 	fMyRootInterface->set_OutputName(m_runName);
 	fMyRootInterface->init();
 
@@ -192,64 +202,37 @@ int main(int argc, char* argv[]){
 
 		fMyRootInterface->get_value("evt_num",evt_num);
 		fMyRootInterface->get_value("run_num",run_num);
-		if (m_MonitorPlane=="ptacs_shielding"){
-			fMyRootInterface->get_value("PTACSMonitor_nHits",Monitor_nHits);
-			fMyRootInterface->get_value("PTACSMonitor_t",Monitor_t,ns);
-			fMyRootInterface->get_value("PTACSMonitor_tid",Monitor_tid);
-			fMyRootInterface->get_value("PTACSMonitor_pid",Monitor_pid);
-			fMyRootInterface->get_value("PTACSMonitor_ppid",Monitor_ppid);
-			fMyRootInterface->get_value("PTACSMonitor_oprocess",Monitor_oprocess);
-			fMyRootInterface->get_value("PTACSMonitor_ovolName",Monitor_ovolName);
-			fMyRootInterface->get_value("PTACSMonitor_ox",Monitor_ox,cm);
-			fMyRootInterface->get_value("PTACSMonitor_oy",Monitor_oy,cm);
-			fMyRootInterface->get_value("PTACSMonitor_oz",Monitor_oz,cm);
-			fMyRootInterface->get_value("PTACSMonitor_opx",Monitor_opx,GeV);
-			fMyRootInterface->get_value("PTACSMonitor_opy",Monitor_opy,GeV);
-			fMyRootInterface->get_value("PTACSMonitor_opz",Monitor_opz,GeV);
-			fMyRootInterface->get_value("PTACSMonitor_x",Monitor_x,cm);
-			fMyRootInterface->get_value("PTACSMonitor_y",Monitor_y,cm);
-			fMyRootInterface->get_value("PTACSMonitor_z",Monitor_z,cm);
-			fMyRootInterface->get_value("PTACSMonitor_px",Monitor_px,GeV);
-			fMyRootInterface->get_value("PTACSMonitor_py",Monitor_py,GeV);
-			fMyRootInterface->get_value("PTACSMonitor_pz",Monitor_pz,GeV);
-		}
-		else if (m_MonitorPlane=="blt0"){
-			fMyRootInterface->get_value("MT1Monitor_nHits",Monitor_nHits);
-			fMyRootInterface->get_value("MT1Monitor_t",Monitor_t,ns);
-			fMyRootInterface->get_value("MT1Monitor_tid",Monitor_tid);
-			fMyRootInterface->get_value("MT1Monitor_pid",Monitor_pid);
-			fMyRootInterface->get_value("MT1Monitor_ppid",Monitor_ppid);
-			fMyRootInterface->get_value("MT1Monitor_oprocess",Monitor_oprocess);
-			fMyRootInterface->get_value("MT1Monitor_ovolName",Monitor_ovolName);
-			fMyRootInterface->get_value("MT1Monitor_ox",Monitor_ox,cm);
-			fMyRootInterface->get_value("MT1Monitor_oy",Monitor_oy,cm);
-			fMyRootInterface->get_value("MT1Monitor_oz",Monitor_oz,cm);
-			fMyRootInterface->get_value("MT1Monitor_opx",Monitor_opx,GeV);
-			fMyRootInterface->get_value("MT1Monitor_opy",Monitor_opy,GeV);
-			fMyRootInterface->get_value("MT1Monitor_opz",Monitor_opz,GeV);
-			fMyRootInterface->get_value("MT1Monitor_x",Monitor_x,cm);
-			fMyRootInterface->get_value("MT1Monitor_y",Monitor_y,cm);
-			fMyRootInterface->get_value("MT1Monitor_z",Monitor_z,cm);
-			fMyRootInterface->get_value("MT1Monitor_px",Monitor_px,GeV);
-			fMyRootInterface->get_value("MT1Monitor_py",Monitor_py,GeV);
-			fMyRootInterface->get_value("MT1Monitor_pz",Monitor_pz,GeV);
-		}
-		else{
-			std::cout<<"Cannot recognize this Monitor plane: \""<<m_MonitorPlane<<"\"!!!"<<std::endl;
-			return -1;
-		}
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_nHits",Monitor_nHits);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_t",Monitor_t,ns);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_tid",Monitor_tid);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_pid",Monitor_pid);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ppid",Monitor_ppid);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oprocess",Monitor_oprocess);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ovolName",Monitor_ovolName);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ox",Monitor_ox,cm);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oy",Monitor_oy,cm);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oz",Monitor_oz,cm);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opx",Monitor_opx,GeV);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opy",Monitor_opy,GeV);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opz",Monitor_opz,GeV);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_x",Monitor_x,cm);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_y",Monitor_y,cm);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_z",Monitor_z,cm);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_px",Monitor_px,GeV);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_py",Monitor_py,GeV);
+		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_pz",Monitor_pz,GeV);
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
 
 		// find particles
-		std::vector<int> hit_iMon;
-		std::vector<bool> goot_hit;
-		std::vector<int> hit_iMc;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"###Getting information"<<std::endl;
 
 		bool filled = false;
 		for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
-			if (Monitor_pid[i_mon] == PDGEncoding ){
+			if (!PDGEncoding // all particles
+				||PDGEncoding==-1&&Monitor_pid[i_mon]>=1e7 // only nuclears
+				||PDGEncoding==1&&Monitor_pid[i_mon]<1e7 // only elementary particles
+				||Monitor_pid[i_mon] == PDGEncoding){
 				if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 					std::cout<<prefix_ParticleInfoStart
 				             <<"  Found Particle! i_mon = "<<i_mon
@@ -261,6 +244,7 @@ int main(int argc, char* argv[]){
 				             <<"MeV"
 						     <<std::endl;
 
+				/*
 				// going_downstream ?
 				bool going_downstream=false;
 				if (m_MonitorPlane=="blt0"){
@@ -294,19 +278,20 @@ int main(int argc, char* argv[]){
 					std::cout<<prefix_ParticleInfoStart
 						 <<"Comes from upstream"
 						 <<std::endl;
+				*/
 
 				// Fill
 				pid=Monitor_pid[i_mon];
 				tid=Monitor_tid[i_mon];
 				ppid=Monitor_ppid[i_mon];
-				if (m_MonitorPlane=="blt0"){
-					x=Monitor_x[i_mon];
-					y=Monitor_y[i_mon];
-					z=Monitor_z[i_mon];
-					px=Monitor_px[i_mon];
-					py=Monitor_py[i_mon];
-					pz=Monitor_pz[i_mon];
-				}
+//				if (m_MonitorPlane=="blt0"){
+//					x=Monitor_x[i_mon];
+//					y=Monitor_y[i_mon];
+//					z=Monitor_z[i_mon];
+//					px=Monitor_px[i_mon];
+//					py=Monitor_py[i_mon];
+//					pz=Monitor_pz[i_mon];
+//				}
 //				else if (m_MonitorPlane == "ptacs_shielding"){
 //					x=Monitor_z[i_mon]+5790.5*mm;
 //					y=Monitor_y[i_mon];
@@ -315,14 +300,12 @@ int main(int argc, char* argv[]){
 //					py=Monitor_py[i_mon];
 //					pz=-Monitor_px[i_mon];
 //				}
-				else if (m_MonitorPlane == "ptacs_shielding"){
-					x=Monitor_x[i_mon];
-					y=Monitor_y[i_mon];
-					z=Monitor_z[i_mon];
-					px=Monitor_px[i_mon];
-					py=Monitor_py[i_mon];
-					pz=Monitor_pz[i_mon];
-				}
+				x=Monitor_x[i_mon];
+				y=Monitor_y[i_mon];
+				z=Monitor_z[i_mon];
+				px=Monitor_px[i_mon];
+				py=Monitor_py[i_mon];
+				pz=Monitor_pz[i_mon];
 				t=Monitor_t[i_mon];
 //				ox=Monitor_oz[i_mon]+5790.5*mm;
 //				oy=Monitor_oy[i_mon];
@@ -418,7 +401,9 @@ void print_usage(char* prog_name)
 	fprintf(stderr,"\t -h\n");
 	fprintf(stderr,"\t\t Usage message.\n");
 	fprintf(stderr,"\t -b\n");
-	fprintf(stderr,"\t\t restore backup file.\n");
+	fprintf(stderr,"\t\tCPU index starts from\n");
+	fprintf(stderr,"\t -t\n");
+	fprintf(stderr,"\t\tTotal CPU numbers\n");
 	fprintf(stderr,"[example]\n");
 	fprintf(stderr,"\t\t%s -m ab -v 20 -n 100\n",prog_name);
 }

@@ -1,6 +1,6 @@
-GEOCARDROOT       = geometry_ip
+GEOCARDROOT       = geometry_PTACS
 MAGFIELDCARDROOT  = MagField_PT
-GENFILEROOT       = gen_ip_g40cm6mm
+GENFILEROOT       = gen_ip
 OUTCARDROOT       = output_beam
 
 ##geometry preset
@@ -22,4 +22,4 @@ setCut_default.mac
 #run
 run_configure
 1
-500000
+10000
