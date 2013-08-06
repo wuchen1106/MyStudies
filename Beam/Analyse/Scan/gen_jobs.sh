@@ -1,8 +1,8 @@
 #!/bin/bash
 
-for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
+for monitor in "blt0" "ptacs_shielding";
 do
-	for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
+	for configName in "g60cm6mm170gcm3" "g40cm10mm182gcm3" "g30cm10mm182gcm3" "g50cm10mm182gcm3" "t16cm6mm"
 	do
 		for pid in 11 13 -211 2112;
 		do
@@ -18,7 +18,7 @@ do
 				echo "source $MYHOME/.setana.sh" >> $pbsfile
 				fileexist=false
 				if [ $runname == "Andy" ]; then
-					if [ $configName == "g60cm6mm_170gcm3" ]; then
+					if [ $configName == "g60cm6mm170gcm3" ]; then
 						file="$MYDATA/other/Andy/graphite-proton-target_length-60cm.root"
 					else
 						file="DUMMY"

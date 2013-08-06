@@ -114,26 +114,33 @@ int main(int argc, char* argv[]){
 		content += ":" + m_monitor + ".position.fZ*10-2790.5"; // to CdcWithBLT
 	}
 	else if (m_monitor == "ptacs_beampipe"){
-		content += ":" + m_monitor + ".position.fX*10";
+		content += ":-" + m_monitor + ".position.fZ*10+4505.5";
 		content += ":" + m_monitor + ".position.fY*10";
-		content += ":" + m_monitor + ".position.fZ*10+2844.5"; // to comet_g4 coordinate
+		content += ":" + m_monitor + ".position.fX*10-5790.5"; // to CometPhase1
 	}
 	else if (m_monitor == "ptacs_shielding"){
-		content += ":" + m_monitor + ".position.fX*10";
+		content += ":-" + m_monitor + ".position.fZ*10+6600";
 		content += ":" + m_monitor + ".position.fY*10";
-		content += ":" + m_monitor + ".position.fZ*10"; // to comet_g4 coordinate
+		content += ":" + m_monitor + ".position.fX*10-5790.5"; // to CometPhase1
 	}
 	else {
 		printf("Cannot recogonize this  monitor plane \"%s\"\n",m_monitor.c_str());
 		return -1;
 	}
-	content += ":" + m_monitor + ".direction.fX*" + m_monitor + ".momentum";
-	content += ":" + m_monitor + ".direction.fY*" + m_monitor + ".momentum";
-	content += ":" + m_monitor + ".direction.fZ*" + m_monitor + ".momentum";
+	if (m_monitor == "ts2_0"||m_monitor=="blt1"||m_monitor=="blt0"){
+		content += ":" + m_monitor + ".direction.fX*" + m_monitor + ".momentum";
+		content += ":" + m_monitor + ".direction.fY*" + m_monitor + ".momentum";
+		content += ":" + m_monitor + ".direction.fZ*" + m_monitor + ".momentum";
+	}
+	else if (m_monitor == "ptacs_beampipe" || m_monitor == "ptacs_shielding"){
+		content += ":-" + m_monitor + ".direction.fZ*" + m_monitor + ".momentum";
+		content += ":" + m_monitor + ".direction.fY*" + m_monitor + ".momentum";
+		content += ":" + m_monitor + ".direction.fX*" + m_monitor + ".momentum";
+	}
 	content += ":" + m_monitor + ".globalTime";
-	content += ":" + m_monitor + ".origin.fX*10";
+	content += ":-" + m_monitor + ".origin.fZ*10+7350";
 	content += ":" + m_monitor + ".origin.fY*10";
-	content += ":" + m_monitor + ".origin.fZ*10";
+	content += ":" + m_monitor + ".origin.fX*10-5790.5";
 
 	std::string cutcont = m_monitor + ".PDGEncoding==";
 	buff.str("");
