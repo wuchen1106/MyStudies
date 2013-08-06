@@ -91,20 +91,20 @@ int main(int argc, char* argv[]){
 
 	//=======================================
 	//************Verbose Control***********
-	int Verbose_SectorInfo = 5; //大概的流程情况
+	int Verbose_SectorInfo = 5; //å¤§æ¦çæµç¨æåµ
 	std::string prefix_SectorInfo = "### ";
-	int Verbose_HistInfo = 10; //有哪些hist,什么时候输出了，参数如何
+	int Verbose_HistInfo = 10; //æåªäºhist,ä»ä¹æ¶åè¾åºäºï¼åæ°å¦ä½
 	std::string prefix_HistInfo= "  [Histograms] ";
-	int Verbose_Statistics = 10; //跟统计相关的(效率，分辨，粒子鉴别的情况)
+	int Verbose_Statistics = 10; //è·ç»è®¡ç¸å³ç(æçï¼åè¾¨ï¼ç²å­é´å«çæåµ)
 	std::string prefix_Statistics="  [Statistics] ";
-	int Verbose_FileInfo = 10; //有哪些FileList,都有多少file
+	int Verbose_FileInfo = 10; //æåªäºFileList,é½æå¤å°file
 	std::string prefix_FileInfo="  [FileInfo] ";
 	int Verbose_EffInfo = 15; //Efficiency info
 	std::string prefix_EffInfo="  [EffInfo] ";
-	int Verbose_EventInfo = 20; //每个event的基本流程
+	int Verbose_EventInfo = 20; //æ¯ä¸ªeventçåºæ¬æµç¨
 	std::string prefix_EventInfoStart="    =>[EventInfo] ";
 	std::string prefix_EventInfo="      [EventInfo] ";
-	int Verbose_ParticleInfo=25; //每个particle的基本信息
+	int Verbose_ParticleInfo=25; //æ¯ä¸ªparticleçåºæ¬ä¿¡æ¯
 	std::string prefix_ParticleInfoStart="    ->[ParticleInfo]";
 	std::string prefix_ParticleInfo="      [ParticleInfo]";
 
@@ -166,7 +166,6 @@ int main(int argc, char* argv[]){
 		double opx;
 		double opy;
 		double opz;
-		double ot;
 
 		// Get info
 		int evt_num;
@@ -308,22 +307,35 @@ int main(int argc, char* argv[]){
 					py=Monitor_py[i_mon];
 					pz=Monitor_pz[i_mon];
 				}
+//				else if (m_MonitorPlane == "ptacs_shielding"){
+//					x=Monitor_z[i_mon]+5790.5*mm;
+//					y=Monitor_y[i_mon];
+//					z=-Monitor_x[i_mon]+6400*mm;
+//					px=Monitor_pz[i_mon];
+//					py=Monitor_py[i_mon];
+//					pz=-Monitor_px[i_mon];
+//				}
 				else if (m_MonitorPlane == "ptacs_shielding"){
-					x=Monitor_z[i_mon]+5790.5*mm;
+					x=Monitor_x[i_mon];
 					y=Monitor_y[i_mon];
-					z=-Monitor_x[i_mon]+6400*mm;
-					px=Monitor_pz[i_mon];
+					z=Monitor_z[i_mon];
+					px=Monitor_px[i_mon];
 					py=Monitor_py[i_mon];
-					pz=-Monitor_px[i_mon];
+					pz=Monitor_pz[i_mon];
 				}
 				t=Monitor_t[i_mon];
-				ox=Monitor_oz[i_mon]+5790.5*mm;
+//				ox=Monitor_oz[i_mon]+5790.5*mm;
+//				oy=Monitor_oy[i_mon];
+//				oz=-Monitor_ox[i_mon]+7350*mm;
+//				opx=Monitor_opz[i_mon];
+//				opy=Monitor_opy[i_mon];
+//				opz=-Monitor_opx[i_mon];
+				ox=Monitor_ox[i_mon];
 				oy=Monitor_oy[i_mon];
-				oz=-Monitor_ox[i_mon]+7350*mm;
-				opx=Monitor_opz[i_mon];
+				oz=Monitor_oz[i_mon];
+				opx=Monitor_opx[i_mon];
 				opy=Monitor_opy[i_mon];
-				opz=-Monitor_opx[i_mon];
-				ot=0;
+				opz=Monitor_opz[i_mon];
 				process=Monitor_oprocess[i_mon];
 				volume=Monitor_ovolName[i_mon];
 				fMyRootInterface->set_ovalue("evt_num",evt_num);
@@ -344,7 +356,6 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->set_ovalue("opx",opx/MeV);
 				fMyRootInterface->set_ovalue("opy",opy/MeV);
 				fMyRootInterface->set_ovalue("opz",opz/MeV);
-				fMyRootInterface->set_ovalue("ot",ot/ns);
 				fMyRootInterface->set_ovalue("process",process);
 				fMyRootInterface->set_ovalue("volume",volume);
 				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
