@@ -4,13 +4,13 @@ nFiles=100
 nSplit=1
 
 #for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
-for configName in "g40cm10mm182gcm3"
+for configName in "g40cm10mm"
 do
 #	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201" "QGSPBERTg4sim"
 	for runname in "QGSPBERTHPg4sim"
 	do
 #		for monitor in "MT1" "PTACS";
-		for monitor in "PTACS"
+		for monitor in "MT1"
 		do
 #			for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
 			for pid in -211;
@@ -37,9 +37,9 @@ do
 					pbsfile=$PWD'/result/'$name'.boss'
 					echo "#!/bin/bash" > $pbsfile
 					echo "source $MYHOME/.setana.sh" >> $pbsfile
-					echo $PWD'/ip -b '$beginNo' -t '$totalNo' -m '$monitor' -P '$pid' -r '$name' -i '$PWD'/input -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
+					echo $PWD'/ip -b '$beginNo' -t '$totalNo' -m '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$configName' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 					chmod +x $pbsfile
-					qsub -j oe -o /dev/null -q besq $pbsfile
+					qsub -j oe -o /dev/null -q shortq $pbsfile
 				done
 			done
 		done
