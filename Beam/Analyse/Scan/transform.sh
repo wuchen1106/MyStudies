@@ -22,24 +22,27 @@ do_trans(){
 }
 
 #for configName in "g40cm10mm182gcm3" "g60cm6mm170gcm3" "t16cm6mm"
-for configName in "g40cm10mm182gcm3"
+for configName in "g40cm10mm"
 do
 #	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201"
-	for runname in "QGSPBERT"
+	for runname in "QGSPBERTcometg4"
 	do
-		for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
+#		for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
+		for monitor in "blt0" "ptacs_shielding";
 		do
 			for pname in "em" "mum" "n0" "pim"
 			do
-				if [ monitor = "blt0" ]; then
+				if [ $monitor = "blt0" ]; then
 					monitor_name="MT1"
-				elif [ monitor = "ptacs_shielding" ]; then
+				elif [ $monitor = "ptacs_shielding" ]; then
 					monitor_name="PTACS"
 				fi
-				logfile="../../result/$configName/$runname/$configName'_'$monitor'_'$pname'_'$runname.bosslog"
-				output="../../result/$configName/$runname/$configName'_'$monitor'_'$pname'_'$runname"
+				logfile=../../result/$configName/$runname/$configName.$monitor.$pname.$runname.bosslog
+				output=../../result/$configName/$runname/$configName.$monitor_name.$pname.$runname
 				if [ -e $logfile ]; then
 					do_trans $logfile $output
+				else
+					echo $logfile does not exist
 				fi
 			done
 		done
