@@ -8,7 +8,7 @@
 
 #	TYPE    | Directory                                                                         | runname | #CPU | #job
 #	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/PT_g40cm10mm                         |         | 100  | 1
-	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/MT1_g40cm10mm_03T_pim                |         | 100  | 1
+	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/MT1_g40cm10mm_03T_EP                 |         | 100  | 1
 
 #	TYPE    | Path
 #	oFILE   | /home/chen/MyWorkArea/g4sim/output/raw_g4sim.root
@@ -61,28 +61,11 @@
 
 #	TYPE     | Name                         | Type      | Vector?
 	                                0:double;1:int;string:2
-#	oTBranch | evt_num                      | 1         | 0
-#	oTBranch | run_num                      | 1         | 0
-#	oTBranch | pid                          | 1         | 0
-#	oTBranch | tid                          | 1         | 0
-#	oTBranch | ppid                         | 1         | 0
-#	oTBranch | x                            | 0         | 0
-#	oTBranch | y                            | 0         | 0
-#	oTBranch | z                            | 0         | 0
-#	oTBranch | px                           | 0         | 0
-#	oTBranch | py                           | 0         | 0
-#	oTBranch | pz                           | 0         | 0
-#	oTBranch | t                            | 0         | 0
-#	oTBranch | ox                           | 0         | 0
-#	oTBranch | oy                           | 0         | 0
-#	oTBranch | oz                           | 0         | 0
-#	oTBranch | opx                          | 0         | 0
-#	oTBranch | opy                          | 0         | 0
-#	oTBranch | opz                          | 0         | 0
-#	oTBranch | process                      | 2         | 0
-#	oTBranch | volume                       | 2         | 0
-
+	oTBranch | evt_num                      | 1         | 0
+	oTBranch | run_num                      | 1         | 0
 	oTBranch | pid                          | 1         | 0
+	oTBranch | tid                          | 1         | 0
+	oTBranch | ppid                         | 1         | 0
 	oTBranch | x                            | 0         | 0
 	oTBranch | y                            | 0         | 0
 	oTBranch | z                            | 0         | 0
@@ -90,3 +73,20 @@
 	oTBranch | py                           | 0         | 0
 	oTBranch | pz                           | 0         | 0
 	oTBranch | t                            | 0         | 0
+	oTBranch | ox                           | 0         | 0
+	oTBranch | oy                           | 0         | 0
+	oTBranch | oz                           | 0         | 0
+	oTBranch | opx                          | 0         | 0
+	oTBranch | opy                          | 0         | 0
+	oTBranch | opz                          | 0         | 0
+	oTBranch | process                      | 2         | 0
+	oTBranch | volume                       | 2         | 0
+
+#	oTBranch | pid                          | 1         | 0
+#	oTBranch | x                            | 0         | 0
+#	oTBranch | y                            | 0         | 0
+#	oTBranch | z                            | 0         | 0
+#	oTBranch | px                           | 0         | 0
+#	oTBranch | py                           | 0         | 0
+#	oTBranch | pz                           | 0         | 0
+#	oTBranch | t                            | 0         | 0

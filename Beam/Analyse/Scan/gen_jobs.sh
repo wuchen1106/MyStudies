@@ -2,16 +2,20 @@
 
 for monitor in "blt0" "ptacs_shielding";
 do
-	for configName in "g60cm6mm170gcm3" "g40cm10mm182gcm3" "g30cm10mm182gcm3" "g50cm10mm182gcm3" "t16cm6mm"
+#	for configName in "g60cm6mm170gcm3" "g40cm10mm" "g30cm10mm" "g50cm10mm" "t16cm6mm"
+	for configName in "g40cm10mm"
 	do
-		for pid in 11 13 -211 2112;
+#		for pid in 11 13 -211 2112;
+		for pid in 0;
 		do
 			if [ $pid = 11 ]; then pname="em";
 			elif [ $pid = 13 ]; then pname="mum";
 			elif [ $pid = -211 ]; then pname="pim";
 			elif [ $pid = 2112 ]; then pname="n0";
+			elif [ $pid = 0 ]; then pname="all";
 			fi
-			for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201"
+#			for runname in "Andy" "Hayashi" "QGSPBERTcometg4" "QGSPBERTHPcometg4" "originalcometg4" "modifiedcometg4" "nomueccometg4" "QGSPBERT49302cometg4" "QGSPBERT49201cometg4"
+			for runname in "QGSPBERTcometg4"
 			do
 				pbsfile=$configName.$monitor.$pname.$runname.boss
 				echo "#!/bin/bash" > $pbsfile

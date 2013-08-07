@@ -142,12 +142,13 @@ int main(int argc, char* argv[]){
 	content += ":" + m_monitor + ".origin.fY*10";
 	content += ":" + m_monitor + ".origin.fX*10-5790.5";
 
-	std::string cutcont = m_monitor + ".PDGEncoding==";
-	buff.str("");
-	buff.clear();
-	buff<<m_pid;
-	cutcont += buff.str();
-	cutcont += "&&" + m_monitor + ".direction.fZ>0";
+	std::string cutcont = m_monitor + ".direction.fZ>0";
+	if (m_pid){
+		buff.str("");
+		buff.clear();
+		buff<<m_monitor<<".PDGEncoding=="<<m_pid;
+		cutcont += "&&" + buff.str();
+	}
 	if (m_monitor == "ts2_0"){
 		cutcont += "&&" + m_monitor + ".origin.fX<450.15";
 	}
