@@ -1,19 +1,34 @@
 #!/bin/bash
-
-for configName in "g40cm10mm182gcm3" "g60cm6mm_170gcm3" "g60cm6mm_200gcm3" "t16cm6mm"
+for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
 do
-	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP" "original" "modified" "nomuec" "QGSPBERT49302" "QGSPBERT49201"
+	for app in "A" "H" "cg4" "g4s"
 	do
-		for monitor in "ts2_0" "blt1" "blt0" "ptacs_beampipe" "ptacs_shielding";
+		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
 		do
-			for pname in "em" "mum" "n0" "pim"
+#			for pname in "em" "mum" "n0" "pim"
+			for pname in "all"
 			do
-				logfile="result/$configName.$monitor.$pname.$runname.bosslog"
-				directory="../../result/$configName/$runname/"
-				if [ -e $logfile ]; then
-					mv $logfile $directory
-				fi
+				for monitor in "PTACS" "MT1"
+				do
+					if [ $monitor = "PTACS" ]; then
+						rootfile="result/"$monitor".$pname."$Target"."$app"."$phys".root"
+						rootdir="../../result"
+						if [ -e $rootfile ]; then
+							mv $rootfile $rootdir
+						fi
+					elif [ $monitor = "MT1" ]; then
+						for DF in "03T" "018T"
+						do
+							rootfile="result/"$monitor".$pname."$Target"."$DF"."$app"."$phys".root"
+							rootdir="../../result"
+							if [ -e $rootfile ]; then
+								mv $rootfile $rootdir
+							fi
+						done
+					fi
+				done
 			done
 		done
 	done
 done
+

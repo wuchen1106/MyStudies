@@ -141,6 +141,7 @@ int main(int argc, char* argv[]){
 	content += ":-" + m_monitor + ".origin.fZ*10+7350";
 	content += ":" + m_monitor + ".origin.fY*10";
 	content += ":" + m_monitor + ".origin.fX*10-5790.5";
+	content += ":" + m_monitor + ".PDGEncoding";
 
 	std::string cutcont = m_monitor + ".direction.fZ>0";
 	if (m_pid){

@@ -30,20 +30,25 @@ LIBS += -lMyRootInterface
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-PROGRAM = BeamProfile
+BEAMPROFILE = BeamProfile
+GETENTRIES = GetEntries
 
 # Object list for user defined packages
 OBJ = 
 
 .PHONY: all
-all: $(PROGRAM)
+all: $(BEAMPROFILE) $(GETENTRIES)
 
-$(PROGRAM): $(PROGRAM).cxx
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROGRAM).cxx $(OBJ) -o $(PROGRAM)
+$(BEAMPROFILE): $(BEAMPROFILE).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(BEAMPROFILE).cxx $(OBJ) -o $(BEAMPROFILE)
+
+$(GETENTRIES): $(GETENTRIES).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(GETENTRIES).cxx $(OBJ) -o $(GETENTRIES)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
 # Here is an example showing how to make clean and make a specified user defined package
 .PHONY: clean
 clean:
-	$(RM) $(PROGRAM)
+	$(RM) $(BEAMPROFILE)
+	$(RM) $(GETENTRIES)
