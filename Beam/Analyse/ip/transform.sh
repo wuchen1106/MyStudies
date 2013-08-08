@@ -4,13 +4,13 @@ nFiles=100
 nSplit=1
 
 #for configName in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm_170gcm3"
-for configName in "g40cm10mm"
+for configName in "t16cm6mm"
 do
 #	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP"  "QGSPBERTcometg4" "QGSPBERTHPcometg4" "originalcometg4" "modifiedcometg4" "nomueccometg4" "QGSPBERT49302cometg4" "QGSPBERT49201cometg4"
-	for runname in "QGSPBERTHP"
+	for runname in "QBH"
 	do
 #		for monitor in "MT1" "PTACS";
-		for monitor in "PTACS"
+		for monitor in "MT1"
 		do
 #			for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
 			for pid in 0;
