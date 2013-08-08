@@ -7,8 +7,8 @@
 	TreeName | tree
 
 #	TYPE    | Directory                                                                         | runname | #CPU | #job
-	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/PT_g40cm10mm                         |         | 100  | 1
-#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/MT1_g40cm10mm_03T_EP                 |         | 100  | 1
+	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/PT_g40cm10mm                         |         | 100  | 1
+#	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/MT1_g40cm10mm_03T_EP                 |         | 100  | 1
 
 #	TYPE    | Path
 #	oFILE   | /home/chen/MyWorkArea/g4sim/output/raw_g4sim.root

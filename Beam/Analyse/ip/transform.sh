@@ -7,7 +7,7 @@ nSplit=1
 for configName in "g40cm10mm"
 do
 #	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP"  "QGSPBERTcometg4" "QGSPBERTHPcometg4" "originalcometg4" "modifiedcometg4" "nomueccometg4" "QGSPBERT49302cometg4" "QGSPBERT49201cometg4"
-	for runname in "QGSPBERTHP"
+	for runname in "QB"
 	do
 #		for monitor in "MT1" "PTACS";
 		for monitor in "PTACS"
@@ -39,7 +39,8 @@ do
 					echo "source $MYHOME/.setana.sh" >> $pbsfile
 					echo $PWD'/ip -b '$beginNo' -t '$totalNo' -m '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$configName' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 					chmod +x $pbsfile
-					qsub -j oe -o /dev/null -q midq $pbsfile
+#					qsub -j oe -o /dev/null -q midq $pbsfile
+					$pbsfile
 				done
 			done
 		done

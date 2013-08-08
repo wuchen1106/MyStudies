@@ -1,9 +1,12 @@
 #!/bin/bash
-for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
+#for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
+for Target in "g40cm10mm"
 do
-	for app in "A" "H" "cg4" "g4s"
+#	for app in "A" "H" "cg4" "g4s"
+	for app in "cg4"
 	do
-		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
+#		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
+		for phys in "QB"
 		do
 			if [ $app == "A" ]; then
 				nEvents=1000000
@@ -40,8 +43,7 @@ do
 			fi
 			for monitor in "PTACS" "MT1"
 			do
-#				for pname in "em" "mum" "pim" "n0"
-				for pname in "mum"
+				for pname in "em" "mum" "pim" "n0"
 				do
 					if [ $pname = em ]; then pname_inTitle="e^{-}";
 					elif [ $pname = mum ]; then pname_inTitle="#mu^{-}";
@@ -51,7 +53,8 @@ do
 					prefix=$monitor"."$pname
 					suffix="."$Target"."$app"."$phys
 					pbsfile="$PWD/result/"$prefix$suffix".boss"
-					directory="$PWD/../../result/$Target/$app/$phys/$monitor/"
+#					directory="$PWD/../../result/$Target/$app/$phys/$monitor/"
+					directory="$PWD/../../result/$Target"
 					rootfile=$directory$prefix$suffix".root"
 					inputfile="input.$prefix$suffix"
 					if [ -e $rootfile ]; then
@@ -148,6 +151,7 @@ do
 						echo "$PWD/BeamProfile -t \"$pname_inTitle on $monitor\" -s $nEvents -m argu -x $prefix -y $suffix -l 1e-7 $rootfile -i $PWD/$inputfile -d $PWD/result > $pbsfile""log 2> $pbsfile""err" >> $pbsfile
 						chmod +x $pbsfile
 #						qsub -j oe -o /dev/null -q midq $pbsfile
+						$pbsfile
 					else
 						echo $rootfile does not exit!
 					fi

@@ -24,11 +24,14 @@ echo Hello
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
 for Target in "g40cm10mm"
 do
-	for app in "A" "H" "cg4"
+#	for app in "A" "H" "cg4"
+	for app in "cg4"
 	do
-		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
+#		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
+		for phys in "QB"
 		do
-			for monitor in "MT1" "PTACS";
+#			for monitor in "MT1" "PTACS";
+			for monitor in "PTACS";
 			do
 #				for pname in "em" "mum" "n0" "pim"
 				for pname in "all"
@@ -45,7 +48,8 @@ do
 							echo "out=$output" >> $pbsfile
 							echo "$do_trans" >> $pbsfile
 							chmod +x $pbsfile
-							qsub -j oe -o /dev/null -q midq $pbsfile
+							$pbsfile
+#							qsub -j oe -o /dev/null -q midq $pbsfile
 						else
 							echo $logfile does not exist
 						fi
@@ -63,7 +67,8 @@ do
 								echo "out=$output" >> $pbsfile
 								echo "$do_trans" >> $pbsfile
 								chmod +x $pbsfile
-								qsub -j oe -o /dev/null -q midq $pbsfile
+								$pbsfile
+#								qsub -j oe -o /dev/null -q midq $pbsfile
 							else
 								echo $logfile does not exist
 							fi
