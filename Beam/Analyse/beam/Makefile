@@ -30,7 +30,7 @@ LIBS += -lMyRootInterface
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-PROJECT = ip
+PROJECT = beam
 
 # Object list for user defined packages
 OBJ = 

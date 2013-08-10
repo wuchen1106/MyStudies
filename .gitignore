@@ -37,7 +37,7 @@ RPC/Analyse/RPC
 RMC/RMCSpectrum/RMCSpectrum
 Resolution/Resolution
 Signal/Analyse/signal
-Beam/Analyse/ip/ip
+Beam/Analyse/beam/beam
 RMC/Analyse/Compare
 input
 histList

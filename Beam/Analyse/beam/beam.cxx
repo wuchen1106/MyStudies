@@ -16,6 +16,7 @@
 
 #include "MyRootInterface.hxx"
 
+std::string m_workMode;
 std::string m_MonitorPlane;
 std::string m_runName;
 std::string m_input;
@@ -44,10 +45,14 @@ int main(int argc, char* argv[]){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hb:t:v:n:m:r:d:p:P:i:"))!=-1){
+	while((result=getopt(argc,argv,"hb:t:v:n:m:M:r:d:p:P:i:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
+				m_workMode = optarg;
+				printf("Work Mode: %s\n",m_workMode.c_str());
+				break;
+			case 'M':
 				m_MonitorPlane = optarg;
 				printf("Monitor plane: %s\n",m_MonitorPlane.c_str());
 				break;
@@ -202,8 +207,39 @@ int main(int argc, char* argv[]){
 		std::vector<double> Monitor_opy;
 		std::vector<double> Monitor_opz;
 
+		int McTruth_nTracks = 0;
+		std::vector<int> McTruth_tid;
+		std::vector<int> McTruth_pid;
+		std::vector<int> McTruth_charge;
+		std::vector<int> McTruth_ptid;
+		std::vector<std::string> McTruth_process;
+		std::vector<std::string> McTruth_volume;
+		std::vector<double> McTruth_time;
+		std::vector<double> McTruth_x;
+		std::vector<double> McTruth_y;
+		std::vector<double> McTruth_z;
+		std::vector<double> McTruth_px;
+		std::vector<double> McTruth_py;
+		std::vector<double> McTruth_pz;
+
 		fMyRootInterface->get_value("evt_num",evt_num);
 		fMyRootInterface->get_value("run_num",run_num);
+
+		fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
+		fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
+		fMyRootInterface->get_value("McTruth_tid",McTruth_tid);
+		fMyRootInterface->get_value("McTruth_pid",McTruth_pid);
+		fMyRootInterface->get_value("McTruth_charge",McTruth_charge);
+		fMyRootInterface->get_value("McTruth_ptid",McTruth_ptid);
+		fMyRootInterface->get_value("McTruth_process",McTruth_process);
+		fMyRootInterface->get_value("McTruth_volume",McTruth_volume);
+		fMyRootInterface->get_value("McTruth_x",McTruth_x,cm);
+		fMyRootInterface->get_value("McTruth_y",McTruth_y,cm);
+		fMyRootInterface->get_value("McTruth_z",McTruth_z,cm);
+		fMyRootInterface->get_value("McTruth_px",McTruth_px,GeV);
+		fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
+		fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
+
 		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_nHits",Monitor_nHits);
 		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_t",Monitor_t,ns);
 		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_tid",Monitor_tid);
@@ -230,104 +266,110 @@ int main(int argc, char* argv[]){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"###Getting information"<<std::endl;
 
 		bool filled = false;
-		for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
-			if (!PDGEncoding // all particles
-				||PDGEncoding==-1&&Monitor_pid[i_mon]>=1e7 // only nuclears
-				||PDGEncoding==1&&Monitor_pid[i_mon]<1e7 // only elementary particles
-				||Monitor_pid[i_mon] == PDGEncoding){
-				if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-					std::cout<<prefix_ParticleInfoStart
-				             <<"  Found Particle! i_mon = "<<i_mon
-				             <<", pid = "<<Monitor_pid[i_mon]
-				             <<", tid = "<<Monitor_tid[i_mon]
-				             <<", px = "<<Monitor_px[i_mon]
-				             <<"MeV, py = "<<Monitor_py[i_mon]
-				             <<"MeV, pz = "<<Monitor_pz[i_mon]
-				             <<"MeV"
-						     <<std::endl;
+		if (m_workMode=="monitor"){
+			for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
+				if (!PDGEncoding // all particles
+					||PDGEncoding==-1&&Monitor_pid[i_mon]>=1e7 // only nuclears
+					||PDGEncoding==1&&Monitor_pid[i_mon]<1e7 // only elementary particles
+					||Monitor_pid[i_mon] == PDGEncoding){
+					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+						std::cout<<prefix_ParticleInfoStart
+								 <<"  Found Particle! i_mon = "<<i_mon
+								 <<", pid = "<<Monitor_pid[i_mon]
+								 <<", tid = "<<Monitor_tid[i_mon]
+								 <<", px = "<<Monitor_px[i_mon]
+								 <<"MeV, py = "<<Monitor_py[i_mon]
+								 <<"MeV, pz = "<<Monitor_pz[i_mon]
+								 <<"MeV"
+								 <<std::endl;
 
-				/*
-				// going_downstream ?
-				bool going_downstream=false;
-				if (m_MonitorPlane=="blt0"){
-					if (Monitor_pz[i_mon]>0){
-						going_downstream=true;
+					/*
+					// going_downstream ?
+					bool going_downstream=false;
+					if (m_MonitorPlane=="blt0"){
+						if (Monitor_pz[i_mon]>0){
+							going_downstream=true;
+						}
 					}
-				}
-				else if (m_MonitorPlane=="ptacs_shielding"){
-					if (Monitor_px[i_mon]<0){
-						going_downstream=true;
+					else if (m_MonitorPlane=="ptacs_shielding"){
+						if (Monitor_px[i_mon]<0){
+							going_downstream=true;
+						}
 					}
+
+					if (!going_downstream) continue;
+
+					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+						std::cout<<prefix_ParticleInfoStart
+								 <<"going downstream"<<std::endl;
+
+					// comes_from_upstream ?
+					bool comes_from_upstream = false;
+					if (m_MonitorPlane=="blt0"){
+						if (Monitor_oz[i_mon]<=-2791.5*mm) comes_from_upstream=true;
+					}
+					else if (m_MonitorPlane=="ptacs_shielding"){
+						if (Monitor_ox[i_mon]>=6500*mm) comes_from_upstream = true;
+					}
+					if (!comes_from_upstream) continue;
+
+					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+						std::cout<<prefix_ParticleInfoStart
+							 <<"Comes from upstream"
+							 <<std::endl;
+					*/
+
+					// Fill
+					pid=Monitor_pid[i_mon];
+					tid=Monitor_tid[i_mon];
+					ppid=Monitor_ppid[i_mon];
+					x=Monitor_x[i_mon];
+					y=Monitor_y[i_mon];
+					z=Monitor_z[i_mon];
+					px=Monitor_px[i_mon];
+					py=Monitor_py[i_mon];
+					pz=Monitor_pz[i_mon];
+					t=Monitor_t[i_mon];
+					ox=Monitor_ox[i_mon];
+					oy=Monitor_oy[i_mon];
+					oz=Monitor_oz[i_mon];
+					opx=Monitor_opx[i_mon];
+					opy=Monitor_opy[i_mon];
+					opz=Monitor_opz[i_mon];
+					process=Monitor_oprocess[i_mon];
+					volume=Monitor_ovolName[i_mon];
+					fMyRootInterface->set_ovalue("evt_num",evt_num);
+					fMyRootInterface->set_ovalue("run_num",run_num);
+					fMyRootInterface->set_ovalue("pid",pid);
+					fMyRootInterface->set_ovalue("tid",tid);
+					fMyRootInterface->set_ovalue("ppid",ppid);
+					fMyRootInterface->set_ovalue("x",x/mm);
+					fMyRootInterface->set_ovalue("y",y/mm);
+					fMyRootInterface->set_ovalue("z",z/mm);
+					fMyRootInterface->set_ovalue("px",px/MeV);
+					fMyRootInterface->set_ovalue("py",py/MeV);
+					fMyRootInterface->set_ovalue("pz",pz/MeV);
+					fMyRootInterface->set_ovalue("t",t/ns);
+					fMyRootInterface->set_ovalue("ox",ox/mm);
+					fMyRootInterface->set_ovalue("oy",oy/mm);
+					fMyRootInterface->set_ovalue("oz",oz/mm);
+					fMyRootInterface->set_ovalue("opx",opx/MeV);
+					fMyRootInterface->set_ovalue("opy",opy/MeV);
+					fMyRootInterface->set_ovalue("opz",opz/MeV);
+					fMyRootInterface->set_ovalue("process",process);
+					fMyRootInterface->set_ovalue("volume",volume);
+					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
+					fMyRootInterface->Fill();
+					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
+					filled=true;
 				}
-
-				if (!going_downstream) continue;
-
-				if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-					std::cout<<prefix_ParticleInfoStart
-							 <<"going downstream"<<std::endl;
-
-				// comes_from_upstream ?
-				bool comes_from_upstream = false;
-				if (m_MonitorPlane=="blt0"){
-					if (Monitor_oz[i_mon]<=-2791.5*mm) comes_from_upstream=true;
-				}
-				else if (m_MonitorPlane=="ptacs_shielding"){
-					if (Monitor_ox[i_mon]>=6500*mm) comes_from_upstream = true;
-				}
-				if (!comes_from_upstream) continue;
-
-				if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-					std::cout<<prefix_ParticleInfoStart
-						 <<"Comes from upstream"
-						 <<std::endl;
-				*/
-
-				// Fill
-				pid=Monitor_pid[i_mon];
-				tid=Monitor_tid[i_mon];
-				ppid=Monitor_ppid[i_mon];
-//				if (m_MonitorPlane=="blt0"){
-//					x=Monitor_x[i_mon];
-//					y=Monitor_y[i_mon];
-//					z=Monitor_z[i_mon];
-//					px=Monitor_px[i_mon];
-//					py=Monitor_py[i_mon];
-//					pz=Monitor_pz[i_mon];
-//				}
-//				else if (m_MonitorPlane == "ptacs_shielding"){
-//					x=Monitor_z[i_mon]+5790.5*mm;
-//					y=Monitor_y[i_mon];
-//					z=-Monitor_x[i_mon]+6400*mm;
-//					px=Monitor_pz[i_mon];
-//					py=Monitor_py[i_mon];
-//					pz=-Monitor_px[i_mon];
-//				}
-				x=Monitor_x[i_mon];
-				y=Monitor_y[i_mon];
-				z=Monitor_z[i_mon];
-				px=Monitor_px[i_mon];
-				py=Monitor_py[i_mon];
-				pz=Monitor_pz[i_mon];
-				t=Monitor_t[i_mon];
-//				ox=Monitor_oz[i_mon]+5790.5*mm;
-//				oy=Monitor_oy[i_mon];
-//				oz=-Monitor_ox[i_mon]+7350*mm;
-//				opx=Monitor_opz[i_mon];
-//				opy=Monitor_opy[i_mon];
-//				opz=-Monitor_opx[i_mon];
-				ox=Monitor_ox[i_mon];
-				oy=Monitor_oy[i_mon];
-				oz=Monitor_oz[i_mon];
-				opx=Monitor_opx[i_mon];
-				opy=Monitor_opy[i_mon];
-				opz=Monitor_opz[i_mon];
-				process=Monitor_oprocess[i_mon];
-				volume=Monitor_ovolName[i_mon];
-				fMyRootInterface->set_ovalue("evt_num",evt_num);
-				fMyRootInterface->set_ovalue("run_num",run_num);
+			}
+		}
+		else if (m_workMode=="mctruth"){
+			for ( int iMc = 0; iMc < McTruth_nTracks; iMc++ ){
+				if (McTruth_time[iMc]<500*ns||McTruth_time[iMc]>600*ns) continue;
+				if (McTruth_charge[iMc]==0) continue;
 				fMyRootInterface->set_ovalue("pid",pid);
-				fMyRootInterface->set_ovalue("tid",tid);
-				fMyRootInterface->set_ovalue("ppid",ppid);
 				fMyRootInterface->set_ovalue("x",x/mm);
 				fMyRootInterface->set_ovalue("y",y/mm);
 				fMyRootInterface->set_ovalue("z",z/mm);
@@ -335,12 +377,6 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->set_ovalue("py",py/MeV);
 				fMyRootInterface->set_ovalue("pz",pz/MeV);
 				fMyRootInterface->set_ovalue("t",t/ns);
-				fMyRootInterface->set_ovalue("ox",ox/mm);
-				fMyRootInterface->set_ovalue("oy",oy/mm);
-				fMyRootInterface->set_ovalue("oz",oz/mm);
-				fMyRootInterface->set_ovalue("opx",opx/MeV);
-				fMyRootInterface->set_ovalue("opy",opy/MeV);
-				fMyRootInterface->set_ovalue("opz",opz/MeV);
 				fMyRootInterface->set_ovalue("process",process);
 				fMyRootInterface->set_ovalue("volume",volume);
 				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
@@ -374,6 +410,7 @@ int main(int argc, char* argv[]){
 
 void init_args()
 {
+	m_workMode="monitor";
 	m_MonitorPlane="blt0";
 	m_OutputDir="result";
 	m_input="input";
