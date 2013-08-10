@@ -1,10 +1,14 @@
 #!/bin/bash
-for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
+#for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
+for Target in "g40cm10mm"
 do
-	for app in "A" "H" "cg4" "g4s"
+#	for app in "A" "H" "cg4" "g4s"
+	for app in "g4s"
 	do
-		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
+#		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
+		for phys in "QBH"
 		do
+			nEvents=1000000
 			if [ $app == "A" ]; then
 				nEvents=1000000
 			elif [ $app == "H" ]; then
@@ -17,7 +21,7 @@ do
 				elif [ $phys == "QB" ]; then
 					if [ $Target = "g60cm6mm200gcm3" -o $Target = "t16cm6mm" ]; then
 						nEvents=250000
-					elif [ $Target = "g40cm10mm182gcm3" ]; then
+					elif [ $Target = "g40cm10mm" ]; then
 						nEvents=15000000
 					fi
 				elif [ $phys == "QBH" ]; then
@@ -35,105 +39,138 @@ do
 				if [ $phys == "QBH" -a $Target == "g40cm10mm" ]; then
 					nEvents=10000000
 				fi
-			else
-				nEvents=1000000
 			fi
 			for monitor in "PTACS" "MT1"
 			do
-#				for pname in "em" "mum" "pim" "n0"
-				for pname in "mum"
+				for pname in "em" "mum" "pim" "n0"
 				do
-					if [ $pname = em ]; then pname_inTitle="e^{-}";
-					elif [ $pname = mum ]; then pname_inTitle="#mu^{-}";
-					elif [ $pname = pim ]; then pname_inTitle="#pi^{-}";
-					elif [ $pname = n0 ]; then pname_inTitle="n_{0}";
+					pid=0
+					if [ $pname = em ]; then pname_inTitle="e^{-}"; pid=11;
+					elif [ $pname = mum ]; then pname_inTitle="#mu^{-}"; pid=13;
+					elif [ $pname = pim ]; then pname_inTitle="#pi^{-}"; pid=-211;
+					elif [ $pname = n0 ]; then pname_inTitle="n_{0}"; pid=2112;
 					fi
-					prefix=$monitor"."$pname
-					suffix="."$Target"."$app"."$phys
-					pbsfile="$PWD/result/"$prefix$suffix".boss"
-					directory="$PWD/../../result/$Target/$app/$phys/$monitor/"
-					rootfile=$directory$prefix$suffix".root"
-					inputfile="input.$prefix$suffix"
-					if [ -e $rootfile ]; then
-						echo "Processing $rootfile"
+					if [ $monitor = "MT1" ]; then
+						for DF in "03T" "018T"
+						do
+							prefix=$monitor"."$pname
+							suffix="."$Target"."$DF"."$app"."$phys
+							pbsfile="$PWD/result/"$prefix$suffix".boss"
+#							directory="$PWD/../../result/$Target/$app/$phys/$monitor/"
+							directory="$PWD/../../result/$Target"
+							rootfile=$directory/$monitor.all.$Target.$DF.$app.$phys.root
+							inputfile=input.$monitor.$pname.$Target.$app.$phys
+							cp input.temp $inputfile
+							R=350
+							PMAX=300
+							TMAX=2000
+							T=80
+							if [ $pname = "em" ]; then
+								P=2
+								OZMIN=-6040.5
+								OZMAX=-5540.5
+								OYMIN=-10
+								OYMAX=10
+								OXMIN=7100
+								OXMAX=7600
+							elif [ $pname = "mum" ]; then
+								P=150
+								OZMIN=-5990.5
+								OZMAX=-5590.5
+								OYMIN=-200
+								OYMAX=200
+								OXMIN=6550
+								OXMAX=8150
+							elif [ $pname = "pim" ]; then
+								P=150
+								OZMIN=-5870.5
+								OZMAX=5710.5
+								OYMIN=-10 
+								OYMAX=10 
+								OXMIN=7000
+								OXMAX=7700
+							elif [ $pname = "n0" ]; then
+								T=1200
+								P=60
+								OZMIN=-6590.5
+								OZMAX=-1790.5
+								OYMIN=-800
+								OYMAX=800
+								OXMIN=8150
+								OXMAX=1650
+							fi
+							sed -i "s/\<_P\>/$P/g" $inputfile
+							sed -i "s/\<_R\>/$R/g" $inputfile
+							sed -i "s/\<_PMAX\>/$PMAX/g" $inputfile
+							sed -i "s/\<_T\>/$T/g" $inputfile
+							sed -i "s/\<_TMAX\>/$TMAX/g" $inputfile
+							sed -i "s/\<_OXMIN\>/$OXMIN/g" $inputfile
+							sed -i "s/\<_OYMIN\>/$OYMIN/g" $inputfile
+							sed -i "s/\<_OZMIN\>/$OZMIN/g" $inputfile
+							sed -i "s/\<_OXMAX\>/$OXMAX/g" $inputfile
+							sed -i "s/\<_OYMAX\>/$OYMAX/g" $inputfile
+							sed -i "s/\<_OZMAX\>/$OZMAX/g" $inputfile
+							if [ -e $rootfile ]; then
+								echo "Processing $prefix$suffix"
+								echo "#!/bin/bash" > $pbsfile
+								echo "source $MYHOME/.setana.sh" >> $pbsfile
+								echo "$PWD/BeamProfile -t \"$pname_inTitle on $monitor\" -s $nEvents -m $monitor -x $prefix -y $suffix -l 1e-7 -i $PWD/$inputfile -P $pid -d $PWD/result -v 0 $rootfile > $pbsfile""log 2> $pbsfile""err" >> $pbsfile
+								chmod +x $pbsfile
+#								qsub -j oe -o /dev/null -q midq $pbsfile
+								$pbsfile
+							else
+								echo $rootfile does not exit!
+							fi
+						done
+					elif [ $monitor = "PTACS" ]; then
+						prefix=$monitor"."$pname
+						suffix="."$Target"."$app"."$phys
+						pbsfile="$PWD/result/"$prefix$suffix".boss"
+#						directory="$PWD/../../result/$Target/$app/$phys/$monitor/"
+						directory="$PWD/../../result/$Target"
+						rootfile=$directory/$monitor.all.$Target.$app.$phys.root
+						inputfile="input.$prefix$suffix"
 						cp input.temp $inputfile
 						R=350
 						PMAX=300
 						TMAX=2000
-						if [ $monitor = "MT1" ]; then
-							T=80
-							if [ $pname = "em" ]; then
-								P=2
-								OXMIN=-250
-								OXMAX=250
-								OYMIN=-10
-								OYMAX=10
-								OZMIN=-250
-								OZMAX=250
-							elif [ $pname = "mum" ]; then
-								P=150
-								OXMIN=-200
-								OXMAX=200
-								OYMIN=-200
-								OYMAX=200
-								OZMIN=-800
-								OZMAX=8000
-							elif [ $pname = "pim" ]; then
-								P=150
-								OXMIN=-80 
-								OXMAX=80 
-								OYMIN=-10 
-								OYMAX=10 
-								OZMIN=-300
-								OZMAX=350 
-							elif [ $pname = "n0" ]; then
-								T=1200
-								P=60
-								OXMIN=-800
-								OXMAX=4000
-								OYMIN=-800
-								OYMAX=800
-								OZMIN=-800
-								OZMAX=9000
-							fi
-						elif [ $monitor = "PTACS" ]; then
-							T=20
-							if [ $pname = "em" ]; then
-								P=2
-								OXMIN=-200
-								OXMAX=200
-								OYMIN=-10
-								OYMAX=10
-								OZMIN=-450
-								OZMAX=800
-							elif [ $pname = "mum" ]; then
-								P=250
-								OXMIN=-400
-								OXMAX=400
-								OYMIN=-400
-								OYMAX=400
-								OZMIN=-800
-								OZMAX=800
-							elif [ $pname = "pim" ]; then
-								P=350
-								OXMIN=-80 
-								OXMAX=80 
-								OYMIN=-10 
-								OYMAX=10 
-								OZMIN=-300
-								OZMAX=300 
-							elif [ $pname = "n0" ]; then
-								T=1000
-								P=100
-								OXMIN=-800
-								OXMAX=800
-								OYMIN=-800
-								OYMAX=800
-								OZMIN=-800
-								OZMAX=800
-							fi
+						T=20
+						if [ $pname = "em" ]; then
+							P=2
+							OZMIN=-5990.5
+							OZMAX=-5590.5
+							OYMIN=-10
+							OYMAX=10
+							OXMIN=7800
+							OXMAX=6550
+						elif [ $pname = "mum" ]; then
+							P=250
+							OZMIN=-6190.5
+							OZMAX=-5390.5
+							OYMIN=-400
+							OYMAX=400
+							OXMIN=8150
+							OXMAX=6550
+						elif [ $pname = "pim" ]; then
+							P=350
+							OZMIN=-5870.5
+							OZMAX=-5710.5
+							OYMIN=-10 
+							OYMAX=10 
+							OXMIN=7050
+							OXMAX=7650
+						elif [ $pname = "n0" ]; then
+							T=1000
+							P=100
+							OZMIN=-6590.5
+							OZMAX=-4990.5
+							OYMIN=-800
+							OYMAX=800
+							OXMIN=6550
+							OXMAX=8150
 						fi
 						sed -i "s/\<_P\>/$P/g" $inputfile
+						sed -i "s/\<_R\>/$R/g" $inputfile
 						sed -i "s/\<_PMAX\>/$PMAX/g" $inputfile
 						sed -i "s/\<_T\>/$T/g" $inputfile
 						sed -i "s/\<_TMAX\>/$TMAX/g" $inputfile
@@ -143,13 +180,17 @@ do
 						sed -i "s/\<_OXMAX\>/$OXMAX/g" $inputfile
 						sed -i "s/\<_OYMAX\>/$OYMAX/g" $inputfile
 						sed -i "s/\<_OZMAX\>/$OZMAX/g" $inputfile
-						echo "#!/bin/bash" > $pbsfile
-						echo "source $MYHOME/.setana.sh" >> $pbsfile
-						echo "$PWD/BeamProfile -t \"$pname_inTitle on $monitor\" -s $nEvents -m argu -x $prefix -y $suffix -l 1e-7 $rootfile -i $PWD/$inputfile -d $PWD/result > $pbsfile""log 2> $pbsfile""err" >> $pbsfile
-						chmod +x $pbsfile
-#						qsub -j oe -o /dev/null -q midq $pbsfile
-					else
-						echo $rootfile does not exit!
+						if [ -e $rootfile ]; then
+							echo "Processing $prefix$suffix"
+							echo "#!/bin/bash" > $pbsfile
+							echo "source $MYHOME/.setana.sh" >> $pbsfile
+							echo "$PWD/BeamProfile -t \"$pname_inTitle on $monitor\" -s $nEvents -m $monitor -x $prefix -y $suffix -l 1e-7 -i $PWD/$inputfile -P $pid -d $PWD/result -v 0 $rootfile > $pbsfile""log 2> $pbsfile""err" >> $pbsfile
+							chmod +x $pbsfile
+#							qsub -j oe -o /dev/null -q midq $pbsfile
+							$pbsfile
+						else
+							echo $rootfile does not exit!
+						fi
 					fi
 				done
 			done

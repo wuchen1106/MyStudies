@@ -15,8 +15,11 @@
 std::string m_rootfile;
 std::string m_prefix;
 std::string m_suffix;
-std::string m_workMode;
+std::string m_monitor;
+std::string m_input;
+std::string m_OutputDir;
 std::string m_title;
+int PDGEncoding=0;
 int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
@@ -35,16 +38,20 @@ int main(int argc, char** argv){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hbv:n:m:t:s:x:y:p:l:"))!=-1){
+	while((result=getopt(argc,argv,"hbv:n:m:t:s:x:y:p:l:P:i:d:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
-				m_workMode = optarg;
-				printf("work mode: %s\n",m_workMode.c_str());
+				m_monitor = optarg;
+				printf("work mode: %s\n",m_monitor.c_str());
 				break;
 			case 'x':
 				m_prefix = optarg;
 				printf("m_prefix: %s\n",m_prefix.c_str());
+				break;
+			case 'i':
+				m_input=optarg;
+				printf("input configuration file: %s\n",m_input.c_str());
 				break;
 			case 'y':
 				m_suffix = optarg;
@@ -70,6 +77,10 @@ int main(int argc, char** argv){
 				printModule = atoi(optarg);
 				printf("printModule: %d\n",printModule);
 				break;
+			case 'P':
+				PDGEncoding = atoi(optarg);
+				printf("PDGEncoding: %d\n",printModule);
+				break;
 			case 's':
 				m_scale = atof(optarg);
 				printf("scale factor (inverse): %e\n",m_scale);
@@ -77,6 +88,10 @@ int main(int argc, char** argv){
 			case 'l':
 				m_miny = atof(optarg);
 				printf("minimum y (for log style only): %e\n",m_miny);
+				break;
+			case 'd':
+				m_OutputDir=optarg;
+				printf("Output Directroy: %s\n",m_OutputDir.c_str());
 				break;
 			case '?':
 				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
@@ -87,15 +102,13 @@ int main(int argc, char** argv){
 				return 1;
 		}
 	}
-	if (m_workMode == "argu"){
-		if (argc-optind<1){
-			std::cout<<"This is \"argu\" mode which need arguments: rootfile"<<std::endl;
-			std::cout<<"Insufficient names!"<<std::endl;
-			return -1;
-		}
-		m_rootfile = argv[optind++];
-		std::cout<<"m_rootfile= "<<m_rootfile<<std::endl;
+	if (argc-optind<1){
+		std::cout<<"This is \"argu\" mode which need arguments: rootfile"<<std::endl;
+		std::cout<<"Insufficient names!"<<std::endl;
+		return -1;
 	}
+	m_rootfile = argv[optind++];
+	std::cout<<"m_rootfile= "<<m_rootfile<<std::endl;
 
 	//=======================================
 	//************Verbose Control***********
@@ -119,7 +132,8 @@ int main(int argc, char** argv){
 	//##########################PRESET############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In Preset###"<<std::endl;
 	MyRootInterface *fMyRootInterface = new MyRootInterface(verbose);
-	fMyRootInterface->set_OutputDir("result");
+	if (m_rootfile!="") fMyRootInterface->add_oFileName(m_rootfile);
+	fMyRootInterface->set_OutputDir(m_OutputDir);
 	int index_temp = 0;
 	TH1D *h1d_temp=0;
 	int bin_temp = 0;
@@ -150,8 +164,7 @@ int main(int argc, char** argv){
 
 	//##########################Prepare histograms############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;
-	fMyRootInterface->read("input");
-	fMyRootInterface->add_oFileName(m_rootfile);
+	fMyRootInterface->read(m_input);
 	int nHists = fMyRootInterface->get_TH1D_size();
 	for (int iHist = 0; iHist < nHists; iHist++ ){
 		fMyRootInterface->set_titleForH1D(iHist,m_title);
@@ -187,7 +200,7 @@ int main(int argc, char** argv){
 		std::string name = fMyRootInterface->get_nameForH2D(iHist);
 		fMyRootInterface->set_nameForH2D(iHist,m_prefix+"."+name+m_suffix);
 	}
-	fMyRootInterface->set_OutputName(m_prefix+m_suffix+".root");
+	fMyRootInterface->set_OutputName(m_prefix+m_suffix);
 	fMyRootInterface->init();
 
 	//************SET Statistics********************
@@ -222,6 +235,7 @@ int main(int argc, char** argv){
 		double ox;
 		double oy;
 		double oz;
+		int pid;
 
 		fMyRootInterface->get_value("x",x,mm);
 		fMyRootInterface->get_value("y",y,mm);
@@ -233,28 +247,28 @@ int main(int argc, char** argv){
 		fMyRootInterface->get_value("ox",ox,mm);
 		fMyRootInterface->get_value("oy",oy,mm);
 		fMyRootInterface->get_value("oz",oz,mm);
+		fMyRootInterface->get_value("pid",pid);
 
-		double xp = x;
-		double yp = y;
-		double zp = z-2791.5*mm;
-		double pxp = px;
-		double pyp = py;
-		double pzp = pz;
-		double tp = t;
-
-		fMyRootInterface->set_ovalue("x",xp/mm);
-		fMyRootInterface->set_ovalue("y",yp/mm);
-		fMyRootInterface->set_ovalue("z",zp/mm);
-		fMyRootInterface->set_ovalue("px",pxp/MeV);
-		fMyRootInterface->set_ovalue("py",pyp/MeV);
-		fMyRootInterface->set_ovalue("pz",pzp/MeV);
-		fMyRootInterface->set_ovalue("t",tp/ns);
-		fMyRootInterface->Fill();
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"pid="<<pid<<",PDGEncoding="<<PDGEncoding<<std::endl;
+		if (PDGEncoding&&pid!=PDGEncoding) continue;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Passed pid!!!"<<std::endl;
 
 		double pa = sqrt(px*px+py*py+pz*pz);
 		double pt = sqrt(px*px+py*py);
-		double r = sqrt(x*x+y*y);
-		double theta = acos(pz/pa);
+		double r = 0;
+		double theta = 0;
+
+		if (m_monitor=="PTACS"){
+			r = sqrt((-5790.5-z)*(-5790.5-z)+y*y);
+			theta = acos(-px/pa);
+			pz=-px;
+			pt=sqrt(pz*pz+py*py);
+		}
+		else if (m_monitor=="MT1"){
+			r = sqrt(x*x+y*y);
+			theta = acos(pz/pa);
+		}
+
 		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"."+"pa"+m_suffix);
 		if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->Fill(pa/MeV);
 		index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"."+"pt"+m_suffix);
@@ -403,7 +417,9 @@ void init_args()
 	m_prefix="";
 	m_suffix="";
 	m_title="";
-	m_workMode="file";
+	m_monitor="PTACS";
+	m_input="input";
+	m_OutputDir="result";
 	verbose = 0;
 	nEvents = 0;
 	printModule = 10000;

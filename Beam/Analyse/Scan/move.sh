@@ -12,7 +12,7 @@ do
 				do
 					if [ $monitor = "PTACS" ]; then
 						rootfile="result/"$monitor".$pname."$Target"."$app"."$phys".root"
-						rootdir="../../result"
+						rootdir="../../result/$Target"
 						if [ -e $rootfile ]; then
 							mv $rootfile $rootdir
 						fi
@@ -20,7 +20,7 @@ do
 						for DF in "03T" "018T"
 						do
 							rootfile="result/"$monitor".$pname."$Target"."$DF"."$app"."$phys".root"
-							rootdir="../../result"
+							rootdir="../../result/$Target"
 							if [ -e $rootfile ]; then
 								mv $rootfile $rootdir
 							fi
