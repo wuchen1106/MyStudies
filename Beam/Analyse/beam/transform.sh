@@ -1,16 +1,16 @@
 #!/bin/bash
 
 nFiles=100
-nSplit=1
+nSplit=50
 
 #for configName in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm_170gcm3"
-for configName in "g40cm10mm"
+for configName in "t16cm6mm"
 do
 #	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP"  "QGSPBERTcometg4" "QGSPBERTHPcometg4" "originalcometg4" "modifiedcometg4" "nomueccometg4" "QGSPBERT49302cometg4" "QGSPBERT49201cometg4"
-	for runname in "QB"
+	for runname in "QBH"
 	do
 #		for monitor in "MT1" "PTACS" "McTruth";
-		for monitor in "McTruth"
+		for monitor in "MT1"
 		do
 #			for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
 			for pid in 1;
@@ -37,11 +37,11 @@ do
 					pbsfile=$PWD'/result/'$name'.boss'
 					echo "#!/bin/bash" > $pbsfile
 					echo "source $MYHOME/.setana.sh" >> $pbsfile
-#					echo $PWD'/beam -b '$beginNo' -t '$totalNo' -m monitor -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$configName' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
-					echo $PWD'/beam -n 73346 -m McTruth -P '$pid' -r '$name' -i '$PWD'/input_'$configName' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
+					echo $PWD'/beam -b '$beginNo' -t '$totalNo' -m monitor -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$configName' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
+#					echo $PWD'/beam -n 73346 -m McTruth -P '$pid' -r '$name' -i '$PWD'/input_'$configName' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 					chmod +x $pbsfile
-#					qsub -j oe -o /dev/null -q midq $pbsfile
-					$pbsfile
+					qsub -j oe -o /dev/null -q midq $pbsfile
+#					$pbsfile
 				done
 			done
 		done

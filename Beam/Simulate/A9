@@ -1,5 +1,5 @@
 GEOCARDROOT       = geometry_A9
-MAGFIELDCARDROOT  = MagField_sasaki_130731
+MAGFIELDCARDROOT  = MagField_sasaki_130701
 GENFILEROOT       = gen_root
 OUTCARDROOT       = output_A9
 

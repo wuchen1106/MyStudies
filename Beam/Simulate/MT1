@@ -1,6 +1,6 @@
 GEOCARDROOT       = geometry_BPandMT1
-MAGFIELDCARDROOT  = MagField_UK_03T
-GENFILEROOT       = gen_PTACS
+MAGFIELDCARDROOT  = MagField_UK_018T
+GENFILEROOT       = gen_root
 OUTCARDROOT       = output_B9
 
 ##geometry preset
