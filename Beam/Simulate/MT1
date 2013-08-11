@@ -1,7 +1,7 @@
 GEOCARDROOT       = geometry_BPandMT1
 MAGFIELDCARDROOT  = MagField_UK_03T
 GENFILEROOT       = gen_PTACS
-OUTCARDROOT       = output_beam
+OUTCARDROOT       = output_B9
 
 ##geometry preset
 #detector_configure
