@@ -116,6 +116,7 @@ int main(int argc, char* argv[]){
 	//=>About Constant
 	double PI = 3.141592653589793238;
 	double FSC = 1/137.03599911; //fine structure constant
+	double M_PION = 0.139570*GeV;
 	double M_MUON = 105.6584*MeV; //mass of muon in MeV
 	double M_ELE = 0.510999*MeV; //mass of electron in MeV
 	double M_U = 931.494061*MeV; //atomic mass unit in MeV
@@ -140,6 +141,31 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->set_beginCPU(0,i_begin);
 		fMyRootInterface->set_NCPU(0,1);
 		fMyRootInterface->init_file();
+
+		// Get t0
+		int ifile_1 = i_begin;
+		int ifile_2 = ifile_1%10;
+
+		buff.str("");
+		buff.clear();
+		buff<<"/scratchfs/bes/wuc/MyWorkArea/g4simData/MT1.pim.g40cm10mm.03T.g4s.QBH.ref/MT1.pim.g40cm10mm.03T.g4s.QBH."<<ifile_2<<".root";
+		TChain* m_TChain = new TChain("t");
+		m_TChain->Add(buff.str().c_str());
+		int num_2 = m_TChain->GetEntries();
+
+		double t0;
+		double opx;
+		double opy;
+		double opz;
+		double oy;
+		double Mc_time;
+		m_TChain->SetBranchAddress("t",&Mc_time);
+		m_TChain->SetBranchAddress("ot",&t0);
+		m_TChain->SetBranchAddress("px",&opx);
+		m_TChain->SetBranchAddress("py",&opy);
+		m_TChain->SetBranchAddress("pz",&opz);
+		m_TChain->SetBranchAddress("y",&oy);
+
 		Long64_t nEvent = fMyRootInterface->get_Entries();
 		for( Long64_t iEvent = 0; iEvent < (nEvents&&nEvents<nEvent?nEvents:nEvent); iEvent++ ){
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
@@ -159,18 +185,6 @@ int main(int argc, char* argv[]){
 			// Get info
 			int evt_num;
 			int run_num;
-			int McTruth_nTracks = 0;
-			std::vector<int> McTruth_tid;
-			std::vector<int> McTruth_pid;
-			std::vector<int> McTruth_ptid;
-			std::vector<double> McTruth_x;
-			std::vector<double> McTruth_y;
-			std::vector<double> McTruth_z;
-			std::vector<double> McTruth_px;
-			std::vector<double> McTruth_py;
-			std::vector<double> McTruth_pz;
-			std::vector<double> McTruth_e;
-			std::vector<double> McTruth_time;
 			int CDCMonitor_nHits = 0;
 			std::vector<int> CDCMonitor_tid;
 			std::vector<int> CDCMonitor_pid;
@@ -210,18 +224,6 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->get_value("evt_num",evt_num);
 			fMyRootInterface->get_value("run_num",run_num);
 			std::cout<<__LINE__<<std::endl;
-			fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
-			fMyRootInterface->get_value("McTruth_pid",McTruth_pid);
-			fMyRootInterface->get_value("McTruth_tid",McTruth_tid);
-			fMyRootInterface->get_value("McTruth_ptid",McTruth_ptid);
-			fMyRootInterface->get_value("McTruth_x",McTruth_x,cm);
-			fMyRootInterface->get_value("McTruth_y",McTruth_y,cm);
-			fMyRootInterface->get_value("McTruth_z",McTruth_z,cm);
-			fMyRootInterface->get_value("McTruth_px",McTruth_px,GeV);
-			fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
-			fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
-			fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
-			fMyRootInterface->get_value("McTruth_e",McTruth_e,GeV);
 			std::cout<<__LINE__<<std::endl;
 			fMyRootInterface->get_value("CDCMonitor_nHits",CDCMonitor_nHits);
 			std::cout<<__LINE__<<std::endl;
@@ -273,32 +275,17 @@ int main(int argc, char* argv[]){
 
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
 
-			// Get t0
-			int ifile_1 = i_begin;
-			int ifile_2 = ifile_1;
-			int ifile_3 = ifile_2%50;
-
 			int ievent_1 = iEvent;
-			buff.str("");
-			buff.clear();
-			buff<<"/home/chen/MyWorkArea/Data/raw/g4sim/BP_g40cm10mm182gcm3_03T_QGSPBERTg4sim/"<<ifile_2<<"_job0.raw";
-			TFile *file_2 = new TFile(buff.str().c_str());
-			TTree *tree_2 = (TTree*) file_2->Get("tree");
-			int num_2 = tree_2->GetEntries();
 			int ievent_2 = ievent_1%num_2;
-
-			buff.str("");
-			buff.clear();
-			buff<<"/home/chen/MyWorkArea/g4sim/data/BP."<<ifile_3<<".root";
-			TFile *file_3 = new TFile(buff.str().c_str());
-			TTree *tree_3 = (TTree*) file_3->Get("t");
-			int num_3 = tree_3->GetEntries();
-			int ievent_3 = ievent_2%num_3;
-
-			double t0;
-			tree_3->SetBranchAddress("t0",&t0);
-			tree_3->GetEntry(ievent_3);
+			m_TChain->GetEntry(ievent_2);
+			Mc_time *= ns;
 			t0 *= ns;
+			opx *= MeV;
+			opy *= MeV;
+			opz *= MeV;
+			y *= mm;
+			double opa = sqrt(opx*opx+opy*opy+opz*opz);
+			double opt = sqrt(opx*opx+opy*opy);
 
 			// Get weight
 			double Mc_w = 0;
@@ -306,20 +293,16 @@ int main(int argc, char* argv[]){
 			double BLT_w = 0;
 			double Target_w = 0;
 
-			double Mc_time = McTruth_time[0];
 			double Target_time;
 			double BLT_time;
 			double CDC_time;
 
-			Mc_w = exp(-(Mc_time-t0)/tau);
+			double E = sqrt(opa*opa+M_PION*M_PION);
+			double Beta = opa/E;
+			double Gamma = sqrt(1./(1.-Beta*Beta));
+			Mc_w = exp(-(Mc_time-t0)/tau/Gamma);
 
 			// Get info
-			double opx = McTruth_px[0];
-			double opy = McTruth_py[0];
-			double opz = McTruth_pz[0];
-			double opa = sqrt(opx*opx+opy*opy+opz*opz);
-			double opt = sqrt(opx*opx+opy*opy);
-			double oy = McTruth_y[0];
 			if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_total")) != -1 ){
 				fMyRootInterface->get_TH1D(index_temp)->Fill(opa/MeV,Mc_w);
 			}
@@ -341,7 +324,7 @@ int main(int argc, char* argv[]){
 				if (CDCMonitor_tid[i_mon]==1){
 					got_CDC = true;
 					CDC_time = CDCMonitor_t[i_mon];
-					CDC_w = exp(-(CDC_time-t0)/tau);
+					CDC_w = exp(-(CDC_time-t0)/tau/Gamma);
 					break;
 				}
 			}
@@ -355,7 +338,7 @@ int main(int argc, char* argv[]){
 					if (Target_stopped[i_mon]){
 						got_stopped = true;
 						Target_time = Target_t[i_mon];
-						Target_w = exp(-(Target_time-t0)/tau);
+						Target_w = exp(-(Target_time-t0)/tau/Gamma);
 						break;
 					}
 				}
@@ -375,7 +358,7 @@ int main(int argc, char* argv[]){
 				if (BLTMonitor_tid[i_mon]==1&&BLTMonitor_pz[i_mon]<0){
 					got_recoiled = true;
 					BLT_time = BLTMonitor_t[i_mon];
-					BLT_w = exp(-(BLT_time-t0)/tau);
+					BLT_w = exp(-(BLT_time-t0)/tau/Gamma);
 					break;
 				}
 			}

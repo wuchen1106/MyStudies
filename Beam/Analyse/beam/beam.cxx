@@ -13,6 +13,8 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TRandom.h"
+#include "TFile.h"
+#include "TTree.h"
 
 #include "MyRootInterface.hxx"
 
@@ -152,6 +154,36 @@ int main(int argc, char* argv[]){
 	//=>About Statistical
 	init_Ncut();
 
+	// For output
+	int pid;
+	int tid;
+	int ppid;
+	double x;
+	double y;
+	double z;
+	double px;
+	double py;
+	double pz;
+	double t;
+	std::string particle;
+	std::string process;
+	std::string volume;
+	double ot;
+	double ox;
+	double oy;
+	double oz;
+	double opx;
+	double opy;
+	double opz;
+
+	//**********************************************************************************************
+	//**********************************************************************************************
+	TChain* m_TChain = new TChain("t");
+	m_TChain->Add("/scratchfs/bes/wuc/MyWorkArea/g4simData/g40cm10mm_PTACS_pim_QGSPBERTHPg4sim.root");
+	m_TChain->SetBranchAddress("t",&ot);
+	//**********************************************************************************************
+	//**********************************************************************************************
+
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK###"<<std::endl;
@@ -160,30 +192,11 @@ int main(int argc, char* argv[]){
 	for( Long64_t iEvent = 0; iEvent < (nEvents&&nEvents<nEvent?nEvents:nEvent); iEvent++ ){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
 		fMyRootInterface->GetEntry(iEvent);
+		m_TChain->GetEntry(iEvent);
+		ot*=ns;
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
 		inc_Ncut("Got entries");
 		if (iEvent%printModule==0) fMyRootInterface->Write();
-
-		// For output
-		int pid;
-		int tid;
-		int ppid;
-		double x;
-		double y;
-		double z;
-		double px;
-		double py;
-		double pz;
-		double t;
-		std::string particle;
-		std::string process;
-		std::string volume;
-		double ox;
-		double oy;
-		double oz;
-		double opx;
-		double opy;
-		double opz;
 
 		// Get info
 		int evt_num;
@@ -353,6 +366,7 @@ int main(int argc, char* argv[]){
 					fMyRootInterface->set_ovalue("py",py/MeV);
 					fMyRootInterface->set_ovalue("pz",pz/MeV);
 					fMyRootInterface->set_ovalue("t",t/ns);
+					fMyRootInterface->set_ovalue("ot",ot/ns);
 					fMyRootInterface->set_ovalue("ox",ox/mm);
 					fMyRootInterface->set_ovalue("oy",oy/mm);
 					fMyRootInterface->set_ovalue("oz",oz/mm);
