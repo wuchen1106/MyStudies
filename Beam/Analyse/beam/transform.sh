@@ -7,7 +7,7 @@ nSplit=1
 for configName in "g40cm10mm"
 do
 #	for runname in "Andy" "Hayashi" "QGSPBERT" "QGSPBERTHP"  "QGSPBERTcometg4" "QGSPBERTHPcometg4" "originalcometg4" "modifiedcometg4" "nomueccometg4" "QGSPBERT49302cometg4" "QGSPBERT49201cometg4"
-	for runname in "QB"
+	for runname in "QBH"
 	do
 #		for monitor in "MT1" "PTACS" "McTruth";
 		for monitor in "McTruth"
