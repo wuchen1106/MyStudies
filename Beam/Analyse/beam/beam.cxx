@@ -387,8 +387,9 @@ int main(int argc, char* argv[]){
 					double pa = sqrt(McTruth_px[iMc]*McTruth_px[iMc]+McTruth_py[iMc]*McTruth_py[iMc]+McTruth_pz[iMc]*McTruth_pz[iMc]);
 					double pt = sqrt(McTruth_px[iMc]*McTruth_px[iMc]+McTruth_py[iMc]*McTruth_py[iMc]);
 					double theta = acos(McTruth_pz[iMc]/pa);
+					double r  = sqrt(McTruth_x[iMc]*McTruth_x[iMc]+McTruth_y[iMc]*McTruth_y[iMc]);
 					if (pa<1.5*MeV) continue;
-					//if (McTruth_time[iMc]<400*ns||McTruth_time[iMc]>500*ns) continue;
+					if (McTruth_time[iMc]<1400*ns||McTruth_time[iMc]>1e9*ns) continue;
 					if (McTruth_charge[iMc]==0) continue;
 					fMyRootInterface->set_ovalue("pid",McTruth_pid[iMc]);
 					fMyRootInterface->set_ovalue("x",McTruth_x[iMc]/mm);
@@ -406,30 +407,35 @@ int main(int argc, char* argv[]){
 						fMyRootInterface->Fill("em_pt",pt/MeV);
 						fMyRootInterface->Fill("em_theta",theta/rad);
 						fMyRootInterface->Fill("em_time",McTruth_time[iMc]/ns);
+						fMyRootInterface->Fill("em_zr",McTruth_z[iMc]/mm,r/mm);
 					}
 					else if (McTruth_pid[iMc]==-11){
 						fMyRootInterface->Fill("ep_pa",pa/MeV);
 						fMyRootInterface->Fill("ep_pt",pt/MeV);
 						fMyRootInterface->Fill("ep_theta",theta/rad);
 						fMyRootInterface->Fill("ep_time",McTruth_time[iMc]/ns);
+						fMyRootInterface->Fill("ep_zr",McTruth_z[iMc]/mm,r/mm);
 					}
 					else if (McTruth_pid[iMc]==13){
 						fMyRootInterface->Fill("mum_pa",pa/MeV);
 						fMyRootInterface->Fill("mum_pt",pt/MeV);
 						fMyRootInterface->Fill("mum_theta",theta/rad);
 						fMyRootInterface->Fill("mum_time",McTruth_time[iMc]/ns);
+						fMyRootInterface->Fill("mum_zr",McTruth_z[iMc]/mm,r/mm);
 					}
 					else if (McTruth_pid[iMc]==-211){
 						fMyRootInterface->Fill("pim_pa",pa/MeV);
 						fMyRootInterface->Fill("pim_pt",pt/MeV);
 						fMyRootInterface->Fill("pim_theta",theta/rad);
 						fMyRootInterface->Fill("pim_time",McTruth_time[iMc]/ns);
+						fMyRootInterface->Fill("pim_zr",McTruth_z[iMc]/mm,r/mm);
 					}
 					else if (McTruth_pid[iMc]==2212){
 						fMyRootInterface->Fill("pp_pa",pa/MeV);
 						fMyRootInterface->Fill("pp_pt",pt/MeV);
 						fMyRootInterface->Fill("pp_theta",theta/rad);
 						fMyRootInterface->Fill("pp_time",McTruth_time[iMc]/ns);
+						fMyRootInterface->Fill("pp_zr",McTruth_z[iMc]/mm,r/mm);
 					}
 					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
 					fMyRootInterface->Fill();

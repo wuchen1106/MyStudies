@@ -108,11 +108,6 @@
 	oTBranch | pz                           | 0         | 0
 	oTBranch | t                            | 0         | 0
 
-
-#	kWhite =0,   kBlack =1,   kGray=920,
-#	kRed   =632, kGreen =416, kBlue=600, kYellow=400, kMagenta=616, kCyan=432,
-#	kOrange=800, kSpring=820, kTeal=840, kAzure =860, kViolet =880, kPink=900
-###########################################################################################################################
 #	TYPE    | NAME       | TITLE                       | xAxisName    | yAxisName | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm |DrawOption|UseLeg|legendName|legx1|legy1|legx2|legy2|npadx|npady
 #	TH1D    | em_pa      | e^{-} Momentum Amplitude    | p_{a}(MeV/c) | count     | 100 | 0     | 200   | 0    | 1     |600| 4 | 0  | 1  | 20   | 0   |          |  1   | e^{-}    | 0.8 | 0.8 | 1.0 | 1.0 |  2  |  2
 #	TH1D    | ep_pa      | e^{+} Momentum Amplitude    | p_{a}(MeV/c) | count     | 100 | 0     | 200   | 0    | 1     |632| 0 | 0  | 1  | 20   | 0   |          |  1   | e^{+}    |     |     |     |     |  2  |  2
@@ -137,6 +132,14 @@
 #	TH1D    | mum_time   | #mu^{-} Time                | time(ns)     | count     | 100 | 0     | 2000  | 0    | 1     |432| 0 | 0  | 1  | 20   | 0   |          |  1   | #mu^{-}  |     |     |     |     |  2  |  2
 #	TH1D    | pim_time   | #pi^{-} Time                | time(ns)     | count     | 100 | 0     | 2000  | 0    | 1     |400| 0 | 0  | 1  | 20   | 0   |          |  1   | #pi^{-}  |     |     |     |     |  2  |  2
 #	TH1D    | pp_time    | p^{+} Time                  | time(ns)     | count     | 100 | 0     | 2000  | 0    | 1     |616| 0 | 0  | 1  | 20   | 0   |          |  1   | p^{+}    |     |     |     |     |  2  |  2
+
+#
+##	TYPE    | NAME            | TITLE                  | xAxisName     | yAxisName         | BIN | LEFT  | RIGHT | BIN | LEFT  | RIGHT
+#	TH2D    | em_zr           | Original Position      | z(mm) origin  | r(mm) origin      | 200 |-3000.0|1500   | 200 | 0     | 1000  
+#	TH2D    | ep_zr           | Original Position      | z(mm) origin  | r(mm) origin      | 200 |-3000.0|1500   | 200 | 0     | 1000  
+#	TH2D    | mum_zr          | Original Position      | z(mm) origin  | r(mm) origin      | 200 |-3000.0|1500   | 200 | 0     | 1000  
+#	TH2D    | pim_zr          | Original Position      | z(mm) origin  | r(mm) origin      | 200 |-3000.0|1500   | 200 | 0     | 1000  
+#	TH2D    | pp_zr           | Original Position      | z(mm) origin  | r(mm) origin      | 200 |-3000.0|1500   | 200 | 0     | 1000  
 
 #	TYPE    | NAME       | TITLE                       | xAxisName    | yAxisName | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm |DrawOption|UseLeg|legendName|legx1|legy1|legx2|legy2|npadx|npady
 #	TH1D    | em_pa      | e^{-} Momentum Amplitude    | p_{a}(MeV/c) | count     | 100 | 0     | 300   | 0    | 1     | 1 | 0 | 0  | 1  | 20   | 0   |          |  0   |          |     |     |     |     |  2  |  2
