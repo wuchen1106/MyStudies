@@ -16,20 +16,6 @@
 #	                                0:double;1:int;string:2
 	TBranch | evt_num                      | 1         | 0
 	TBranch | run_num                      | 1         | 0
-	TBranch | McTruth_nTracks              | 1         | 0
-	TBranch | McTruth_tid                  | 1         | 1
-	TBranch | McTruth_pid                  | 1         | 1
-	TBranch | McTruth_ptid                 | 1         | 1
-	TBranch | McTruth_x                    | 0         | 1
-	TBranch | McTruth_y                    | 0         | 1
-	TBranch | McTruth_z                    | 0         | 1
-	TBranch | McTruth_px                   | 0         | 1
-	TBranch | McTruth_py                   | 0         | 1
-	TBranch | McTruth_pz                   | 0         | 1
-	TBranch | McTruth_e                    | 0         | 1
-	TBranch | McTruth_time                 | 0         | 1
-	TBranch | McTruth_process              | 2         | 1
-	TBranch | McTruth_volume               | 2         | 1
 	TBranch | BLTMonitor_nHits             | 1         | 0
 	TBranch | BLTMonitor_t                 | 0         | 1
 	TBranch | BLTMonitor_e                 | 0         | 1

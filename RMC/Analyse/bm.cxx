@@ -152,9 +152,6 @@ int main(int argc, char* argv[]){
 		int evt_num;
 		int run_num;
 		int McTruth_nTracks = 0;
-		std::vector<int> McTruth_tid;
-		std::vector<int> McTruth_pid;
-		std::vector<int> McTruth_ptid;
 		std::vector<double> McTruth_x;
 		std::vector<double> McTruth_y;
 		std::vector<double> McTruth_z;
@@ -163,13 +160,10 @@ int main(int argc, char* argv[]){
 		std::vector<double> McTruth_pz;
 		std::vector<double> McTruth_e;
 		std::vector<double> McTruth_time;
-		std::vector<std::string> McTruth_process;
-		std::vector<std::string> McTruth_volume;
 		int CDCMonitor_nHits = 0;
 		std::vector<int> CDCMonitor_tid;
 		std::vector<int> CDCMonitor_pid;
 		std::vector<double> CDCMonitor_t;
-		std::vector<double> CDCMonitor_e;
 		std::vector<double> CDCMonitor_x;
 		std::vector<double> CDCMonitor_y;
 		std::vector<double> CDCMonitor_z;
@@ -180,7 +174,6 @@ int main(int argc, char* argv[]){
 		std::vector<int> BLTMonitor_tid;
 		std::vector<int> BLTMonitor_pid;
 		std::vector<double> BLTMonitor_t;
-		std::vector<double> BLTMonitor_e;
 		std::vector<double> BLTMonitor_x;
 		std::vector<double> BLTMonitor_y;
 		std::vector<double> BLTMonitor_z;
@@ -191,7 +184,6 @@ int main(int argc, char* argv[]){
 		std::vector<int> Target_tid;
 		std::vector<int> Target_pid;
 		std::vector<double> Target_t;
-		std::vector<double> Target_e;
 		std::vector<double> Target_x;
 		std::vector<double> Target_y;
 		std::vector<double> Target_z;
@@ -203,9 +195,6 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("evt_num",evt_num);
 		fMyRootInterface->get_value("run_num",run_num);
 		fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
-		fMyRootInterface->get_value("McTruth_pid",McTruth_pid);
-		fMyRootInterface->get_value("McTruth_tid",McTruth_tid);
-		fMyRootInterface->get_value("McTruth_ptid",McTruth_ptid);
 		fMyRootInterface->get_value("McTruth_x",McTruth_x,cm);
 		fMyRootInterface->get_value("McTruth_y",McTruth_y,cm);
 		fMyRootInterface->get_value("McTruth_z",McTruth_z,cm);
@@ -214,11 +203,8 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
 		fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
 		fMyRootInterface->get_value("McTruth_e",McTruth_e,GeV);
-		fMyRootInterface->get_value("McTruth_process",McTruth_process);
-		fMyRootInterface->get_value("McTruth_volume",McTruth_volume);
 		fMyRootInterface->get_value("CDCMonitor_nHits",CDCMonitor_nHits);
 		fMyRootInterface->get_value("CDCMonitor_t",CDCMonitor_t,ns);
-		fMyRootInterface->get_value("CDCMonitor_e",CDCMonitor_e,GeV);
 		fMyRootInterface->get_value("CDCMonitor_tid",CDCMonitor_tid);
 		fMyRootInterface->get_value("CDCMonitor_pid",CDCMonitor_pid);
 		fMyRootInterface->get_value("CDCMonitor_x",CDCMonitor_x,cm);
@@ -229,7 +215,6 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("CDCMonitor_pz",CDCMonitor_pz,GeV);
 		fMyRootInterface->get_value("BLTMonitor_nHits",BLTMonitor_nHits);
 		fMyRootInterface->get_value("BLTMonitor_t",BLTMonitor_t,ns);
-		fMyRootInterface->get_value("BLTMonitor_e",BLTMonitor_e,GeV);
 		fMyRootInterface->get_value("BLTMonitor_tid",BLTMonitor_tid);
 		fMyRootInterface->get_value("BLTMonitor_pid",BLTMonitor_pid);
 		fMyRootInterface->get_value("BLTMonitor_x",BLTMonitor_x,cm);
@@ -240,7 +225,6 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("BLTMonitor_pz",BLTMonitor_pz,GeV);
 		fMyRootInterface->get_value("Target_nHits",Target_nHits);
 		fMyRootInterface->get_value("Target_t",Target_t,ns);
-		fMyRootInterface->get_value("Target_e",Target_e,GeV);
 		fMyRootInterface->get_value("Target_tid",Target_tid);
 		fMyRootInterface->get_value("Target_pid",Target_pid);
 		fMyRootInterface->get_value("Target_x",Target_x,cm);
@@ -254,6 +238,7 @@ int main(int argc, char* argv[]){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
 
 		// Get info
+		if (McTruth_nTracks<=0) continue;
 		double opx = McTruth_px[0];
 		double opy = McTruth_py[0];
 		double opz = McTruth_pz[0];
@@ -278,7 +263,7 @@ int main(int argc, char* argv[]){
 		// Got Cdc Region?
 		bool got_CDC = false;
 		for ( int i_mon = 0; i_mon < CDCMonitor_nHits; i_mon++ ){
-			if (CDCMonitor_tid[i_mon]==1)
+			if (CDCMonitor_tid[i_mon]==1&&CDCMonitor_pid[i_mon]==PDGEncoding)
 				got_CDC = true;
 		}
 		// Got Target Region?
@@ -286,26 +271,27 @@ int main(int argc, char* argv[]){
 		bool got_Target = false;
 		bool got_stopped = false;
 		for ( int i_mon = 0; i_mon < Target_nHits; i_mon++ ){
-			if (Target_tid[i_mon]==1){
+			if (Target_tid[i_mon]==1&&Target_pid[i_mon]==PDGEncoding){
 				got_Target = true;
 				if (Target_stopped[i_mon]){
 					got_stopped = true;
 				}
 			}
-			else if (Target_pid[i_mon]==13){
-				std::cout<<"Hey a moun from else where!"<<std::endl;
-				std::cout<<"  px = "<<Target_px[i_mon]/MeV<<"MeV"
-				         <<", py = "<<Target_py[i_mon]/MeV<<"MeV"
-				         <<", pz = "<<Target_pz[i_mon]/MeV<<"MeV"
-				         <<", tid = "<<Target_tid[i_mon]
-				         <<", stopped?"<<Target_stopped[i_mon]
-				         <<std::endl;
+			else if (Target_pid[i_mon]==PDGEncoding){
+				//std::cout<<"Hey a particle from else where!"<<std::endl;
+				//std::cout<<"  px = "<<Target_px[i_mon]/MeV<<"MeV"
+				//         <<", py = "<<Target_py[i_mon]/MeV<<"MeV"
+				//         <<", pz = "<<Target_pz[i_mon]/MeV<<"MeV"
+				//         <<", tid = "<<Target_tid[i_mon]
+				//         <<", pid = "<<Target_pid[i_mon]
+				//         <<", stopped?"<<Target_stopped[i_mon]
+				//         <<std::endl;
 			}
 		}
 		// Got recoiled?
 		bool got_recoiled = false;
 		for ( int i_mon = 0; i_mon < BLTMonitor_nHits; i_mon++ ){
-			if (BLTMonitor_tid[i_mon]==1&&BLTMonitor_pz[i_mon]<0)
+			if (BLTMonitor_tid[i_mon]==1&&BLTMonitor_pid[i_mon]==PDGEncoding&&BLTMonitor_pz[i_mon]<0)
 				got_recoiled = true;
 		}
 		if (got_CDC){

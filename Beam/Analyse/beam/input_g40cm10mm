@@ -6,9 +6,12 @@
 #	TYPE     | Name
 	TreeName | tree
 
-#	TYPE    | Directory                                                                 | runname | #CPU | #job
-#	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/PT_g40cm10mm                         |         | 100  | 1
-	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/MT1_g40cm10mm_018T_EP        |         | 100  | 1
+#	TYPE    | Directory                                                                   | runname | #CPU | #job
+#	FILE    | /home/chen/MyWorkArea/Data/raw/g4sim/PT_g40cm10mm                           |         | 100  | 1
+	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/MT1.pim.g40cm10mm.03T.g4s.QBH  |         | 100  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/MT1.EP.g40cm10mm.03T.g4s.QBH   |         | 100  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/MT1.EP.g40cm10mm.018T.g4s.QBH  |         | 100  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/PTACS.EP.g40cm10mm.g4s.QBH     |         | 100  | 1
 
 #	TYPE    | Path
 #	oFILE   | /home/chen/MyWorkArea/g4sim/output/raw_g4sim.root
@@ -16,8 +19,8 @@
 
 #	TYPE    | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2
-#	TBranch | evt_num                      | 1         | 0
-#	TBranch | run_num                      | 1         | 0
+	TBranch | evt_num                      | 1         | 0
+	TBranch | run_num                      | 1         | 0
 	TBranch | MT1Monitor_nHits             | 1         | 0
 	TBranch | MT1Monitor_t                 | 0         | 1
 	TBranch | MT1Monitor_tid               | 1         | 1
@@ -77,29 +80,11 @@
 
 #	TYPE     | Name                         | Type      | Vector?
 	                                0:double;1:int;string:2
-#	oTBranch | evt_num                      | 1         | 0
-#	oTBranch | run_num                      | 1         | 0
-#	oTBranch | pid                          | 1         | 0
-#	oTBranch | tid                          | 1         | 0
-#	oTBranch | ppid                         | 1         | 0
-#	oTBranch | x                            | 0         | 0
-#	oTBranch | y                            | 0         | 0
-#	oTBranch | z                            | 0         | 0
-#	oTBranch | px                           | 0         | 0
-#	oTBranch | py                           | 0         | 0
-#	oTBranch | pz                           | 0         | 0
-#	oTBranch | t                            | 0         | 0
-#	oTBranch | ox                           | 0         | 0
-#	oTBranch | oy                           | 0         | 0
-#	oTBranch | oz                           | 0         | 0
-#	oTBranch | opx                          | 0         | 0
-#	oTBranch | opy                          | 0         | 0
-#	oTBranch | opz                          | 0         | 0
-#	oTBranch | particle                     | 2         | 0
-#	oTBranch | process                      | 2         | 0
-#	oTBranch | volume                       | 2         | 0
-
+	oTBranch | evt_num                      | 1         | 0
+	oTBranch | run_num                      | 1         | 0
 	oTBranch | pid                          | 1         | 0
+	oTBranch | tid                          | 1         | 0
+	oTBranch | ppid                         | 1         | 0
 	oTBranch | x                            | 0         | 0
 	oTBranch | y                            | 0         | 0
 	oTBranch | z                            | 0         | 0
@@ -107,6 +92,25 @@
 	oTBranch | py                           | 0         | 0
 	oTBranch | pz                           | 0         | 0
 	oTBranch | t                            | 0         | 0
+	oTBranch | ot                           | 0         | 0
+	oTBranch | ox                           | 0         | 0
+	oTBranch | oy                           | 0         | 0
+	oTBranch | oz                           | 0         | 0
+	oTBranch | opx                          | 0         | 0
+	oTBranch | opy                          | 0         | 0
+	oTBranch | opz                          | 0         | 0
+	oTBranch | particle                     | 2         | 0
+	oTBranch | process                      | 2         | 0
+	oTBranch | volume                       | 2         | 0
+
+#	oTBranch | pid                          | 1         | 0
+#	oTBranch | x                            | 0         | 0
+#	oTBranch | y                            | 0         | 0
+#	oTBranch | z                            | 0         | 0
+#	oTBranch | px                           | 0         | 0
+#	oTBranch | py                           | 0         | 0
+#	oTBranch | pz                           | 0         | 0
+#	oTBranch | t                            | 0         | 0
 
 #	TYPE    | NAME       | TITLE                       | xAxisName    | yAxisName | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm |DrawOption|UseLeg|legendName|legx1|legy1|legx2|legy2|npadx|npady
 #	TH1D    | em_pa      | e^{-} Momentum Amplitude    | p_{a}(MeV/c) | count     | 100 | 0     | 200   | 0    | 1     |600| 4 | 0  | 1  | 20   | 0   |          |  1   | e^{-}    | 0.8 | 0.8 | 1.0 | 1.0 |  2  |  2
