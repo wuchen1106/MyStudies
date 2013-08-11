@@ -175,6 +175,7 @@ int main(int argc, char* argv[]){
 		double py;
 		double pz;
 		double t;
+		std::string particle;
 		std::string process;
 		std::string volume;
 		double ox;
@@ -212,6 +213,7 @@ int main(int argc, char* argv[]){
 		std::vector<int> McTruth_pid;
 		std::vector<int> McTruth_charge;
 		std::vector<int> McTruth_ptid;
+		std::vector<std::string> McTruth_particleName;
 		std::vector<std::string> McTruth_process;
 		std::vector<std::string> McTruth_volume;
 		std::vector<double> McTruth_time;
@@ -231,6 +233,7 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("McTruth_pid",McTruth_pid);
 		fMyRootInterface->get_value("McTruth_charge",McTruth_charge);
 		fMyRootInterface->get_value("McTruth_ptid",McTruth_ptid);
+		fMyRootInterface->get_value("McTruth_particleName",McTruth_particleName);
 		fMyRootInterface->get_value("McTruth_process",McTruth_process);
 		fMyRootInterface->get_value("McTruth_volume",McTruth_volume);
 		fMyRootInterface->get_value("McTruth_x",McTruth_x,cm);
@@ -365,24 +368,74 @@ int main(int argc, char* argv[]){
 				}
 			}
 		}
-		else if (m_workMode=="mctruth"){
+		else if (m_workMode=="McTruth"){
 			for ( int iMc = 0; iMc < McTruth_nTracks; iMc++ ){
-				if (McTruth_time[iMc]<500*ns||McTruth_time[iMc]>600*ns) continue;
-				if (McTruth_charge[iMc]==0) continue;
-				fMyRootInterface->set_ovalue("pid",pid);
-				fMyRootInterface->set_ovalue("x",x/mm);
-				fMyRootInterface->set_ovalue("y",y/mm);
-				fMyRootInterface->set_ovalue("z",z/mm);
-				fMyRootInterface->set_ovalue("px",px/MeV);
-				fMyRootInterface->set_ovalue("py",py/MeV);
-				fMyRootInterface->set_ovalue("pz",pz/MeV);
-				fMyRootInterface->set_ovalue("t",t/ns);
-				fMyRootInterface->set_ovalue("process",process);
-				fMyRootInterface->set_ovalue("volume",volume);
-				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
-				fMyRootInterface->Fill();
-				if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
-				filled=true;
+				if (!PDGEncoding // all particles
+					||PDGEncoding==-1&&McTruth_pid[iMc]>=1e7 // only nuclears
+					||PDGEncoding==1&&McTruth_pid[iMc]<1e7 // only elementary particles
+					||McTruth_pid[iMc] == PDGEncoding){
+					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+						std::cout<<prefix_ParticleInfoStart
+								 <<"  Found Particle! iMc = "<<iMc
+								 <<", pid = "<<McTruth_pid[iMc]
+								 <<", tid = "<<McTruth_tid[iMc]
+								 <<", px = "<<McTruth_px[iMc]
+								 <<"MeV, py = "<<McTruth_py[iMc]
+								 <<"MeV, pz = "<<McTruth_pz[iMc]
+								 <<"MeV"
+								 <<std::endl;
+					double pa = sqrt(McTruth_px[iMc]*McTruth_px[iMc]+McTruth_py[iMc]*McTruth_py[iMc]+McTruth_pz[iMc]*McTruth_pz[iMc]);
+					double pt = sqrt(McTruth_px[iMc]*McTruth_px[iMc]+McTruth_py[iMc]*McTruth_py[iMc]);
+					double theta = acos(McTruth_pz[iMc]/pa);
+					if (pa<1.5*MeV) continue;
+					//if (McTruth_time[iMc]<400*ns||McTruth_time[iMc]>500*ns) continue;
+					if (McTruth_charge[iMc]==0) continue;
+					fMyRootInterface->set_ovalue("pid",McTruth_pid[iMc]);
+					fMyRootInterface->set_ovalue("x",McTruth_x[iMc]/mm);
+					fMyRootInterface->set_ovalue("y",McTruth_y[iMc]/mm);
+					fMyRootInterface->set_ovalue("z",McTruth_z[iMc]/mm);
+					fMyRootInterface->set_ovalue("px",McTruth_px[iMc]/MeV);
+					fMyRootInterface->set_ovalue("py",McTruth_py[iMc]/MeV);
+					fMyRootInterface->set_ovalue("pz",McTruth_pz[iMc]/MeV);
+					fMyRootInterface->set_ovalue("t",McTruth_time[iMc]/ns);
+					fMyRootInterface->set_ovalue("particle",McTruth_particleName[iMc]);
+					fMyRootInterface->set_ovalue("process",McTruth_process[iMc]);
+					fMyRootInterface->set_ovalue("volume",McTruth_volume[iMc]);
+					if (McTruth_pid[iMc]==11){
+						fMyRootInterface->Fill("em_pa",pa/MeV);
+						fMyRootInterface->Fill("em_pt",pt/MeV);
+						fMyRootInterface->Fill("em_theta",theta/rad);
+						fMyRootInterface->Fill("em_time",McTruth_time[iMc]/ns);
+					}
+					else if (McTruth_pid[iMc]==-11){
+						fMyRootInterface->Fill("ep_pa",pa/MeV);
+						fMyRootInterface->Fill("ep_pt",pt/MeV);
+						fMyRootInterface->Fill("ep_theta",theta/rad);
+						fMyRootInterface->Fill("ep_time",McTruth_time[iMc]/ns);
+					}
+					else if (McTruth_pid[iMc]==13){
+						fMyRootInterface->Fill("mum_pa",pa/MeV);
+						fMyRootInterface->Fill("mum_pt",pt/MeV);
+						fMyRootInterface->Fill("mum_theta",theta/rad);
+						fMyRootInterface->Fill("mum_time",McTruth_time[iMc]/ns);
+					}
+					else if (McTruth_pid[iMc]==-211){
+						fMyRootInterface->Fill("pim_pa",pa/MeV);
+						fMyRootInterface->Fill("pim_pt",pt/MeV);
+						fMyRootInterface->Fill("pim_theta",theta/rad);
+						fMyRootInterface->Fill("pim_time",McTruth_time[iMc]/ns);
+					}
+					else if (McTruth_pid[iMc]==2212){
+						fMyRootInterface->Fill("pp_pa",pa/MeV);
+						fMyRootInterface->Fill("pp_pt",pt/MeV);
+						fMyRootInterface->Fill("pp_theta",theta/rad);
+						fMyRootInterface->Fill("pp_time",McTruth_time[iMc]/ns);
+					}
+					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
+					fMyRootInterface->Fill();
+					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
+					filled=true;
+				}
 			}
 		}
 		if (filled)	inc_Ncut("Got particles");
