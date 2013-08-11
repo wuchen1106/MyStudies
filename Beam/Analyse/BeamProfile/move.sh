@@ -11,7 +11,7 @@ do
 			do
 				if [ $monitor = "PTACS" ]; then
 					rootfile="result/"$monitor"_*_"$Target"_"$app"_"$phys".root"
-					profile="result/"$monitor"_*_"$Target"_"$app"_"$phys"*"
+					profile="result/"$monitor"_*_"$Target"_"$app"_"$phys".*"
 					directroy="../../result/$Target/$app/$phys/$monitor"
 					mv $rootfile $directroy
 					mv $profile $directroy
@@ -19,7 +19,7 @@ do
 					for DF in "03T" "018T"
 					do
 						rootfile="result/"$monitor"_*_"$Target"_"$DF"_"$app"_"$phys".root"
-						profile="result/"$monitor"_*_"$Target"_"$DF"_"$app"_"$phys"*"
+						profile="result/"$monitor"_*_"$Target"_"$DF"_"$app"_"$phys".*"
 						directroy="../../result/$Target/$app/$phys/$monitor/$DF"
 						mv $rootfile $directroy
 						mv $profile $directroy
