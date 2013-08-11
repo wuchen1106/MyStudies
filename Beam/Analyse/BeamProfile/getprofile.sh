@@ -1,47 +1,53 @@
 #!/bin/bash
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
-for Target in "g40cm10mm"
+for Target in "g30cm10mm" "g40cm10mm" "g50cm10mm" "t16cm6mm"
 do
 #	for app in "A" "H" "cg4" "g4s"
-	for app in "g4s"
+	for app in "g4s" "cg4"
 	do
 #		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
-		for phys in "QBH"
+		for phys in "QBH" "QB"
 		do
-			nEvents=1000000
-			if [ $app == "A" ]; then
-				nEvents=1000000
-			elif [ $app == "H" ]; then
-				nEvents=100000
-			elif [ $app == "cg4" ]; then
-				if [ $phys == "modified" ]; then
-					if [ $Target = "g60cm6mm200gcm3" -o $Target = "t16cm6mm" ]; then
-						nEvents=15000000
-					fi
-				elif [ $phys == "QB" ]; then
-					if [ $Target = "g60cm6mm200gcm3" -o $Target = "t16cm6mm" ]; then
-						nEvents=250000
-					elif [ $Target = "g40cm10mm" ]; then
-						nEvents=15000000
-					fi
-				elif [ $phys == "QBH" ]; then
-					if [ $Target = "g60cm6mm200gcm3" -o $Target = "t16cm6mm" ]; then
-						nEvents=250000
-					fi
-				elif [ $phys == "QB49302" ]; then
-					if [ $Target = "g60cm6mm170gcm3" ]; then
-						nEvents=990000
-					else
-						nEvents=0
-					fi
-				fi
-			elif [ $app == "g4s" ]; then
-				if [ $phys == "QBH" -a $Target == "g40cm10mm" ]; then
-					nEvents=10000000
-				fi
-			fi
 			for monitor in "PTACS" "MT1"
 			do
+				nEvents=1000000
+				if [ $app == "A" ]; then
+					nEvents=1000000
+				elif [ $app == "H" ]; then
+					nEvents=100000
+				elif [ $app == "cg4" ]; then
+					if [ $phys == "modified" ]; then
+						if [ $Target = "g60cm6mm200gcm3" -o $Target = "t16cm6mm" ]; then
+							nEvents=15000000
+						fi
+					elif [ $phys == "QB" ]; then
+						if [ $Target = "g60cm6mm200gcm3" -o $Target = "t16cm6mm" ]; then
+							nEvents=250000
+						elif [ $Target = "g40cm10mm" ]; then
+							nEvents=15000000
+						fi
+					elif [ $phys == "QBH" ]; then
+						if [ $Target = "g60cm6mm200gcm3" -o $Target = "t16cm6mm" ]; then
+							nEvents=250000
+						fi
+					elif [ $phys == "QB49302" ]; then
+						if [ $Target = "g60cm6mm170gcm3" ]; then
+							nEvents=990000
+						else
+							nEvents=0
+						fi
+					fi
+				elif [ $app == "g4s" ]; then
+					if [ $monitor == "PTACS" ]; then
+						if [ $phys == "QBH" -a $Target == "g40cm10mm" ]; then
+							nEvents=10000000
+						fi
+					elif [ $monitor == "MT1" ]; then
+						if [ $phys == "QBH" ]; then
+							nEvents=20000000
+						fi
+					fi
+				fi
 				for pname in "em" "mum" "pim" "n0"
 				do
 					pid=0
@@ -53,8 +59,8 @@ do
 					if [ $monitor = "MT1" ]; then
 						for DF in "03T" "018T"
 						do
-							prefix=$monitor"."$pname
-							suffix="."$Target"."$DF"."$app"."$phys
+							prefix=$monitor"_"$pname
+							suffix="_"$Target"_"$DF"_"$app"_"$phys
 							pbsfile="$PWD/result/"$prefix$suffix".boss"
 #							directory="$PWD/../../result/$Target/$app/$phys/$monitor/"
 							directory="$PWD/../../result/$Target"
@@ -123,8 +129,8 @@ do
 							fi
 						done
 					elif [ $monitor = "PTACS" ]; then
-						prefix=$monitor"."$pname
-						suffix="."$Target"."$app"."$phys
+						prefix=$monitor"_"$pname
+						suffix="_"$Target"_"$app"_"$phys
 						pbsfile="$PWD/result/"$prefix$suffix".boss"
 #						directory="$PWD/../../result/$Target/$app/$phys/$monitor/"
 						directory="$PWD/../../result/$Target"

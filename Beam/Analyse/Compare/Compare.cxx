@@ -143,6 +143,7 @@ int main(int argc, char** argv){
 void init_args()
 {
 	strcpy(m_workMode,"gen");
+	m_runName = "output";
 	verbose = 0;
 	nEvents = 0;
 	printModule = 10000;
