@@ -13,7 +13,7 @@ do
 		for monitor in "McTruth"
 		do
 #			for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
-			for pid in 0;
+			for pid in 1;
 			do
 				for (( iSplit=0; iSplit<nSplit; iSplit++ ))
 				do
@@ -37,7 +37,8 @@ do
 					pbsfile=$PWD'/result/'$name'.boss'
 					echo "#!/bin/bash" > $pbsfile
 					echo "source $MYHOME/.setana.sh" >> $pbsfile
-					echo $PWD'/ip -b '$beginNo' -t '$totalNo' -m monitor -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$configName' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
+#					echo $PWD'/beam -b '$beginNo' -t '$totalNo' -m monitor -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$configName' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
+					echo $PWD'/beam -n 73346 -m McTruth -P '$pid' -r '$name' -i '$PWD'/input_'$configName' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 					chmod +x $pbsfile
 #					qsub -j oe -o /dev/null -q midq $pbsfile
 					$pbsfile
