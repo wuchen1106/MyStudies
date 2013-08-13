@@ -235,7 +235,7 @@ int main(int argc, char** argv){
 		double ox;
 		double oy;
 		double oz;
-		double pid;
+		int pid;
 
 		fMyRootInterface->get_value("x",x,mm);
 		fMyRootInterface->get_value("y",y,mm);
