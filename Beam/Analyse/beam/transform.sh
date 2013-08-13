@@ -31,12 +31,12 @@ do_the_job(){
 	echo $PWD'/beam -D '$DirName' -O '$OriginalFile' -b '$beginNo' -t '$totalNo' -m monitor -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 #	echo $PWD'/beam -n 73346 -m McTruth -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 	chmod +x $pbsfile
-	qsub -j oe -o /dev/null -q $queue $pbsfile
-#	$pbsfile
+#	qsub -j oe -o /dev/null -q $queue $pbsfile
+	nohup $pbsfile &
 }
 
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
-for Target in  "g50cm10mm" "g30cm10mm" "t16cm6mm"
+for Target in  "g40cm10mm"
 do
 #   for app in "A" "H" "cg4" "g4s"
 	for app in "g4s"
@@ -70,7 +70,7 @@ do
 						fi
 						if [ $monitor = "MT1" ]; then
 #							for DF in "03T" "018T"
-							for DF in "03T"
+							for DF in "018T"
 							do
 								DirName=$MYDATA/raw/g4sim/$monitor.all.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'all' and 'pim' etc
 								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.$Target.$app.$phys.ref.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
