@@ -1,6 +1,6 @@
 #!/bin/bash
 
-queue=shortq
+queue=besq
 nFiles=100
 nSplit=1
 
@@ -31,8 +31,8 @@ do_the_job(){
 	echo $PWD'/beam -D '$DirName' -O '$OriginalFile' -b '$beginNo' -t '$totalNo' -m monitor -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 #	echo $PWD'/beam -n 73346 -m McTruth -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 	chmod +x $pbsfile
-#	qsub -j oe -o /dev/null -q $queue $pbsfile
-	nohup $pbsfile &
+	qsub -j oe -o /dev/null -q $queue $pbsfile
+#	nohup $pbsfile &
 }
 
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
@@ -48,7 +48,7 @@ do
 			for monitor in "MT1"
 			do
 #			for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
-				for pid in 1;
+				for pid in -211;
 				do
 					for (( iSplit=0; iSplit<nSplit; iSplit++ ))
 					do
@@ -70,14 +70,14 @@ do
 						fi
 						if [ $monitor = "MT1" ]; then
 #							for DF in "03T" "018T"
-							for DF in "018T"
+							for DF in "018T" "03T"
 							do
-								DirName=$MYDATA/raw/g4sim/$monitor.all.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'all' and 'pim' etc
-								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.$Target.$app.$phys.ref.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+								DirName=$MYDATA/raw/g4sim/$monitor.$pname.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+								OriginalFile=$MYG4SIMDATAROOT/PTACS.$pname.$Target.$app.$phys.ref.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 								do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile $DF 
 							done
 						elif [ $monitor = "PTACS" ]; then
-							DirName=$MYDATA/raw/g4sim/$monitor.all.$Target.$app.$phys #FIXME need a convention. Now we have to change it in 'all' and 'pim' etc
+							DirName=$MYDATA/raw/g4sim/$monitor.EP.$Target.$app.$phys
 							OriginalFile='NONE'
 							do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile
 						fi
