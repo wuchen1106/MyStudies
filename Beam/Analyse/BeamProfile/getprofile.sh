@@ -1,6 +1,6 @@
 #!/bin/bash
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
-for Target in "g40cm10mm"
+for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm"
 do
 #	for app in "A" "H" "cg4" "g4s"
 	for app in "g4s"
@@ -59,14 +59,14 @@ do
 					fi
 					if [ $monitor = "MT1" ]; then
 #						for DF in "03T" "018T"
-						for DF in "018T"
+						for DF in "018T" "03T"
 						do
 							prefix=$monitor"_"$pname
 							suffix="_"$Target"_"$DF"_"$app"_"$phys
 							pbsfile="$PWD/result/"$prefix$suffix".boss"
 #							directory="$PWD/../../result/$Target/$app/$phys/$monitor/"
 							directory="$PWD/../../result/$Target"
-							rootfile=$directory/$monitor.all.$Target.$DF.$app.$phys.root
+							rootfile=$directory/$monitor.EP.$Target.$DF.$app.$phys.root
 							inputfile=input.$monitor.$pname
 							cp input.temp $inputfile
 							R=350
@@ -136,7 +136,7 @@ do
 						pbsfile="$PWD/result/"$prefix$suffix".boss"
 #						directory="$PWD/../../result/$Target/$app/$phys/$monitor/"
 						directory="$PWD/../../result/$Target"
-						rootfile=$directory/$monitor.all.$Target.$app.$phys.root
+						rootfile=$directory/$monitor.EP.$Target.$app.$phys.root
 						inputfile=input.$monitor.$pname
 						cp input.temp $inputfile
 						R=350
