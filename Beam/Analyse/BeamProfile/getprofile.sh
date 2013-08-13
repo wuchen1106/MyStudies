@@ -3,12 +3,13 @@
 for Target in "g40cm10mm"
 do
 #	for app in "A" "H" "cg4" "g4s"
-	for app in "cg4"
+	for app in "g4s"
 	do
 #		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
-		for phys in "QB"
+		for phys in "QBH"
 		do
-			for monitor in "PTACS" "MT1"
+#			for monitor in "MT1" "PTACS"
+			for monitor in "MT1"
 			do
 				nEvents=1000000
 				if [ $app == "A" ]; then
@@ -57,7 +58,8 @@ do
 					elif [ $pname = n0 ]; then pname_inTitle="n_{0}"; pid=2112;
 					fi
 					if [ $monitor = "MT1" ]; then
-						for DF in "03T" "018T"
+#						for DF in "03T" "018T"
+						for DF in "018T"
 						do
 							prefix=$monitor"_"$pname
 							suffix="_"$Target"_"$DF"_"$app"_"$phys
@@ -65,7 +67,7 @@ do
 #							directory="$PWD/../../result/$Target/$app/$phys/$monitor/"
 							directory="$PWD/../../result/$Target"
 							rootfile=$directory/$monitor.all.$Target.$DF.$app.$phys.root
-							inputfile=input.$monitor.$pname.$Target.$app.$phys
+							inputfile=input.$monitor.$pname
 							cp input.temp $inputfile
 							R=350
 							PMAX=300
@@ -135,7 +137,7 @@ do
 #						directory="$PWD/../../result/$Target/$app/$phys/$monitor/"
 						directory="$PWD/../../result/$Target"
 						rootfile=$directory/$monitor.all.$Target.$app.$phys.root
-						inputfile="input.$prefix$suffix"
+						inputfile=input.$monitor.$pname
 						cp input.temp $inputfile
 						R=350
 						PMAX=300

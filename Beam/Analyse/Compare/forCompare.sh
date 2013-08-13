@@ -32,6 +32,11 @@ do_id(){
 		rootfile="../../result/$Target/$app/$phys/$monitor/"$monitor"_"$pname"_"$Target"_"$app"_"$phys".root"
 		histo=$monitor"_"$pname"_"$var$vartype$Target"_"$app"_"$phys
 	fi
+	if [ $vartype = "_" ]; then
+		LOG=0
+	else
+		LOG=1
+	fi
 	if [ -e $rootfile ]; then
 #		legendName=$phys
 		legendName=$Target
@@ -60,11 +65,6 @@ var_process(){
 	vartype=$6
 	nx=$7
 	ny=$8
-	if [ $vartype = "." ]; then
-		LOG=0
-	else
-		LOG=1
-	fi
 	iFile=0
 #	for app in "A" "H" "cg4" "g4s"
 	for app in "cg4" "g4s"
@@ -76,7 +76,8 @@ var_process(){
 			for Target in "g40cm10mm"
 			do
 				if [ $monitor = "MT1" ]; then
-					for DF in "03T" "018T"
+#					for DF in "03T" "018T"
+					for DF in "018T"
 					do
 						do_id $iFile $var $vartype $monitor $pname $app $phys $Target $DF
 						iFile=$?
@@ -96,7 +97,8 @@ input="input"
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
 for Target in "g40cm10mm"
 do
-	for monitor in "PTACS"
+#	for monitor in "PTACS" "MT1"
+	for monitor in "MT1" "PTACS"
 	do
 		for pname in "em" "mum" "pim" "n0"
 		do
