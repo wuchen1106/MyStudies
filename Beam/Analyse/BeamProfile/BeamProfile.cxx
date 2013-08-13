@@ -45,13 +45,13 @@ int main(int argc, char** argv){
 				m_monitor = optarg;
 				printf("work mode: %s\n",m_monitor.c_str());
 				break;
-			case 'x':
-				m_prefix = optarg;
-				printf("m_prefix: %s\n",m_prefix.c_str());
-				break;
 			case 'i':
 				m_input=optarg;
 				printf("input configuration file: %s\n",m_input.c_str());
+				break;
+			case 'x':
+				m_prefix = optarg;
+				printf("m_prefix: %s\n",m_prefix.c_str());
 				break;
 			case 'y':
 				m_suffix = optarg;

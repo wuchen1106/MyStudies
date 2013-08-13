@@ -20,6 +20,8 @@
 #include "MyRootInterface.hxx"
 
 std::string m_workMode;
+std::string m_prefix;
+std::string m_suffix;
 std::string m_MonitorPlane;
 std::string m_runName;
 std::string m_input;
@@ -50,12 +52,20 @@ int main(int argc, char* argv[]){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hb:t:v:n:m:M:r:D:O:d:p:P:i:"))!=-1){
+	while((result=getopt(argc,argv,"hb:t:v:n:m:M:r:D:O:d:p:P:x:y:i:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
 				m_workMode = optarg;
 				printf("Work Mode: %s\n",m_workMode.c_str());
+				break;
+			case 'x':
+				m_prefix = optarg;
+				printf("m_prefix: %s\n",m_prefix.c_str());
+				break;
+			case 'y':
+				m_suffix = optarg;
+				printf("m_suffix: %s\n",m_suffix.c_str());
 				break;
 			case 'M':
 				m_MonitorPlane = optarg;
@@ -160,6 +170,16 @@ int main(int argc, char* argv[]){
 	if (m_beginNo!=-1&&m_totalNo!=-1){
 		fMyRootInterface->set_beginCPU(0,m_beginNo);
 		fMyRootInterface->set_NCPU(0,m_totalNo);
+	}
+	int nHists = fMyRootInterface->get_TH1D_size();
+	for (int iHist = 0; iHist < nHists; iHist++ ){
+		std::string name = fMyRootInterface->get_nameForH1D(iHist);
+		fMyRootInterface->set_nameForH1D(iHist,m_prefix+"_"+name+m_suffix);
+	}
+	nHists = fMyRootInterface->get_TH2D_size();
+	for (int iHist = 0; iHist < nHists; iHist++ ){
+		std::string name = fMyRootInterface->get_nameForH2D(iHist);
+		fMyRootInterface->set_nameForH2D(iHist,m_prefix+"_"+name+m_suffix);
 	}
 	fMyRootInterface->set_DirNames(0,m_InputDir);
 	fMyRootInterface->set_OutputName(m_runName);
@@ -337,10 +357,10 @@ int main(int argc, char* argv[]){
 	if (m_OriginalFile!="NONE"){ // we need original file to get original information for primary particles. e.g. MT1 & A9
 		m_TChain->Add(m_OriginalFile.c_str());
 		m_OriginalNum = m_TChain->GetEntries();
-		if (m_workMode=="monitor"){
+		if (m_MonitorPlane=="PTACS"||m_MonitorPlane=="MT1"){
 			m_TChain->SetBranchAddress("t",&ot);
 		}
-		else if (m_workMode=="A9"||m_workMode=="A9pim"){
+		else if (m_MonitorPlane=="A9"){
 			m_TChain->SetBranchAddress("ot",&ot);
 		}
 		m_TChain->SetBranchAddress("ox",&ox);
@@ -390,7 +410,7 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("evt_num",evt_num);
 		fMyRootInterface->get_value("run_num",run_num);
 
-		if (m_workMode=="McTruth"){
+		if (m_MonitorPlane=="McTruth"){
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Getting info for McTruth"<<std::endl;
 			fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
 			fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
@@ -408,28 +428,28 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
 			fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
 		}
-		else if (m_workMode=="A9"||m_workMode=="A9pim"){
-			fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
-			fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
-			fMyRootInterface->get_value("McTruth_x",McTruth_x,cm);
-			fMyRootInterface->get_value("McTruth_y",McTruth_y,cm);
-			fMyRootInterface->get_value("McTruth_z",McTruth_z,cm);
-			fMyRootInterface->get_value("McTruth_px",McTruth_px,GeV);
-			fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
-			fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
+		else if (m_MonitorPlane=="A9"){
+//			fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
+//			fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
+//			fMyRootInterface->get_value("McTruth_x",McTruth_x,cm);
+//			fMyRootInterface->get_value("McTruth_y",McTruth_y,cm);
+//			fMyRootInterface->get_value("McTruth_z",McTruth_z,cm);
+//			fMyRootInterface->get_value("McTruth_px",McTruth_px,GeV);
+//			fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
+//			fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
 			fMyRootInterface->get_value("CDCMonitor_nHits",CDCMonitor_nHits);
 			fMyRootInterface->get_value("CDCMonitor_t",CDCMonitor_t,ns);
-			fMyRootInterface->get_value("CDCMonitor_tid",CDCMonitor_tid);
-			fMyRootInterface->get_value("CDCMonitor_pid",CDCMonitor_pid);
-			fMyRootInterface->get_value("CDCMonitor_ppid",CDCMonitor_ppid);
-			fMyRootInterface->get_value("CDCMonitor_oprocess",CDCMonitor_oprocess);
-			fMyRootInterface->get_value("CDCMonitor_ovolName",CDCMonitor_ovolName);
-			fMyRootInterface->get_value("CDCMonitor_ox",CDCMonitor_ox,cm);
-			fMyRootInterface->get_value("CDCMonitor_oy",CDCMonitor_oy,cm);
-			fMyRootInterface->get_value("CDCMonitor_oz",CDCMonitor_oz,cm);
-			fMyRootInterface->get_value("CDCMonitor_opx",CDCMonitor_opx,GeV);
-			fMyRootInterface->get_value("CDCMonitor_opy",CDCMonitor_opy,GeV);
-			fMyRootInterface->get_value("CDCMonitor_opz",CDCMonitor_opz,GeV);
+//			fMyRootInterface->get_value("CDCMonitor_tid",CDCMonitor_tid);
+//			fMyRootInterface->get_value("CDCMonitor_pid",CDCMonitor_pid);
+//			fMyRootInterface->get_value("CDCMonitor_ppid",CDCMonitor_ppid);
+//			fMyRootInterface->get_value("CDCMonitor_oprocess",CDCMonitor_oprocess);
+//			fMyRootInterface->get_value("CDCMonitor_ovolName",CDCMonitor_ovolName);
+//			fMyRootInterface->get_value("CDCMonitor_ox",CDCMonitor_ox,cm);
+//			fMyRootInterface->get_value("CDCMonitor_oy",CDCMonitor_oy,cm);
+//			fMyRootInterface->get_value("CDCMonitor_oz",CDCMonitor_oz,cm);
+//			fMyRootInterface->get_value("CDCMonitor_opx",CDCMonitor_opx,GeV);
+//			fMyRootInterface->get_value("CDCMonitor_opy",CDCMonitor_opy,GeV);
+//			fMyRootInterface->get_value("CDCMonitor_opz",CDCMonitor_opz,GeV);
 			fMyRootInterface->get_value("CDCMonitor_x",CDCMonitor_x,cm);
 			fMyRootInterface->get_value("CDCMonitor_y",CDCMonitor_y,cm);
 			fMyRootInterface->get_value("CDCMonitor_z",CDCMonitor_z,cm);
@@ -438,17 +458,17 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->get_value("CDCMonitor_pz",CDCMonitor_pz,GeV);
 			fMyRootInterface->get_value("BLTMonitor_nHits",BLTMonitor_nHits);
 			fMyRootInterface->get_value("BLTMonitor_t",BLTMonitor_t,ns);
-			fMyRootInterface->get_value("BLTMonitor_tid",BLTMonitor_tid);
-			fMyRootInterface->get_value("BLTMonitor_pid",BLTMonitor_pid);
-			fMyRootInterface->get_value("BLTMonitor_ppid",BLTMonitor_ppid);
-			fMyRootInterface->get_value("BLTMonitor_oprocess",BLTMonitor_oprocess);
-			fMyRootInterface->get_value("BLTMonitor_ovolName",BLTMonitor_ovolName);
-			fMyRootInterface->get_value("BLTMonitor_ox",BLTMonitor_ox,cm);
-			fMyRootInterface->get_value("BLTMonitor_oy",BLTMonitor_oy,cm);
-			fMyRootInterface->get_value("BLTMonitor_oz",BLTMonitor_oz,cm);
-			fMyRootInterface->get_value("BLTMonitor_opx",BLTMonitor_opx,GeV);
-			fMyRootInterface->get_value("BLTMonitor_opy",BLTMonitor_opy,GeV);
-			fMyRootInterface->get_value("BLTMonitor_opz",BLTMonitor_opz,GeV);
+//			fMyRootInterface->get_value("BLTMonitor_tid",BLTMonitor_tid);
+//			fMyRootInterface->get_value("BLTMonitor_pid",BLTMonitor_pid);
+//			fMyRootInterface->get_value("BLTMonitor_ppid",BLTMonitor_ppid);
+//			fMyRootInterface->get_value("BLTMonitor_oprocess",BLTMonitor_oprocess);
+//			fMyRootInterface->get_value("BLTMonitor_ovolName",BLTMonitor_ovolName);
+//			fMyRootInterface->get_value("BLTMonitor_ox",BLTMonitor_ox,cm);
+//			fMyRootInterface->get_value("BLTMonitor_oy",BLTMonitor_oy,cm);
+//			fMyRootInterface->get_value("BLTMonitor_oz",BLTMonitor_oz,cm);
+//			fMyRootInterface->get_value("BLTMonitor_opx",BLTMonitor_opx,GeV);
+//			fMyRootInterface->get_value("BLTMonitor_opy",BLTMonitor_opy,GeV);
+//			fMyRootInterface->get_value("BLTMonitor_opz",BLTMonitor_opz,GeV);
 			fMyRootInterface->get_value("BLTMonitor_x",BLTMonitor_x,cm);
 			fMyRootInterface->get_value("BLTMonitor_y",BLTMonitor_y,cm);
 			fMyRootInterface->get_value("BLTMonitor_z",BLTMonitor_z,cm);
@@ -457,64 +477,64 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->get_value("BLTMonitor_pz",BLTMonitor_pz,GeV);
 			fMyRootInterface->get_value("InnerCylinder_nHits",InnerCylinder_nHits);
 			fMyRootInterface->get_value("InnerCylinder_t",InnerCylinder_t,ns);
-			fMyRootInterface->get_value("InnerCylinder_tid",InnerCylinder_tid);
-			fMyRootInterface->get_value("InnerCylinder_pid",InnerCylinder_pid);
-			fMyRootInterface->get_value("InnerCylinder_ppid",InnerCylinder_ppid);
-			fMyRootInterface->get_value("InnerCylinder_oprocess",InnerCylinder_oprocess);
-			fMyRootInterface->get_value("InnerCylinder_ovolName",InnerCylinder_ovolName);
-			fMyRootInterface->get_value("InnerCylinder_ox",InnerCylinder_ox,cm);
-			fMyRootInterface->get_value("InnerCylinder_oy",InnerCylinder_oy,cm);
-			fMyRootInterface->get_value("InnerCylinder_oz",InnerCylinder_oz,cm);
-			fMyRootInterface->get_value("InnerCylinder_opx",InnerCylinder_opx,GeV);
-			fMyRootInterface->get_value("InnerCylinder_opy",InnerCylinder_opy,GeV);
-			fMyRootInterface->get_value("InnerCylinder_opz",InnerCylinder_opz,GeV);
-			fMyRootInterface->get_value("InnerCylinder_x",InnerCylinder_x,cm);
-			fMyRootInterface->get_value("InnerCylinder_y",InnerCylinder_y,cm);
-			fMyRootInterface->get_value("InnerCylinder_z",InnerCylinder_z,cm);
-			fMyRootInterface->get_value("InnerCylinder_px",InnerCylinder_px,GeV);
-			fMyRootInterface->get_value("InnerCylinder_py",InnerCylinder_py,GeV);
-			fMyRootInterface->get_value("InnerCylinder_pz",InnerCylinder_pz,GeV);
-			fMyRootInterface->get_value("Trigger_nHits",Trigger_nHits);
-			fMyRootInterface->get_value("Trigger_t",Trigger_t,ns);
-			fMyRootInterface->get_value("Trigger_tid",Trigger_tid);
-			fMyRootInterface->get_value("Trigger_pid",Trigger_pid);
-			fMyRootInterface->get_value("Trigger_ppid",Trigger_ppid);
-			fMyRootInterface->get_value("Trigger_oprocess",Trigger_oprocess);
-			fMyRootInterface->get_value("Trigger_ovolName",Trigger_ovolName);
-			fMyRootInterface->get_value("Trigger_ox",Trigger_ox,cm);
-			fMyRootInterface->get_value("Trigger_oy",Trigger_oy,cm);
-			fMyRootInterface->get_value("Trigger_oz",Trigger_oz,cm);
-			fMyRootInterface->get_value("Trigger_opx",Trigger_opx,GeV);
-			fMyRootInterface->get_value("Trigger_opy",Trigger_opy,GeV);
-			fMyRootInterface->get_value("Trigger_opz",Trigger_opz,GeV);
-			fMyRootInterface->get_value("Trigger_x",Trigger_x,cm);
-			fMyRootInterface->get_value("Trigger_y",Trigger_y,cm);
-			fMyRootInterface->get_value("Trigger_z",Trigger_z,cm);
-			fMyRootInterface->get_value("Trigger_px",Trigger_px,GeV);
-			fMyRootInterface->get_value("Trigger_py",Trigger_py,GeV);
-			fMyRootInterface->get_value("Trigger_pz",Trigger_pz,GeV);
-			fMyRootInterface->get_value("Target_nHits",Target_nHits);
-			fMyRootInterface->get_value("Target_t",Target_t,ns);
-			fMyRootInterface->get_value("Target_tid",Target_tid);
-			fMyRootInterface->get_value("Target_pid",Target_pid);
-			fMyRootInterface->get_value("Target_ppid",Target_ppid);
-			fMyRootInterface->get_value("Target_oprocess",Target_oprocess);
-			fMyRootInterface->get_value("Target_ovolName",Target_ovolName);
-			fMyRootInterface->get_value("Target_ox",Target_ox,cm);
-			fMyRootInterface->get_value("Target_oy",Target_oy,cm);
-			fMyRootInterface->get_value("Target_oz",Target_oz,cm);
-			fMyRootInterface->get_value("Target_opx",Target_opx,GeV);
-			fMyRootInterface->get_value("Target_opy",Target_opy,GeV);
-			fMyRootInterface->get_value("Target_opz",Target_opz,GeV);
-			fMyRootInterface->get_value("Target_x",Target_x,cm);
-			fMyRootInterface->get_value("Target_y",Target_y,cm);
-			fMyRootInterface->get_value("Target_z",Target_z,cm);
-			fMyRootInterface->get_value("Target_px",Target_px,GeV);
-			fMyRootInterface->get_value("Target_py",Target_py,GeV);
-			fMyRootInterface->get_value("Target_pz",Target_pz,GeV);
-			fMyRootInterface->get_value("Target_stopped",Target_stopped);
+//			fMyRootInterface->get_value("InnerCylinder_tid",InnerCylinder_tid);
+//			fMyRootInterface->get_value("InnerCylinder_pid",InnerCylinder_pid);
+//			fMyRootInterface->get_value("InnerCylinder_ppid",InnerCylinder_ppid);
+//			fMyRootInterface->get_value("InnerCylinder_oprocess",InnerCylinder_oprocess);
+//			fMyRootInterface->get_value("InnerCylinder_ovolName",InnerCylinder_ovolName);
+//			fMyRootInterface->get_value("InnerCylinder_ox",InnerCylinder_ox,cm);
+//			fMyRootInterface->get_value("InnerCylinder_oy",InnerCylinder_oy,cm);
+//			fMyRootInterface->get_value("InnerCylinder_oz",InnerCylinder_oz,cm);
+//			fMyRootInterface->get_value("InnerCylinder_opx",InnerCylinder_opx,GeV);
+//			fMyRootInterface->get_value("InnerCylinder_opy",InnerCylinder_opy,GeV);
+//			fMyRootInterface->get_value("InnerCylinder_opz",InnerCylinder_opz,GeV);
+//			fMyRootInterface->get_value("InnerCylinder_x",InnerCylinder_x,cm);
+//			fMyRootInterface->get_value("InnerCylinder_y",InnerCylinder_y,cm);
+//			fMyRootInterface->get_value("InnerCylinder_z",InnerCylinder_z,cm);
+//			fMyRootInterface->get_value("InnerCylinder_px",InnerCylinder_px,GeV);
+//			fMyRootInterface->get_value("InnerCylinder_py",InnerCylinder_py,GeV);
+//			fMyRootInterface->get_value("InnerCylinder_pz",InnerCylinder_pz,GeV);
+//			fMyRootInterface->get_value("Trigger_nHits",Trigger_nHits);
+//			fMyRootInterface->get_value("Trigger_t",Trigger_t,ns);
+//			fMyRootInterface->get_value("Trigger_tid",Trigger_tid);
+//			fMyRootInterface->get_value("Trigger_pid",Trigger_pid);
+//			fMyRootInterface->get_value("Trigger_ppid",Trigger_ppid);
+//			fMyRootInterface->get_value("Trigger_oprocess",Trigger_oprocess);
+//			fMyRootInterface->get_value("Trigger_ovolName",Trigger_ovolName);
+//			fMyRootInterface->get_value("Trigger_ox",Trigger_ox,cm);
+//			fMyRootInterface->get_value("Trigger_oy",Trigger_oy,cm);
+//			fMyRootInterface->get_value("Trigger_oz",Trigger_oz,cm);
+//			fMyRootInterface->get_value("Trigger_opx",Trigger_opx,GeV);
+//			fMyRootInterface->get_value("Trigger_opy",Trigger_opy,GeV);
+//			fMyRootInterface->get_value("Trigger_opz",Trigger_opz,GeV);
+//			fMyRootInterface->get_value("Trigger_x",Trigger_x,cm);
+//			fMyRootInterface->get_value("Trigger_y",Trigger_y,cm);
+//			fMyRootInterface->get_value("Trigger_z",Trigger_z,cm);
+//			fMyRootInterface->get_value("Trigger_px",Trigger_px,GeV);
+//			fMyRootInterface->get_value("Trigger_py",Trigger_py,GeV);
+//			fMyRootInterface->get_value("Trigger_pz",Trigger_pz,GeV);
+//			fMyRootInterface->get_value("Target_nHits",Target_nHits);
+//			fMyRootInterface->get_value("Target_t",Target_t,ns);
+//			fMyRootInterface->get_value("Target_tid",Target_tid);
+//			fMyRootInterface->get_value("Target_pid",Target_pid);
+//			fMyRootInterface->get_value("Target_ppid",Target_ppid);
+//			fMyRootInterface->get_value("Target_oprocess",Target_oprocess);
+//			fMyRootInterface->get_value("Target_ovolName",Target_ovolName);
+//			fMyRootInterface->get_value("Target_ox",Target_ox,cm);
+//			fMyRootInterface->get_value("Target_oy",Target_oy,cm);
+//			fMyRootInterface->get_value("Target_oz",Target_oz,cm);
+//			fMyRootInterface->get_value("Target_opx",Target_opx,GeV);
+//			fMyRootInterface->get_value("Target_opy",Target_opy,GeV);
+//			fMyRootInterface->get_value("Target_opz",Target_opz,GeV);
+//			fMyRootInterface->get_value("Target_x",Target_x,cm);
+//			fMyRootInterface->get_value("Target_y",Target_y,cm);
+//			fMyRootInterface->get_value("Target_z",Target_z,cm);
+//			fMyRootInterface->get_value("Target_px",Target_px,GeV);
+//			fMyRootInterface->get_value("Target_py",Target_py,GeV);
+//			fMyRootInterface->get_value("Target_pz",Target_pz,GeV);
+//			fMyRootInterface->get_value("Target_stopped",Target_stopped);
 		}
-		else if (m_workMode=="monitor"){
+		else if (m_MonitorPlane=="PTACS"||m_MonitorPlane=="MT1"){
 			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_nHits",Monitor_nHits);
 			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_t",Monitor_t,ns);
 			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_tid",Monitor_tid);
@@ -542,7 +562,7 @@ int main(int argc, char* argv[]){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"###Getting information"<<std::endl;
 
 		bool filled = false;
-		if (m_workMode=="monitor"){
+		if (m_MonitorPlane=="PTACS"||m_MonitorPlane=="MT1"){
 			for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
 				if (!PDGEncoding // all particles
 					||PDGEncoding==-1&&Monitor_pid[i_mon]>=1e7 // only nuclears
@@ -609,21 +629,27 @@ int main(int argc, char* argv[]){
 				}
 			}
 		}
-		else if (m_workMode=="A9pim"){
+		else if (m_MonitorPlane=="A9"){
 			if (McTruth_nTracks>0){
-				double Mc_px = McTruth_px[0];
-				double Mc_py = McTruth_py[0];
-				double Mc_pz = McTruth_pz[0];
+//				double Mc_px = McTruth_px[0];
+//				double Mc_py = McTruth_py[0];
+//				double Mc_pz = McTruth_pz[0];
+//				double Mc_y = McTruth_y[0];
+//				double Mc_time = McTruth_time[0];
+				double Mc_px = opx;
+				double Mc_py = opy;
+				double Mc_pz = opz;
+				double Mc_y = oy;
+				double Mc_time = ot;
+
 				double Mc_pa = sqrt(Mc_px*Mc_px+Mc_py*Mc_py+Mc_pz*Mc_pz);
 				double Mc_pt = sqrt(Mc_px*Mc_px+Mc_py*Mc_py);
-				double Mc_y = McTruth_y[0];
-				double Mc_time = McTruth_time[0];
 
 				// Get weight
-				double Mc_w = 0;
-				double CDC_w = 0;
-				double BLT_w = 0;
-				double Target_w = 0;
+				double Mc_w = 1;
+				double CDC_w = 1;
+				double BLT_w = 1;
+				double Target_w = 1;
 
 				double Target_time;
 				double BLT_time;
@@ -632,21 +658,21 @@ int main(int argc, char* argv[]){
 				double E = sqrt(Mc_pa*Mc_pa+M_PION*M_PION);
 				double Beta = Mc_pa/E;
 				double Gamma = sqrt(1./(1.-Beta*Beta));
-				Mc_w = exp(-(Mc_time-ot)/tau/Gamma);
+				if (PDGEncoding==-211) Mc_w = exp(-(Mc_time-ot)/tau/Gamma);
 				// Get info
-				if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_total")) != -1 ){
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_total"+m_suffix)) != -1 ){
 					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,Mc_w);
 				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_total")) != -1 ){
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_total"+m_suffix)) != -1 ){
 					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,Mc_w);
 				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_total")) != -1 ){
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_total"+m_suffix)) != -1 ){
 					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,Mc_w);
 				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index("y_total")) != -1 ){
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_total"+m_suffix)) != -1 ){
 					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,Mc_w);
 				}
-				if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_total")) != -1 ){
+				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_total"+m_suffix)) != -1 ){
 					fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,Mc_w);
 				}
 				// Got Cdc Region?
@@ -655,7 +681,7 @@ int main(int argc, char* argv[]){
 					if (CDCMonitor_tid[i_mon]==1){
 						got_CDC = true;
 						CDC_time = CDCMonitor_t[i_mon];
-						CDC_w = exp(-(CDC_time-ot)/tau/Gamma);
+						if (PDGEncoding==-211) CDC_w = exp(-(CDC_time-ot)/tau/Gamma);
 						break;
 					}
 				}
@@ -669,7 +695,7 @@ int main(int argc, char* argv[]){
 						if (Target_stopped[i_mon]){
 							got_stopped = true;
 							Target_time = Target_t[i_mon];
-							Target_w = exp(-(Target_time-ot)/tau/Gamma);
+							if (PDGEncoding==-211) Target_w = exp(-(Target_time-ot)/tau/Gamma);
 							break;
 						}
 					}
@@ -689,209 +715,82 @@ int main(int argc, char* argv[]){
 					if (BLTMonitor_tid[i_mon]==1&&BLTMonitor_pz[i_mon]<0){
 						got_recoiled = true;
 						BLT_time = BLTMonitor_t[i_mon];
-						BLT_w = exp(-(BLT_time-ot)/tau/Gamma);
+						if (PDGEncoding==-211) BLT_w = exp(-(BLT_time-ot)/tau/Gamma);
 						break;
 					}
 				}
 				if (got_CDC){
 
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_CDC")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_CDC"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,CDC_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_CDC")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_CDC"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,CDC_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_CDC")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_CDC"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,CDC_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("y_CDC")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_CDC"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,CDC_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_CDC")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_CDC"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,CDC_w);
 					}
 				}
 				if (got_Target){
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_Target")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_Target"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,Target_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_Target")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_Target"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,Target_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_Target")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_Target"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,Target_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("y_Target")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_Target"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,Target_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_Target")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_Target"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,Target_w);
 					}
 				}
 				if (got_stopped){
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_stop")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_stop"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,Target_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_stop")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_stop"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,Target_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_stop")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_stop"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,Target_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("y_stop")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_stop"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,Target_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_stop")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_stop"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,Target_w);
 					}
 				}
 				if (got_recoiled){
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_recoil")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_recoil"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,BLT_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_recoil")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_recoil"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,BLT_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_recoil")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_recoil"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,BLT_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("y_recoil")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_recoil"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,BLT_w);
 					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_recoil")) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_recoil"+m_suffix)) != -1 ){
 						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,BLT_w);
 					}
 				}
 			}
 		}
-		else if (m_workMode=="A9"){
-			if (McTruth_nTracks>0){
-				double Mc_px = McTruth_px[0];
-				double Mc_py = McTruth_py[0];
-				double Mc_pz = McTruth_pz[0];
-				double Mc_pa = sqrt(Mc_px*Mc_px+Mc_py*Mc_py+Mc_pz*Mc_pz);
-				double Mc_pt = sqrt(Mc_px*Mc_px+Mc_py*Mc_py);
-				double Mc_y = McTruth_y[0];
-				if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_total")) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV);
-				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_total")) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV);
-				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_total")) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV);
-				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index("y_total")) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm);
-				}
-				if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_total")) != -1 ){
-					fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm);
-				}
-				// Got Cdc Region?
-				bool got_CDC = false;
-				for ( int i_mon = 0; i_mon < CDCMonitor_nHits; i_mon++ ){
-					if (CDCMonitor_tid[i_mon]==1&&CDCMonitor_pid[i_mon]==PDGEncoding)
-						got_CDC = true;
-				}
-				// Got Target Region?
-				// Got stopped?
-				bool got_Target = false;
-				bool got_stopped = false;
-				for ( int i_mon = 0; i_mon < Target_nHits; i_mon++ ){
-					if (Target_tid[i_mon]==1&&Target_pid[i_mon]==PDGEncoding){
-						got_Target = true;
-						if (Target_stopped[i_mon]){
-							got_stopped = true;
-						}
-					}
-					else if (Target_pid[i_mon]==PDGEncoding){
-						//std::cout<<"Hey a particle from else where!"<<std::endl;
-						//std::cout<<"  px = "<<Target_px[i_mon]/MeV<<"MeV"
-						//         <<", py = "<<Target_py[i_mon]/MeV<<"MeV"
-						//         <<", pz = "<<Target_pz[i_mon]/MeV<<"MeV"
-						//         <<", tid = "<<Target_tid[i_mon]
-						//         <<", pid = "<<Target_pid[i_mon]
-						//         <<", stopped?"<<Target_stopped[i_mon]
-						//         <<std::endl;
-					}
-				}
-				// Got recoiled?
-				bool got_recoiled = false;
-				for ( int i_mon = 0; i_mon < BLTMonitor_nHits; i_mon++ ){
-					if (BLTMonitor_tid[i_mon]==1&&BLTMonitor_pid[i_mon]==PDGEncoding&&BLTMonitor_pz[i_mon]<0)
-						got_recoiled = true;
-				}
-				if (got_CDC){
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_CDC")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_CDC")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_CDC")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("y_CDC")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_CDC")) != -1 ){
-						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm);
-					}
-				}
-				if (got_Target){
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_Target")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_Target")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_Target")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("y_Target")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_Target")) != -1 ){
-						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm);
-					}
-				}
-				if (got_stopped){
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_stop")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_stop")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_stop")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("y_stop")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_stop")) != -1 ){
-						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm);
-					}
-				}
-				if (got_recoiled){
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pa_recoil")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pt_recoil")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("pz_recoil")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index("y_recoil")) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index("paVSy_recoil")) != -1 ){
-						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm);
-					}
-				}
-			}
-		}
-		else if (m_workMode=="McTruth"){
+		else if (m_MonitorPlane=="McTruth"){
 			for ( int iMc = 0; iMc < McTruth_nTracks; iMc++ ){
 				if (!PDGEncoding // all particles
 					||PDGEncoding==-1&&McTruth_pid[iMc]>=1e7 // only nuclears
@@ -992,10 +891,12 @@ int main(int argc, char* argv[]){
 
 void init_args()
 {
+	m_prefix="";
+	m_suffix="";
 	m_InputDir="";
 	m_OriginalFile="NONE";
 	m_workMode="monitor";
-	m_MonitorPlane="blt0";
+	m_MonitorPlane="PTACS";
 	m_OutputDir="result";
 	m_input="input";
 	verbose = 0;
