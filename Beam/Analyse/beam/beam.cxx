@@ -23,6 +23,8 @@ std::string m_MonitorPlane;
 std::string m_runName;
 std::string m_input;
 std::string m_OutputDir;
+std::string m_InputDir;
+std::string m_OriginalFile;
 int m_beginNo = -1;
 int m_totalNo = -1;
 int verbose = 0;
@@ -47,7 +49,7 @@ int main(int argc, char* argv[]){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hb:t:v:n:m:M:r:d:p:P:i:"))!=-1){
+	while((result=getopt(argc,argv,"hb:t:v:n:m:M:r:D:O:d:p:P:i:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -63,6 +65,14 @@ int main(int argc, char* argv[]){
 			case 'i':
 				m_input=optarg;
 				printf("input configuration file: %s\n",m_input.c_str());
+				break;
+			case 'D':
+				m_InputDir=optarg;
+				printf("Input Directroy: %s\n",m_InputDir.c_str());
+				break;
+			case 'O':
+				m_OriginalFile=optarg;
+				printf("OriginalFile: %s\n",m_OriginalFile.c_str());
 				break;
 			case 'd':
 				m_OutputDir=optarg;
@@ -146,6 +156,7 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->set_beginCPU(0,m_beginNo);
 		fMyRootInterface->set_NCPU(0,m_totalNo);
 	}
+	fMyRootInterface->set_DirNames(0,m_InputDir);
 	fMyRootInterface->set_OutputName(m_runName);
 	fMyRootInterface->init();
 
@@ -177,11 +188,19 @@ int main(int argc, char* argv[]){
 	double opz;
 
 	//**********************************************************************************************
-	//**********************************************************************************************
 	TChain* m_TChain = new TChain("t");
-	m_TChain->Add("/scratchfs/bes/wuc/MyWorkArea/g4simData/g40cm10mm_PTACS_pim_QGSPBERTHPg4sim.root");
-	m_TChain->SetBranchAddress("t",&ot);
-	//**********************************************************************************************
+	int m_OriginalNum=0;
+	if (m_OriginalFile!="NONE"){ // we need original file to get original information for primary particles. e.g. MT1 & A9
+		m_TChain->Add(m_OriginalFile.c_str());
+		m_OriginalNum = m_TChain->GetEntries();
+		m_TChain->SetBranchAddress("t",&ot);
+		m_TChain->SetBranchAddress("ox",&ox);
+		m_TChain->SetBranchAddress("oy",&oy);
+		m_TChain->SetBranchAddress("oz",&oz);
+		m_TChain->SetBranchAddress("opx",&opx);
+		m_TChain->SetBranchAddress("opy",&opy);
+		m_TChain->SetBranchAddress("opz",&opz);
+	}
 	//**********************************************************************************************
 
 	//=======================================================================================================
@@ -192,8 +211,16 @@ int main(int argc, char* argv[]){
 	for( Long64_t iEvent = 0; iEvent < (nEvents&&nEvents<nEvent?nEvents:nEvent); iEvent++ ){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
 		fMyRootInterface->GetEntry(iEvent);
-		m_TChain->GetEntry(iEvent);
-		ot*=ns;
+		if (m_OriginalFile!="NONE"){ // we need original file to get original information for primary particles. e.g. MT1 & A9
+			m_TChain->GetEntry(iEvent%m_OriginalNum);
+			ot*=ns;
+			ox*=mm;
+			oy*=mm;
+			oz*=mm;
+			opx*=MeV;
+			opy*=MeV;
+			opz*=MeV;
+		}
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
 		inc_Ncut("Got entries");
 		if (iEvent%printModule==0) fMyRootInterface->Write();
@@ -346,14 +373,17 @@ int main(int argc, char* argv[]){
 					py=Monitor_py[i_mon];
 					pz=Monitor_pz[i_mon];
 					t=Monitor_t[i_mon];
-					ox=Monitor_ox[i_mon];
-					oy=Monitor_oy[i_mon];
-					oz=Monitor_oz[i_mon];
-					opx=Monitor_opx[i_mon];
-					opy=Monitor_opy[i_mon];
-					opz=Monitor_opz[i_mon];
-					process=Monitor_oprocess[i_mon];
-					volume=Monitor_ovolName[i_mon];
+					if (tid!=1||m_OriginalFile=="NONE"){ // we don't need original file to get original information for primary particles. e.g. PTACS
+						ot=-1;
+						ox=Monitor_ox[i_mon];
+						oy=Monitor_oy[i_mon];
+						oz=Monitor_oz[i_mon];
+						opx=Monitor_opx[i_mon];
+						opy=Monitor_opy[i_mon];
+						opz=Monitor_opz[i_mon];
+						process=Monitor_oprocess[i_mon];
+						volume=Monitor_ovolName[i_mon];
+					}
 					fMyRootInterface->set_ovalue("evt_num",evt_num);
 					fMyRootInterface->set_ovalue("run_num",run_num);
 					fMyRootInterface->set_ovalue("pid",pid);
@@ -483,6 +513,8 @@ int main(int argc, char* argv[]){
 
 void init_args()
 {
+	m_InputDir="";
+	m_OriginalFile="NONE";
 	m_workMode="monitor";
 	m_MonitorPlane="blt0";
 	m_OutputDir="result";

@@ -1,7 +1,8 @@
 #!/bin/bash
 
+queue=shortq
 nFiles=100
-nSplit=10
+nSplit=1
 
 do_the_job(){
 	Target=$1
@@ -10,7 +11,9 @@ do_the_job(){
 	totalNo=$4
 	pid=$5
 	pname=$6
-	DF=$7
+	DirName=$7
+	OriginalFile=$8
+	DF=$9
 
 	if [ $monitor = "MT1" ]; then
 		name=$monitor.$pname.$Target.$DF.$app.$phys
@@ -25,10 +28,10 @@ do_the_job(){
 	pbsfile=$PWD'/result/'$name'.boss'
 	echo "#!/bin/bash" > $pbsfile
 	echo "source $MYHOME/.setana.sh" >> $pbsfile
-	echo $PWD'/beam -b '$beginNo' -t '$totalNo' -m monitor -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$Target' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
-#	echo $PWD'/beam -n 73346 -m McTruth -P '$pid' -r '$name' -i '$PWD'/input_'$Target' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
+	echo $PWD'/beam -D '$DirName' -O '$OriginalFile' -b '$beginNo' -t '$totalNo' -m monitor -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
+#	echo $PWD'/beam -n 73346 -m McTruth -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 	chmod +x $pbsfile
-	qsub -j oe -o /dev/null -q midq $pbsfile
+	qsub -j oe -o /dev/null -q $queue $pbsfile
 #	$pbsfile
 }
 
@@ -42,10 +45,10 @@ do
 		for phys in "QBH"
 		do
 #		for monitor in "MT1" "PTACS" "McTruth";
-			for monitor in "MT1"
+			for monitor in "PTACS"
 			do
 #			for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
-				for pid in -211;
+				for pid in 1;
 				do
 					for (( iSplit=0; iSplit<nSplit; iSplit++ ))
 					do
@@ -69,10 +72,14 @@ do
 #							for DF in "03T" "018T"
 							for DF in "018T"
 							do
-								do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DF
+								DirName=$MYDATA/raw/g4sim/$monitor.all.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'all' and 'pim' etc
+								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.$Target.$app.$phys.ref.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+								do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile $DF 
 							done
 						elif [ $monitor = "PTACS" ]; then
-							do_the_job $Target $monitor $beginNo $totalNo $pid $pname
+							DirName=$MYDATA/raw/g4sim/$monitor.all.$Target.$app.$phys #FIXME need a convention. Now we have to change it in 'all' and 'pim' etc
+							OriginalFile='NONE'
+							do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile
 						fi
 					done
 				done
