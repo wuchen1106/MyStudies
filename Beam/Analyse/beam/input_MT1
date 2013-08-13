@@ -7,7 +7,7 @@
 	TreeName | tree
 
 #	TYPE    | Directory                                                                   | runname | #CPU | #job
-#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/MT1.pim.g40cm10mm.03T.g4s.QBH  |         | 100  | 1
+	FILE    | Dummy                                                                       |         | 100  | 1
 
 #	TYPE    | Path
 #	oFILE   | /home/chen/MyWorkArea/g4sim/output/raw_g4sim.root
@@ -75,7 +75,7 @@
 	oTreeName | t
 
 #	TYPE     | Name                         | Type      | Vector?
-	                                0:double;1:int;string:2
+#	                                0:double;1:int;string:2
 	oTBranch | evt_num                      | 1         | 0
 	oTBranch | run_num                      | 1         | 0
 	oTBranch | pid                          | 1         | 0

@@ -36,7 +36,7 @@ do_the_job(){
 }
 
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
-for Target in "g40cm10mm"
+for Target in  "g50cm10mm" "g30cm10mm" "t16cm6mm"
 do
 #   for app in "A" "H" "cg4" "g4s"
 	for app in "g4s"
@@ -45,7 +45,7 @@ do
 		for phys in "QBH"
 		do
 #		for monitor in "MT1" "PTACS" "McTruth";
-			for monitor in "PTACS"
+			for monitor in "MT1"
 			do
 #			for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
 				for pid in 1;
@@ -70,7 +70,7 @@ do
 						fi
 						if [ $monitor = "MT1" ]; then
 #							for DF in "03T" "018T"
-							for DF in "018T"
+							for DF in "03T"
 							do
 								DirName=$MYDATA/raw/g4sim/$monitor.all.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'all' and 'pim' etc
 								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.$Target.$app.$phys.ref.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc

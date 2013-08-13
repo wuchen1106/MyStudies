@@ -62,6 +62,8 @@ int main(int argc, char* argv[]){
 				break;
 			case 'r':
 				m_runName=optarg;
+				printf("runName: %s\n",m_runName.c_str());
+				break;
 			case 'i':
 				m_input=optarg;
 				printf("input configuration file: %s\n",m_input.c_str());
@@ -176,9 +178,9 @@ int main(int argc, char* argv[]){
 	double py;
 	double pz;
 	double t;
-	std::string particle;
-	std::string process;
-	std::string volume;
+	std::string *particle;
+	std::string *process;
+	std::string *volume;
 	double ot;
 	double ox;
 	double oy;
@@ -200,6 +202,10 @@ int main(int argc, char* argv[]){
 		m_TChain->SetBranchAddress("opx",&opx);
 		m_TChain->SetBranchAddress("opy",&opy);
 		m_TChain->SetBranchAddress("opz",&opz);
+		m_TChain->SetBranchAddress("particle",&particle);
+		m_TChain->SetBranchAddress("process",&process);
+		m_TChain->SetBranchAddress("volume",&volume);
+		if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"Need original file, m_OriginalNum = "<<m_OriginalNum<<std::endl;
 	}
 	//**********************************************************************************************
 
@@ -211,6 +217,7 @@ int main(int argc, char* argv[]){
 	for( Long64_t iEvent = 0; iEvent < (nEvents&&nEvents<nEvent?nEvents:nEvent); iEvent++ ){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
 		fMyRootInterface->GetEntry(iEvent);
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
 		if (m_OriginalFile!="NONE"){ // we need original file to get original information for primary particles. e.g. MT1 & A9
 			m_TChain->GetEntry(iEvent%m_OriginalNum);
 			ot*=ns;
@@ -221,7 +228,7 @@ int main(int argc, char* argv[]){
 			opy*=MeV;
 			opz*=MeV;
 		}
-		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
+		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries for original file"<<std::endl;
 		inc_Ncut("Got entries");
 		if (iEvent%printModule==0) fMyRootInterface->Write();
 
@@ -267,41 +274,44 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("evt_num",evt_num);
 		fMyRootInterface->get_value("run_num",run_num);
 
-		fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
-		fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
-		fMyRootInterface->get_value("McTruth_tid",McTruth_tid);
-		fMyRootInterface->get_value("McTruth_pid",McTruth_pid);
-		fMyRootInterface->get_value("McTruth_charge",McTruth_charge);
-		fMyRootInterface->get_value("McTruth_ptid",McTruth_ptid);
-		fMyRootInterface->get_value("McTruth_particleName",McTruth_particleName);
-		fMyRootInterface->get_value("McTruth_process",McTruth_process);
-		fMyRootInterface->get_value("McTruth_volume",McTruth_volume);
-		fMyRootInterface->get_value("McTruth_x",McTruth_x,cm);
-		fMyRootInterface->get_value("McTruth_y",McTruth_y,cm);
-		fMyRootInterface->get_value("McTruth_z",McTruth_z,cm);
-		fMyRootInterface->get_value("McTruth_px",McTruth_px,GeV);
-		fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
-		fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
-
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_nHits",Monitor_nHits);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_t",Monitor_t,ns);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_tid",Monitor_tid);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_pid",Monitor_pid);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ppid",Monitor_ppid);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oprocess",Monitor_oprocess);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ovolName",Monitor_ovolName);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ox",Monitor_ox,cm);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oy",Monitor_oy,cm);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oz",Monitor_oz,cm);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opx",Monitor_opx,GeV);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opy",Monitor_opy,GeV);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opz",Monitor_opz,GeV);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_x",Monitor_x,cm);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_y",Monitor_y,cm);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_z",Monitor_z,cm);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_px",Monitor_px,GeV);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_py",Monitor_py,GeV);
-		fMyRootInterface->get_value(m_MonitorPlane+"Monitor_pz",Monitor_pz,GeV);
+		if (m_workMode=="McTruth"){
+			fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
+			fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
+			fMyRootInterface->get_value("McTruth_tid",McTruth_tid);
+			fMyRootInterface->get_value("McTruth_pid",McTruth_pid);
+			fMyRootInterface->get_value("McTruth_charge",McTruth_charge);
+			fMyRootInterface->get_value("McTruth_ptid",McTruth_ptid);
+			fMyRootInterface->get_value("McTruth_particleName",McTruth_particleName);
+			fMyRootInterface->get_value("McTruth_process",McTruth_process);
+			fMyRootInterface->get_value("McTruth_volume",McTruth_volume);
+			fMyRootInterface->get_value("McTruth_x",McTruth_x,cm);
+			fMyRootInterface->get_value("McTruth_y",McTruth_y,cm);
+			fMyRootInterface->get_value("McTruth_z",McTruth_z,cm);
+			fMyRootInterface->get_value("McTruth_px",McTruth_px,GeV);
+			fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
+			fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
+		}
+		else if (m_workMode=="monitor"){
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_nHits",Monitor_nHits);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_t",Monitor_t,ns);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_tid",Monitor_tid);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_pid",Monitor_pid);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ppid",Monitor_ppid);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oprocess",Monitor_oprocess);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ovolName",Monitor_ovolName);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ox",Monitor_ox,cm);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oy",Monitor_oy,cm);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oz",Monitor_oz,cm);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opx",Monitor_opx,GeV);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opy",Monitor_opy,GeV);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opz",Monitor_opz,GeV);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_x",Monitor_x,cm);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_y",Monitor_y,cm);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_z",Monitor_z,cm);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_px",Monitor_px,GeV);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_py",Monitor_py,GeV);
+			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_pz",Monitor_pz,GeV);
+		}
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
 
@@ -381,8 +391,9 @@ int main(int argc, char* argv[]){
 						opx=Monitor_opx[i_mon];
 						opy=Monitor_opy[i_mon];
 						opz=Monitor_opz[i_mon];
-						process=Monitor_oprocess[i_mon];
-						volume=Monitor_ovolName[i_mon];
+						particle=new std::string("");
+						process=&Monitor_oprocess[i_mon];
+						volume=&Monitor_ovolName[i_mon];
 					}
 					fMyRootInterface->set_ovalue("evt_num",evt_num);
 					fMyRootInterface->set_ovalue("run_num",run_num);
@@ -403,8 +414,9 @@ int main(int argc, char* argv[]){
 					fMyRootInterface->set_ovalue("opx",opx/MeV);
 					fMyRootInterface->set_ovalue("opy",opy/MeV);
 					fMyRootInterface->set_ovalue("opz",opz/MeV);
-					fMyRootInterface->set_ovalue("process",process);
-					fMyRootInterface->set_ovalue("volume",volume);
+					fMyRootInterface->set_ovalue("particle",*particle);
+					fMyRootInterface->set_ovalue("process",*process);
+					fMyRootInterface->set_ovalue("volume",*volume);
 					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
 					fMyRootInterface->Fill();
 					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
