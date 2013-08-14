@@ -38,8 +38,8 @@ do_the_job(){
 	echo $PWD'/beam -x '$prefix' -y '$suffix' -D '$DirName' -O '$OriginalFile' -b '$beginNo' -t '$totalNo' -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 #	echo $PWD'/beam -n 73346 -m McTruth -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 	chmod +x $pbsfile
-	qsub -j oe -o /dev/null -q $queue $pbsfile
-#	nohup $pbsfile &
+#	qsub -j oe -o /dev/null -q $queue $pbsfile
+	nohup $pbsfile &
 }
 
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
@@ -52,10 +52,10 @@ do
 		for phys in "QBH"
 		do
 #		for monitor in "MT1" "PTACS" "McTruth" "A9";
-			for monitor in "MT1"
+			for monitor in "McTruth"
 			do
 #			for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
-				for pid in -211;
+				for pid in 1;
 				do
 					for (( iSplit=0; iSplit<nSplit; iSplit++ ))
 					do
@@ -85,9 +85,11 @@ do
 								do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile $DF 
 							done
 						elif [ $monitor = "A9" ]; then
+#							for DF in "03T" "018T"
 							for DF in "03T"
 							do
-								for A9 in "0731" "0701"
+#								for A9 in "0731" "0701"
+								for A9 in "0701"
 								do
 									DirName=$MYDATA/raw/g4sim/$monitor.$pname.$Target.$DF.$A9.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 									OriginalFile=$MYG4SIMDATAROOT/MT1.$pname.$Target.$DF.$app.$phys.ref.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
