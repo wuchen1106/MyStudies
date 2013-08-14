@@ -567,7 +567,8 @@ int main(int argc, char* argv[]){
 				if (!PDGEncoding // all particles
 					||PDGEncoding==-1&&Monitor_pid[i_mon]>=1e7 // only nuclears
 					||PDGEncoding==1&&Monitor_pid[i_mon]<1e7 // only elementary particles
-					||Monitor_pid[i_mon] == PDGEncoding){
+					||Monitor_pid[i_mon] == PDGEncoding
+					||PDGEncoding==2&&Monitor_pid[i_mon]!=13&&Monitor_pid[i_mon]!=-211&&Monitor_pid[i_mon]!=11&&Monitor_pid[i_mon]<1e7){
 					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 						std::cout<<prefix_ParticleInfoStart
 								 <<"  Found Particle! i_mon = "<<i_mon

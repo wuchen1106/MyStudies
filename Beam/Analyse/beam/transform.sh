@@ -52,7 +52,7 @@ do
 		for phys in "QBH"
 		do
 #		for monitor in "MT1" "PTACS" "McTruth" "A9";
-			for monitor in "A9"
+			for monitor in "MT1"
 			do
 #			for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
 				for pid in -211;
@@ -74,13 +74,14 @@ do
 						elif [ $pid = 0 ]; then pname="all";
 						elif [ $pid = 1 ]; then pname="EP";
 						elif [ $pid = -1 ]; then pname="NU";
+						elif [ $pid = 2 ]; then pname="OT";
 						fi
 						if [ $monitor = "MT1" ]; then
 #							for DF in "03T" "018T"
 							for DF in "03T"
 							do
-								DirName=$MYDATA/raw/g4sim/$monitor.$pname.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
-								OriginalFile=$MYG4SIMDATAROOT/PTACS.$pname.$Target.$app.$phys.ref.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+								DirName=$MYDATA/raw/g4sim/$monitor.EP.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.$Target.$app.$phys.ref.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 								do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile $DF 
 							done
 						elif [ $monitor = "A9" ]; then
