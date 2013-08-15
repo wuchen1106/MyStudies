@@ -26,7 +26,7 @@
 #	TBranch | McTruth_time              | 0         | 1
 	TBranch | BLTMonitor_nHits          | 1         | 0
 	TBranch | BLTMonitor_t              | 0         | 1
-#	TBranch | BLTMonitor_tid            | 1         | 1
+	TBranch | BLTMonitor_tid            | 1         | 1
 #	TBranch | BLTMonitor_pid            | 1         | 1
 #	TBranch | BLTMonitor_ppid           | 1         | 1
 	TBranch | BLTMonitor_x              | 0         | 1
@@ -45,7 +45,7 @@
 #	TBranch | BLTMonitor_ovolName       | 0         | 1
 	TBranch | Target_nHits              | 1         | 0
 	TBranch | Target_t                  | 0         | 1
-#	TBranch | Target_tid                | 1         | 1
+	TBranch | Target_tid                | 1         | 1
 #	TBranch | Target_pid                | 1         | 1
 #	TBranch | Target_ppid               | 1         | 1
 	TBranch | Target_x                  | 0         | 1
@@ -65,7 +65,7 @@
 #	TBranch | Target_ovolName           | 0         | 1
 	TBranch | CDCMonitor_nHits          | 1         | 0
 	TBranch | CDCMonitor_t              | 0         | 1
-#	TBranch | CDCMonitor_tid            | 1         | 1
+	TBranch | CDCMonitor_tid            | 1         | 1
 #	TBranch | CDCMonitor_pid            | 1         | 1
 #	TBranch | CDCMonitor_ppid           | 1         | 1
 	TBranch | CDCMonitor_x              | 0         | 1

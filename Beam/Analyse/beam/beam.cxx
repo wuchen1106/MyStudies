@@ -439,7 +439,7 @@ int main(int argc, char* argv[]){
 //			fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
 			fMyRootInterface->get_value("CDCMonitor_nHits",CDCMonitor_nHits);
 			fMyRootInterface->get_value("CDCMonitor_t",CDCMonitor_t,ns);
-//			fMyRootInterface->get_value("CDCMonitor_tid",CDCMonitor_tid);
+			fMyRootInterface->get_value("CDCMonitor_tid",CDCMonitor_tid);
 //			fMyRootInterface->get_value("CDCMonitor_pid",CDCMonitor_pid);
 //			fMyRootInterface->get_value("CDCMonitor_ppid",CDCMonitor_ppid);
 //			fMyRootInterface->get_value("CDCMonitor_oprocess",CDCMonitor_oprocess);
@@ -458,7 +458,7 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->get_value("CDCMonitor_pz",CDCMonitor_pz,GeV);
 			fMyRootInterface->get_value("BLTMonitor_nHits",BLTMonitor_nHits);
 			fMyRootInterface->get_value("BLTMonitor_t",BLTMonitor_t,ns);
-//			fMyRootInterface->get_value("BLTMonitor_tid",BLTMonitor_tid);
+			fMyRootInterface->get_value("BLTMonitor_tid",BLTMonitor_tid);
 //			fMyRootInterface->get_value("BLTMonitor_pid",BLTMonitor_pid);
 //			fMyRootInterface->get_value("BLTMonitor_ppid",BLTMonitor_ppid);
 //			fMyRootInterface->get_value("BLTMonitor_oprocess",BLTMonitor_oprocess);
@@ -475,8 +475,8 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->get_value("BLTMonitor_px",BLTMonitor_px,GeV);
 			fMyRootInterface->get_value("BLTMonitor_py",BLTMonitor_py,GeV);
 			fMyRootInterface->get_value("BLTMonitor_pz",BLTMonitor_pz,GeV);
-			fMyRootInterface->get_value("InnerCylinder_nHits",InnerCylinder_nHits);
-			fMyRootInterface->get_value("InnerCylinder_t",InnerCylinder_t,ns);
+//			fMyRootInterface->get_value("InnerCylinder_nHits",InnerCylinder_nHits);
+//			fMyRootInterface->get_value("InnerCylinder_t",InnerCylinder_t,ns);
 //			fMyRootInterface->get_value("InnerCylinder_tid",InnerCylinder_tid);
 //			fMyRootInterface->get_value("InnerCylinder_pid",InnerCylinder_pid);
 //			fMyRootInterface->get_value("InnerCylinder_ppid",InnerCylinder_ppid);
@@ -513,9 +513,9 @@ int main(int argc, char* argv[]){
 //			fMyRootInterface->get_value("Trigger_px",Trigger_px,GeV);
 //			fMyRootInterface->get_value("Trigger_py",Trigger_py,GeV);
 //			fMyRootInterface->get_value("Trigger_pz",Trigger_pz,GeV);
-//			fMyRootInterface->get_value("Target_nHits",Target_nHits);
+			fMyRootInterface->get_value("Target_nHits",Target_nHits);
 //			fMyRootInterface->get_value("Target_t",Target_t,ns);
-//			fMyRootInterface->get_value("Target_tid",Target_tid);
+			fMyRootInterface->get_value("Target_tid",Target_tid);
 //			fMyRootInterface->get_value("Target_pid",Target_pid);
 //			fMyRootInterface->get_value("Target_ppid",Target_ppid);
 //			fMyRootInterface->get_value("Target_oprocess",Target_oprocess);
@@ -526,13 +526,13 @@ int main(int argc, char* argv[]){
 //			fMyRootInterface->get_value("Target_opx",Target_opx,GeV);
 //			fMyRootInterface->get_value("Target_opy",Target_opy,GeV);
 //			fMyRootInterface->get_value("Target_opz",Target_opz,GeV);
-//			fMyRootInterface->get_value("Target_x",Target_x,cm);
-//			fMyRootInterface->get_value("Target_y",Target_y,cm);
-//			fMyRootInterface->get_value("Target_z",Target_z,cm);
-//			fMyRootInterface->get_value("Target_px",Target_px,GeV);
-//			fMyRootInterface->get_value("Target_py",Target_py,GeV);
-//			fMyRootInterface->get_value("Target_pz",Target_pz,GeV);
-//			fMyRootInterface->get_value("Target_stopped",Target_stopped);
+			fMyRootInterface->get_value("Target_x",Target_x,cm);
+			fMyRootInterface->get_value("Target_y",Target_y,cm);
+			fMyRootInterface->get_value("Target_z",Target_z,cm);
+			fMyRootInterface->get_value("Target_px",Target_px,GeV);
+			fMyRootInterface->get_value("Target_py",Target_py,GeV);
+			fMyRootInterface->get_value("Target_pz",Target_pz,GeV);
+			fMyRootInterface->get_value("Target_stopped",Target_stopped);
 		}
 		else if (m_MonitorPlane=="PTACS"||m_MonitorPlane=="MT1"){
 			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_nHits",Monitor_nHits);
@@ -631,163 +631,186 @@ int main(int argc, char* argv[]){
 			}
 		}
 		else if (m_MonitorPlane=="A9"){
-			if (McTruth_nTracks>0){
-//				double Mc_px = McTruth_px[0];
-//				double Mc_py = McTruth_py[0];
-//				double Mc_pz = McTruth_pz[0];
-//				double Mc_y = McTruth_y[0];
-//				double Mc_time = McTruth_time[0];
-				double Mc_px = opx;
-				double Mc_py = opy;
-				double Mc_pz = opz;
-				double Mc_y = oy;
-				double Mc_time = ot;
+//			double Mc_px = McTruth_px[0];
+//			double Mc_py = McTruth_py[0];
+//			double Mc_pz = McTruth_pz[0];
+//			double Mc_y = McTruth_y[0];
+//			double Mc_time = McTruth_time[0];
+			double Mc_px = opx;
+			double Mc_py = opy;
+			double Mc_pz = opz;
+			double Mc_y = oy;
+			double Mc_time = ot;
 
-				double Mc_pa = sqrt(Mc_px*Mc_px+Mc_py*Mc_py+Mc_pz*Mc_pz);
-				double Mc_pt = sqrt(Mc_px*Mc_px+Mc_py*Mc_py);
+			double Mc_pa = sqrt(Mc_px*Mc_px+Mc_py*Mc_py+Mc_pz*Mc_pz);
+			double Mc_pt = sqrt(Mc_px*Mc_px+Mc_py*Mc_py);
 
-				// Get weight
-				double Mc_w = 1;
-				double CDC_w = 1;
-				double BLT_w = 1;
-				double Target_w = 1;
+			// Get weight
+			double Mc_w = 1;
+			double CDC_w = 1;
+			double BLT_w = 1;
+			double Target_w = 1;
 
-				double Target_time;
-				double BLT_time;
-				double CDC_time;
+			double Target_time;
+			double BLT_time;
+			double CDC_time;
 
-				double E = sqrt(Mc_pa*Mc_pa+M_PION*M_PION);
-				double Beta = Mc_pa/E;
-				double Gamma = sqrt(1./(1.-Beta*Beta));
-				if (PDGEncoding==-211) Mc_w = exp(-(Mc_time-ot)/tau/Gamma);
-				// Get info
-				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_total"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,Mc_w);
+			double E = sqrt(Mc_pa*Mc_pa+M_PION*M_PION);
+			double Beta = Mc_pa/E;
+			double Gamma = sqrt(1./(1.-Beta*Beta));
+			if (PDGEncoding==-211) Mc_w = exp(-(Mc_time-ot)/tau/Gamma);
+			// Get info
+			if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+				std::cout<<prefix_ParticleInfoStart
+						 <<"  Found Particle!"
+						 <<", pa = "<<Mc_pa/MeV<<"MeV"
+						 <<std::endl;
+			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_total"+m_suffix)) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,Mc_w);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_total"+m_suffix)) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,Mc_w);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_total"+m_suffix)) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,Mc_w);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_total"+m_suffix)) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,Mc_w);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_total"+m_suffix)) != -1 ){
+				fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,Mc_w);
+			}
+			// Got Cdc Region?
+			bool got_CDC = false;
+			for ( int i_mon = 0; i_mon < CDCMonitor_nHits; i_mon++ ){
+				if (CDCMonitor_tid[i_mon]==1){
+					got_CDC = true;
+					CDC_time = CDCMonitor_t[i_mon];
+					if (PDGEncoding==-211) CDC_w = exp(-(CDC_time-ot)/tau/Gamma);
+					break;
 				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_total"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,Mc_w);
-				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_total"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,Mc_w);
-				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_total"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,Mc_w);
-				}
-				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_total"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,Mc_w);
-				}
-				// Got Cdc Region?
-				bool got_CDC = false;
-				for ( int i_mon = 0; i_mon < CDCMonitor_nHits; i_mon++ ){
-					if (CDCMonitor_tid[i_mon]==1){
-						got_CDC = true;
-						CDC_time = CDCMonitor_t[i_mon];
-						if (PDGEncoding==-211) CDC_w = exp(-(CDC_time-ot)/tau/Gamma);
+			}
+			std::cout<<__LINE__<<std::endl;
+			// Got Target Region?
+			// Got stopped?
+			bool got_Target = false;
+			bool got_stopped = false;
+			for ( int i_mon = 0; i_mon < Target_nHits; i_mon++ ){
+				if (Target_tid[i_mon]==1){
+					got_Target = true;
+					if (Target_stopped[i_mon]){
+						got_stopped = true;
+						Target_time = Target_t[i_mon];
+						if (PDGEncoding==-211) Target_w = exp(-(Target_time-ot)/tau/Gamma);
 						break;
 					}
 				}
-				// Got Target Region?
-				// Got stopped?
-				bool got_Target = false;
-				bool got_stopped = false;
-				for ( int i_mon = 0; i_mon < Target_nHits; i_mon++ ){
-					if (Target_tid[i_mon]==1){
-						got_Target = true;
-						if (Target_stopped[i_mon]){
-							got_stopped = true;
-							Target_time = Target_t[i_mon];
-							if (PDGEncoding==-211) Target_w = exp(-(Target_time-ot)/tau/Gamma);
-							break;
-						}
-					}
-					else if (Target_pid[i_mon]==13){
-						std::cout<<"Hey a moun from else where!"<<std::endl;
-						std::cout<<"  px = "<<Target_px[i_mon]/MeV<<"MeV"
-								 <<", py = "<<Target_py[i_mon]/MeV<<"MeV"
-								 <<", pz = "<<Target_pz[i_mon]/MeV<<"MeV"
-								 <<", tid = "<<Target_tid[i_mon]
-								 <<", stopped?"<<Target_stopped[i_mon]
-								 <<std::endl;
-					}
+				else if (Target_pid[i_mon]==13){
+					std::cout<<"Hey a moun from else where!"<<std::endl;
+					std::cout<<"  px = "<<Target_px[i_mon]/MeV<<"MeV"
+							 <<", py = "<<Target_py[i_mon]/MeV<<"MeV"
+							 <<", pz = "<<Target_pz[i_mon]/MeV<<"MeV"
+							 <<", tid = "<<Target_tid[i_mon]
+							 <<", stopped?"<<Target_stopped[i_mon]
+							 <<std::endl;
 				}
-				// Got recoiled?
-				bool got_recoiled = false;
-				for ( int i_mon = 0; i_mon < BLTMonitor_nHits; i_mon++ ){
-					if (BLTMonitor_tid[i_mon]==1&&BLTMonitor_pz[i_mon]<0){
-						got_recoiled = true;
-						BLT_time = BLTMonitor_t[i_mon];
-						if (PDGEncoding==-211) BLT_w = exp(-(BLT_time-ot)/tau/Gamma);
-						break;
-					}
+			}
+			std::cout<<__LINE__<<std::endl;
+			// Got recoiled?
+			bool got_recoiled = false;
+			for ( int i_mon = 0; i_mon < BLTMonitor_nHits; i_mon++ ){
+			std::cout<<__LINE__<<std::endl;
+				if (BLTMonitor_tid[i_mon]==1&&BLTMonitor_pz[i_mon]<0){
+			std::cout<<__LINE__<<std::endl;
+					got_recoiled = true;
+					BLT_time = BLTMonitor_t[i_mon];
+					if (PDGEncoding==-211) BLT_w = exp(-(BLT_time-ot)/tau/Gamma);
+					break;
 				}
-				if (got_CDC){
-
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_CDC"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,CDC_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_CDC"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,CDC_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_CDC"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,CDC_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_CDC"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,CDC_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_CDC"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,CDC_w);
-					}
+			}
+			std::cout<<__LINE__<<std::endl;
+			if (got_CDC){
+				if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+					std::cout<<prefix_ParticleInfoStart
+							 <<"  got_CDC!"
+							 <<std::endl;
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_CDC"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,CDC_w);
 				}
-				if (got_Target){
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_Target"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,Target_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_Target"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,Target_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_Target"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,Target_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_Target"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,Target_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_Target"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,Target_w);
-					}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_CDC"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,CDC_w);
 				}
-				if (got_stopped){
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_stop"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,Target_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_stop"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,Target_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_stop"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,Target_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_stop"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,Target_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_stop"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,Target_w);
-					}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_CDC"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,CDC_w);
 				}
-				if (got_recoiled){
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_recoil"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,BLT_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_recoil"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,BLT_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_recoil"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,BLT_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_recoil"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,BLT_w);
-					}
-					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_recoil"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,BLT_w);
-					}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_CDC"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,CDC_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_CDC"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,CDC_w);
+				}
+			}
+			if (got_Target){
+				if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+					std::cout<<prefix_ParticleInfoStart
+							 <<"  got_Target!"
+							 <<std::endl;
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_Target"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,Target_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_Target"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,Target_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_Target"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,Target_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_Target"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,Target_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_Target"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,Target_w);
+				}
+			}
+			if (got_stopped){
+				if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+					std::cout<<prefix_ParticleInfoStart
+							 <<"  got_stopped"
+							 <<std::endl;
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_stop"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,Target_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_stop"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,Target_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_stop"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,Target_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_stop"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,Target_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_stop"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,Target_w);
+				}
+			}
+			if (got_recoiled){
+				if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+					std::cout<<prefix_ParticleInfoStart
+							 <<"  got_recoiled"
+							 <<std::endl;
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pa_recoil"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,BLT_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pt_recoil"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,BLT_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"pz_recoil"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,BLT_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"y_recoil"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,BLT_w);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"paVSy_recoil"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,BLT_w);
 				}
 			}
 		}
@@ -811,8 +834,8 @@ int main(int argc, char* argv[]){
 					double pt = sqrt(McTruth_px[iMc]*McTruth_px[iMc]+McTruth_py[iMc]*McTruth_py[iMc]);
 					double theta = acos(McTruth_pz[iMc]/pa);
 					double r  = sqrt(McTruth_x[iMc]*McTruth_x[iMc]+McTruth_y[iMc]*McTruth_y[iMc]);
-					if (pa<1.5*MeV) continue;
-					if (McTruth_time[iMc]<1400*ns||McTruth_time[iMc]>1e9*ns) continue;
+					if (pa<1.5*MeV&&r<410) continue;
+					if (McTruth_time[iMc]<0*ns||McTruth_time[iMc]>200*ns) continue;
 					if (McTruth_charge[iMc]==0) continue;
 					fMyRootInterface->set_ovalue("pid",McTruth_pid[iMc]);
 					fMyRootInterface->set_ovalue("x",McTruth_x[iMc]/mm);
@@ -826,39 +849,39 @@ int main(int argc, char* argv[]){
 					fMyRootInterface->set_ovalue("process",McTruth_process[iMc]);
 					fMyRootInterface->set_ovalue("volume",McTruth_volume[iMc]);
 					if (McTruth_pid[iMc]==11){
-						fMyRootInterface->Fill("em_pa",pa/MeV);
-						fMyRootInterface->Fill("em_pt",pt/MeV);
-						fMyRootInterface->Fill("em_theta",theta/rad);
-						fMyRootInterface->Fill("em_time",McTruth_time[iMc]/ns);
-						fMyRootInterface->Fill("em_zr",McTruth_z[iMc]/mm,r/mm);
+						fMyRootInterface->Fill(m_prefix+"_"+"em_pa"+m_suffix,pa/MeV);
+						fMyRootInterface->Fill(m_prefix+"_"+"em_pt"+m_suffix,pt/MeV);
+						fMyRootInterface->Fill(m_prefix+"_"+"em_theta"+m_suffix,theta/rad);
+						fMyRootInterface->Fill(m_prefix+"_"+"em_time"+m_suffix,McTruth_time[iMc]/ns);
+						fMyRootInterface->Fill(m_prefix+"_"+"em_zr"+m_suffix,McTruth_z[iMc]/mm,r/mm);
 					}
 					else if (McTruth_pid[iMc]==-11){
-						fMyRootInterface->Fill("ep_pa",pa/MeV);
-						fMyRootInterface->Fill("ep_pt",pt/MeV);
-						fMyRootInterface->Fill("ep_theta",theta/rad);
-						fMyRootInterface->Fill("ep_time",McTruth_time[iMc]/ns);
-						fMyRootInterface->Fill("ep_zr",McTruth_z[iMc]/mm,r/mm);
+						fMyRootInterface->Fill(m_prefix+"_"+"ep_pa"+m_suffix,pa/MeV);
+						fMyRootInterface->Fill(m_prefix+"_"+"ep_pt"+m_suffix,pt/MeV);
+						fMyRootInterface->Fill(m_prefix+"_"+"ep_theta"+m_suffix,theta/rad);
+						fMyRootInterface->Fill(m_prefix+"_"+"ep_time"+m_suffix,McTruth_time[iMc]/ns);
+						fMyRootInterface->Fill(m_prefix+"_"+"ep_zr"+m_suffix,McTruth_z[iMc]/mm,r/mm);
 					}
 					else if (McTruth_pid[iMc]==13){
-						fMyRootInterface->Fill("mum_pa",pa/MeV);
-						fMyRootInterface->Fill("mum_pt",pt/MeV);
-						fMyRootInterface->Fill("mum_theta",theta/rad);
-						fMyRootInterface->Fill("mum_time",McTruth_time[iMc]/ns);
-						fMyRootInterface->Fill("mum_zr",McTruth_z[iMc]/mm,r/mm);
+						fMyRootInterface->Fill(m_prefix+"_"+"mum_pa"+m_suffix,pa/MeV);
+						fMyRootInterface->Fill(m_prefix+"_"+"mum_pt"+m_suffix,pt/MeV);
+						fMyRootInterface->Fill(m_prefix+"_"+"mum_theta"+m_suffix,theta/rad);
+						fMyRootInterface->Fill(m_prefix+"_"+"mum_time"+m_suffix,McTruth_time[iMc]/ns);
+						fMyRootInterface->Fill(m_prefix+"_"+"mum_zr"+m_suffix,McTruth_z[iMc]/mm,r/mm);
 					}
 					else if (McTruth_pid[iMc]==-211){
-						fMyRootInterface->Fill("pim_pa",pa/MeV);
-						fMyRootInterface->Fill("pim_pt",pt/MeV);
-						fMyRootInterface->Fill("pim_theta",theta/rad);
-						fMyRootInterface->Fill("pim_time",McTruth_time[iMc]/ns);
-						fMyRootInterface->Fill("pim_zr",McTruth_z[iMc]/mm,r/mm);
+						fMyRootInterface->Fill(m_prefix+"_"+"pim_pa"+m_suffix,pa/MeV);
+						fMyRootInterface->Fill(m_prefix+"_"+"pim_pt"+m_suffix,pt/MeV);
+						fMyRootInterface->Fill(m_prefix+"_"+"pim_theta"+m_suffix,theta/rad);
+						fMyRootInterface->Fill(m_prefix+"_"+"pim_time"+m_suffix,McTruth_time[iMc]/ns);
+						fMyRootInterface->Fill(m_prefix+"_"+"pim_zr"+m_suffix,McTruth_z[iMc]/mm,r/mm);
 					}
 					else if (McTruth_pid[iMc]==2212){
-						fMyRootInterface->Fill("pp_pa",pa/MeV);
-						fMyRootInterface->Fill("pp_pt",pt/MeV);
-						fMyRootInterface->Fill("pp_theta",theta/rad);
-						fMyRootInterface->Fill("pp_time",McTruth_time[iMc]/ns);
-						fMyRootInterface->Fill("pp_zr",McTruth_z[iMc]/mm,r/mm);
+						fMyRootInterface->Fill(m_prefix+"_"+"pp_pa"+m_suffix,pa/MeV);
+						fMyRootInterface->Fill(m_prefix+"_"+"pp_pt"+m_suffix,pt/MeV);
+						fMyRootInterface->Fill(m_prefix+"_"+"pp_theta"+m_suffix,theta/rad);
+						fMyRootInterface->Fill(m_prefix+"_"+"pp_time"+m_suffix,McTruth_time[iMc]/ns);
+						fMyRootInterface->Fill(m_prefix+"_"+"pp_zr"+m_suffix,McTruth_z[iMc]/mm,r/mm);
 					}
 					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
 					fMyRootInterface->Fill();

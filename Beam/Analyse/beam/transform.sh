@@ -1,7 +1,7 @@
 #!/bin/bash
 
 queue=besq
-nFiles=100
+nFiles=0
 nSplit=1
 
 do_the_job(){
@@ -20,7 +20,7 @@ do_the_job(){
 	suffix="_Dummy"
 	if [ $monitor = "MT1" ]; then
 		name=$monitor.$pname.$Target.$DF.$app.$phys
-	elif [ $monitor  = "A9" ]; then
+	elif [ $monitor  = "A9" -o $monitor = "McTruth" ]; then
 		name=$monitor.$pname.$Target.$DF.$A9.$app.$phys
 		prefix=$monitor'_'$pname
 		suffix='_'$Target'_'$DF'_'$A9'_'$app'_'$phys
@@ -84,7 +84,7 @@ do
 								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.$Target.$app.$phys.ref.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 								do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile $DF 
 							done
-						elif [ $monitor = "A9" ]; then
+						elif [ $monitor = "A9" -o $monitor = "McTruth" ]; then
 #							for DF in "03T" "018T"
 							for DF in "03T"
 							do

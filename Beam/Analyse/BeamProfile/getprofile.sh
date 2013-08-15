@@ -1,6 +1,6 @@
 #!/bin/bash
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
-for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm"
+for Target in "t16cm6mm"
 do
 #	for app in "A" "H" "cg4" "g4s"
 	for app in "g4s"
@@ -45,7 +45,11 @@ do
 						fi
 					elif [ $monitor == "MT1" ]; then
 						if [ $phys == "QBH" ]; then
-							nEvents=20000000
+							if [ $Target == "t16cm6mm" ]; then
+								nEvents=2000000
+							else
+								nEvents=20000000
+							fi
 						fi
 					fi
 				fi

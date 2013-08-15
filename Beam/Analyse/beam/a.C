@@ -1,7 +1,7 @@
 int a(){
 	std::stringstream buff;
 
-	TFile * fp_ref = new TFile("result/g40cm10mm_McTruth_EP_QB_0.root");
+	TFile * fp_ref = new TFile("result/McTruth.EP.g40cm10mm.03T.0701.g4s.QBH.root");
 	TTree * tree = (TTree*)fp_ref->Get("t");
 	if (!tree){
 		std::cout<<"Cannot find tree!"<<std::endl;
@@ -11,14 +11,20 @@ int a(){
 	TPad padList[20];
 	int ipad=0;
 	int pid=0;
+	std::string prefix="McTruth_EP";
+	std::string suffix="_g40cm10mm_03T_0701_g4s_QBH";
 	std::string pname="";
+	gStyle->SetPalette(1);
+	gStyle->SetOptStat(0);
+	gStyle->SetPadTickX(1);
+	gStyle->SetPadTickY(1);
 	for (int iPar = 0; iPar<5; iPar++){
 		if (iPar==0) {pid=11;pname="em";}
 		else if (iPar==1) {pid=-11;pname="ep";}
 		else if (iPar==2) {pid=13;pname="mum";}
 		else if (iPar==3) {pid=-211;pname="pim";}
 		else if (iPar==4) {pid=2212;pname="pp";}
-		std::string h2Name = pname+"_zr";
+		std::string h2Name = prefix + "_" + pname+"_zr" + suffix;
 		TH2D* h2 = (TH2D*)fp_ref->Get(h2Name.c_str());
 		if (!h2){
 			std::cout<<"Cannot find h2!"<<std::endl;
