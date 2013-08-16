@@ -36,7 +36,7 @@ do
 					elif [ $pid = -1 ]; then pname="NU";
 					fi
 					if [ $monitor = "MT1" ]; then
-						for DF in "03T" "018T"
+						for DF in "003T" "0018T" "003TS" "0018TS"
 						do
 							name=result/$monitor.$pname.$Target.$DF.$app.$phys
 							dir=../../result/$Target/$app/$phys/$monitor/$DF

@@ -47,9 +47,9 @@ do_id(){
 		echo "    refTH1D | "$rootfile" | "$histo >> $input
 		echo "#   TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm   |DrawOption|UseLeg|legendName|legx1|legy1|legx2|legy2|npadx|npady" >> $input
 		if [ $iFile = 0 ]; then
-			echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-6  | $COL | _NFILES | 0  | $LOG  | 3   | 0 | LP       |   1  |$legendName  |0.8 |0.8 |1 |1 |$nx |$ny " >> $input
+			echo "    TH1D    | "$histo"     |                    |              |               | 100 |   1   |   1   | 0    | 1e-6  | $COL | _NFILES | 0  | $LOG  | 3   | 0 |          |   1  |$legendName  |0.8 |0.8 |1 |1 |$nx |$ny " >> $input
 		else
-			echo "    TH1D    | "$histo"     |                    |              |               | 120 |   1   |   1   | 0    | 1e-6  | $COL | 0 | 0  | $LOG  | 3   | 0 | LP       |   1  |$legendName  |0.8 |0.8 |1 |1 " >> $input
+			echo "    TH1D    | "$histo"     |                    |              |               | 100 |   1   |   1   | 0    | 1e-6  | $COL | 0 | 0  | $LOG  | 3   | 0 |          |   1  |$legendName  |0.8 |0.8 |1 |1 " >> $input
 		fi
 		((iFile++))
 	else
@@ -78,7 +78,7 @@ var_process(){
 			for Target in "g40cm10mm"
 			do
 				if [ $monitor = "MT1" ]; then
-					for DF in "03T" "018T"
+					for DF in "003T" "0018TS"
 					do
 						do_id $iFile $var $vartype $monitor $pname $app $phys $Target $DF
 						iFile=$?

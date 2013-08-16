@@ -1,6 +1,6 @@
 #!/bin/bash
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
-for Target in "t16cm6mm"
+for Target in "g50cm10mm"
 do
 #	for app in "A" "H" "cg4" "g4s"
 	for app in "g4s"
@@ -62,8 +62,8 @@ do
 					elif [ $pname = n0 ]; then pname_inTitle="n_{0}"; pid=2112;
 					fi
 					if [ $monitor = "MT1" ]; then
-#						for DF in "03T" "018T"
-						for DF in "018T" "03T"
+#						for DF in "003TS" "0018TS" "0018T" "003T"
+						for DF in "003TS"
 						do
 							prefix=$monitor"_"$pname
 							suffix="_"$Target"_"$DF"_"$app"_"$phys

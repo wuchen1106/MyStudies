@@ -1,7 +1,7 @@
 #!/bin/bash
 
 queue=besq
-nFiles=0
+nFiles=100
 nSplit=1
 
 do_the_job(){
@@ -52,10 +52,10 @@ do
 		for phys in "QBH"
 		do
 #		for monitor in "MT1" "PTACS" "McTruth" "A9";
-			for monitor in "McTruth"
+			for monitor in "MT1"
 			do
 #			for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
-				for pid in 1;
+				for pid in "2"
 				do
 					for (( iSplit=0; iSplit<nSplit; iSplit++ ))
 					do
@@ -77,11 +77,11 @@ do
 						elif [ $pid = 2 ]; then pname="OT";
 						fi
 						if [ $monitor = "MT1" ]; then
-#							for DF in "03T" "018T"
-							for DF in "03T"
+#							for DF in "003T" "0018T"
+							for DF in "003T"
 							do
 								DirName=$MYDATA/raw/g4sim/$monitor.EP.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
-								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.$Target.$app.$phys.ref.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.$Target.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 								do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile $DF 
 							done
 						elif [ $monitor = "A9" -o $monitor = "McTruth" ]; then
@@ -92,7 +92,7 @@ do
 								for A9 in "0701"
 								do
 									DirName=$MYDATA/raw/g4sim/$monitor.$pname.$Target.$DF.$A9.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
-									OriginalFile=$MYG4SIMDATAROOT/MT1.$pname.$Target.$DF.$app.$phys.ref.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+									OriginalFile=$MYG4SIMDATAROOT/MT1.$pname.$Target.$DF.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 									do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile $DF $A9
 								done
 							done

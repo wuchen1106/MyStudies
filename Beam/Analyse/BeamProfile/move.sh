@@ -16,7 +16,7 @@ do
 					mv $rootfile $directroy
 					mv $profile $directroy
 				elif [ $monitor = "MT1" ]; then
-					for DF in "03T" "018T"
+					for DF in "003TS" "0018TS" "0018T" "003T"
 					do
 						rootfile="result/"$monitor"_*_"$Target"_"$DF"_"$app"_"$phys".root"
 						profile="result/"$monitor"_*_"$Target"_"$DF"_"$app"_"$phys".*"
