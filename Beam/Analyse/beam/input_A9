@@ -27,99 +27,251 @@
 	TBranch | BLTMonitor_nHits          | 1         | 0
 	TBranch | BLTMonitor_t              | 0         | 1
 	TBranch | BLTMonitor_tid            | 1         | 1
-#	TBranch | BLTMonitor_pid            | 1         | 1
-#	TBranch | BLTMonitor_ppid           | 1         | 1
+	TBranch | BLTMonitor_pid            | 1         | 1
+	TBranch | BLTMonitor_ppid           | 1         | 1
 	TBranch | BLTMonitor_x              | 0         | 1
 	TBranch | BLTMonitor_y              | 0         | 1
 	TBranch | BLTMonitor_z              | 0         | 1
 	TBranch | BLTMonitor_px             | 0         | 1
 	TBranch | BLTMonitor_py             | 0         | 1
 	TBranch | BLTMonitor_pz             | 0         | 1
-#	TBranch | BLTMonitor_ox             | 0         | 1
-#	TBranch | BLTMonitor_oy             | 0         | 1
-#	TBranch | BLTMonitor_oz             | 0         | 1
-#	TBranch | BLTMonitor_opx            | 0         | 1
-#	TBranch | BLTMonitor_opy            | 0         | 1
-#	TBranch | BLTMonitor_opz            | 0         | 1
-#	TBranch | BLTMonitor_oprocess       | 0         | 1
-#	TBranch | BLTMonitor_ovolName       | 0         | 1
-	TBranch | Target_nHits              | 1         | 0
-	TBranch | Target_t                  | 0         | 1
-	TBranch | Target_tid                | 1         | 1
-#	TBranch | Target_pid                | 1         | 1
-#	TBranch | Target_ppid               | 1         | 1
-	TBranch | Target_x                  | 0         | 1
-	TBranch | Target_y                  | 0         | 1
-	TBranch | Target_z                  | 0         | 1
-	TBranch | Target_px                 | 0         | 1
-	TBranch | Target_py                 | 0         | 1
-	TBranch | Target_pz                 | 0         | 1
-	TBranch | Target_stopped            | 1         | 1
-#	TBranch | Target_ox                 | 0         | 1
-#	TBranch | Target_oy                 | 0         | 1
-#	TBranch | Target_oz                 | 0         | 1
-#	TBranch | Target_opx                | 0         | 1
-#	TBranch | Target_opy                | 0         | 1
-#	TBranch | Target_opz                | 0         | 1
-#	TBranch | Target_oprocess           | 0         | 1
-#	TBranch | Target_ovolName           | 0         | 1
+	TBranch | BLTMonitor_ox             | 0         | 1
+	TBranch | BLTMonitor_oy             | 0         | 1
+	TBranch | BLTMonitor_oz             | 0         | 1
+	TBranch | BLTMonitor_opx            | 0         | 1
+	TBranch | BLTMonitor_opy            | 0         | 1
+	TBranch | BLTMonitor_opz            | 0         | 1
+	TBranch | BLTMonitor_oprocess       | 2         | 1
+	TBranch | BLTMonitor_ovolName       | 2         | 1
+	TBranch | BLTMonitor_charge         | 1         | 1
 	TBranch | CDCMonitor_nHits          | 1         | 0
 	TBranch | CDCMonitor_t              | 0         | 1
 	TBranch | CDCMonitor_tid            | 1         | 1
-#	TBranch | CDCMonitor_pid            | 1         | 1
-#	TBranch | CDCMonitor_ppid           | 1         | 1
+	TBranch | CDCMonitor_pid            | 1         | 1
+	TBranch | CDCMonitor_ppid           | 1         | 1
 	TBranch | CDCMonitor_x              | 0         | 1
 	TBranch | CDCMonitor_y              | 0         | 1
 	TBranch | CDCMonitor_z              | 0         | 1
 	TBranch | CDCMonitor_px             | 0         | 1
 	TBranch | CDCMonitor_py             | 0         | 1
 	TBranch | CDCMonitor_pz             | 0         | 1
-#	TBranch | CDCMonitor_ox             | 0         | 1
-#	TBranch | CDCMonitor_oy             | 0         | 1
-#	TBranch | CDCMonitor_oz             | 0         | 1
-#	TBranch | CDCMonitor_opx            | 0         | 1
-#	TBranch | CDCMonitor_opy            | 0         | 1
-#	TBranch | CDCMonitor_opz            | 0         | 1
-#	TBranch | CDCMonitor_oprocess       | 0         | 1
-#	TBranch | CDCMonitor_ovolName       | 0         | 1
-#	TBranch | Trigger_nHits             | 1         | 0
-#	TBranch | Trigger_t                 | 0         | 1
-#	TBranch | Trigger_tid               | 1         | 1
-#	TBranch | Trigger_pid               | 1         | 1
-#	TBranch | Trigger_ppid              | 1         | 1
-#	TBranch | Trigger_x                 | 0         | 1
-#	TBranch | Trigger_y                 | 0         | 1
-#	TBranch | Trigger_z                 | 0         | 1
-#	TBranch | Trigger_px                | 0         | 1
-#	TBranch | Trigger_py                | 0         | 1
-#	TBranch | Trigger_pz                | 0         | 1
-#	TBranch | Trigger_ox                | 0         | 1
-#	TBranch | Trigger_oy                | 0         | 1
-#	TBranch | Trigger_oz                | 0         | 1
-#	TBranch | Trigger_opx               | 0         | 1
-#	TBranch | Trigger_opy               | 0         | 1
-#	TBranch | Trigger_opz               | 0         | 1
-#	TBranch | Trigger_oprocess          | 0         | 1
-#	TBranch | Trigger_ovolName          | 0         | 1
-#	TBranch | InnerCylinder_nHits       | 1         | 0
-#	TBranch | InnerCylinder_t           | 0         | 1
-#	TBranch | InnerCylinder_tid         | 1         | 1
-#	TBranch | InnerCylinder_pid         | 1         | 1
-#	TBranch | InnerCylinder_ppid        | 1         | 1
-#	TBranch | InnerCylinder_x           | 0         | 1
-#	TBranch | InnerCylinder_y           | 0         | 1
-#	TBranch | InnerCylinder_z           | 0         | 1
-#	TBranch | InnerCylinder_px          | 0         | 1
-#	TBranch | InnerCylinder_py          | 0         | 1
-#	TBranch | InnerCylinder_pz          | 0         | 1
-#	TBranch | InnerCylinder_ox          | 0         | 1
-#	TBranch | InnerCylinder_oy          | 0         | 1
-#	TBranch | InnerCylinder_oz          | 0         | 1
-#	TBranch | InnerCylinder_opx         | 0         | 1
-#	TBranch | InnerCylinder_opy         | 0         | 1
-#	TBranch | InnerCylinder_opz         | 0         | 1
-#	TBranch | InnerCylinder_oprocess    | 0         | 1
-#	TBranch | InnerCylinder_ovolName    | 0         | 1
+	TBranch | CDCMonitor_ox             | 0         | 1
+	TBranch | CDCMonitor_oy             | 0         | 1
+	TBranch | CDCMonitor_oz             | 0         | 1
+	TBranch | CDCMonitor_opx            | 0         | 1
+	TBranch | CDCMonitor_opy            | 0         | 1
+	TBranch | CDCMonitor_opz            | 0         | 1
+	TBranch | CDCMonitor_oprocess       | 2         | 1
+	TBranch | CDCMonitor_ovolName       | 2         | 1
+	TBranch | CDCMonitor_charge         | 1         | 1
+	TBranch | InnerLayer_nHits       | 1         | 0
+	TBranch | InnerLayer_t           | 0         | 1
+	TBranch | InnerLayer_tid         | 1         | 1
+	TBranch | InnerLayer_pid         | 1         | 1
+	TBranch | InnerLayer_ppid        | 1         | 1
+	TBranch | InnerLayer_x           | 0         | 1
+	TBranch | InnerLayer_y           | 0         | 1
+	TBranch | InnerLayer_z           | 0         | 1
+	TBranch | InnerLayer_px          | 0         | 1
+	TBranch | InnerLayer_py          | 0         | 1
+	TBranch | InnerLayer_pz          | 0         | 1
+	TBranch | InnerLayer_ox          | 0         | 1
+	TBranch | InnerLayer_oy          | 0         | 1
+	TBranch | InnerLayer_oz          | 0         | 1
+	TBranch | InnerLayer_opx         | 0         | 1
+	TBranch | InnerLayer_opy         | 0         | 1
+	TBranch | InnerLayer_opz         | 0         | 1
+	TBranch | InnerLayer_oprocess    | 2         | 1
+	TBranch | InnerLayer_ovolName    | 2         | 1
+	TBranch | InnerLayer_charge      | 1         | 1
+	TBranch | OuterLayer_nHits       | 1         | 0
+	TBranch | OuterLayer_t           | 0         | 1
+	TBranch | OuterLayer_tid         | 1         | 1
+	TBranch | OuterLayer_pid         | 1         | 1
+	TBranch | OuterLayer_ppid        | 1         | 1
+	TBranch | OuterLayer_x           | 0         | 1
+	TBranch | OuterLayer_y           | 0         | 1
+	TBranch | OuterLayer_z           | 0         | 1
+	TBranch | OuterLayer_px          | 0         | 1
+	TBranch | OuterLayer_py          | 0         | 1
+	TBranch | OuterLayer_pz          | 0         | 1
+	TBranch | OuterLayer_ox          | 0         | 1
+	TBranch | OuterLayer_oy          | 0         | 1
+	TBranch | OuterLayer_oz          | 0         | 1
+	TBranch | OuterLayer_opx         | 0         | 1
+	TBranch | OuterLayer_opy         | 0         | 1
+	TBranch | OuterLayer_opz         | 0         | 1
+	TBranch | OuterLayer_oprocess    | 2         | 1
+	TBranch | OuterLayer_ovolName    | 2         | 1
+	TBranch | OuterLayer_charge      | 1         | 1
+	TBranch | Target_nHits              | 1         | 0
+	TBranch | Target_t                  | 0         | 1
+	TBranch | Target_tid                | 1         | 1
+	TBranch | Target_pid                | 1         | 1
+	TBranch | Target_ppid               | 1         | 1
+	TBranch | Target_x                  | 0         | 1
+	TBranch | Target_y                  | 0         | 1
+	TBranch | Target_z                  | 0         | 1
+	TBranch | Target_px                 | 0         | 1
+	TBranch | Target_py                 | 0         | 1
+	TBranch | Target_pz                 | 0         | 1
+	TBranch | Target_ox                 | 0         | 1
+	TBranch | Target_oy                 | 0         | 1
+	TBranch | Target_oz                 | 0         | 1
+	TBranch | Target_opx                | 0         | 1
+	TBranch | Target_opy                | 0         | 1
+	TBranch | Target_opz                | 0         | 1
+	TBranch | Target_oprocess           | 2         | 1
+	TBranch | Target_ovolName           | 2         | 1
+	TBranch | Target_stopped            | 1         | 1
+	TBranch | Target_charge             | 1         | 1
+	TBranch | Trigger_nHits             | 1         | 0
+	TBranch | Trigger_t                 | 0         | 1
+	TBranch | Trigger_tid               | 1         | 1
+	TBranch | Trigger_pid               | 1         | 1
+	TBranch | Trigger_ppid              | 1         | 1
+	TBranch | Trigger_x                 | 0         | 1
+	TBranch | Trigger_y                 | 0         | 1
+	TBranch | Trigger_z                 | 0         | 1
+	TBranch | Trigger_px                | 0         | 1
+	TBranch | Trigger_py                | 0         | 1
+	TBranch | Trigger_pz                | 0         | 1
+	TBranch | Trigger_ox                | 0         | 1
+	TBranch | Trigger_oy                | 0         | 1
+	TBranch | Trigger_oz                | 0         | 1
+	TBranch | Trigger_opx               | 0         | 1
+	TBranch | Trigger_opy               | 0         | 1
+	TBranch | Trigger_opz               | 0         | 1
+	TBranch | Trigger_oprocess          | 2         | 1
+	TBranch | Trigger_ovolName          | 2         | 1
+	TBranch | Trigger_stopped           | 1         | 1
+	TBranch | Trigger_charge            | 1         | 1
+	TBranch | InnerCylinder_nHits       | 1         | 0
+	TBranch | InnerCylinder_t           | 0         | 1
+	TBranch | InnerCylinder_tid         | 1         | 1
+	TBranch | InnerCylinder_pid         | 1         | 1
+	TBranch | InnerCylinder_ppid        | 1         | 1
+	TBranch | InnerCylinder_x           | 0         | 1
+	TBranch | InnerCylinder_y           | 0         | 1
+	TBranch | InnerCylinder_z           | 0         | 1
+	TBranch | InnerCylinder_px          | 0         | 1
+	TBranch | InnerCylinder_py          | 0         | 1
+	TBranch | InnerCylinder_pz          | 0         | 1
+	TBranch | InnerCylinder_ox          | 0         | 1
+	TBranch | InnerCylinder_oy          | 0         | 1
+	TBranch | InnerCylinder_oz          | 0         | 1
+	TBranch | InnerCylinder_opx         | 0         | 1
+	TBranch | InnerCylinder_opy         | 0         | 1
+	TBranch | InnerCylinder_opz         | 0         | 1
+	TBranch | InnerCylinder_oprocess    | 2         | 1
+	TBranch | InnerCylinder_ovolName    | 2         | 1
+	TBranch | InnerCylinder_stopped     | 1         | 1
+	TBranch | InnerCylinder_charge      | 1         | 1
+	TBranch | OuterCylinder_nHits       | 1         | 0
+	TBranch | OuterCylinder_t           | 0         | 1
+	TBranch | OuterCylinder_tid         | 1         | 1
+	TBranch | OuterCylinder_pid         | 1         | 1
+	TBranch | OuterCylinder_ppid        | 1         | 1
+	TBranch | OuterCylinder_x           | 0         | 1
+	TBranch | OuterCylinder_y           | 0         | 1
+	TBranch | OuterCylinder_z           | 0         | 1
+	TBranch | OuterCylinder_px          | 0         | 1
+	TBranch | OuterCylinder_py          | 0         | 1
+	TBranch | OuterCylinder_pz          | 0         | 1
+	TBranch | OuterCylinder_ox          | 0         | 1
+	TBranch | OuterCylinder_oy          | 0         | 1
+	TBranch | OuterCylinder_oz          | 0         | 1
+	TBranch | OuterCylinder_opx         | 0         | 1
+	TBranch | OuterCylinder_opy         | 0         | 1
+	TBranch | OuterCylinder_opz         | 0         | 1
+	TBranch | OuterCylinder_oprocess    | 2         | 1
+	TBranch | OuterCylinder_ovolName    | 2         | 1
+	TBranch | OuterCylinder_stopped     | 1         | 1
+	TBranch | OuterCylinder_charge      | 1         | 1
+	TBranch | BLTCollimator_nHits              | 1         | 0
+	TBranch | BLTCollimator_t                  | 0         | 1
+	TBranch | BLTCollimator_tid                | 1         | 1
+	TBranch | BLTCollimator_pid                | 1         | 1
+	TBranch | BLTCollimator_ppid               | 1         | 1
+	TBranch | BLTCollimator_x                  | 0         | 1
+	TBranch | BLTCollimator_y                  | 0         | 1
+	TBranch | BLTCollimator_z                  | 0         | 1
+	TBranch | BLTCollimator_px                 | 0         | 1
+	TBranch | BLTCollimator_py                 | 0         | 1
+	TBranch | BLTCollimator_pz                 | 0         | 1
+	TBranch | BLTCollimator_ox                 | 0         | 1
+	TBranch | BLTCollimator_oy                 | 0         | 1
+	TBranch | BLTCollimator_oz                 | 0         | 1
+	TBranch | BLTCollimator_opx                | 0         | 1
+	TBranch | BLTCollimator_opy                | 0         | 1
+	TBranch | BLTCollimator_opz                | 0         | 1
+	TBranch | BLTCollimator_oprocess           | 2         | 1
+	TBranch | BLTCollimator_ovolName           | 2         | 1
+	TBranch | BLTCollimator_stopped            | 1         | 1
+	TBranch | BLTCollimator_charge             | 1         | 1
+	TBranch | BLTShell_nHits              | 1         | 0
+	TBranch | BLTShell_t                  | 0         | 1
+	TBranch | BLTShell_tid                | 1         | 1
+	TBranch | BLTShell_pid                | 1         | 1
+	TBranch | BLTShell_ppid               | 1         | 1
+	TBranch | BLTShell_x                  | 0         | 1
+	TBranch | BLTShell_y                  | 0         | 1
+	TBranch | BLTShell_z                  | 0         | 1
+	TBranch | BLTShell_px                 | 0         | 1
+	TBranch | BLTShell_py                 | 0         | 1
+	TBranch | BLTShell_pz                 | 0         | 1
+	TBranch | BLTShell_ox                 | 0         | 1
+	TBranch | BLTShell_oy                 | 0         | 1
+	TBranch | BLTShell_oz                 | 0         | 1
+	TBranch | BLTShell_opx                | 0         | 1
+	TBranch | BLTShell_opy                | 0         | 1
+	TBranch | BLTShell_opz                | 0         | 1
+	TBranch | BLTShell_oprocess           | 2         | 1
+	TBranch | BLTShell_ovolName           | 2         | 1
+	TBranch | BLTShell_stopped            | 1         | 1
+	TBranch | BLTShell_charge             | 1         | 1
+	TBranch | BLTYoke_nHits              | 1         | 0
+	TBranch | BLTYoke_t                  | 0         | 1
+	TBranch | BLTYoke_tid                | 1         | 1
+	TBranch | BLTYoke_pid                | 1         | 1
+	TBranch | BLTYoke_ppid               | 1         | 1
+	TBranch | BLTYoke_x                  | 0         | 1
+	TBranch | BLTYoke_y                  | 0         | 1
+	TBranch | BLTYoke_z                  | 0         | 1
+	TBranch | BLTYoke_px                 | 0         | 1
+	TBranch | BLTYoke_py                 | 0         | 1
+	TBranch | BLTYoke_pz                 | 0         | 1
+	TBranch | BLTYoke_ox                 | 0         | 1
+	TBranch | BLTYoke_oy                 | 0         | 1
+	TBranch | BLTYoke_oz                 | 0         | 1
+	TBranch | BLTYoke_opx                | 0         | 1
+	TBranch | BLTYoke_opy                | 0         | 1
+	TBranch | BLTYoke_opz                | 0         | 1
+	TBranch | BLTYoke_oprocess           | 2         | 1
+	TBranch | BLTYoke_ovolName           | 2         | 1
+	TBranch | BLTYoke_stopped            | 1         | 1
+	TBranch | BLTYoke_charge             | 1         | 1
+	TBranch | EndPlate_nHits              | 1         | 0
+	TBranch | EndPlate_t                  | 0         | 1
+	TBranch | EndPlate_tid                | 1         | 1
+	TBranch | EndPlate_pid                | 1         | 1
+	TBranch | EndPlate_ppid               | 1         | 1
+	TBranch | EndPlate_x                  | 0         | 1
+	TBranch | EndPlate_y                  | 0         | 1
+	TBranch | EndPlate_z                  | 0         | 1
+	TBranch | EndPlate_px                 | 0         | 1
+	TBranch | EndPlate_py                 | 0         | 1
+	TBranch | EndPlate_pz                 | 0         | 1
+	TBranch | EndPlate_ox                 | 0         | 1
+	TBranch | EndPlate_oy                 | 0         | 1
+	TBranch | EndPlate_oz                 | 0         | 1
+	TBranch | EndPlate_opx                | 0         | 1
+	TBranch | EndPlate_opy                | 0         | 1
+	TBranch | EndPlate_opz                | 0         | 1
+	TBranch | EndPlate_oprocess           | 2         | 1
+	TBranch | EndPlate_ovolName           | 2         | 1
+	TBranch | EndPlate_stopped            | 1         | 1
+	TBranch | EndPlate_charge             | 1         | 1
 
 #	TYPE     | Name
 	oTreeName | t
@@ -145,35 +297,64 @@
 	oTBranch | opx                          | 0         | 0
 	oTBranch | opy                          | 0         | 0
 	oTBranch | opz                          | 0         | 0
+	oTBranch | weight                       | 0         | 0
 	oTBranch | particle                     | 2         | 0
 	oTBranch | process                      | 2         | 0
 	oTBranch | volume                       | 2         | 0
 
-#	TYPE    | NAME            | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
-	TH1D    | pa_total        | Total Beam #mu^{-}s                       | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pt_total        | Total Beam #mu^{-}s                       | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pz_total        | Total Beam #mu^{-}s                       | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | y_total         | Total Beam #mu^{-}s                       |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pa_CDC          | #mu^{-}s Reached CDC Region               | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pt_CDC          | #mu^{-}s Reached CDC Region               | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pz_CDC          | #mu^{-}s Reached CDC Region               | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | y_CDC           | #mu^{-}s Reached CDC Region               |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pa_Target       | #mu^{-}s Reached Stopping Target          | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pt_Target       | #mu^{-}s Reached Stopping Target          | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pz_Target       | #mu^{-}s Reached Stopping Target          | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | y_Target        | #mu^{-}s Reached Stopping Target          |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pa_stop         | #mu^{-}s Got Stopped in Stopping Target   | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pt_stop         | #mu^{-}s Got Stopped in Stopping Target   | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pz_stop         | #mu^{-}s Got Stopped in Stopping Target   | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | y_stop          | #mu^{-}s Got Stopped in Stopping Target   |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pa_recoil       | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{a}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pt_recoil       | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{t}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | pz_recoil       | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{z}(MeV/c) | count         | 120 | 0     | 150   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
-	TH1D    | y_recoil        | #mu^{-}s Got Recoiled Back to BLT Monitor |y position(mm)| count         | 120 | -180  | 180   | 0    | 0     | 1 | 0 | 0  | 0  | 3    | 0  | 
+#	TYPE    | NAME            | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption|UseLeg|legendName              |legx1|legy1|legx2|legy2|npadx|npady
+	TH1D    | initial_pa      | Total Beam Particles                      | p_{a}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |600| 4 | 0  | 0  | 3    | 0  |          |  1   | Initial Beam Particle  | 0.8 | 0.8 | 1.0 | 1.0 |  2  |  2
+	TH1D    | CDCMonitor_pa   | Particles Reached CDC Region              | p_{a}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |632| 0 | 0  | 0  | 3    | 0  |          |  1   | Enter CDC              |
+	TH1D    | Target_pa       | Particles Reached Stopping Target         | p_{a}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |432| 0 | 0  | 0  | 3    | 0  |          |  1   | Hit Target             |
+	TH1D    | stop_pa         | Particles Got Stopped in Stopping Target  | p_{a}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |400| 0 | 0  | 0  | 3    | 0  |          |  1   | Stopped in Target      |
+	TH1D    | recoil_pa       | Particles Got Recoiled Back to BLT Monitor| p_{a}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |616| 0 | 0  | 0  | 3    | 0  |          |  1   | Recoiled back          |
+                                                                                                                                                  
+	TH1D    | initial_pt      | Total Beam Particles                      | p_{t}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |600| 4 | 0  | 0  | 3    | 0  |          |  1   | Initial Beam Particle  | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CDCMonitor_pt   | Particles Reached CDC Region              | p_{t}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |632| 0 | 0  | 0  | 3    | 0  |          |  1   | Enter CDC              |
+	TH1D    | Target_pt       | Particles Reached Stopping Target         | p_{t}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |432| 0 | 0  | 0  | 3    | 0  |          |  1   | Hit Target             |
+	TH1D    | stop_pt         | Particles Got Stopped in Stopping Target  | p_{t}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |400| 0 | 0  | 0  | 3    | 0  |          |  1   | Stopped in Target      |
+	TH1D    | recoil_pt       | Particles Got Recoiled Back to BLT Monitor| p_{t}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |616| 0 | 0  | 0  | 3    | 0  |          |  1   | Recoiled back          |
+                                                                                                                                                  
+	TH1D    | initial_pz      | Total Beam Particles                      | p_{z}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |600| 4 | 0  | 0  | 3    | 0  |          |  1   | Initial Beam Particle  | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CDCMonitor_pz   | Particles Reached CDC Region              | p_{z}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |632| 0 | 0  | 0  | 3    | 0  |          |  1   | Enter CDC              |
+	TH1D    | Target_pz       | Particles Reached Stopping Target         | p_{z}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |432| 0 | 0  | 0  | 3    | 0  |          |  1   | Hit Target             |
+	TH1D    | stop_pz         | Particles Got Stopped in Stopping Target  | p_{z}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |400| 0 | 0  | 0  | 3    | 0  |          |  1   | Stopped in Target      |
+	TH1D    | recoil_pz       | Particles Got Recoiled Back to BLT Monitor| p_{z}(MeV/c) | count         | 100 | 0     | 150   | 0    | 0     |616| 0 | 0  | 0  | 3    | 0  |          |  1   | Recoiled back          |
+                                                                                                                                                  
+	TH1D    | initial_theta   | Total Beam Particles                      | #theta(rad)  | count         | 100 | 0     | 3.15  | 0    | 0     |600| 4 | 0  | 0  | 3    | 0  |          |  1   | Initial Beam Particle  | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CDCMonitor_theta| Particles Reached CDC Region              | #theta(rad)  | count         | 100 | 0     | 3.15  | 0    | 0     |632| 0 | 0  | 0  | 3    | 0  |          |  1   | Enter CDC              |
+	TH1D    | Target_theta    | Particles Reached Stopping Target         | #theta(rad)  | count         | 100 | 0     | 3.15  | 0    | 0     |432| 0 | 0  | 0  | 3    | 0  |          |  1   | Hit Target             |
+	TH1D    | stop_theta      | Particles Got Stopped in Stopping Target  | #theta(rad)  | count         | 100 | 0     | 3.15  | 0    | 0     |400| 0 | 0  | 0  | 3    | 0  |          |  1   | Stopped in Target      |
+	TH1D    | recoil_theta    | Particles Got Recoiled Back to BLT Monitor| #theta(rad)  | count         | 100 | 0     | 3.15  | 0    | 0     |616| 0 | 0  | 0  | 3    | 0  |          |  1   | Recoiled back          |
 
-#	TYPE    | NAME            | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
-	TH2D    | paVSy_total     | Total Beam #mu^{-}s                       | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
-	TH2D    | paVSy_CDC       | #mu^{-}s Reached CDC Region               | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
-	TH2D    | paVSy_Target    | #mu^{-}s Reached Stopping Target          | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
-	TH2D    | paVSy_stop      | #mu^{-}s Got Stopped in Stopping Target   | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
-	TH2D    | paVSy_recoil    | #mu^{-}s Got Recoiled Back to BLT Monitor | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
+	TH1D    | initial_x       | Total Beam Particles                      |x position(mm)| count         | 100 | -180  | 180   | 0    | 0     |600| 4 | 0  | 0  | 3    | 0  |          |  1   | Initial Beam Particle  | 0.8 | 0.8 | 1.0 | 1.0 |  2  |  2
+	TH1D    | CDCMonitor_x    | Particles Reached CDC Region              |x position(mm)| count         | 100 | -180  | 180   | 0    | 0     |632| 0 | 0  | 0  | 3    | 0  |          |  1   | Enter CDC              |
+	TH1D    | Target_x        | Particles Reached Stopping Target         |x position(mm)| count         | 100 | -180  | 180   | 0    | 0     |432| 0 | 0  | 0  | 3    | 0  |          |  1   | Hit Target             |
+	TH1D    | stop_x          | Particles Got Stopped in Stopping Target  |x position(mm)| count         | 100 | -180  | 180   | 0    | 0     |400| 0 | 0  | 0  | 3    | 0  |          |  1   | Stopped in Target      |
+	TH1D    | recoil_x        | Particles Got Recoiled Back to BLT Monitor|x position(mm)| count         | 100 | -180  | 180   | 0    | 0     |616| 0 | 0  | 0  | 3    | 0  |          |  1   | Recoiled back          |
+                                                                                                                                                  
+	TH1D    | initial_y       | Total Beam Particles                      |y position(mm)| count         | 100 | -180  | 180   | 0    | 0     |600| 4 | 0  | 0  | 3    | 0  |          |  1   | Initial Beam Particle  | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CDCMonitor_y    | Particles Reached CDC Region              |y position(mm)| count         | 100 | -180  | 180   | 0    | 0     |632| 0 | 0  | 0  | 3    | 0  |          |  1   | Enter CDC              |
+	TH1D    | Target_y        | Particles Reached Stopping Target         |y position(mm)| count         | 100 | -180  | 180   | 0    | 0     |432| 0 | 0  | 0  | 3    | 0  |          |  1   | Hit Target             |
+	TH1D    | stop_y          | Particles Got Stopped in Stopping Target  |y position(mm)| count         | 100 | -180  | 180   | 0    | 0     |400| 0 | 0  | 0  | 3    | 0  |          |  1   | Stopped in Target      |
+	TH1D    | recoil_y        | Particles Got Recoiled Back to BLT Monitor|y position(mm)| count         | 100 | -180  | 180   | 0    | 0     |616| 0 | 0  | 0  | 3    | 0  |          |  1   | Recoiled back          |
+                                                                                                                                                  
+	TH1D    | initial_time    | Total Beam Particles                      | time(ns)     | count         | 100 | 0     | 3000  | 0    | 1e-15 |600| 4 | 0  | 1  | 3    | 0  |          |  1   | Initial Beam Particle  | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CDCMonitor_time | Particles Reached CDC Region              | time(ns)     | count         | 100 | 0     | 3000  | 0    | 1e-15 |632| 0 | 0  | 1  | 3    | 0  |          |  1   | Enter CDC              |
+	TH1D    | Target_time     | Particles Reached Stopping Target         | time(ns)     | count         | 100 | 0     | 3000  | 0    | 1e-15 |432| 0 | 0  | 1  | 3    | 0  |          |  1   | Hit Target             |
+	TH1D    | stop_time       | Particles Got Stopped in Stopping Target  | time(ns)     | count         | 100 | 0     | 3000  | 0    | 1e-15 |400| 0 | 0  | 1  | 3    | 0  |          |  1   | Stopped in Target      |
+	TH1D    | recoil_time     | Particles Got Recoiled Back to BLT Monitor| time(ns)     | count         | 100 | 0     | 3000  | 0    | 1e-15 |616| 0 | 0  | 1  | 3    | 0  |          |  1   | Recoiled back          |
+
+	TH1D    | initial_otime   | Total Beam Particles                      |time(ns) original| count      | 100 | 0     | 300   | 0    | 1e-15 |600| 4 | 0  | 1  | 3    | 0  |          |  1   | Initial Beam Particle  | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CDCMonitor_otime| Particles Reached CDC Region              |time(ns) original| count      | 100 | 0     | 300   | 0    | 1e-15 |632| 0 | 0  | 1  | 3    | 0  |          |  1   | Enter CDC              |
+	TH1D    | Target_otime    | Particles Reached Stopping Target         |time(ns) original| count      | 100 | 0     | 300   | 0    | 1e-15 |432| 0 | 0  | 1  | 3    | 0  |          |  1   | Hit Target             |
+	TH1D    | stop_otime      | Particles Got Stopped in Stopping Target  |time(ns) original| count      | 100 | 0     | 300   | 0    | 1e-15 |400| 0 | 0  | 1  | 3    | 0  |          |  1   | Stopped in Target      |
+	TH1D    | recoil_otime    | Particles Got Recoiled Back to BLT Monitor|time(ns) original| count      | 100 | 0     | 300   | 0    | 1e-15 |616| 0 | 0  | 1  | 3    | 0  |          |  1   | Recoiled back          |
+
+
+#	TYPE    | NAME                | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
+	TH2D    | initial_paVSy       | Total Beam Particles                      | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
+	TH2D    | CDCMonitor_paVSy    | Particles Reached CDC Region              | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
+	TH2D    | Target_paVSy        | Particles Reached Stopping Target         | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
+	TH2D    | stop_paVSy          | Particles Got Stopped in Stopping Target  | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
+	TH2D    | recoil_paVSy        | Particles Got Recoiled Back to BLT Monitor| p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -180 | 180
