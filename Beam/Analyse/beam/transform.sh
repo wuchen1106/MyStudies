@@ -1,6 +1,6 @@
 #!/bin/bash
 
-queue=besq
+queue=midq
 nFiles=100
 nSplit=1
 
@@ -38,8 +38,8 @@ do_the_job(){
 	echo $PWD'/beam -x '$prefix' -y '$suffix' -D '$DirName' -O '$OriginalFile' -b '$beginNo' -t '$totalNo' -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 #	echo $PWD'/beam -n 73346 -m McTruth -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 	chmod +x $pbsfile
-#	qsub -j oe -o /dev/null -q $queue $pbsfile
-	nohup $pbsfile &
+	qsub -j oe -o /dev/null -q $queue $pbsfile
+#	nohup $pbsfile &
 }
 
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
@@ -80,7 +80,7 @@ do
 #							for DF in "003T" "0018T"
 							for DF in "003TS"
 							do
-								DirName=$MYDATA/raw/g4sim/$monitor.pim.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+								DirName=$MYDATA/raw/g4sim/$monitor.EP.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.$Target.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 								do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile $DF 
 							done
