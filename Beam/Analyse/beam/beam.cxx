@@ -34,7 +34,7 @@ int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
 int PDGEncoding = 13;
-int m_norm = 1;
+int m_norm = 0;
 bool backup = false;
 std::vector<int> Ncut;
 std::vector<std::string> Ncut_message;
@@ -195,11 +195,6 @@ int main(int argc, char* argv[]){
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET Statistics###"<<std::endl;
 	//=>About Statistical
 	init_Ncut();
-	int IC_nHits = 0;
-	int OC_nHits = 0;
-	int IC_TR_nHits = 0;
-	int OC_TR_nHits = 0;
-	int TR_nHits = 0;
 
 	// For output
 	int pid;
@@ -270,7 +265,7 @@ int main(int argc, char* argv[]){
 
 	std::vector<std::string> Volumes;
 	Volumes.push_back("CDCMonitor");
-	Volumes.push_back("BLTMonitor");
+//	Volumes.push_back("BLTMonitor");
 	Volumes.push_back("InnerLayer");
 	Volumes.push_back("OuterLayer");
 	Volumes.push_back("Target");
@@ -414,6 +409,7 @@ int main(int argc, char* argv[]){
 								 <<"MeV, py = "<<Monitor_py[i_mon] <<"MeV, pz = "<<Monitor_pz[i_mon] <<"MeV"
 								 <<std::endl;
 					// Fill
+					ot=t; // For PTACS, we don't know initial time. For MT1, the initial time is the monitor time in PTACS.
 					pid=Monitor_pid[i_mon];
 					tid=Monitor_tid[i_mon];
 					ppid=Monitor_ppid[i_mon];
@@ -423,9 +419,8 @@ int main(int argc, char* argv[]){
 					px=Monitor_px[i_mon];
 					py=Monitor_py[i_mon];
 					pz=Monitor_pz[i_mon];
-					t=Monitor_t[i_mon];
+					t=Monitor_t[i_mon]; // for output, we should set t to new monitor time
 					if (tid!=1||m_OriginalFile=="NONE"){ // we don't need original file to get original information for primary particles. e.g. PTACS
-						ot=t;
 						ox=Monitor_ox[i_mon];
 						oy=Monitor_oy[i_mon];
 						oz=Monitor_oz[i_mon];
@@ -476,7 +471,8 @@ int main(int argc, char* argv[]){
 
 			double Mc_pa = sqrt(Mc_px*Mc_px+Mc_py*Mc_py+Mc_pz*Mc_pz);
 			double Mc_pt = sqrt(Mc_px*Mc_px+Mc_py*Mc_py);
-			double Mc_theta = acos(Mc_pz/Mc_pa);
+			double Mc_theta = Mc_pa?acos(Mc_pz/Mc_pa):0;
+			double Mc_phi = Mc_px?atan(Mc_py/Mc_px):90*deg;
 
 			// Get weight
 			double weight = 1;
@@ -529,7 +525,13 @@ int main(int argc, char* argv[]){
 			bool IC_Hit=false;
 			bool OC_Hit=false;
 			bool TR_Hit=false;
+			double IC_Hit_time = 0;
+			double OC_Hit_time = 0;
+			double TR_Hit_time = 0;
 			// Get Monitor Info
+			bool TG_Hit=false;
+			bool CDC_Hit=false;
+			bool ST_Hit=false;
 			for ( int i_MP = 0; i_MP<Volumes.size(); i_MP++ ){
 				std::string Volume=Volumes[i_MP];
 				fMyRootInterface->get_value(Volume+"_nHits",Monitor_nHits);
@@ -554,7 +556,6 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->get_value(Volume+"_pz",Monitor_pz,GeV);
 				if (i_MP>3)
 					fMyRootInterface->get_value(Volume+"_stopped",Monitor_stopped);
-				// Got Cdc Region?
 				for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
 					std::string pname = "";
 					if (Monitor_pid[i_mon]==13){
@@ -576,7 +577,19 @@ int main(int argc, char* argv[]){
 						std::cout<<prefix_ParticleInfoStart
 								 <<"  got "<<pname<<" in "<<Volume<<"!"
 								 <<std::endl;
-					if ( (Volume=="CDCMonitor"||Volume=="BLTMonitor"||Volume=="Target")&&Monitor_tid[i_mon]==1){
+					if ( (Volume=="CDCMonitor"||Volume=="Target")&&Monitor_tid[i_mon]==1){
+						if (Volume=="CDCMonitor"){
+							if (!CDC_Hit) CDC_Hit=true;
+							else break;
+						}
+						else if (Volume=="Target"){
+							if (!TG_Hit) TG_Hit=true;
+							else continue;
+						}
+						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+							std::cout<<prefix_ParticleInfoStart
+									 <<"  Hit \""<<Volume<<"\""
+									 <<std::endl;
 						if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"pa"+m_suffix)) != -1 ){
 							fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,weight);
 						}
@@ -605,6 +618,12 @@ int main(int argc, char* argv[]){
 							fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,weight);
 						}
 						if (Volume=="Target"&&Monitor_stopped[i_mon]){
+							if (!ST_Hit) ST_Hit=true;
+							else break;
+							if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+								std::cout<<prefix_ParticleInfoStart
+										 <<"  Stopped in \""<<Volume<<"\""
+										 <<std::endl;
 							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pa"+m_suffix)) != -1 ){
 								fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,weight);
 							}
@@ -634,7 +653,12 @@ int main(int argc, char* argv[]){
 							}
 						}
 					}
+					/*
 					if (Volume=="BLTMonitor"&&Monitor_tid[i_mon]==1&&Monitor_pz[i_mon]<0){
+						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+							std::cout<<prefix_ParticleInfoStart
+									 <<"  Got recoiled"
+									 <<std::endl;
 						if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_recoil_"+"pa"+m_suffix)) != -1 ){
 							fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,weight);
 						}
@@ -663,14 +687,24 @@ int main(int argc, char* argv[]){
 							fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,weight);
 						}
 					}
+					*/
 					if (Volume=="InnerCylinder"&&pname!="NEU"){
-						IC_Hit=true;
+						if (!IC_Hit){
+							IC_Hit_time = Monitor_t[i_mon];
+							IC_Hit=true;
+						}
 					}
 					if (Volume=="OuterCylinder"&&pname!="NEU"){
-						OC_Hit=true;
+						if (!OC_Hit){
+							OC_Hit_time = Monitor_t[i_mon];
+							OC_Hit=true;
+						}
 					}
 					if (Volume=="Trigger"&&pname!="NEU"){
-						TR_Hit=true;
+						if (!TR_Hit){
+							TR_Hit_time = Monitor_t[i_mon];
+							TR_Hit=true;
+						}
 					}
 					if (i_MP>3&&Monitor_stopped[i_mon]){
 						pid=Monitor_pid[i_mon];
@@ -717,21 +751,34 @@ int main(int argc, char* argv[]){
 						fMyRootInterface->set_ovalue("weight",weight);
 						fMyRootInterface->set_ovalue("particle",particle);
 						fMyRootInterface->set_ovalue("process",process);
+						fMyRootInterface->set_ovalue("cvolume",Volume);
 						fMyRootInterface->set_ovalue("volume",volume);
 						fMyRootInterface->Fill();
 					}
 				}
 			}
 			if (IC_Hit){
-				IC_nHits++;
-				if (TR_Hit) IC_TR_nHits++;
+				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"IC_Hit"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH2D(index_temp)->Fill(IC_Hit_time/ns,weight);
+				}
+				if (TR_Hit)
+					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"IC_TR_Hit"+m_suffix)) != -1 ){
+						fMyRootInterface->get_TH2D(index_temp)->Fill(IC_Hit_time/ns,weight);
+					}
 			}
 			if (OC_Hit){
-				OC_nHits++;
-				if (TR_Hit) OC_TR_nHits++;
+				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"OC_Hit"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH2D(index_temp)->Fill(OC_Hit_time/ns,weight);
+				}
+				if (TR_Hit)
+					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"OC_TR_Hit"+m_suffix)) != -1 ){
+						fMyRootInterface->get_TH2D(index_temp)->Fill(OC_Hit_time/ns,weight);
+					}
 			}
 			if (TR_Hit){
-				TR_nHits++;
+				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"TR_Hit"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH2D(index_temp)->Fill(TR_Hit_time/ns,weight);
+				}
 			}
 		}
 		else if (m_MonitorPlane=="McTruth"){
