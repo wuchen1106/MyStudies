@@ -80,7 +80,7 @@ do
 #							for DF in "003T" "0018T"
 							for DF in "003TS"
 							do
-								DirName=$MYDATA/raw/g4sim/$monitor.pim.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+								DirName=$MYDATA/raw/g4sim/$monitor.EP.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.$Target.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 								do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile $DF 
 							done
