@@ -181,6 +181,12 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->set_normForH1D(iHist,m_norm);
 		std::string name = fMyRootInterface->get_nameForH1D(iHist);
 		fMyRootInterface->set_nameForH1D(iHist,m_prefix+"_"+name+m_suffix);
+		if (PDGEncoding==-211){
+			if (name.find("time")<name.length())
+				fMyRootInterface->set_minyForH1D(iHist,1e-20);
+			else
+				fMyRootInterface->set_minyForH1D(iHist,1e-2);
+		}
 	}
 	nHists = fMyRootInterface->get_TH2D_size();
 	for (int iHist = 0; iHist < nHists; iHist++ ){
@@ -196,7 +202,7 @@ int main(int argc, char* argv[]){
 	//=>About Statistical
 	init_Ncut();
 
-	// For output
+	// Original information
 	int pid;
 	int tid;
 	int ppid;
@@ -221,7 +227,7 @@ int main(int argc, char* argv[]){
 	double opy;
 	double opz;
 
-	// For input
+	// Current information
 	int evt_num;
 	int run_num;
 
@@ -263,6 +269,7 @@ int main(int argc, char* argv[]){
 	std::vector<double> McTruth_py;
 	std::vector<double> McTruth_pz;
 
+	// for volumes
 	std::vector<std::string> Volumes;
 	Volumes.push_back("CDCMonitor");
 //	Volumes.push_back("BLTMonitor");
@@ -277,7 +284,7 @@ int main(int argc, char* argv[]){
 	Volumes.push_back("BLTShell");
 	Volumes.push_back("BLTCollimator");
 
-	//**********************************************************************************************
+	//***********************************If We Need Original File***********************************
 	TChain* m_TChain = new TChain("t");
 	int m_OriginalNum=0;
 	if (m_OriginalFile!="NONE"){ // we need original file to get original information for primary particles. e.g. MT1 & A9
@@ -291,6 +298,7 @@ int main(int argc, char* argv[]){
 		m_TChain->SetBranchAddress("px",&px);
 		m_TChain->SetBranchAddress("py",&py);
 		m_TChain->SetBranchAddress("pz",&pz);
+		m_TChain->SetBranchAddress("ppid",&ppid);
 		m_TChain->SetBranchAddress("ox",&ox);
 		m_TChain->SetBranchAddress("oy",&oy);
 		m_TChain->SetBranchAddress("oz",&oz);
@@ -412,7 +420,6 @@ int main(int argc, char* argv[]){
 					ot=t; // For PTACS, we don't know initial time. For MT1, the initial time is the monitor time in PTACS.
 					pid=Monitor_pid[i_mon];
 					tid=Monitor_tid[i_mon];
-					ppid=Monitor_ppid[i_mon];
 					x=Monitor_x[i_mon];
 					y=Monitor_y[i_mon];
 					z=Monitor_z[i_mon];
@@ -421,6 +428,7 @@ int main(int argc, char* argv[]){
 					pz=Monitor_pz[i_mon];
 					t=Monitor_t[i_mon]; // for output, we should set t to new monitor time
 					if (tid!=1||m_OriginalFile=="NONE"){ // we don't need original file to get original information for primary particles. e.g. PTACS
+						ppid=Monitor_ppid[i_mon];
 						ox=Monitor_ox[i_mon];
 						oy=Monitor_oy[i_mon];
 						oz=Monitor_oz[i_mon];
@@ -554,7 +562,7 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->get_value(Volume+"_px",Monitor_px,GeV);
 				fMyRootInterface->get_value(Volume+"_py",Monitor_py,GeV);
 				fMyRootInterface->get_value(Volume+"_pz",Monitor_pz,GeV);
-				if (i_MP>3)
+				if (i_MP>2)
 					fMyRootInterface->get_value(Volume+"_stopped",Monitor_stopped);
 				for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
 					std::string pname = "";
@@ -580,11 +588,46 @@ int main(int argc, char* argv[]){
 					if ( (Volume=="CDCMonitor"||Volume=="Target")&&Monitor_tid[i_mon]==1){
 						if (Volume=="CDCMonitor"){
 							if (!CDC_Hit) CDC_Hit=true;
-							else break;
+							else break;// Hit once, enough for CDCMonitor
 						}
 						else if (Volume=="Target"){
+							if (ST_Hit) break; // Stopped once, enough for Target
+							if (Monitor_stopped[i_mon]){
+								if (!ST_Hit) ST_Hit=true;
+								if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+									std::cout<<prefix_ParticleInfoStart
+											 <<"  Stopped in \""<<Volume<<"\""
+											 <<std::endl;
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pa"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pt"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pz"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"theta"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_theta/rad,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"x"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_x/mm,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"y"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"time"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_time/ns,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"otime"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(ot/ns,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_stop_"+"paVSy"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,weight);
+								}
+							}
 							if (!TG_Hit) TG_Hit=true;
-							else continue;
+							else continue; // Hit once, don't need to fill for hit
 						}
 						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 							std::cout<<prefix_ParticleInfoStart
@@ -616,41 +659,6 @@ int main(int argc, char* argv[]){
 						}
 						if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+Volume+"_"+"paVSy"+m_suffix)) != -1 ){
 							fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,weight);
-						}
-						if (Volume=="Target"&&Monitor_stopped[i_mon]){
-							if (!ST_Hit) ST_Hit=true;
-							else break;
-							if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-								std::cout<<prefix_ParticleInfoStart
-										 <<"  Stopped in \""<<Volume<<"\""
-										 <<std::endl;
-							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pa"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,weight);
-							}
-							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pt"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,weight);
-							}
-							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pz"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,weight);
-							}
-							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"theta"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_theta/rad,weight);
-							}
-							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"x"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_x/mm,weight);
-							}
-							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"y"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,weight);
-							}
-							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"time"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_time/ns,weight);
-							}
-							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"otime"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH1D(index_temp)->Fill(ot/ns,weight);
-							}
-							if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_stop_"+"paVSy"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,weight);
-							}
 						}
 					}
 					/*
@@ -706,7 +714,8 @@ int main(int argc, char* argv[]){
 							TR_Hit=true;
 						}
 					}
-					if (i_MP>3&&Monitor_stopped[i_mon]){
+					if ((i_MP>2&&Monitor_stopped[i_mon]&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211))
+					   ||((i_MP==1||i_MP==2)&&Monitor_pid[i_mon]==11)){
 						pid=Monitor_pid[i_mon];
 						tid=Monitor_tid[i_mon];
 						ppid=Monitor_ppid[i_mon];
