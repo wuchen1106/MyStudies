@@ -715,7 +715,7 @@ int main(int argc, char* argv[]){
 						}
 					}
 					if ((i_MP>2&&Monitor_stopped[i_mon]&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211))
-					   ||((i_MP==1||i_MP==2)&&Monitor_pid[i_mon]==11)){
+					   ||(i_MP<=2)){
 						pid=Monitor_pid[i_mon];
 						tid=Monitor_tid[i_mon];
 						ppid=Monitor_ppid[i_mon];
