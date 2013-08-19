@@ -257,6 +257,7 @@
 	oTBranch | opx                          | 0         | 0
 	oTBranch | opy                          | 0         | 0
 	oTBranch | opz                          | 0         | 0
+	oTBranch | Triggered                    | 1         | 0
 	oTBranch | weight                       | 0         | 0
 	oTBranch | particle                     | 2         | 0
 	oTBranch | process                      | 2         | 0

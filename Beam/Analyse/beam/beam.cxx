@@ -658,9 +658,12 @@ int main(int argc, char* argv[]){
 						}
 					}
 					if (Volume=="CDCLayer"&&pname!="NEU"){
-						if (!IC_Hit){
-							IC_Hit_time = Monitor_t[i_mon];
-							IC_Hit=true;
+						double r = sqrt(Monitor_x[i_mon]*Monitor_x[i_mon]+Monitor_y[i_mon]*Monitor_y[i_mon]);
+						if (r<=526*mm){
+							if (!IC_Hit){
+								IC_Hit_time = Monitor_t[i_mon];
+								IC_Hit=true;
+							}
 						}
 					}
 					if (Volume=="Trigger"&&pname!="NEU"){
@@ -712,6 +715,7 @@ int main(int argc, char* argv[]){
 						fMyRootInterface->set_ovalue("opx",opx/MeV);
 						fMyRootInterface->set_ovalue("opy",opy/MeV);
 						fMyRootInterface->set_ovalue("opz",opz/MeV);
+						fMyRootInterface->set_ovalue("triggered",(int)TR_Hit);
 						fMyRootInterface->set_ovalue("weight",weight);
 						fMyRootInterface->set_ovalue("particle",particle);
 						fMyRootInterface->set_ovalue("process",process);

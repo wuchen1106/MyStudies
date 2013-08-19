@@ -1,5 +1,5 @@
 GEOCARDROOT       = geometry_A9
-MAGFIELDCARDROOT  = MagField_A9_130701
+MAGFIELDCARDROOT  = MagField_A9_130731
 GENFILEROOT       = gen_root
 OUTCARDROOT       = output_A9
 
@@ -22,4 +22,4 @@ setCut_A9.mac
 #run
 run_configure
 1
-91055
+293284
