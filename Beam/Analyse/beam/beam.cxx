@@ -273,11 +273,11 @@ int main(int argc, char* argv[]){
 	std::vector<std::string> Volumes;
 	Volumes.push_back("CDCMonitor");
 	Volumes.push_back("CDCLayer");
+	Volumes.push_back("Trigger");
 	Volumes.push_back("Target");
 	Volumes.push_back("EndPlate");
 	Volumes.push_back("InnerCylinder");
 	Volumes.push_back("OuterCylinder");
-	Volumes.push_back("Trigger");
 	Volumes.push_back("BLTYoke");
 	Volumes.push_back("BLTShell");
 	Volumes.push_back("BLTCollimator");
@@ -529,10 +529,8 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,weight);
 			}
 			bool IC_Hit=false;
-			bool OC_Hit=false;
 			bool TR_Hit=false;
 			double IC_Hit_time = 0;
-			double OC_Hit_time = 0;
 			double TR_Hit_time = 0;
 			// Get Monitor Info
 			bool TG_Hit=false;
@@ -659,51 +657,10 @@ int main(int argc, char* argv[]){
 							fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,weight);
 						}
 					}
-					/*
-					if (Volume=="BLTMonitor"&&Monitor_tid[i_mon]==1&&Monitor_pz[i_mon]<0){
-						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-							std::cout<<prefix_ParticleInfoStart
-									 <<"  Got recoiled"
-									 <<std::endl;
-						if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_recoil_"+"pa"+m_suffix)) != -1 ){
-							fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pa/MeV,weight);
-						}
-						if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_recoil_"+"pt"+m_suffix)) != -1 ){
-							fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pt/MeV,weight);
-						}
-						if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_recoil_"+"pz"+m_suffix)) != -1 ){
-							fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_pz/MeV,weight);
-						}
-						if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_recoil_"+"theta"+m_suffix)) != -1 ){
-							fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_theta/rad,weight);
-						}
-						if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_recoil_"+"x"+m_suffix)) != -1 ){
-							fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_x/mm,weight);
-						}
-						if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_recoil_"+"y"+m_suffix)) != -1 ){
-							fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_y/mm,weight);
-						}
-						if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_recoil_"+"time"+m_suffix)) != -1 ){
-							fMyRootInterface->get_TH1D(index_temp)->Fill(Mc_time/ns,weight);
-						}
-						if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_recoil_"+"otime"+m_suffix)) != -1 ){
-							fMyRootInterface->get_TH1D(index_temp)->Fill(ot/ns,weight);
-						}
-						if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_recoil_"+"paVSy"+m_suffix)) != -1 ){
-							fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,weight);
-						}
-					}
-					*/
-					if (Volume=="InnerCylinder"&&pname!="NEU"){
+					if (Volume=="CDCLayer"&&pname!="NEU"){
 						if (!IC_Hit){
 							IC_Hit_time = Monitor_t[i_mon];
 							IC_Hit=true;
-						}
-					}
-					if (Volume=="OuterCylinder"&&pname!="NEU"){
-						if (!OC_Hit){
-							OC_Hit_time = Monitor_t[i_mon];
-							OC_Hit=true;
 						}
 					}
 					if (Volume=="Trigger"&&pname!="NEU"){
@@ -713,7 +670,7 @@ int main(int argc, char* argv[]){
 						}
 					}
 					if ((i_MP>1&&Monitor_stopped[i_mon]&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211))
-					   ||(i_MP<=1)){
+					   ||i_MP<=2){
 						pid=Monitor_pid[i_mon];
 						tid=Monitor_tid[i_mon];
 						ppid=Monitor_ppid[i_mon];
@@ -765,26 +722,17 @@ int main(int argc, char* argv[]){
 				}
 			}
 			if (IC_Hit){
-				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"IC_Hit"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH2D(index_temp)->Fill(IC_Hit_time/ns,weight);
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"IC_Hit"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(IC_Hit_time/ns,weight);
 				}
 				if (TR_Hit)
-					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"IC_TR_Hit"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH2D(index_temp)->Fill(IC_Hit_time/ns,weight);
-					}
-			}
-			if (OC_Hit){
-				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"OC_Hit"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH2D(index_temp)->Fill(OC_Hit_time/ns,weight);
-				}
-				if (TR_Hit)
-					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"OC_TR_Hit"+m_suffix)) != -1 ){
-						fMyRootInterface->get_TH2D(index_temp)->Fill(OC_Hit_time/ns,weight);
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"IC_TR_Hit"+m_suffix)) != -1 ){
+						fMyRootInterface->get_TH1D(index_temp)->Fill(IC_Hit_time/ns,weight);
 					}
 			}
 			if (TR_Hit){
-				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"TR_Hit"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH2D(index_temp)->Fill(TR_Hit_time/ns,weight);
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"TR_Hit"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(TR_Hit_time/ns,weight);
 				}
 			}
 		}
