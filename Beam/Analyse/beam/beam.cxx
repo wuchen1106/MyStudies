@@ -530,12 +530,13 @@ int main(int argc, char* argv[]){
 			}
 			bool IC_Hit=false;
 			bool TR_Hit=false;
-			double IC_Hit_time = 0;
-			double TR_Hit_time = 0;
+			double IC_Hit_time = -1;
+			double TR_Hit_time = -1;
 			// Get Monitor Info
 			bool TG_Hit=false;
 			bool CDC_Hit=false;
 			bool ST_Hit=false;
+			int prevtid = -1;
 			for ( int i_MP = 0; i_MP<Volumes.size(); i_MP++ ){
 				std::string Volume=Volumes[i_MP];
 				fMyRootInterface->get_value(Volume+"_nHits",Monitor_nHits);
@@ -657,15 +658,6 @@ int main(int argc, char* argv[]){
 							fMyRootInterface->get_TH2D(index_temp)->Fill(Mc_pa/MeV,Mc_y/mm,weight);
 						}
 					}
-					if (Volume=="CDCLayer"&&pname!="NEU"){
-						double r = sqrt(Monitor_x[i_mon]*Monitor_x[i_mon]+Monitor_y[i_mon]*Monitor_y[i_mon]);
-						if (r<=526*mm){
-							if (!IC_Hit){
-								IC_Hit_time = Monitor_t[i_mon];
-								IC_Hit=true;
-							}
-						}
-					}
 					if (Volume=="Trigger"&&pname!="NEU"){
 						if (!TR_Hit){
 							TR_Hit_time = Monitor_t[i_mon];
@@ -674,68 +666,76 @@ int main(int argc, char* argv[]){
 					}
 					if ((i_MP>1&&Monitor_stopped[i_mon]&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211))
 					   ||i_MP<=2){
-						pid=Monitor_pid[i_mon];
 						tid=Monitor_tid[i_mon];
-						ppid=Monitor_ppid[i_mon];
-						x=Monitor_x[i_mon];
-						y=Monitor_y[i_mon];
-						z=Monitor_z[i_mon];
-						px=Monitor_px[i_mon];
-						py=Monitor_py[i_mon];
-						pz=Monitor_pz[i_mon];
-						t=Monitor_t[i_mon];
-						if (tid!=1||m_OriginalFile=="NONE"){ // we don't need original file to get original information for primary particles. e.g. PTACS
-							ot=-1;
-							ox=Monitor_ox[i_mon];
-							oy=Monitor_oy[i_mon];
-							oz=Monitor_oz[i_mon];
-							opx=Monitor_opx[i_mon];
-							opy=Monitor_opy[i_mon];
-							opz=Monitor_opz[i_mon];
-							particle="";
-							process=Monitor_oprocess[i_mon];
-							volume=Monitor_ovolName[i_mon];
+						if (tid!=prevtid){
+							pid=Monitor_pid[i_mon];
+							ppid=Monitor_ppid[i_mon];
+							x=Monitor_x[i_mon];
+							y=Monitor_y[i_mon];
+							z=Monitor_z[i_mon];
+							px=Monitor_px[i_mon];
+							py=Monitor_py[i_mon];
+							pz=Monitor_pz[i_mon];
+							t=Monitor_t[i_mon];
+							if (tid!=1||m_OriginalFile=="NONE"){ // we don't need original file to get original information for primary particles. e.g. PTACS
+								ot=-1;
+								ox=Monitor_ox[i_mon];
+								oy=Monitor_oy[i_mon];
+								oz=Monitor_oz[i_mon];
+								opx=Monitor_opx[i_mon];
+								opy=Monitor_opy[i_mon];
+								opz=Monitor_opz[i_mon];
+								particle="";
+								process=Monitor_oprocess[i_mon];
+								volume=Monitor_ovolName[i_mon];
+							}
+							fMyRootInterface->set_ovalue("evt_num",evt_num);
+							fMyRootInterface->set_ovalue("run_num",run_num);
+							fMyRootInterface->set_ovalue("pid",pid);
+							fMyRootInterface->set_ovalue("tid",tid);
+							fMyRootInterface->set_ovalue("ppid",ppid);
+							fMyRootInterface->set_ovalue("x",x/mm);
+							fMyRootInterface->set_ovalue("y",y/mm);
+							fMyRootInterface->set_ovalue("z",z/mm);
+							fMyRootInterface->set_ovalue("px",px/MeV);
+							fMyRootInterface->set_ovalue("py",py/MeV);
+							fMyRootInterface->set_ovalue("pz",pz/MeV);
+							fMyRootInterface->set_ovalue("t",t/ns);
+							fMyRootInterface->set_ovalue("ot",ot/ns);
+							fMyRootInterface->set_ovalue("ox",ox/mm);
+							fMyRootInterface->set_ovalue("oy",oy/mm);
+							fMyRootInterface->set_ovalue("oz",oz/mm);
+							fMyRootInterface->set_ovalue("opx",opx/MeV);
+							fMyRootInterface->set_ovalue("opy",opy/MeV);
+							fMyRootInterface->set_ovalue("opz",opz/MeV);
+							fMyRootInterface->set_ovalue("TriggerTime",TR_Hit_time);
+							fMyRootInterface->set_ovalue("weight",weight);
+							fMyRootInterface->set_ovalue("particle",particle);
+							fMyRootInterface->set_ovalue("process",process);
+							fMyRootInterface->set_ovalue("cvolume",Volume);
+							fMyRootInterface->set_ovalue("volume",volume);
+							fMyRootInterface->Fill();
 						}
-						fMyRootInterface->set_ovalue("evt_num",evt_num);
-						fMyRootInterface->set_ovalue("run_num",run_num);
-						fMyRootInterface->set_ovalue("pid",pid);
-						fMyRootInterface->set_ovalue("tid",tid);
-						fMyRootInterface->set_ovalue("ppid",ppid);
-						fMyRootInterface->set_ovalue("x",x/mm);
-						fMyRootInterface->set_ovalue("y",y/mm);
-						fMyRootInterface->set_ovalue("z",z/mm);
-						fMyRootInterface->set_ovalue("px",px/MeV);
-						fMyRootInterface->set_ovalue("py",py/MeV);
-						fMyRootInterface->set_ovalue("pz",pz/MeV);
-						fMyRootInterface->set_ovalue("t",t/ns);
-						fMyRootInterface->set_ovalue("ot",ot/ns);
-						fMyRootInterface->set_ovalue("ox",ox/mm);
-						fMyRootInterface->set_ovalue("oy",oy/mm);
-						fMyRootInterface->set_ovalue("oz",oz/mm);
-						fMyRootInterface->set_ovalue("opx",opx/MeV);
-						fMyRootInterface->set_ovalue("opy",opy/MeV);
-						fMyRootInterface->set_ovalue("opz",opz/MeV);
-						fMyRootInterface->set_ovalue("triggered",(int)TR_Hit);
-						fMyRootInterface->set_ovalue("weight",weight);
-						fMyRootInterface->set_ovalue("particle",particle);
-						fMyRootInterface->set_ovalue("process",process);
-						fMyRootInterface->set_ovalue("cvolume",Volume);
-						fMyRootInterface->set_ovalue("volume",volume);
-						fMyRootInterface->Fill();
+						prevtid=tid;
 					}
 				}
 			}
 			if (IC_Hit){
-				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"IC_Hit"+m_suffix)) != -1 ){
+				std::cout<<"Try to fill IC_Hit_time"<<std::endl;
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_IC_Hit"+m_suffix)) != -1 ){
+					std::cout<<"Fill: IC_Hit_time = "<<IC_Hit_time/ns<<"ns"<<std::endl;
 					fMyRootInterface->get_TH1D(index_temp)->Fill(IC_Hit_time/ns,weight);
 				}
 				if (TR_Hit)
-					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"IC_TR_Hit"+m_suffix)) != -1 ){
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_IC_TR_Hit"+m_suffix)) != -1 ){
+						std::cout<<"Fill IC+TR_Hit"<<std::endl;
 						fMyRootInterface->get_TH1D(index_temp)->Fill(IC_Hit_time/ns,weight);
 					}
 			}
 			if (TR_Hit){
-				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"TR_Hit"+m_suffix)) != -1 ){
+				std::cout<<"Try to fill TR_Hit_time"<<std::endl;
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_TR_Hit"+m_suffix)) != -1 ){
+					std::cout<<"Fill: TR_Hit_time = "<<TR_Hit_time/ns<<"ns"<<std::endl;
 					fMyRootInterface->get_TH1D(index_temp)->Fill(TR_Hit_time/ns,weight);
 				}
 			}

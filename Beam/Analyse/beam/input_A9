@@ -257,7 +257,7 @@
 	oTBranch | opx                          | 0         | 0
 	oTBranch | opy                          | 0         | 0
 	oTBranch | opz                          | 0         | 0
-	oTBranch | Triggered                    | 1         | 0
+	oTBranch | TriggerTime                  | 0         | 0
 	oTBranch | weight                       | 0         | 0
 	oTBranch | particle                     | 2         | 0
 	oTBranch | process                      | 2         | 0
@@ -283,12 +283,6 @@
 	TH1D    | CDCMonitor_time | Particles Reached CDC Region              | time(ns)     | count         | 100 | 0     | 1500  | 0    |   1   |632| 0 | 0  | 1  | 3    | 0  |          |  1   | Enter CDC Region       |
 	TH1D    | Target_time     | Particles Reached Stopping Target         | time(ns)     | count         | 100 | 0     | 1500  | 0    |   1   |432| 0 | 0  | 1  | 3    | 0  |          |  1   | Hit Target             |
 	TH1D    | stop_time       | Particles Got Stopped in Stopping Target  | time(ns)     | count         | 100 | 0     | 1500  | 0    |   1   |416| 0 | 0  | 1  | 3    | 0  |          |  1   | Stopped in Target      |
-
-	TH1D    | IC_Hit          | nHits on Innermoset CDCLayer per proton   |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   | 1 | 1 | 0  | 1  | 3    | 0  |          |  1   | All Hits               | 0.8 | 0.8 | 1.0 | 1.0 |  2  |  1
-	TH1D    | IC_TR_Hit       | nHits on Innermoset CDCLayer per proton   |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   |600| 0 | 0  | 1  | 3    | 0  |          |  1   | Triggered Hits         |
-
-	TH1D    | TR_Hit          | nHits on Trigger per proton               |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   | 1 | 0 | 0  | 1  | 3    | 0  |          |  1   | All Hits               | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
-
 
 #	TYPE    | NAME                | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
 	TH2D    | initial_paVSy       | Enter BLT Region                          | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -200 | 200
