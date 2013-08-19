@@ -272,9 +272,7 @@ int main(int argc, char* argv[]){
 	// for volumes
 	std::vector<std::string> Volumes;
 	Volumes.push_back("CDCMonitor");
-//	Volumes.push_back("BLTMonitor");
-	Volumes.push_back("InnerLayer");
-	Volumes.push_back("OuterLayer");
+	Volumes.push_back("CDCLayer");
 	Volumes.push_back("Target");
 	Volumes.push_back("EndPlate");
 	Volumes.push_back("InnerCylinder");
@@ -562,7 +560,7 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->get_value(Volume+"_px",Monitor_px,GeV);
 				fMyRootInterface->get_value(Volume+"_py",Monitor_py,GeV);
 				fMyRootInterface->get_value(Volume+"_pz",Monitor_pz,GeV);
-				if (i_MP>2)
+				if (i_MP>1)
 					fMyRootInterface->get_value(Volume+"_stopped",Monitor_stopped);
 				for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
 					std::string pname = "";
@@ -714,8 +712,8 @@ int main(int argc, char* argv[]){
 							TR_Hit=true;
 						}
 					}
-					if ((i_MP>2&&Monitor_stopped[i_mon]&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211))
-					   ||(i_MP<=2)){
+					if ((i_MP>1&&Monitor_stopped[i_mon]&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211))
+					   ||(i_MP<=1)){
 						pid=Monitor_pid[i_mon];
 						tid=Monitor_tid[i_mon];
 						ppid=Monitor_ppid[i_mon];

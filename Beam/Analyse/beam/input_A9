@@ -24,26 +24,6 @@
 #	TBranch | McTruth_py                | 0         | 1
 #	TBranch | McTruth_pz                | 0         | 1
 #	TBranch | McTruth_time              | 0         | 1
-	TBranch | BLTMonitor_nHits          | 1         | 0
-	TBranch | BLTMonitor_t              | 0         | 1
-	TBranch | BLTMonitor_tid            | 1         | 1
-	TBranch | BLTMonitor_pid            | 1         | 1
-	TBranch | BLTMonitor_ppid           | 1         | 1
-	TBranch | BLTMonitor_x              | 0         | 1
-	TBranch | BLTMonitor_y              | 0         | 1
-	TBranch | BLTMonitor_z              | 0         | 1
-	TBranch | BLTMonitor_px             | 0         | 1
-	TBranch | BLTMonitor_py             | 0         | 1
-	TBranch | BLTMonitor_pz             | 0         | 1
-	TBranch | BLTMonitor_ox             | 0         | 1
-	TBranch | BLTMonitor_oy             | 0         | 1
-	TBranch | BLTMonitor_oz             | 0         | 1
-	TBranch | BLTMonitor_opx            | 0         | 1
-	TBranch | BLTMonitor_opy            | 0         | 1
-	TBranch | BLTMonitor_opz            | 0         | 1
-	TBranch | BLTMonitor_oprocess       | 2         | 1
-	TBranch | BLTMonitor_ovolName       | 2         | 1
-	TBranch | BLTMonitor_charge         | 1         | 1
 	TBranch | CDCMonitor_nHits          | 1         | 0
 	TBranch | CDCMonitor_t              | 0         | 1
 	TBranch | CDCMonitor_tid            | 1         | 1
@@ -64,46 +44,26 @@
 	TBranch | CDCMonitor_oprocess       | 2         | 1
 	TBranch | CDCMonitor_ovolName       | 2         | 1
 	TBranch | CDCMonitor_charge         | 1         | 1
-	TBranch | InnerLayer_nHits       | 1         | 0
-	TBranch | InnerLayer_t           | 0         | 1
-	TBranch | InnerLayer_tid         | 1         | 1
-	TBranch | InnerLayer_pid         | 1         | 1
-	TBranch | InnerLayer_ppid        | 1         | 1
-	TBranch | InnerLayer_x           | 0         | 1
-	TBranch | InnerLayer_y           | 0         | 1
-	TBranch | InnerLayer_z           | 0         | 1
-	TBranch | InnerLayer_px          | 0         | 1
-	TBranch | InnerLayer_py          | 0         | 1
-	TBranch | InnerLayer_pz          | 0         | 1
-	TBranch | InnerLayer_ox          | 0         | 1
-	TBranch | InnerLayer_oy          | 0         | 1
-	TBranch | InnerLayer_oz          | 0         | 1
-	TBranch | InnerLayer_opx         | 0         | 1
-	TBranch | InnerLayer_opy         | 0         | 1
-	TBranch | InnerLayer_opz         | 0         | 1
-	TBranch | InnerLayer_oprocess    | 2         | 1
-	TBranch | InnerLayer_ovolName    | 2         | 1
-	TBranch | InnerLayer_charge      | 1         | 1
-	TBranch | OuterLayer_nHits       | 1         | 0
-	TBranch | OuterLayer_t           | 0         | 1
-	TBranch | OuterLayer_tid         | 1         | 1
-	TBranch | OuterLayer_pid         | 1         | 1
-	TBranch | OuterLayer_ppid        | 1         | 1
-	TBranch | OuterLayer_x           | 0         | 1
-	TBranch | OuterLayer_y           | 0         | 1
-	TBranch | OuterLayer_z           | 0         | 1
-	TBranch | OuterLayer_px          | 0         | 1
-	TBranch | OuterLayer_py          | 0         | 1
-	TBranch | OuterLayer_pz          | 0         | 1
-	TBranch | OuterLayer_ox          | 0         | 1
-	TBranch | OuterLayer_oy          | 0         | 1
-	TBranch | OuterLayer_oz          | 0         | 1
-	TBranch | OuterLayer_opx         | 0         | 1
-	TBranch | OuterLayer_opy         | 0         | 1
-	TBranch | OuterLayer_opz         | 0         | 1
-	TBranch | OuterLayer_oprocess    | 2         | 1
-	TBranch | OuterLayer_ovolName    | 2         | 1
-	TBranch | OuterLayer_charge      | 1         | 1
+	TBranch | CDCLayer_nHits            | 1         | 0
+	TBranch | CDCLayer_t                | 0         | 1
+	TBranch | CDCLayer_tid              | 1         | 1
+	TBranch | CDCLayer_pid              | 1         | 1
+	TBranch | CDCLayer_ppid             | 1         | 1
+	TBranch | CDCLayer_x                | 0         | 1
+	TBranch | CDCLayer_y                | 0         | 1
+	TBranch | CDCLayer_z                | 0         | 1
+	TBranch | CDCLayer_px               | 0         | 1
+	TBranch | CDCLayer_py               | 0         | 1
+	TBranch | CDCLayer_pz               | 0         | 1
+	TBranch | CDCLayer_ox               | 0         | 1
+	TBranch | CDCLayer_oy               | 0         | 1
+	TBranch | CDCLayer_oz               | 0         | 1
+	TBranch | CDCLayer_opx              | 0         | 1
+	TBranch | CDCLayer_opy              | 0         | 1
+	TBranch | CDCLayer_opz              | 0         | 1
+	TBranch | CDCLayer_oprocess         | 2         | 1
+	TBranch | CDCLayer_ovolName         | 2         | 1
+	TBranch | CDCLayer_charge           | 1         | 1
 	TBranch | Target_nHits              | 1         | 0
 	TBranch | Target_t                  | 0         | 1
 	TBranch | Target_tid                | 1         | 1
@@ -323,11 +283,11 @@
 	TH1D    | Target_time     | Particles Reached Stopping Target         | time(ns)     | count         | 100 | 0     | 1500  | 0    |   1   |432| 0 | 0  | 1  | 3    | 0  |          |  1   | Hit Target             |
 	TH1D    | stop_time       | Particles Got Stopped in Stopping Target  | time(ns)     | count         | 100 | 0     | 1500  | 0    |   1   |416| 0 | 0  | 1  | 3    | 0  |          |  1   | Stopped in Target      |
 
-	TH1D    | IC_Hit          | nHits on Innermoset Layer per proton      |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   | 1 | 1 | 0  | 1  | 3    | 0  |          |  1   | All Hits               | 0.8 | 0.8 | 1.0 | 1.0 |  2  |  1
-	TH1D    | IC_TR_Hit       | nHits on Innermoset Layer per proton      |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   |600| 0 | 0  | 1  | 3    | 0  |          |  1   | Triggered Hits         |
+	TH1D    | IC_Hit          | nHits on Innermoset CDCLayer per proton   |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   | 1 | 1 | 0  | 1  | 3    | 0  |          |  1   | All Hits               | 0.8 | 0.8 | 1.0 | 1.0 |  2  |  1
+	TH1D    | IC_TR_Hit       | nHits on Innermoset CDCLayer per proton   |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   |600| 0 | 0  | 1  | 3    | 0  |          |  1   | Triggered Hits         |
 
-	TH1D    | OC_Hit          | nHits on Outmoset Layer per proton        |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   | 1 | 1 | 0  | 1  | 3    | 0  |          |  1   | All Hits               | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
-	TH1D    | OC_TR_Hit       | nHits on Outmoset Layer per proton        |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   |600| 0 | 0  | 1  | 3    | 0  |          |  1   | Triggered Hits         |
+	TH1D    | OC_Hit          | nHits on Outmoset CDCLayer per proton     |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   | 1 | 1 | 0  | 1  | 3    | 0  |          |  1   | All Hits               | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | OC_TR_Hit       | nHits on Outmoset CDCLayer per proton     |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   |600| 0 | 0  | 1  | 3    | 0  |          |  1   | Triggered Hits         |
 
 	TH1D    | TR_Hit          | nHits on Trigger per proton               |time(ns)         | count      | 30  | 0     | 1500  | 0    |   1   | 1 | 0 | 0  | 1  | 3    | 0  |          |  1   | All Hits               | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
 
