@@ -426,6 +426,7 @@ int main(int argc, char* argv[]){
 					pz=Monitor_pz[i_mon];
 					t=Monitor_t[i_mon]; // for output, we should set t to new monitor time
 					if (tid!=1||m_OriginalFile=="NONE"){ // we don't need original file to get original information for primary particles. e.g. PTACS
+						ot=Monitor_t[i_mon]; // For PTACS, we don't know initial time
 						ppid=Monitor_ppid[i_mon];
 						ox=Monitor_ox[i_mon];
 						oy=Monitor_oy[i_mon];

@@ -15,8 +15,8 @@
 
 #	TYPE    | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2
-#	TBranch | evt_num                      | 1         | 0
-#	TBranch | run_num                      | 1         | 0
+	TBranch | evt_num                      | 1         | 0
+	TBranch | run_num                      | 1         | 0
 #	TBranch | MT1Monitor_nHits             | 1         | 0
 #	TBranch | MT1Monitor_t                 | 0         | 1
 #	TBranch | MT1Monitor_tid               | 1         | 1

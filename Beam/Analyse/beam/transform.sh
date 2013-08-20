@@ -42,8 +42,8 @@ do_the_job(){
 #	nohup $pbsfile &
 }
 
-#for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
-for Target in  "t16cm6mm"
+#for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm"
+for Target in "g40cm10mm"
 do
 #   for app in "A" "H" "cg4" "g4s"
 	for app in "g4s"
@@ -80,16 +80,16 @@ do
 #							for DF in "003T" "0018T"
 							for DF in "003T"
 							do
-								DirName=$MYDATA/raw/g4sim/$monitor.EP.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
-								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.EP.$Target.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+								DirName=$MYDATA/raw/g4sim/$monitor.pim.$Target.$DF.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+								OriginalFile=$MYG4SIMDATAROOT/PTACS.EP.pim.$Target.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 								do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile $DF 
 							done
 						elif [ $monitor = "A9" -o $monitor = "McTruth" ]; then
 #							for DF in "003T" "0018T"
 							for DF in "003T"
 							do
-#								for A9 in "He0731" "He0701" "Vac0731"
-								for A9 in "Vac0731"
+#								for A9 in "He0731" "He0701" "Vac0731" "He0731Al"
+								for A9 in "He0731Al"
 								do
 									DirName=$MYDATA/raw/g4sim/$monitor.$pname.$Target.$DF.$A9.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 									OriginalFile=$MYG4SIMDATAROOT/MT1.EP.$pname.$Target.$DF.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
