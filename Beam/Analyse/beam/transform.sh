@@ -1,7 +1,7 @@
 #!/bin/bash
 
 queue=midq
-nFiles=100
+nFiles=1
 nSplit=1
 
 do_the_job(){
@@ -35,11 +35,11 @@ do_the_job(){
 	pbsfile=$PWD'/result/'$name'.boss'
 	echo "#!/bin/bash" > $pbsfile
 	echo "source $MYHOME/.setana.sh" >> $pbsfile
-	echo $PWD'/beam -x '$prefix' -y '$suffix' -D '$DirName' -O '$OriginalFile' -b '$beginNo' -t '$totalNo' -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
+	echo $PWD'/beam -x '$prefix' -y '$suffix' -D '$DirName' -O '$OriginalFile' -b '$beginNo' -t '$totalNo' -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 100000 -w 1000000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 #	echo $PWD'/beam -n 73346 -m McTruth -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 	chmod +x $pbsfile
-	qsub -j oe -o /dev/null -q $queue $pbsfile
-#	nohup $pbsfile &
+#	qsub -j oe -o /dev/null -q $queue $pbsfile
+	nohup $pbsfile &
 }
 
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm"
