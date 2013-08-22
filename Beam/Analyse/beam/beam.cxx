@@ -187,10 +187,12 @@ int main(int argc, char* argv[]){
 		std::string name = fMyRootInterface->get_nameForH1D(iHist);
 		fMyRootInterface->set_nameForH1D(iHist,m_prefix+"_"+name+m_suffix);
 		if (PDGEncoding==-211){
-			if (name.find("time")<name.length())
+			if (name=="initial_pa"||name=="initial_y"){
+				fMyRootInterface->set_ylogForH1D(iHist,1);
+			}
+			if (fMyRootInterface->get_ylogForH1D(iHist)){
 				fMyRootInterface->set_minyForH1D(iHist,1e-20);
-			else
-				fMyRootInterface->set_minyForH1D(iHist,1e-2);
+			}
 		}
 	}
 	nHists = fMyRootInterface->get_TH2D_size();
@@ -307,6 +309,8 @@ int main(int argc, char* argv[]){
 		m_TChain->SetBranchAddress("opx",&ini_opx);
 		m_TChain->SetBranchAddress("opy",&ini_opy);
 		m_TChain->SetBranchAddress("opz",&ini_opz);
+		m_TChain->SetBranchAddress("pid",&ini_pid);
+		m_TChain->SetBranchAddress("tid",&ini_tid);
 		m_TChain->SetBranchAddress("ppid",&ini_ppid);
 		m_TChain->SetBranchAddress("process",&p_process);
 		m_TChain->SetBranchAddress("volume",&p_volume);
@@ -460,6 +464,7 @@ int main(int argc, char* argv[]){
 			}
 		}
 		else if (m_MonitorPlane=="A9"){
+			if (ini_tid!=1) continue;
 			// Get initial particle
 			double ini_pa = sqrt(ini_px*ini_px+ini_py*ini_py+ini_pz*ini_pz);
 			double ini_pt = sqrt(ini_px*ini_px+ini_py*ini_py);
@@ -667,9 +672,6 @@ int main(int argc, char* argv[]){
 						}
 						if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"time"+m_suffix)) != -1 ){
 							fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_t[i_mon]/ns,weight);
-						}
-						if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+Volume+"_"+"paVSy"+m_suffix)) != -1 ){
-							fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight);
 						}
 					}
 				}

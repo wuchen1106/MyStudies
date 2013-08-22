@@ -32,18 +32,17 @@ do_the_job(){
 		name=$name.$iSplit
 	fi
 
-	pbsfile=$PWD'/result/'$name'.boss'
+	pbsfile=$PWD'/'$name'.boss'
 	echo "#!/bin/bash" > $pbsfile
 	echo "source $MYHOME/.setana.sh" >> $pbsfile
-	echo $PWD'/beam -x '$prefix' -y '$suffix' -D '$DirName' -O '$OriginalFile' -b '$beginNo' -t '$totalNo' -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 100000 -w 1000000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
-#	echo $PWD'/beam -n 73346 -m McTruth -P '$pid' -r '$name' -i '$PWD'/input_'$monitor' -d '$PWD'/result -p 10000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
+	echo $PWD'/../beam -x '$prefix' -y '$suffix' -D '$DirName' -O '$OriginalFile' -b '$beginNo' -t '$totalNo' -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/../input_'$monitor' -d '$PWD' -p 100000 -w 1000000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 	chmod +x $pbsfile
 #	qsub -j oe -o /dev/null -q $queue $pbsfile
 	nohup $pbsfile &
 }
 
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm"
-for Target in "g40cm10mm"
+for Target in "g40cm10mm_lt20ns"
 do
 #   for app in "A" "H" "cg4" "g4s"
 	for app in "g4s"
@@ -55,7 +54,7 @@ do
 			for monitor in "A9"
 			do
 #			for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
-				for pid in "13"
+				for pid in "-211"
 				do
 					for (( iSplit=0; iSplit<nSplit; iSplit++ ))
 					do
@@ -89,10 +88,10 @@ do
 							for DF in "003T"
 							do
 #								for A9 in "He0731" "He0701" "Vac0731" "He0731Al"
-								for A9 in "He0731Al"
+								for A9 in "He0731"
 								do
 									DirName=$MYDATA/raw/g4sim/$monitor.$pname.$Target.$DF.$A9.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
-									OriginalFile=$MYG4SIMDATAROOT/MT1.EP.$pname.$Target.$DF.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+									OriginalFile=$MYG4SIMDATAROOT/MT1.pim.$pname.$Target.$DF.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 									do_the_job $Target $monitor $beginNo $totalNo $pid $pname $DirName $OriginalFile $DF $A9
 								done
 							done

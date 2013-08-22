@@ -267,4 +267,3 @@
 #	TYPE    | NAME            | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT|npadx|npady
 	TH2D    | initial_paVSy   | Enter BLT Region                          | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -200 | 200  |  2  |  1
 	TH2D    | stop_paVSy      | Stopped in Target                         | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -200 | 200
-	TH2D    | Target_paVSy    | Hit Target                                | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -200 | 200  |  1  |  1
