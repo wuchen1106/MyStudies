@@ -24,7 +24,10 @@ configure
 cometg4_configure
 cometg4_run.sh
 cmdlog
+input
+histList
 
+# Compiled
 Beam/Analyse/BeamProfile/BeamProfile
 Beam/Analyse/Compare/Compare
 Beam/Analyse/Scan/Scan
@@ -39,8 +42,6 @@ Resolution/Resolution
 Signal/Analyse/signal
 Beam/Analyse/beam/beam
 RMC/Analyse/Compare
-input
-histList
 MagneticField/Analyse/Compare/Compare
 MagneticField/Analyse/FieldProfile/FieldProfile
 Beam/Analyse/bp_PT/bp
