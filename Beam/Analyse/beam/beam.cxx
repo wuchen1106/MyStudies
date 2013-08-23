@@ -464,7 +464,6 @@ int main(int argc, char* argv[]){
 			}
 		}
 		else if (m_MonitorPlane=="A9"){
-			if (ini_tid!=1) continue;
 			// Get initial particle
 			double ini_pa = sqrt(ini_px*ini_px+ini_py*ini_py+ini_pz*ini_pz);
 			double ini_pt = sqrt(ini_px*ini_px+ini_py*ini_py);
@@ -474,6 +473,7 @@ int main(int argc, char* argv[]){
 			// Get weight
 			double weight = 1;
 			if (PDGEncoding==-211){
+				if (ini_tid!=1) continue;
 				double E = sqrt(ini_pa*ini_pa+M_PION*M_PION);
 				double Beta = ini_pa/E;
 				double Gamma = sqrt(1./(1.-Beta*Beta));
@@ -513,6 +513,7 @@ int main(int argc, char* argv[]){
 			bool TG_Hit=false;
 			bool ST_Hit=false;
 			int prevtid = -1;
+			int previ_MP = -1;
 			for ( int i_MP = 0; i_MP<Volumes.size(); i_MP++ ){
 				std::string Volume=Volumes[i_MP];
 				fMyRootInterface->get_value(Volume+"_nHits",Monitor_nHits);
@@ -575,7 +576,7 @@ int main(int argc, char* argv[]){
 							}
 					}
 					if (Monitor_stopped[i_mon]&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211)||Volume=="CDCLayer"){
-						if (Monitor_tid[i_mon]!=prevtid){
+						if (Monitor_tid[i_mon]!=prevtid||i_MP!=previ_MP){
 							fMyRootInterface->set_ovalue("evt_num",evt_num);
 							fMyRootInterface->set_ovalue("run_num",run_num);
 							fMyRootInterface->set_ovalue("tid",Monitor_tid[i_mon]);
@@ -636,6 +637,7 @@ int main(int argc, char* argv[]){
 							fMyRootInterface->Fill();
 						}
 						prevtid=Monitor_tid[i_mon];
+						previ_MP=i_MP;
 					}
 					if ( Volume=="Target"&&Monitor_tid[i_mon]==1){
 						if (ST_Hit) break; // Stopped once, enough for Target
