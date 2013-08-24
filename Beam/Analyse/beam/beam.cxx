@@ -34,6 +34,7 @@ int verbose = 0;
 int nEvents = 0;
 int printModule = 1;
 int writeModule = 10000;
+int UseWeight = 0;
 int PDGEncoding = 13;
 int m_norm = 0;
 bool backup = false;
@@ -54,7 +55,7 @@ int main(int argc, char* argv[]){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hb:t:v:n:N:m:M:r:D:O:d:p:P:w:x:y:i:"))!=-1){
+	while((result=getopt(argc,argv,"hb:t:v:n:N:m:M:r:D:O:d:p:P:w:W:x:y:i:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -124,6 +125,10 @@ int main(int argc, char* argv[]){
 			case 'w':
 				writeModule = atoi(optarg);
 				printf("writeModule: %d\n",writeModule);
+				break;
+			case 'W':
+				UseWeight = atoi(optarg);
+				printf("UseWeight : %d\n",UseWeight);
 				break;
 			case '?':
 				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
@@ -377,26 +382,29 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
 			fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
 		}
-		else if (m_MonitorPlane=="PTACS"||m_MonitorPlane=="MT1"){
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_nHits",Monitor_nHits);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_t",Monitor_t,ns);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_tid",Monitor_tid);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_pid",Monitor_pid);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ppid",Monitor_ppid);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oprocess",Monitor_oprocess);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ovolName",Monitor_ovolName);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_ox",Monitor_ox,cm);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oy",Monitor_oy,cm);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_oz",Monitor_oz,cm);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opx",Monitor_opx,GeV);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opy",Monitor_opy,GeV);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_opz",Monitor_opz,GeV);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_x",Monitor_x,cm);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_y",Monitor_y,cm);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_z",Monitor_z,cm);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_px",Monitor_px,GeV);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_py",Monitor_py,GeV);
-			fMyRootInterface->get_value(m_MonitorPlane+"Monitor_pz",Monitor_pz,GeV);
+		else if (m_MonitorPlane=="PTACS"||m_MonitorPlane=="MT1"||m_MonitorPlane=="BLT"){
+			std::string prefix = "";
+			if (m_MonitorPlane=="PTACS"||m_MonitorPlane=="MT1")prefix = m_MonitorPlane+"Monitor";
+			if (m_MonitorPlane=="BLT")prefix = "CDCMonitor";
+			fMyRootInterface->get_value(prefix+"_nHits",Monitor_nHits);
+			fMyRootInterface->get_value(prefix+"_t",Monitor_t,ns);
+			fMyRootInterface->get_value(prefix+"_tid",Monitor_tid);
+			fMyRootInterface->get_value(prefix+"_pid",Monitor_pid);
+			fMyRootInterface->get_value(prefix+"_ppid",Monitor_ppid);
+			fMyRootInterface->get_value(prefix+"_oprocess",Monitor_oprocess);
+			fMyRootInterface->get_value(prefix+"_ovolName",Monitor_ovolName);
+			fMyRootInterface->get_value(prefix+"_ox",Monitor_ox,cm);
+			fMyRootInterface->get_value(prefix+"_oy",Monitor_oy,cm);
+			fMyRootInterface->get_value(prefix+"_oz",Monitor_oz,cm);
+			fMyRootInterface->get_value(prefix+"_opx",Monitor_opx,GeV);
+			fMyRootInterface->get_value(prefix+"_opy",Monitor_opy,GeV);
+			fMyRootInterface->get_value(prefix+"_opz",Monitor_opz,GeV);
+			fMyRootInterface->get_value(prefix+"_x",Monitor_x,cm);
+			fMyRootInterface->get_value(prefix+"_y",Monitor_y,cm);
+			fMyRootInterface->get_value(prefix+"_z",Monitor_z,cm);
+			fMyRootInterface->get_value(prefix+"_px",Monitor_px,GeV);
+			fMyRootInterface->get_value(prefix+"_py",Monitor_py,GeV);
+			fMyRootInterface->get_value(prefix+"_pz",Monitor_pz,GeV);
 		}
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got info"<<std::endl;
@@ -405,7 +413,7 @@ int main(int argc, char* argv[]){
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"###Getting information"<<std::endl;
 
 		bool filled = false;
-		if (m_MonitorPlane=="PTACS"||m_MonitorPlane=="MT1"){
+		if (m_MonitorPlane=="PTACS"||m_MonitorPlane=="MT1"||m_MonitorPlane=="BLT"){
 			for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
 				if (!PDGEncoding // all particles
 					||PDGEncoding==-1&&Monitor_pid[i_mon]>=1e7 // only nuclears
@@ -420,6 +428,21 @@ int main(int argc, char* argv[]){
 								 <<", px = "<<Monitor_px[i_mon]
 								 <<"MeV, py = "<<Monitor_py[i_mon] <<"MeV, pz = "<<Monitor_pz[i_mon] <<"MeV"
 								 <<std::endl;
+					// Get initial particle
+					double ini_pa = sqrt(ini_px*ini_px+ini_py*ini_py+ini_pz*ini_pz);
+					double ini_pt = sqrt(ini_px*ini_px+ini_py*ini_py);
+					double ini_theta = ini_pa?acos(ini_pz/ini_pa):0;
+					//double ini_phi = ini_px?atan(ini_py/ini_px):90*deg;
+
+					// Get weight
+					double weight = 1;
+					if (UseWeight==-211){
+						if (ini_tid!=1) continue;
+						double E = sqrt(ini_pa*ini_pa+M_PION*M_PION);
+						double Beta = ini_pa/E;
+						double Gamma = sqrt(1./(1.-Beta*Beta));
+						weight = exp(-(ini_t-ini_ot)/tau/Gamma);
+					}
 					// Fill
 					fMyRootInterface->set_ovalue("evt_num",evt_num);
 					fMyRootInterface->set_ovalue("run_num",run_num);
@@ -456,6 +479,14 @@ int main(int argc, char* argv[]){
 						fMyRootInterface->set_ovalue("process",ini_process);
 						fMyRootInterface->set_ovalue("volume",ini_volume);
 					}
+					fMyRootInterface->set_ovalue("i_t",ini_t/ns);
+					fMyRootInterface->set_ovalue("i_x",ini_x/mm);
+					fMyRootInterface->set_ovalue("i_y",ini_y/mm);
+					fMyRootInterface->set_ovalue("i_z",ini_z/mm);
+					fMyRootInterface->set_ovalue("i_px",ini_px/MeV);
+					fMyRootInterface->set_ovalue("i_py",ini_py/MeV);
+					fMyRootInterface->set_ovalue("i_pz",ini_pz/MeV);
+					fMyRootInterface->set_ovalue("weight",weight);
 					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
 					fMyRootInterface->Fill();
 					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
@@ -599,13 +630,13 @@ int main(int argc, char* argv[]){
 								fMyRootInterface->set_ovalue("pz",Monitor_pz[i_mon]/MeV);
 								fMyRootInterface->set_ovalue("t" ,Monitor_stop_time[i_mon]/ns);
 							}
-							fMyRootInterface->set_ovalue("i_t",ini_ot/ns);
-							fMyRootInterface->set_ovalue("i_x",ini_ox/mm);
-							fMyRootInterface->set_ovalue("i_y",ini_oy/mm);
-							fMyRootInterface->set_ovalue("i_z",ini_oz/mm);
-							fMyRootInterface->set_ovalue("i_px",ini_opx/MeV);
-							fMyRootInterface->set_ovalue("i_py",ini_opy/MeV);
-							fMyRootInterface->set_ovalue("i_pz",ini_opz/MeV);
+							fMyRootInterface->set_ovalue("i_t",ini_t/ns);
+							fMyRootInterface->set_ovalue("i_x",ini_x/mm);
+							fMyRootInterface->set_ovalue("i_y",ini_y/mm);
+							fMyRootInterface->set_ovalue("i_z",ini_z/mm);
+							fMyRootInterface->set_ovalue("i_px",ini_px/MeV);
+							fMyRootInterface->set_ovalue("i_py",ini_py/MeV);
+							fMyRootInterface->set_ovalue("i_pz",ini_pz/MeV);
 							if (Monitor_tid[i_mon]!=1||m_OriginalFile=="NONE"){ // we don't need original file to get initial information for primary particles. e.g. PTACS
 //								fMyRootInterface->set_ovalue("ot",Monitor_t[i_mon]/ns); // For PTACS, we don't know initial time. For MT1, the initial time is the monitor time in PTACS.
 //								fMyRootInterface->set_ovalue("ox",Monitor_ox[i_mon]/mm);
@@ -832,6 +863,7 @@ void init_args()
 	nEvents = 0;
 	printModule = 10000;
 	writeModule = 10000;
+	UseWeight = 0;
 	PDGEncoding = 13;
 	backup = false;
 }
