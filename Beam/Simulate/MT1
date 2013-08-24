@@ -1,6 +1,6 @@
 GEOCARDROOT       = geometry_BPandMT1
 MAGFIELDCARDROOT  = MagField_B9_S003T
-GENFILEROOT       = gen_root
+GENFILEROOT       = gen_default
 OUTCARDROOT       = output_B9
 
 ##geometry preset
@@ -22,4 +22,4 @@ setCut_bp.mac
 #run
 run_configure
 1
-435550
+1

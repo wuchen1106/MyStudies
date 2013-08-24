@@ -3,7 +3,7 @@ int ana(std::string prefix){
 	TTree *t = 0;
 	int N = 0;
 	std::stringstream buf;
-	for (int i = 0; i < 50; i++ ){
+	for (int i = 0; i < 100; i++ ){
 		buf.str("");
 		buf.clear();
 		buf<<prefix<<i<<".root";
