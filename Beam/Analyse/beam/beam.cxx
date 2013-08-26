@@ -322,7 +322,7 @@ int main(int argc, char* argv[]){
 		m_TChain->SetBranchAddress("ppid",&ini_ppid);
 		m_TChain->SetBranchAddress("process",&p_process);
 		m_TChain->SetBranchAddress("volume",&p_volume);
-		m_TChain->SetBranchAddress("weight",&weight0);
+//		m_TChain->SetBranchAddress("weight",&weight0);
 		if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"Need original file, m_OriginalNum = "<<m_OriginalNum<<std::endl;
 	}
 	//**********************************************************************************************
@@ -514,7 +514,8 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->get_value(Volume+"_px",Monitor_px,GeV);
 				fMyRootInterface->get_value(Volume+"_py",Monitor_py,GeV);
 				fMyRootInterface->get_value(Volume+"_pz",Monitor_pz,GeV);
-				fMyRootInterface->get_value(Volume+"_stopped",Monitor_stopped);
+				bool st_error = -1;
+				st_error = fMyRootInterface->get_value(Volume+"_stopped",Monitor_stopped);
 				fMyRootInterface->get_value(Volume+"_stop_time",Monitor_stop_time,ns);
 				int prevtid = -1;
 				for ( int i_mon = 0; i_mon < Monitor_nHits; prevtid=Monitor_tid[i_mon], i_mon++ ){
@@ -527,7 +528,7 @@ int main(int argc, char* argv[]){
 						||PDGEncoding==1&&Monitor_pid[i_mon]<1e7 // only elementary particles
 						||Monitor_pid[i_mon] == PDGEncoding
 						||PDGEncoding==2&&Monitor_pid[i_mon]!=13&&Monitor_pid[i_mon]!=-211&&Monitor_pid[i_mon]!=11&&Monitor_pid[i_mon]<1e7 // only other particles
-						||PDGEncoding==-2&&Monitor_stopped[i_mon]&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211) // only stopped particles
+						||PDGEncoding==-2&&(!st_error&&Monitor_stopped[i_mon])&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211) // only stopped particles
 						){
 						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 							std::cout<<prefix_ParticleInfoStart
@@ -540,10 +541,14 @@ int main(int argc, char* argv[]){
 										 <<std::endl;
 							continue;
 						}
+						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+							std::cout<<prefix_ParticleInfoStart
+									 <<"  First hit!"
+									 <<std::endl;
 						double weight = weight0;
 						if (UseWeight==-211){
 							if (Monitor_tid[i_mon]==1){
-								if (Monitor_stopped[i_mon]){
+								if (!st_error&&Monitor_stopped[i_mon]){
 									weight *= exp(-(Monitor_stop_time[i_mon]-ini_t)/tau/Gamma);
 								}
 								else{
@@ -573,7 +578,7 @@ int main(int argc, char* argv[]){
 							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"time"+m_suffix)) != -1 ){
 								fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_t[i_mon]/ns,weight);
 							}
-							if (Monitor_stopped[i_mon]){
+							if (!st_error&&Monitor_stopped[i_mon]){
 								if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 									std::cout<<prefix_ParticleInfoStart
 											 <<"  Stopped in \""<<Volume<<"\""
@@ -592,6 +597,10 @@ int main(int argc, char* argv[]){
 								}
 							}
 						}
+						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+							std::cout<<prefix_ParticleInfoStart
+									 <<"  Filling ..."
+									 <<std::endl;
 						// Hash
 						fMyRootInterface->set_ovalue("evt_num",evt_num);
 						fMyRootInterface->set_ovalue("run_num",run_num);
@@ -604,7 +613,12 @@ int main(int argc, char* argv[]){
 						fMyRootInterface->set_ovalue("px",Monitor_px[i_mon]/MeV);
 						fMyRootInterface->set_ovalue("py",Monitor_py[i_mon]/MeV);
 						fMyRootInterface->set_ovalue("pz",Monitor_pz[i_mon]/MeV);
-						fMyRootInterface->set_ovalue("t" ,Monitor_stop_time[i_mon]/ns);
+						if (!st_error&&Monitor_stopped[i_mon]){
+							fMyRootInterface->set_ovalue("t" ,Monitor_stop_time[i_mon]/ns);
+						}
+						else{
+							fMyRootInterface->set_ovalue("t" ,Monitor_t[i_mon]/ns);
+						}
 						// original
 						if (Monitor_tid[i_mon]!=1||m_OriginalFile=="NONE"){ // we don't need original file to get initial information for primary particles. e.g. PTACS
 							if (!ot_error)
