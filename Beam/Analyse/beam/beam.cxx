@@ -192,10 +192,10 @@ int main(int argc, char* argv[]){
 		std::string name = fMyRootInterface->get_nameForH1D(iHist);
 		fMyRootInterface->set_nameForH1D(iHist,m_prefix+"_"+name+m_suffix);
 		if (PDGEncoding==-211){
-			if (name=="initial_pa"||name=="initial_y"){
+			if (name=="Target_pa"||name=="Target_y"){
 				fMyRootInterface->set_ylogForH1D(iHist,1);
 			}
-			if (name=="initial_time"){
+			if (name=="Target_time"){
 				fMyRootInterface->set_minyForH1D(iHist,1e-20);
 			}
 		}
@@ -322,7 +322,7 @@ int main(int argc, char* argv[]){
 		m_TChain->SetBranchAddress("ppid",&ini_ppid);
 		m_TChain->SetBranchAddress("process",&p_process);
 		m_TChain->SetBranchAddress("volume",&p_volume);
-//		m_TChain->SetBranchAddress("weight",&weight0);
+		m_TChain->SetBranchAddress("weight",&weight0);
 		if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"Need original file, m_OriginalNum = "<<m_OriginalNum<<std::endl;
 	}
 	//**********************************************************************************************
@@ -474,21 +474,8 @@ int main(int argc, char* argv[]){
 				Beta = ini_pa/E;
 				Gamma = sqrt(1./(1.-Beta*Beta));
 			}
-			// Fill histograms for initial if needed
-			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"pa"+m_suffix)) != -1 ){
-				fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight0);
-			}
-			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"y"+m_suffix)) != -1 ){
-				fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight0);
-			}
-			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"time"+m_suffix)) != -1 ){
-				fMyRootInterface->get_TH1D(index_temp)->Fill(ini_t/ns,weight0);
-			}
-			if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_initial_"+"paVSy"+m_suffix)) != -1 ){
-				fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight0);
-			}
 			// Get Volume Monitor information if exist
-			int previ_MP = -1;
+			int previ_MP = 0;
 			for ( int i_MP = 0; i_MP<Volumes.size(); previ_MP=i_MP,i_MP++ ){
 				std::string Volume=Volumes[i_MP];
 				Monitor_nHits = 0; // in case this volume does not exist
@@ -522,6 +509,10 @@ int main(int argc, char* argv[]){
 					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 						std::cout<<prefix_ParticleInfoStart
 								 <<"  got "<<Monitor_pid[i_mon]<<" in "<<Volume<<"!"
+								 <<",  tid = "<<Monitor_tid[i_mon]
+								 <<",  i_MP = "<<i_MP
+								 <<",  previ_MP = "<<previ_MP
+								 <<",  prevtid = "<<prevtid
 								 <<std::endl;
 					if (!PDGEncoding // all particles
 						||PDGEncoding==-1&&Monitor_pid[i_mon]>=1e7 // only nuclears
@@ -533,17 +524,6 @@ int main(int argc, char* argv[]){
 						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 							std::cout<<prefix_ParticleInfoStart
 									 <<"  Passed PDG cut!"
-									 <<std::endl;
-						if (Monitor_tid[i_mon]==prevtid&&i_MP==previ_MP){
-							if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-								std::cout<<prefix_ParticleInfoStart
-										 <<"  Occurred once!"
-										 <<std::endl;
-							continue;
-						}
-						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-							std::cout<<prefix_ParticleInfoStart
-									 <<"  First hit!"
 									 <<std::endl;
 						double weight = weight0;
 						if (UseWeight==-211){
@@ -565,18 +545,20 @@ int main(int argc, char* argv[]){
 							}
 						}
 						if (Volume=="Target"){
-							if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-								std::cout<<prefix_ParticleInfoStart
-										 <<"  Hit \""<<Volume<<"\""
-										 <<std::endl;
-							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"pa"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight);
-							}
-							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"y"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight);
-							}
-							if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"time"+m_suffix)) != -1 ){
-								fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_t[i_mon]/ns,weight);
+							if (Monitor_tid[i_mon]!=prevtid||i_MP!=previ_MP){
+								if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+									std::cout<<prefix_ParticleInfoStart
+											 <<"  Hit \""<<Volume<<"\""
+											 <<std::endl;
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"pa"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"y"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"time"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_t[i_mon]/ns,weight);
+								}
 							}
 							if (!st_error&&Monitor_stopped[i_mon]){
 								if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
@@ -597,6 +579,17 @@ int main(int argc, char* argv[]){
 								}
 							}
 						}
+						if (Monitor_tid[i_mon]==prevtid&&i_MP==previ_MP){
+							if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+								std::cout<<prefix_ParticleInfoStart
+										 <<"  Occurred once!"
+										 <<std::endl;
+							continue;
+						}
+						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+							std::cout<<prefix_ParticleInfoStart
+									 <<"  First hit!"
+									 <<std::endl;
 						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 							std::cout<<prefix_ParticleInfoStart
 									 <<"  Filling ..."
