@@ -236,6 +236,7 @@ int main(int argc, char* argv[]){
 	std::string *p_volume = 0;
 	std::string ini_process;
 	std::string ini_volume;
+	double weight0 = 1;
 
 	// General
 	int evt_num;
@@ -255,6 +256,7 @@ int main(int argc, char* argv[]){
 	std::vector<double> Monitor_px;
 	std::vector<double> Monitor_py;
 	std::vector<double> Monitor_pz;
+//	std::vector<double> Monitor_ot;
 	std::vector<double> Monitor_ox;
 	std::vector<double> Monitor_oy;
 	std::vector<double> Monitor_oz;
@@ -285,12 +287,12 @@ int main(int argc, char* argv[]){
 
 	// for volumes
 	std::vector<std::string> Volumes;
-	Volumes.push_back("Trigger");
-	Volumes.push_back("CDCLayer");
-	Volumes.push_back("Target");
-	Volumes.push_back("EndPlate");
-	Volumes.push_back("InnerCylinder");
-	Volumes.push_back("OuterCylinder");
+//	Volumes.push_back("Trigger");
+//	Volumes.push_back("CDCLayer");
+//	Volumes.push_back("Target");
+//	Volumes.push_back("EndPlate");
+//	Volumes.push_back("InnerCylinder");
+//	Volumes.push_back("OuterCylinder");
 	Volumes.push_back("BLTShell");
 	Volumes.push_back("BLTCollimator");
 
@@ -319,6 +321,7 @@ int main(int argc, char* argv[]){
 		m_TChain->SetBranchAddress("ppid",&ini_ppid);
 		m_TChain->SetBranchAddress("process",&p_process);
 		m_TChain->SetBranchAddress("volume",&p_volume);
+		m_TChain->SetBranchAddress("weight",&weight0);
 		if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"Need original file, m_OriginalNum = "<<m_OriginalNum<<std::endl;
 	}
 	//**********************************************************************************************
@@ -393,6 +396,7 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->get_value(prefix+"_ppid",Monitor_ppid);
 			fMyRootInterface->get_value(prefix+"_oprocess",Monitor_oprocess);
 			fMyRootInterface->get_value(prefix+"_ovolName",Monitor_ovolName);
+//			fMyRootInterface->get_value(prefix+"_ot",Monitor_ot,ns);
 			fMyRootInterface->get_value(prefix+"_ox",Monitor_ox,cm);
 			fMyRootInterface->get_value(prefix+"_oy",Monitor_oy,cm);
 			fMyRootInterface->get_value(prefix+"_oz",Monitor_oz,cm);
@@ -414,35 +418,42 @@ int main(int argc, char* argv[]){
 
 		bool filled = false;
 		if (m_MonitorPlane=="PTACS"||m_MonitorPlane=="MT1"||m_MonitorPlane=="BLT"){
+			// Get weight
+			double Gamma, E, Beta, ini_pa;
+			if (UseWeight==-211){
+				ini_pa = sqrt(ini_px*ini_px+ini_py*ini_py+ini_pz*ini_pz);
+				E = sqrt(ini_pa*ini_pa+M_PION*M_PION);
+				Beta = ini_pa/E;
+				Gamma = sqrt(1./(1.-Beta*Beta));
+			}
 			for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
 				if (!PDGEncoding // all particles
 					||PDGEncoding==-1&&Monitor_pid[i_mon]>=1e7 // only nuclears
 					||PDGEncoding==1&&Monitor_pid[i_mon]<1e7 // only elementary particles
 					||Monitor_pid[i_mon] == PDGEncoding
-					||PDGEncoding==2&&Monitor_pid[i_mon]!=13&&Monitor_pid[i_mon]!=-211&&Monitor_pid[i_mon]!=11&&Monitor_pid[i_mon]<1e7){
+					||PDGEncoding==2&&Monitor_pid[i_mon]!=13&&Monitor_pid[i_mon]!=-211&&Monitor_pid[i_mon]!=11&&Monitor_pid[i_mon]<1e7 // only other particles
+					){
+					double weight = weight0;
+					if (UseWeight==-211){
+						if (Monitor_tid[i_mon]==1){
+							weight *= exp(-(Monitor_t[i_mon]-ini_t)/tau/Gamma);
+						}
+						else{
+							continue;
+						}
+					}
 					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 						std::cout<<prefix_ParticleInfoStart
 								 <<"  Found Particle! i_mon = "<<i_mon
 								 <<", pid = "<<Monitor_pid[i_mon]
 								 <<", tid = "<<Monitor_tid[i_mon]
-								 <<", px = "<<Monitor_px[i_mon]
-								 <<"MeV, py = "<<Monitor_py[i_mon] <<"MeV, pz = "<<Monitor_pz[i_mon] <<"MeV"
+								 <<", i_pa = "<<ini_pa/MeV
+								 <<"MeV/c, E = "<<E/MeV
+								 <<"MeV, Beta = "<<Beta
+								 <<", Gamma = "<<Gamma
+								 <<", weight0 = "<<weight0
+								 <<", weight = "<<weight
 								 <<std::endl;
-					// Get initial particle
-					double ini_pa = sqrt(ini_px*ini_px+ini_py*ini_py+ini_pz*ini_pz);
-					double ini_pt = sqrt(ini_px*ini_px+ini_py*ini_py);
-					double ini_theta = ini_pa?acos(ini_pz/ini_pa):0;
-					//double ini_phi = ini_px?atan(ini_py/ini_px):90*deg;
-
-					// Get weight
-					double weight = 1;
-					if (UseWeight==-211){
-						if (ini_tid!=1) continue;
-						double E = sqrt(ini_pa*ini_pa+M_PION*M_PION);
-						double Beta = ini_pa/E;
-						double Gamma = sqrt(1./(1.-Beta*Beta));
-						weight = exp(-(ini_t-ini_ot)/tau/Gamma);
-					}
 					// Fill
 					fMyRootInterface->set_ovalue("evt_num",evt_num);
 					fMyRootInterface->set_ovalue("run_num",run_num);
@@ -458,6 +469,7 @@ int main(int argc, char* argv[]){
 					if (Monitor_tid[i_mon]!=1||m_OriginalFile=="NONE"){ // we don't need original file to get initial information for primary particles. e.g. PTACS
 						fMyRootInterface->set_ovalue("ppid",Monitor_ppid[i_mon]);
 						fMyRootInterface->set_ovalue("ot",Monitor_t[i_mon]/ns); // For PTACS, we don't know initial time. For MT1, the initial time is the monitor time in PTACS.
+//						fMyRootInterface->set_ovalue("ot",Monitor_ot[i_mon]/ns); // For PTACS, we don't know initial time. For MT1, the initial time is the monitor time in PTACS.
 						fMyRootInterface->set_ovalue("ox",Monitor_ox[i_mon]/mm);
 						fMyRootInterface->set_ovalue("oy",Monitor_oy[i_mon]/mm);
 						fMyRootInterface->set_ovalue("oz",Monitor_oz[i_mon]/mm);
@@ -491,6 +503,103 @@ int main(int argc, char* argv[]){
 					fMyRootInterface->Fill();
 					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
 					filled=true;
+
+				}
+			}
+			if (m_MonitorPlane=="BLT"&&PDGEncoding==-2){ // Stopped particles
+				int prevtid = -1;
+				int previ_MP = -1;
+				for ( int i_MP = 0; i_MP<Volumes.size(); i_MP++ ){
+					std::string Volume=Volumes[i_MP];
+					fMyRootInterface->get_value(Volume+"_nHits",Monitor_nHits);
+					fMyRootInterface->get_value(Volume+"_t",Monitor_t,ns);
+					fMyRootInterface->get_value(Volume+"_tid",Monitor_tid);
+					fMyRootInterface->get_value(Volume+"_pid",Monitor_pid);
+					fMyRootInterface->get_value(Volume+"_ppid",Monitor_ppid);
+					fMyRootInterface->get_value(Volume+"_oprocess",Monitor_oprocess);
+					fMyRootInterface->get_value(Volume+"_ovolName",Monitor_ovolName);
+//					fMyRootInterface->get_value(Volume+"_ot",Monitor_ot,ns);
+					fMyRootInterface->get_value(Volume+"_ox",Monitor_ox,cm);
+					fMyRootInterface->get_value(Volume+"_oy",Monitor_oy,cm);
+					fMyRootInterface->get_value(Volume+"_oz",Monitor_oz,cm);
+					fMyRootInterface->get_value(Volume+"_opx",Monitor_opx,GeV);
+					fMyRootInterface->get_value(Volume+"_opy",Monitor_opy,GeV);
+					fMyRootInterface->get_value(Volume+"_opz",Monitor_opz,GeV);
+					fMyRootInterface->get_value(Volume+"_x",Monitor_x,cm);
+					fMyRootInterface->get_value(Volume+"_y",Monitor_y,cm);
+					fMyRootInterface->get_value(Volume+"_z",Monitor_z,cm);
+					fMyRootInterface->get_value(Volume+"_charge",Monitor_charge);
+					fMyRootInterface->get_value(Volume+"_px",Monitor_px,GeV);
+					fMyRootInterface->get_value(Volume+"_py",Monitor_py,GeV);
+					fMyRootInterface->get_value(Volume+"_pz",Monitor_pz,GeV);
+					fMyRootInterface->get_value(Volume+"_stopped",Monitor_stopped);
+					fMyRootInterface->get_value(Volume+"_stop_time",Monitor_stop_time,ns);
+					for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
+						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+							std::cout<<prefix_ParticleInfoStart
+									 <<"  got "<<Monitor_pid[i_mon]<<" in "<<Volume<<"!"
+									 <<std::endl;
+						double weight = weight0;
+						if (UseWeight==-211){
+							if (Monitor_tid[i_mon]==1){
+								weight *= exp(-(Monitor_stop_time[i_mon]-ini_t)/tau/Gamma);
+							}
+							else{
+								//weight = exp(-(Monitor_ot[i_mon]-ini_t)/tau/Gamma);
+								continue;
+							}
+						}
+						if (Monitor_stopped[i_mon]&&Monitor_tid[i_mon]!=prevtid||i_MP!=previ_MP){
+							fMyRootInterface->set_ovalue("evt_num",evt_num);
+							fMyRootInterface->set_ovalue("run_num",run_num);
+							fMyRootInterface->set_ovalue("tid",Monitor_tid[i_mon]);
+							fMyRootInterface->set_ovalue("pid",Monitor_pid[i_mon]);
+							fMyRootInterface->set_ovalue("x" ,Monitor_x[i_mon]/mm);
+							fMyRootInterface->set_ovalue("y" ,Monitor_y[i_mon]/mm);
+							fMyRootInterface->set_ovalue("z" ,Monitor_z[i_mon]/mm);
+							fMyRootInterface->set_ovalue("px",Monitor_px[i_mon]/MeV);
+							fMyRootInterface->set_ovalue("py",Monitor_py[i_mon]/MeV);
+							fMyRootInterface->set_ovalue("pz",Monitor_pz[i_mon]/MeV);
+							fMyRootInterface->set_ovalue("t" ,Monitor_stop_time[i_mon]/ns);
+							fMyRootInterface->set_ovalue("i_t",ini_t/ns);
+							fMyRootInterface->set_ovalue("i_x",ini_x/mm);
+							fMyRootInterface->set_ovalue("i_y",ini_y/mm);
+							fMyRootInterface->set_ovalue("i_z",ini_z/mm);
+							fMyRootInterface->set_ovalue("i_px",ini_px/MeV);
+							fMyRootInterface->set_ovalue("i_py",ini_py/MeV);
+							fMyRootInterface->set_ovalue("i_pz",ini_pz/MeV);
+							if (Monitor_tid[i_mon]!=1||m_OriginalFile=="NONE"){ // we don't need original file to get initial information for primary particles. e.g. PTACS
+								fMyRootInterface->set_ovalue("ot",Monitor_t[i_mon]/ns); // For PTACS, we don't know initial time. For MT1, the initial time is the monitor time in PTACS.
+//								fMyRootInterface->set_ovalue("ot",Monitor_ot[i_mon]/ns); // For PTACS, we don't know initial time. For MT1, the initial time is the monitor time in PTACS.
+								fMyRootInterface->set_ovalue("ox",Monitor_ox[i_mon]/mm);
+								fMyRootInterface->set_ovalue("oy",Monitor_oy[i_mon]/mm);
+								fMyRootInterface->set_ovalue("oz",Monitor_oz[i_mon]/mm);
+								fMyRootInterface->set_ovalue("opx",Monitor_opx[i_mon]/MeV);
+								fMyRootInterface->set_ovalue("opy",Monitor_opy[i_mon]/MeV);
+								fMyRootInterface->set_ovalue("opz",Monitor_opz[i_mon]/MeV);
+								fMyRootInterface->set_ovalue("ppid",Monitor_ppid[i_mon]);
+								fMyRootInterface->set_ovalue("process",Monitor_oprocess[i_mon]);
+								fMyRootInterface->set_ovalue("volume",Monitor_ovolName[i_mon]);
+							}
+							else{ // We should use initial information instead
+								fMyRootInterface->set_ovalue("ot",ini_ot/ns);
+								fMyRootInterface->set_ovalue("ox",ini_ox/mm);
+								fMyRootInterface->set_ovalue("oy",ini_oy/mm);
+								fMyRootInterface->set_ovalue("oz",ini_oz/mm);
+								fMyRootInterface->set_ovalue("opx",ini_opx/MeV);
+								fMyRootInterface->set_ovalue("opy",ini_opy/MeV);
+								fMyRootInterface->set_ovalue("opz",ini_opz/MeV);
+								fMyRootInterface->set_ovalue("ppid",ini_ppid);
+								fMyRootInterface->set_ovalue("process",ini_process);
+								fMyRootInterface->set_ovalue("volume",ini_volume);
+							}
+							fMyRootInterface->set_ovalue("weight",weight);
+							fMyRootInterface->set_ovalue("cvolume",Volume);
+							fMyRootInterface->Fill();
+						}
+						prevtid=Monitor_tid[i_mon];
+						previ_MP=i_MP;
+					}
 				}
 			}
 		}

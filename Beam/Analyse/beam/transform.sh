@@ -1,7 +1,7 @@
 #!/bin/bash
 
 queue=midq
-nFiles=1
+nFiles=10
 nSplit=1
 
 do_the_job(){
@@ -34,13 +34,16 @@ do_the_job(){
 		name=$name.$iSplit
 	fi
 
+#	extra=""
+	extra="-W -211"
+
 	pbsfile=$PWD'/'$name'.boss'
 	echo "#!/bin/bash" > $pbsfile
 	echo "source $MYHOME/.setana.sh" >> $pbsfile
-	echo $PWD'/../beam -x '$prefix' -y '$suffix' -D '$DirName' -O '$OriginalFile' -b '$beginNo' -t '$totalNo' -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/../input_'$monitor' -d '$PWD' -p 100000 -w 1000000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
+	echo $PWD'/../beam '$extra' -x '$prefix' -y '$suffix' -D '$DirName' -O '$OriginalFile' -b '$beginNo' -t '$totalNo' -M '$monitor' -P '$pid' -r '$name' -i '$PWD'/../input_'$monitor' -d '$PWD' -p 100000 -w 1000000 -v 0 > '$pbsfile'log 2> '$pbsfile'err' >> $pbsfile
 	chmod +x $pbsfile
-#	qsub -j oe -o /dev/null -q $queue $pbsfile
-	nohup $pbsfile &
+	qsub -j oe -o /dev/null -q $queue $pbsfile
+#	nohup $pbsfile &
 }
 
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm"
@@ -52,16 +55,17 @@ do
 #		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
 		for phys in "QBH"
 		do
-#			for monitor in "MT1" "PTACS" "McTruth" "A9";
+#			for monitor in "MT1" "PTACS" "McTruth" "A9" "BLT"
 			for monitor in "BLT"
 			do
-				for det in "_noStop"
+#				for det in "_noStop" "_0p01" "_0p01_noStop"
+				for det in "_0p01_noStop"
 				do
-#					for prepname in "mum" "EP"
-					for prepname in "mum"
+#					for prepname in "mum" "em" "OT"
+					for prepname in "pim"
 					do
-#						for pid in -11 -13 211 2212 -2212 22 11 13 -211 2112;
-						for pid in "1"
+#						for pid in  -11 -13 211 2212 -2212 22 11 13 -211 2112;
+						for pid in "-2" "-211"
 						do
 							for (( iSplit=0; iSplit<nSplit; iSplit++ ))
 							do
@@ -81,6 +85,7 @@ do
 								elif [ $pid = 1 ]; then pname="EP";
 								elif [ $pid = -1 ]; then pname="NU";
 								elif [ $pid = 2 ]; then pname="OT";
+								elif [ $pid = -2 ]; then pname="ST";
 								fi
 								if [ $monitor = "MT1" ]; then
 #									for DF in "003T" "0018T"
@@ -99,10 +104,12 @@ do
 									for DF in "003T"
 									do
 #										for A9 in "He0731" "He0701" "Vac0731" "He0731Al" "Vac0731Al"
-										for A9 in "Vac0731Al"
+										for A9 in "He0731" "Vac0731Al" "Vac0731"
 										do
 											DirName=$MYDATA/raw/g4sim/$monitor.$prepname$det.$Target.$DF.$A9.$app.$phys #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
-											OriginalFile=$MYG4SIMDATAROOT/MT1.EP.$prepname.$Target.$DF.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+#											OriginalFile=$MYG4SIMDATAROOT/BLT.mum.$prepname.$Target.$DF.$A9.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+											OriginalFile=$MYG4SIMDATAROOT/MT1.pim_0p01.$prepname.$Target.$DF.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
+#											OriginalFile=$MYG4SIMDATAROOT/MT1.pim.$prepname.$Target.$DF.$app.$phys.root #FIXME need a convention. Now we have to change it in 'EP' and 'pim' etc
 											if [ $det'.' = '.' ]; then
 												do_the_job "" $Target $monitor $beginNo $totalNo $pid $prepname $pname $DirName $OriginalFile $DF $A9
 											else
