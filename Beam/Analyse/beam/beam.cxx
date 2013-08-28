@@ -192,6 +192,9 @@ int main(int argc, char* argv[]){
 		std::string name = fMyRootInterface->get_nameForH1D(iHist);
 		fMyRootInterface->set_nameForH1D(iHist,m_prefix+"_"+name+m_suffix);
 		if (PDGEncoding==-211){
+			if (name=="initial_pa"||name=="initial_y"){
+				fMyRootInterface->set_logyForH1D(iHist,1);
+			}
 			if (name=="Target_time"){
 				fMyRootInterface->set_minyForH1D(iHist,1e-20);
 			}
@@ -471,6 +474,18 @@ int main(int argc, char* argv[]){
 				Beta = ini_pa/E;
 				Gamma = sqrt(1./(1.-Beta*Beta));
 			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"pa"+m_suffix)) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight0);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"y"+m_suffix)) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight0);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"time"+m_suffix)) != -1 ){
+				fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_t[i_mon]/ns,weight0);
+			}
+			if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_initial_"+"paVSy"+m_suffix)) != -1 ){
+				fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight);
+			}
 			// Get Volume Monitor information if exist
 			int previ_MP = 0;
 			for ( int i_MP = 0; i_MP<Volumes.size(); previ_MP=i_MP,i_MP++ ){
@@ -539,6 +554,26 @@ int main(int argc, char* argv[]){
 											 <<std::endl;
 								weight = 0;
 //								continue;
+							}
+						}
+						if (Volume=="CDCMonitor"){
+							if (Monitor_tid[i_mon]!=prevtid||i_MP!=previ_MP){
+								if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+									std::cout<<prefix_ParticleInfoStart
+											 <<"  Hit \""<<Volume<<"\""
+											 <<std::endl;
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"pa"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"y"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"time"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_t[i_mon]/ns,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+Volume+"_"+"paVSy"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight);
+								}
 							}
 						}
 						if (Volume=="Target"){
@@ -704,6 +739,12 @@ int main(int argc, char* argv[]){
 		}
 
 	}/* end of loop in events*/
+	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_int_"+"time"+m_suffix)) != -1 ){
+		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"time"+m_suffix)) != -1 ){
+			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+			h1d_temp->Integral();
+		}
+	}
 
 	//=>For output
 	clock_t t_END = clock();
