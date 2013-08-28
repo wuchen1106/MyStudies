@@ -165,6 +165,7 @@ int main(int argc, char* argv[]){
 	fMyRootInterface->set_OutputDir(m_OutputDir);
 	int index_temp = 0;
 	TH1D *h1d_temp=0;
+	TH1D *h1d_temp2=0;
 	int bin_temp = 0;
 	std::string name_temp = "";
 	std::stringstream buff;
@@ -193,7 +194,7 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->set_nameForH1D(iHist,m_prefix+"_"+name+m_suffix);
 		if (PDGEncoding==-211){
 			if (name=="initial_pa"||name=="initial_y"){
-				fMyRootInterface->set_logyForH1D(iHist,1);
+				fMyRootInterface->set_ylogForH1D(iHist,1);
 			}
 			if (name=="Target_time"){
 				fMyRootInterface->set_minyForH1D(iHist,1e-20);
@@ -481,10 +482,10 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight0);
 			}
 			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"time"+m_suffix)) != -1 ){
-				fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_t[i_mon]/ns,weight0);
+				fMyRootInterface->get_TH1D(index_temp)->Fill(ini_t/ns,weight0);
 			}
 			if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_initial_"+"paVSy"+m_suffix)) != -1 ){
-				fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight);
+				fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight0);
 			}
 			// Get Volume Monitor information if exist
 			int previ_MP = 0;
@@ -740,9 +741,15 @@ int main(int argc, char* argv[]){
 
 	}/* end of loop in events*/
 	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_int_"+"time"+m_suffix)) != -1 ){
+		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
 		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"time"+m_suffix)) != -1 ){
-			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
-			h1d_temp->Integral();
+			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
+			double right=fMyRootInterface->get_right1ForH1D(index_temp);
+			for (int i = 1; i <= nbin; i++){
+				double i_time = h1d_temp->GetBinCenter(i);
+				h1d_temp->SetBinContent(i,h1d_temp2->Integral(i_time,right));
+			}
 		}
 	}
 
