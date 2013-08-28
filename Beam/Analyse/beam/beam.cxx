@@ -192,9 +192,6 @@ int main(int argc, char* argv[]){
 		std::string name = fMyRootInterface->get_nameForH1D(iHist);
 		fMyRootInterface->set_nameForH1D(iHist,m_prefix+"_"+name+m_suffix);
 		if (PDGEncoding==-211){
-			if (name=="Target_pa"||name=="Target_y"){
-				fMyRootInterface->set_ylogForH1D(iHist,1);
-			}
 			if (name=="Target_time"){
 				fMyRootInterface->set_minyForH1D(iHist,1e-20);
 			}
