@@ -196,8 +196,8 @@ int main(int argc, char* argv[]){
 			if (name=="initial_pa"||name=="initial_y"){
 				fMyRootInterface->set_ylogForH1D(iHist,1);
 			}
-			if (name=="Target_time"){
-				fMyRootInterface->set_minyForH1D(iHist,1e-20);
+			if (name=="Target_time"||name=="int_time"||name=="initial_time"){
+				fMyRootInterface->set_minyForH1D(iHist,1e-22);
 			}
 		}
 	}
@@ -475,17 +475,24 @@ int main(int argc, char* argv[]){
 				Beta = ini_pa/E;
 				Gamma = sqrt(1./(1.-Beta*Beta));
 			}
-			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"pa"+m_suffix)) != -1 ){
-				fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight0);
-			}
-			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"y"+m_suffix)) != -1 ){
-				fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight0);
-			}
-			if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"time"+m_suffix)) != -1 ){
-				fMyRootInterface->get_TH1D(index_temp)->Fill(ini_t/ns,weight0);
-			}
-			if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_initial_"+"paVSy"+m_suffix)) != -1 ){
-				fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight0);
+			if (!PDGEncoding // all particles
+				||PDGEncoding==-1&&ini_pid>=1e7 // only nuclears
+				||PDGEncoding==1&&ini_pid<1e7 // only elementary particles
+				||ini_pid == PDGEncoding
+				||PDGEncoding==2&&ini_pid!=13&&ini_pid!=-211&&ini_pid!=11&&ini_pid<1e7 // only other particles
+				){
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"pa"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight0);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"y"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight0);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"time"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill(ini_t/ns,weight0);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_initial_"+"paVSy"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight0);
+				}
 			}
 			// Get Volume Monitor information if exist
 			int previ_MP = 0;
@@ -745,10 +752,11 @@ int main(int argc, char* argv[]){
 		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
 		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"time"+m_suffix)) != -1 ){
 			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
-			double right=fMyRootInterface->get_right1ForH1D(index_temp);
+			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
 			for (int i = 1; i <= nbin; i++){
 				double i_time = h1d_temp->GetBinCenter(i);
-				h1d_temp->SetBinContent(i,h1d_temp2->Integral(i_time,right));
+				int bin_l = h1d_temp2->FindBin(i_time);
+				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
 			}
 		}
 	}
