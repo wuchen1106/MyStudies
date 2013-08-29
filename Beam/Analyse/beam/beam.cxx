@@ -36,7 +36,7 @@ int printModule = 1;
 int writeModule = 10000;
 int UseWeight = 0;
 int PDGEncoding = 13;
-int m_norm = 0;
+double m_norm = 0;
 bool backup = false;
 std::vector<int> Ncut;
 std::vector<std::string> Ncut_message;
@@ -107,8 +107,8 @@ int main(int argc, char* argv[]){
 				printf("Total CPU numbers%d\n",m_totalNo);
 				break;
 			case 'N':
-				m_norm = atoi(optarg);
-				printf("norm: %d\n",m_norm);
+				m_norm = atof(optarg);
+				printf("norm: %lf\n",m_norm);
 				break;
 			case 'n':
 				nEvents = atoi(optarg);
