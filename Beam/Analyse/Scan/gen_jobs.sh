@@ -18,8 +18,10 @@ do
 			elif [ $pid = -211 ]; then pname="pim";
 			elif [ $pid = 2112 ]; then pname="n0";
 			elif [ $pid = 0 ]; then pname="all";
+			elif [ $pid = 1 ]; then pname="EP";
 			fi
-			for app in "A" "H" "cg4"
+#			for app in "A" "H" "cg4"
+			for app in "A"
 			do
 				for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
 				do
@@ -30,6 +32,8 @@ do
 					if [ $app == "A" ]; then
 						if [ $Target == "g60cm6mm170gcm3" ]; then
 							file="$MYDATA/other/Andy/graphite-proton-target_length-60cm.root"
+						elif [ $Target == "g40cm10mm" ]; then
+							file="$MYDATA/other/Andy/graphite-proton-target_length-40cm_radius-10mm.root"
 						else
 							file="DUMMY"
 						fi
