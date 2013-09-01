@@ -242,9 +242,6 @@
 #	TYPE    | NAME            | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT|npadx|npady
 	TH2D    | stop_paVSy      | Stopped in Target                         | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -200 | 200
 
-#	TYPE     | Name                         | Type      | Vector?
-#	                                0:double;1:int;string:2
-
 #	TYPE    | NAME                  | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption|UseLeg|legendName              |legx1|legy1|legx2|legy2|npadx|npady
 	TH1D    | initial_pa            | Momentum Amplitude                        | p_{a}(MeV/c) | count         | 100 | 0     | 150   | 0    |   1   |600| 1 | 0  | 0  | 3    | 0  |          |  1   | Before Collimator      | 0.8 | 0.8 | 1.0 | 1.0 |  2  |  1
 	TH1D    | CDCMonitor_pa         | Momentum Amplitude                        | p_{a}(MeV/c) | count         | 100 | 0     | 150   | 0    |   1   |632| 0 | 0  | 0  | 3    | 0  |          |  1   | After Collimator       |

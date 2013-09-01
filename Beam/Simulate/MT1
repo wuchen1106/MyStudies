@@ -14,7 +14,7 @@ OUTCARDROOT       = output_B9
 #
 #verbose
 verbose_configure_setCut
-setCut_bp.mac
+setCut_default.mac
 #
 ##output
 #output_configure
