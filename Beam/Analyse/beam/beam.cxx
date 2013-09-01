@@ -218,7 +218,7 @@ int main(int argc, char* argv[]){
 	// for initial information
 	int ini_tid;
 	int ini_pid;
-	int ini_ppid;
+	int ini_ppid = 0;
 	double ini_t;
 	double ini_x;
 	double ini_y;
@@ -235,8 +235,8 @@ int main(int argc, char* argv[]){
 	double ini_opz;
 	std::string *p_process = 0;
 	std::string *p_volume = 0;
-	std::string ini_process;
-	std::string ini_volume;
+	std::string ini_process = "NONE";
+	std::string ini_volume = "NONE";
 	double weight0 = 1;
 
 	// General
@@ -296,6 +296,7 @@ int main(int argc, char* argv[]){
 	Volumes.push_back("BLTCollimator");
 	Volumes.push_back("PTACSMonitor");
 	Volumes.push_back("MT1Monitor");
+	Volumes.push_back("M13");
 	Volumes.push_back("CDCMonitor");
 
 	//***********************************If We Need Original File***********************************

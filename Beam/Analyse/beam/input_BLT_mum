@@ -36,9 +36,6 @@
 	TBranch | CDCMonitor_oprocess          | 2         | 1
 	TBranch | CDCMonitor_ovolName          | 2         | 1
 
-#	TYPE     | Name
-	oTreeName | t
-
 #	TYPE     | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2
 
