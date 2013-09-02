@@ -28,12 +28,31 @@
 #	TBranch | McTruth_time              | 0         | 1
 #	TBranch | McTruth_process           | 2         | 1
 #	TBranch | McTruth_volume            | 2         | 1
+	TBranch | CDCMonitor_nHits             | 1         | 0
+	TBranch | CDCMonitor_t                 | 0         | 1
+	TBranch | CDCMonitor_tid               | 1         | 1
+	TBranch | CDCMonitor_pid               | 1         | 1
+	TBranch | CDCMonitor_ppid              | 1         | 1
+	TBranch | CDCMonitor_x                 | 0         | 1
+	TBranch | CDCMonitor_y                 | 0         | 1
+	TBranch | CDCMonitor_z                 | 0         | 1
+	TBranch | CDCMonitor_px                | 0         | 1
+	TBranch | CDCMonitor_py                | 0         | 1
+	TBranch | CDCMonitor_pz                | 0         | 1
+	TBranch | CDCMonitor_ox                | 0         | 1
+	TBranch | CDCMonitor_oy                | 0         | 1
+	TBranch | CDCMonitor_oz                | 0         | 1
+	TBranch | CDCMonitor_opx               | 0         | 1
+	TBranch | CDCMonitor_opy               | 0         | 1
+	TBranch | CDCMonitor_opz               | 0         | 1
+	TBranch | CDCMonitor_oprocess          | 2         | 1
+	TBranch | CDCMonitor_ovolName          | 2         | 1
 	TBranch | Target_nHits              | 1         | 0
 	TBranch | Target_t                  | 0         | 1
 	TBranch | Target_tid                | 1         | 1
 	TBranch | Target_pid                | 1         | 1
 	TBranch | Target_ppid               | 1         | 1
-	TBranch | Target_ot                 | 0         | 1
+#	TBranch | Target_ot                 | 0         | 1
 	TBranch | Target_x                  | 0         | 1
 	TBranch | Target_y                  | 0         | 1
 	TBranch | Target_z                  | 0         | 1
@@ -221,4 +240,22 @@
 	TH1D    | int_time        | Number of #pi^{-} in time window vs t1        | Start Time of the Window (ns) | Number of #pi^{-} in the Window (#pi^{-}/p^{+})| 100 | 0     | 1500  | 0    |   1   |632| 0 | 0  | 1  | 3    | 0  |          |  1   | Stopped in Target      |
 
 #	TYPE    | NAME            | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT|npadx|npady
-	TH2D    | stop_paVSy      | Stopped in Target                         | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -200 | 200
+#	TH2D    | stop_paVSy      | Stopped in Target                         | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -200 | 200
+
+#	TYPE    | NAME                  | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption|UseLeg|legendName              |legx1|legy1|legx2|legy2|npadx|npady
+	TH1D    | initial_pa            | Momentum Amplitude                        | p_{a}(MeV/c) | count         | 100 | 0     | 150   | 0    |   1   | 1 | 2 | 0  | 0  | 3    | 0  |          |  1   | Before Collimator      | 0.8 | 0.8 | 1.0 | 1.0 |  2  |  1
+	TH1D    | CDCMonitor_pa         | Momentum Amplitude                        | p_{a}(MeV/c) | count         | 100 | 0     | 150   | 0    |   1   |600| 0 | 0  | 0  | 3    | 0  |          |  1   | After Collimator       |
+	TH1D    | stop_pa               | Momentum Amplitude                        | p_{a}(MeV/c) | count         | 100 | 0     | 150   | 0    |   1   |632| 0 | 0  | 0  | 3    | 0  |          |  1   | Stopped in Target      |
+                                                                                                                                                  
+	TH1D    | initial_y             | y Position                                |y position(mm)| count         | 100 | -200  | 200   | 0    |   1   | 1 | 2 | 0  | 0  | 3    | 0  |          |  1   | Before Collimator      | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CDCMonitor_y          | y Position                                |y position(mm)| count         | 100 | -200  | 200   | 0    |   1   |600| 0 | 0  | 0  | 3    | 0  |          |  1   | After Collimator       |
+	TH1D    | stop_y                | y Position                                |y position(mm)| count         | 100 | -200  | 200   | 0    |   1   |632| 0 | 0  | 0  | 3    | 0  |          |  1   | Stopped in Target      |
+                                                                                                                                                  
+	TH1D    | initial_time          | Time                                      | time(ns)     | count         | 100 | 0     | 1500  | 0    |   1   | 1 | 2 | 0  | 1  | 3    | 0  |          |  1   | Before Collimator      | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CDCMonitor_time       | Time                                      | time(ns)     | count         | 100 | 0     | 1500  | 0    |   1   |600| 0 | 0  | 1  | 3    | 0  |          |  1   | After Collimator       |
+	TH1D    | stop_time             | Time                                      | time(ns)     | count         | 100 | 0     | 1500  | 0    |   1   |632| 0 | 0  | 1  | 3    | 0  |          |  1   | Stopped in Target      |
+
+#	TYPE    | NAME                  | TITLE                                     | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT|npadx|npady
+	TH2D    | initial_paVSy         | Before Collimator                         | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -200 | 200  | 3   | 1
+	TH2D    | CDCMonitor_paVSy      | After Collimator                          | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -200 | 200
+	TH2D    | stop_paVSy            | Stopped in Target                         | p_{a}(MeV/c) |y position(mm) | 100 | 0     | 150   | 100 | -200 | 200

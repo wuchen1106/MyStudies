@@ -214,6 +214,10 @@ int main(int argc, char* argv[]){
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET Statistics###"<<std::endl;
 	//=>About Statistical
 	init_Ncut();
+	int N_INI = 0;
+	int N_CDC = 0;
+	int N_CDC_75 = 0;
+	int N_Stop = 0;
 
 	// for initial information
 	int ini_tid;
@@ -356,8 +360,8 @@ int main(int argc, char* argv[]){
 			ini_opx*=MeV;
 			ini_opy*=MeV;
 			ini_opz*=MeV;
-			ini_process=*p_process;
-			ini_volume=*p_volume;
+			if (p_process)ini_process=*p_process;
+			if (p_volume)ini_volume=*p_volume;
 		}
 
 		// Get info
@@ -482,6 +486,7 @@ int main(int argc, char* argv[]){
 				||ini_pid == PDGEncoding
 				||PDGEncoding==2&&ini_pid!=13&&ini_pid!=-211&&ini_pid!=11&&ini_pid<1e7 // only other particles
 				){
+				N_INI += weight0;
 				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"pa"+m_suffix)) != -1 ){
 					fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight0);
 				}
@@ -565,12 +570,18 @@ int main(int argc, char* argv[]){
 //								continue;
 							}
 						}
+						double mon_px = Monitor_px[i_mon];
+						double mon_py = Monitor_py[i_mon];
+						double mon_pz = Monitor_pz[i_mon];
+						double mon_pa = sqrt(mon_px*mon_px+mon_py*mon_py+mon_pz*mon_pz);
 						if (Volume=="CDCMonitor"){
-							if (Monitor_tid[i_mon]!=prevtid||i_MP!=previ_MP){
+							if ((Monitor_tid[i_mon]!=prevtid||i_MP!=previ_MP)&&Monitor_pz[i_mon]>0){
 								if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 									std::cout<<prefix_ParticleInfoStart
 											 <<"  Hit \""<<Volume<<"\""
 											 <<std::endl;
+								N_CDC += weight;
+								if (mon_pa>75*MeV) N_CDC_75+=weight;
 								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"pa"+m_suffix)) != -1 ){
 									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight);
 								}
@@ -606,6 +617,7 @@ int main(int argc, char* argv[]){
 									std::cout<<prefix_ParticleInfoStart
 											 <<"  Stopped in \""<<Volume<<"\""
 											 <<std::endl;
+								N_Stop+=weight;
 								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pa"+m_suffix)) != -1 ){
 									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight);
 								}
@@ -777,6 +789,12 @@ int main(int argc, char* argv[]){
 	dump_Ncut();
 
 	fMyRootInterface->dump();
+
+	std::cout<<"N_INI = "<<N_INI<<", eff = "<<((double)N_INI)/m_norm<<std::endl;
+	std::cout<<"N_CDC = "<<N_CDC<<", eff = "<<((double)N_CDC)/m_norm<<std::endl;
+	std::cout<<"N_CDC_75 = "<<N_CDC_75<<", eff = "<<((double)N_CDC_75)/m_norm<<std::endl;
+	std::cout<<"N_Stop = "<<N_Stop<<", eff = "<<((double)N_Stop)/m_norm<<std::endl;
+
 	return 0;
 }
 
