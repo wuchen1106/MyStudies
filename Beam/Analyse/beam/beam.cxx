@@ -716,9 +716,9 @@ int main(int argc, char* argv[]){
 				//Hash
 				fMyRootInterface->set_ovalue("evt_num",evt_num);
 				fMyRootInterface->set_ovalue("run_num",run_num);
-				fMyRootInterface->set_ovalue("tid",-1);
+				fMyRootInterface->set_ovalue("tid",McTruth_tid[iMc]);
 				//for simulation
-				fMyRootInterface->set_ovalue("pid",11);
+				fMyRootInterface->set_ovalue("pid",McTruth_pid[iMc]);
 				fMyRootInterface->set_ovalue("x",McTruth_x[iMc]/mm);
 				fMyRootInterface->set_ovalue("y",McTruth_y[iMc]/mm);
 				fMyRootInterface->set_ovalue("z",McTruth_z[iMc]/mm);
@@ -727,16 +727,30 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->set_ovalue("pz",McTruth_pz[iMc]/MeV);
 				fMyRootInterface->set_ovalue("t",McTruth_time[iMc]/ns);
 				//original
-				fMyRootInterface->set_ovalue("ox",McTruth_x[iMc]/mm);
-				fMyRootInterface->set_ovalue("oy",McTruth_y[iMc]/mm);
-				fMyRootInterface->set_ovalue("oz",McTruth_z[iMc]/mm);
-				fMyRootInterface->set_ovalue("opx",McTruth_px[iMc]/MeV);
-				fMyRootInterface->set_ovalue("opy",McTruth_py[iMc]/MeV);
-				fMyRootInterface->set_ovalue("opz",McTruth_pz[iMc]/MeV);
-				fMyRootInterface->set_ovalue("ot",McTruth_time[iMc]/ns);
-				fMyRootInterface->set_ovalue("ppid",McTruth_ppid[iMc]);
-				fMyRootInterface->set_ovalue("process",McTruth_process[iMc]);
-				fMyRootInterface->set_ovalue("volume",McTruth_volume[iMc]);
+				if (McTruth_tid[iMc]!=1||m_OriginalFile=="NONE"){ // we don't need original file to get initial information for primary particles. e.g. PTACS
+					fMyRootInterface->set_ovalue("ox",McTruth_x[iMc]/mm);
+					fMyRootInterface->set_ovalue("oy",McTruth_y[iMc]/mm);
+					fMyRootInterface->set_ovalue("oz",McTruth_z[iMc]/mm);
+					fMyRootInterface->set_ovalue("opx",McTruth_px[iMc]/MeV);
+					fMyRootInterface->set_ovalue("opy",McTruth_py[iMc]/MeV);
+					fMyRootInterface->set_ovalue("opz",McTruth_pz[iMc]/MeV);
+					fMyRootInterface->set_ovalue("ot",McTruth_time[iMc]/ns);
+					fMyRootInterface->set_ovalue("ppid",McTruth_ppid[iMc]);
+					fMyRootInterface->set_ovalue("process",McTruth_process[iMc]);
+					fMyRootInterface->set_ovalue("volume",McTruth_volume[iMc]);
+				}
+				else{ // We should use initial information instead
+					fMyRootInterface->set_ovalue("ot",ini_ot/ns);
+					fMyRootInterface->set_ovalue("ox",ini_ox/mm);
+					fMyRootInterface->set_ovalue("oy",ini_oy/mm);
+					fMyRootInterface->set_ovalue("oz",ini_oz/mm);
+					fMyRootInterface->set_ovalue("opx",ini_opx/MeV);
+					fMyRootInterface->set_ovalue("opy",ini_opy/MeV);
+					fMyRootInterface->set_ovalue("opz",ini_opz/MeV);
+					fMyRootInterface->set_ovalue("ppid",ini_ppid);
+					fMyRootInterface->set_ovalue("process",ini_process);
+					fMyRootInterface->set_ovalue("volume",ini_volume);
+				}
 				//initial 
 				fMyRootInterface->set_ovalue("i_t",ini_ot/ns);
 				fMyRootInterface->set_ovalue("i_x",ini_ox/mm);
