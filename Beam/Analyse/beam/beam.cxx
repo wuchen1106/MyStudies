@@ -632,7 +632,7 @@ int main(int argc, char* argv[]){
 								}
 							}
 						}
-						if (Monitor_tid[i_mon]==prevtid&&i_MP==previ_MP){
+						if (Monitor_tid[i_mon]==prevtid&&i_MP==previ_MP&&(st_error||!Monitor_stopped[i_mon])){
 							if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 								std::cout<<prefix_ParticleInfoStart
 										 <<"  Occurred once!"

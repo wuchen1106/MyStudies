@@ -1,5 +1,6 @@
 GEOCARDROOT       = geometry_BPandMT1
-MAGFIELDCARDROOT  = MagField_B9_S003T
+#MAGFIELDCARDROOT  = MagField_B9_S003T
+MAGFIELDCARDROOT  = MagField_default
 GENFILEROOT       = gen_default
 OUTCARDROOT       = output_B9
 
