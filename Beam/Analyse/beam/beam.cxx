@@ -214,10 +214,10 @@ int main(int argc, char* argv[]){
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET Statistics###"<<std::endl;
 	//=>About Statistical
 	init_Ncut();
-	int N_INI = 0;
-	int N_CDC = 0;
-	int N_CDC_75 = 0;
-	int N_Stop = 0;
+	double N_INI = 0;
+	double N_CDC = 0;
+	double N_CDC_75 = 0;
+	double N_Stop = 0;
 
 	// for initial information
 	int ini_tid;
@@ -624,7 +624,7 @@ int main(int argc, char* argv[]){
 									std::cout<<prefix_ParticleInfoStart
 											 <<"  Stopped in \""<<Volume<<"\""
 											 <<std::endl;
-								N_Stop+=weight;
+								N_Stop += weight;
 								//std::cout<<"stop_pa->FIll("<<ini_pa/MeV<<","<<weight<<")"<<std::endl;
 								//std::cout<<std::endl;
 								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pa"+m_suffix)) != -1 ){
