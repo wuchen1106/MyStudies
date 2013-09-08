@@ -196,7 +196,7 @@ int main(int argc, char* argv[]){
 			if (name=="initial_pa"||name=="initial_y"){
 				fMyRootInterface->set_ylogForH1D(iHist,1);
 			}
-			if (name=="Target_time"||name=="int_time"||name=="initial_time"){
+			if (name=="intIni_time"||name=="initial_time"||name=="intIni_100_time"||name=="initial_100_time"){
 				fMyRootInterface->set_minyForH1D(iHist,1e-22);
 			}
 		}
