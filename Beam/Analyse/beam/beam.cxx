@@ -487,11 +487,15 @@ int main(int argc, char* argv[]){
 				||PDGEncoding==2&&ini_pid!=13&&ini_pid!=-211&&ini_pid!=11&&ini_pid<1e7 // only other particles
 				){
 				N_INI += weight0;
+				//std::cout<<"initial_pa->FIll("<<ini_pa/MeV<<","<<weight0<<")"<<std::endl;
 				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"pa"+m_suffix)) != -1 ){
 					fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight0);
 				}
 				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"y"+m_suffix)) != -1 ){
 					fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight0);
+				}
+				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_100_"+"time"+m_suffix)) != -1 ){
+					fMyRootInterface->get_TH1D(index_temp)->Fill((ini_t+gRandom->Gaus()*100*ns)/ns,weight0);
 				}
 				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"time"+m_suffix)) != -1 ){
 					fMyRootInterface->get_TH1D(index_temp)->Fill(ini_t/ns,weight0);
@@ -591,6 +595,9 @@ int main(int argc, char* argv[]){
 								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"time"+m_suffix)) != -1 ){
 									fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_t[i_mon]/ns,weight);
 								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_100_"+"time"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill((Monitor_t[i_mon]+gRandom->Gaus()*100*ns)/ns,weight);
+								}
 								if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+Volume+"_"+"paVSy"+m_suffix)) != -1 ){
 									fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight);
 								}
@@ -618,6 +625,8 @@ int main(int argc, char* argv[]){
 											 <<"  Stopped in \""<<Volume<<"\""
 											 <<std::endl;
 								N_Stop+=weight;
+								//std::cout<<"stop_pa->FIll("<<ini_pa/MeV<<","<<weight<<")"<<std::endl;
+								//std::cout<<std::endl;
 								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pa"+m_suffix)) != -1 ){
 									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight);
 								}
@@ -626,6 +635,9 @@ int main(int argc, char* argv[]){
 								}
 								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"time"+m_suffix)) != -1 ){
 									fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_stop_time[i_mon]/ns,weight);
+								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_100_"+"time"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill((Monitor_stop_time[i_mon]+gRandom->Gaus()*100*ns)/ns,weight);
 								}
 								if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_stop_"+"paVSy"+m_suffix)) != -1 ){
 									fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight);
@@ -774,10 +786,75 @@ int main(int argc, char* argv[]){
 		}
 
 	}/* end of loop in events*/
+	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_intCDC_"+"time"+m_suffix)) != -1 ){
+		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
+		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_CDCMonitor_"+"time"+m_suffix)) != -1 ){
+			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
+			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
+			for (int i = 1; i <= nbin; i++){
+				double i_time = h1d_temp->GetBinCenter(i);
+				int bin_l = h1d_temp2->FindBin(i_time);
+				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
+			}
+		}
+	}
+	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_intCDC_100_"+"time"+m_suffix)) != -1 ){
+		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
+		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_CDCMonitor_100_"+"time"+m_suffix)) != -1 ){
+			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
+			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
+			for (int i = 1; i <= nbin; i++){
+				double i_time = h1d_temp->GetBinCenter(i);
+				int bin_l = h1d_temp2->FindBin(i_time);
+				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
+			}
+		}
+	}
+	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_intIni_"+"time"+m_suffix)) != -1 ){
+		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
+		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"time"+m_suffix)) != -1 ){
+			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
+			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
+			for (int i = 1; i <= nbin; i++){
+				double i_time = h1d_temp->GetBinCenter(i);
+				int bin_l = h1d_temp2->FindBin(i_time);
+				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
+			}
+		}
+	}
+	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_intIni_100_"+"time"+m_suffix)) != -1 ){
+		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
+		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_100_"+"time"+m_suffix)) != -1 ){
+			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
+			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
+			for (int i = 1; i <= nbin; i++){
+				double i_time = h1d_temp->GetBinCenter(i);
+				int bin_l = h1d_temp2->FindBin(i_time);
+				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
+			}
+		}
+	}
 	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_int_"+"time"+m_suffix)) != -1 ){
 		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
 		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
 		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"time"+m_suffix)) != -1 ){
+			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
+			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
+			for (int i = 1; i <= nbin; i++){
+				double i_time = h1d_temp->GetBinCenter(i);
+				int bin_l = h1d_temp2->FindBin(i_time);
+				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
+			}
+		}
+	}
+	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_int_100_"+"time"+m_suffix)) != -1 ){
+		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
+		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_100_"+"time"+m_suffix)) != -1 ){
 			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
 			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
 			for (int i = 1; i <= nbin; i++){
