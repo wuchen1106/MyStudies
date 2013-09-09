@@ -630,6 +630,9 @@ int main(int argc, char* argv[]){
 								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pa"+m_suffix)) != -1 ){
 									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight);
 								}
+								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stoped_"+"y"+m_suffix)) != -1 ){
+									fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_y[i_mon]/mm,weight);
+								}
 								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"y"+m_suffix)) != -1 ){
 									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight);
 								}
