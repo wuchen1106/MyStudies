@@ -18,25 +18,36 @@ CXXFLAGS = -g -O2 -W -Wall
 
 # Special packages:
 INCDIR += -I$(MYCOMMONTOOLSROOT)/MyRootInterface
+LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
+LIBS += -lMyRootInterface
+
+INCDIR += -I$(MYG4SIMROOT)/include
+LIBDIR += -L$(MYG4SIMROOT)
+LIBS += -lg4simlib
 
 # Take root as an example. ( Root is a widely used package developed by CERN for analysing. )
 INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
 LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
 LIBS += -pthread -lm -ldl -rdynamic
-LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
-LIBS += -lMyRootInterface
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
 SIGNAL = signal
+HITRATE = hitRate
 
 # Object list for user defined packages
 OBJ = 
 
+.PHONY: all
+all: $(SIGNAL) $(HITRATE)
+
 $(SIGNAL): $(OBJ) $(SIGNAL).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(SIGNAL).cxx $(OBJ) -o $(SIGNAL)
+
+$(HITRATE): $(OBJ) $(HITRATE).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(HITRATE).cxx $(OBJ) -o $(HITRATE)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
@@ -45,6 +56,4 @@ $(SIGNAL): $(OBJ) $(SIGNAL).cxx
 clean:
 	$(RM) $(OBJ)
 	$(RM) $(SIGNAL)
-
-.PHONY: all
-all: $(RMCE)
+	$(RM) $(HITRATE)

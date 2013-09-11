@@ -17,6 +17,7 @@
 #include "TTree.h"
 #include "TChain.h"
 
+#include "CdcGeometryParameter.hh"
 #include "MyRootInterface.hxx"
 
 std::string m_workMode;
@@ -37,7 +38,9 @@ int writeModule = 10000;
 int UseWeight = 0;
 int PDGEncoding = 13;
 double m_norm = 0;
+double nProtonPerPulse = 2.5e12*1.751e-6;
 bool backup = false;
+std::string CdcFile = "";
 std::vector<int> Ncut;
 std::vector<std::string> Ncut_message;
 
@@ -55,7 +58,7 @@ int main(int argc, char* argv[]){
 	//*************read parameter**********
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hb:t:v:n:N:m:M:r:D:O:d:p:P:w:W:x:y:i:"))!=-1){
+	while((result=getopt(argc,argv,"hb:t:v:n:N:m:M:r:D:O:d:p:P:w:W:x:y:i:C:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -130,6 +133,10 @@ int main(int argc, char* argv[]){
 				UseWeight = atoi(optarg);
 				printf("UseWeight : %d\n",UseWeight);
 				break;
+			case 'C':
+				CdcFile = optarg;
+				printf("CdcFile: %s\n",CdcFile.c_str());
+				break;
 			case '?':
 				printf("Wrong option! optopt=%c, optarg=%s\n", optopt, optarg);
 				break;
@@ -165,6 +172,7 @@ int main(int argc, char* argv[]){
 	fMyRootInterface->set_OutputDir(m_OutputDir);
 	int index_temp = 0;
 	TH1D *h1d_temp=0;
+	TH2D *h2d_temp=0;
 	TH1D *h1d_temp2=0;
 	int bin_temp = 0;
 	std::string name_temp = "";
@@ -189,17 +197,8 @@ int main(int argc, char* argv[]){
 	}
 	int nHists = fMyRootInterface->get_TH1D_size();
 	for (int iHist = 0; iHist < nHists; iHist++ ){
-		fMyRootInterface->set_normForH1D(iHist,m_norm);
 		std::string name = fMyRootInterface->get_nameForH1D(iHist);
 		fMyRootInterface->set_nameForH1D(iHist,m_prefix+"_"+name+m_suffix);
-		if (PDGEncoding==-211){
-			if (name=="initial_pa"||name=="initial_y"){
-				fMyRootInterface->set_ylogForH1D(iHist,1);
-			}
-			if (name=="intIni_time"||name=="initial_time"||name=="intIni_100_time"||name=="initial_100_time"){
-				fMyRootInterface->set_minyForH1D(iHist,1e-22);
-			}
-		}
 	}
 	nHists = fMyRootInterface->get_TH2D_size();
 	for (int iHist = 0; iHist < nHists; iHist++ ){
@@ -214,10 +213,20 @@ int main(int argc, char* argv[]){
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET Statistics###"<<std::endl;
 	//=>About Statistical
 	init_Ncut();
-	double N_INI = 0;
-	double N_CDC = 0;
-	double N_CDC_75 = 0;
-	double N_Stop = 0;
+	bool CellHitCheck[5000];
+	double CellHitCount[5000][20];
+	for (int i = 0; i < 5000; i++){
+		for (int j = 0; j < 20; j++){
+			CellHitCount[i][j] = 0;
+		}
+	}
+	bool TriggerHitCheck[2];
+	double TriggerHitCount[2][20];
+	for (int i = 0; i < 2; i++){
+		for (int j = 0; j < 20; j++){
+			TriggerHitCount[i][j] = 0;
+		}
+	}
 
 	// for initial information
 	int ini_tid;
@@ -258,6 +267,8 @@ int main(int argc, char* argv[]){
 	std::vector<double> Monitor_x;
 	std::vector<double> Monitor_y;
 	std::vector<double> Monitor_z;
+	std::vector<double> Monitor_edep;
+	std::vector<int>    Monitor_volID;
 	std::vector<double> Monitor_px;
 	std::vector<double> Monitor_py;
 	std::vector<double> Monitor_pz;
@@ -292,16 +303,6 @@ int main(int argc, char* argv[]){
 
 	// for volumes
 	std::vector<std::string> Volumes;
-	Volumes.push_back("Target");
-	Volumes.push_back("EndPlate");
-	Volumes.push_back("InnerCylinder");
-	Volumes.push_back("OuterCylinder");
-	Volumes.push_back("BLTShell");
-	Volumes.push_back("BLTCollimator");
-	Volumes.push_back("PTACSMonitor");
-	Volumes.push_back("MT1Monitor");
-	Volumes.push_back("M13");
-	Volumes.push_back("CDCMonitor");
 	Volumes.push_back("CdcCell");
 	Volumes.push_back("Trigger");
 
@@ -370,7 +371,7 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("evt_num",evt_num);
 		fMyRootInterface->get_value("run_num",run_num);
 		McTruth_nTracks = 0; // in case there's no McTruth info
-		if (m_MonitorPlane=="McTruth"||m_MonitorPlane=="CDC"){
+		if (m_MonitorPlane=="McTruth"){
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Getting info for McTruth"<<std::endl;
 			fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
 			fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
@@ -393,84 +394,7 @@ int main(int argc, char* argv[]){
 		// find particles
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"###Getting information"<<std::endl;
 
-		bool filled = false;
-		if (m_MonitorPlane=="McTruth"){
-			for ( int iMc = 0; iMc < McTruth_nTracks; iMc++ ){
-				if (!PDGEncoding // all particles
-					||PDGEncoding==-1&&McTruth_pid[iMc]>=1e7 // only nuclears
-					||PDGEncoding==1&&McTruth_pid[iMc]<1e7 // only elementary particles
-					||McTruth_pid[iMc] == PDGEncoding){
-					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-						std::cout<<prefix_ParticleInfoStart
-								 <<"  Found Particle! iMc = "<<iMc
-								 <<", pid = "<<McTruth_pid[iMc]
-								 <<", tid = "<<McTruth_tid[iMc]
-								 <<", px = "<<McTruth_px[iMc]
-								 <<"MeV, py = "<<McTruth_py[iMc]
-								 <<"MeV, pz = "<<McTruth_pz[iMc]
-								 <<"MeV"
-								 <<std::endl;
-					double pa = sqrt(McTruth_px[iMc]*McTruth_px[iMc]+McTruth_py[iMc]*McTruth_py[iMc]+McTruth_pz[iMc]*McTruth_pz[iMc]);
-					double pt = sqrt(McTruth_px[iMc]*McTruth_px[iMc]+McTruth_py[iMc]*McTruth_py[iMc]);
-					double theta = acos(McTruth_pz[iMc]/pa);
-					double r  = sqrt(McTruth_x[iMc]*McTruth_x[iMc]+McTruth_y[iMc]*McTruth_y[iMc]);
-					if (pa<1.5*MeV&&r<410) continue;
-					if (McTruth_time[iMc]<0*ns||McTruth_time[iMc]>200*ns) continue;
-					if (McTruth_charge[iMc]==0) continue;
-					fMyRootInterface->set_ovalue("pid",McTruth_pid[iMc]);
-					fMyRootInterface->set_ovalue("x",McTruth_x[iMc]/mm);
-					fMyRootInterface->set_ovalue("y",McTruth_y[iMc]/mm);
-					fMyRootInterface->set_ovalue("z",McTruth_z[iMc]/mm);
-					fMyRootInterface->set_ovalue("px",McTruth_px[iMc]/MeV);
-					fMyRootInterface->set_ovalue("py",McTruth_py[iMc]/MeV);
-					fMyRootInterface->set_ovalue("pz",McTruth_pz[iMc]/MeV);
-					fMyRootInterface->set_ovalue("t",McTruth_time[iMc]/ns);
-					fMyRootInterface->set_ovalue("particle",McTruth_particleName[iMc]);
-					fMyRootInterface->set_ovalue("process",McTruth_process[iMc]);
-					fMyRootInterface->set_ovalue("volume",McTruth_volume[iMc]);
-					if (McTruth_pid[iMc]==11){
-						fMyRootInterface->Fill(m_prefix+"_"+"em_pa"+m_suffix,pa/MeV);
-						fMyRootInterface->Fill(m_prefix+"_"+"em_pt"+m_suffix,pt/MeV);
-						fMyRootInterface->Fill(m_prefix+"_"+"em_theta"+m_suffix,theta/rad);
-						fMyRootInterface->Fill(m_prefix+"_"+"em_time"+m_suffix,McTruth_time[iMc]/ns);
-						fMyRootInterface->Fill(m_prefix+"_"+"em_zr"+m_suffix,McTruth_z[iMc]/mm,r/mm);
-					}
-					else if (McTruth_pid[iMc]==-11){
-						fMyRootInterface->Fill(m_prefix+"_"+"ep_pa"+m_suffix,pa/MeV);
-						fMyRootInterface->Fill(m_prefix+"_"+"ep_pt"+m_suffix,pt/MeV);
-						fMyRootInterface->Fill(m_prefix+"_"+"ep_theta"+m_suffix,theta/rad);
-						fMyRootInterface->Fill(m_prefix+"_"+"ep_time"+m_suffix,McTruth_time[iMc]/ns);
-						fMyRootInterface->Fill(m_prefix+"_"+"ep_zr"+m_suffix,McTruth_z[iMc]/mm,r/mm);
-					}
-					else if (McTruth_pid[iMc]==13){
-						fMyRootInterface->Fill(m_prefix+"_"+"mum_pa"+m_suffix,pa/MeV);
-						fMyRootInterface->Fill(m_prefix+"_"+"mum_pt"+m_suffix,pt/MeV);
-						fMyRootInterface->Fill(m_prefix+"_"+"mum_theta"+m_suffix,theta/rad);
-						fMyRootInterface->Fill(m_prefix+"_"+"mum_time"+m_suffix,McTruth_time[iMc]/ns);
-						fMyRootInterface->Fill(m_prefix+"_"+"mum_zr"+m_suffix,McTruth_z[iMc]/mm,r/mm);
-					}
-					else if (McTruth_pid[iMc]==-211){
-						fMyRootInterface->Fill(m_prefix+"_"+"pim_pa"+m_suffix,pa/MeV);
-						fMyRootInterface->Fill(m_prefix+"_"+"pim_pt"+m_suffix,pt/MeV);
-						fMyRootInterface->Fill(m_prefix+"_"+"pim_theta"+m_suffix,theta/rad);
-						fMyRootInterface->Fill(m_prefix+"_"+"pim_time"+m_suffix,McTruth_time[iMc]/ns);
-						fMyRootInterface->Fill(m_prefix+"_"+"pim_zr"+m_suffix,McTruth_z[iMc]/mm,r/mm);
-					}
-					else if (McTruth_pid[iMc]==2212){
-						fMyRootInterface->Fill(m_prefix+"_"+"pp_pa"+m_suffix,pa/MeV);
-						fMyRootInterface->Fill(m_prefix+"_"+"pp_pt"+m_suffix,pt/MeV);
-						fMyRootInterface->Fill(m_prefix+"_"+"pp_theta"+m_suffix,theta/rad);
-						fMyRootInterface->Fill(m_prefix+"_"+"pp_time"+m_suffix,McTruth_time[iMc]/ns);
-						fMyRootInterface->Fill(m_prefix+"_"+"pp_zr"+m_suffix,McTruth_z[iMc]/mm,r/mm);
-					}
-					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Set oTrees"<<std::endl;
-					fMyRootInterface->Fill();
-					if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Filled"<<std::endl;
-					filled=true;
-				}
-			}
-		}
-		else{
+		if (m_MonitorPlane!="McTruth"){
 			// Get initial particle
 			double ini_pa = sqrt(ini_px*ini_px+ini_py*ini_py+ini_pz*ini_pz);
 			double ini_pt = sqrt(ini_px*ini_px+ini_py*ini_py);
@@ -482,30 +406,11 @@ int main(int argc, char* argv[]){
 				Beta = ini_pa/E;
 				Gamma = sqrt(1./(1.-Beta*Beta));
 			}
-			if (!PDGEncoding // all particles
-				||PDGEncoding==-1&&ini_pid>=1e7 // only nuclears
-				||PDGEncoding==1&&ini_pid<1e7 // only elementary particles
-				||ini_pid == PDGEncoding
-				||PDGEncoding==2&&ini_pid!=13&&ini_pid!=-211&&ini_pid!=11&&ini_pid<1e7 // only other particles
-				||PDGEncoding==-3 // only other particles
-				){
-				N_INI += weight0;
-				//std::cout<<"initial_pa->FIll("<<ini_pa/MeV<<","<<weight0<<")"<<std::endl;
-				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"pa"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight0);
-				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"y"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight0);
-				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_100_"+"time"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill((ini_t+gRandom->Gaus()*100*ns)/ns,weight0);
-				}
-				if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"time"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH1D(index_temp)->Fill(ini_t/ns,weight0);
-				}
-				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_initial_"+"paVSy"+m_suffix)) != -1 ){
-					fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight0);
-				}
+			for (int j = 0; j < 5000; j++){
+				CellHitCheck[j] = false;
+			}
+			for (int j = 0; j < 2; j++){
+				TriggerHitCheck[j] = false;
 			}
 			// Get Volume Monitor information if exist
 			int previ_MP = 0;
@@ -519,6 +424,10 @@ int main(int argc, char* argv[]){
 				fMyRootInterface->get_value(Volume+"_ppid",Monitor_ppid);
 				fMyRootInterface->get_value(Volume+"_oprocess",Monitor_oprocess);
 				fMyRootInterface->get_value(Volume+"_ovolName",Monitor_ovolName);
+				int edep_error = -1;
+				edep_error = fMyRootInterface->get_value(Volume+"_edep",Monitor_edep,GeV);
+				int volID_error = -1;
+				volID_error = fMyRootInterface->get_value(Volume+"_volID",Monitor_volID);
 				int ot_error = -1;
 				ot_error = fMyRootInterface->get_value(Volume+"_ot",Monitor_ot,ns);
 				fMyRootInterface->get_value(Volume+"_ox",Monitor_ox,cm);
@@ -593,75 +502,50 @@ int main(int argc, char* argv[]){
 								continue;
 							}
 						}
-						if (Volume=="CDCMonitor"){
-							if ((Monitor_tid[i_mon]!=prevtid||i_MP!=previ_MP)&&Monitor_pz[i_mon]>0){
-								if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-									std::cout<<prefix_ParticleInfoStart
-											 <<"  Hit \""<<Volume<<"\""
-											 <<std::endl;
-								N_CDC += weight;
-								if (mon_pa>75*MeV) N_CDC_75+=weight;
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"pa"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight);
-								}
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"y"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight);
-								}
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"time"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_t[i_mon]/ns,weight);
-								}
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_100_"+"time"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill((Monitor_t[i_mon]+gRandom->Gaus()*100*ns)/ns,weight);
-								}
-								if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+Volume+"_"+"paVSy"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight);
+						if (Volume=="CdcCell"){
+							if (volID_error){
+								std::cout<<"We need volID for CdcCell hits!"<<std::endl;
+								break;
+							}
+							int volID = Monitor_volID[i_mon];
+							if (!CellHitCheck[volID]){
+								if (edep_error||Monitor_edep[i_mon]>0.5*keV){
+									CellHitCheck[volID] = true;
+									for (int i_time = 0; i_time < 20; i_time++){
+										double down_time = i_time*100*ns;
+										double up_time = down_time + 100*ns;
+										if (Monitor_t[i_mon]>=down_time&&Monitor_t[i_mon]<up_time){
+											CellHitCount[volID][i_time]++;
+										}
+									}
 								}
 							}
 						}
-						if (Volume=="Target"){
-							if (Monitor_tid[i_mon]!=prevtid||i_MP!=previ_MP){
-								if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-									std::cout<<prefix_ParticleInfoStart
-											 <<"  Hit \""<<Volume<<"\""
-											 <<std::endl;
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"pa"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight);
-								}
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"y"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight);
-								}
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+Volume+"_"+"time"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_t[i_mon]/ns,weight);
-								}
+						if (Volume=="Trigger"){
+							int volID = 0;
+							if (volID_error){
+								if (Monitor_z[i_mon]<0)
+									volID=0;
+								else
+									volID=1;
 							}
-							if (!st_error&&Monitor_stopped[i_mon]){
-								if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-									std::cout<<prefix_ParticleInfoStart
-											 <<"  Stopped in \""<<Volume<<"\""
-											 <<std::endl;
-								N_Stop += weight;
-								//std::cout<<"stop_pa->FIll("<<ini_pa/MeV<<","<<weight<<")"<<std::endl;
-								//std::cout<<std::endl;
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"pa"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight);
-								}
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stoped_"+"y"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_y[i_mon]/mm,weight);
-								}
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"y"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight);
-								}
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"time"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill(Monitor_stop_time[i_mon]/ns,weight);
-								}
-								if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_100_"+"time"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH1D(index_temp)->Fill((Monitor_stop_time[i_mon]+gRandom->Gaus()*100*ns)/ns,weight);
-								}
-								if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_stop_"+"paVSy"+m_suffix)) != -1 ){
-									fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight);
+							else{
+								volID=Monitor_volID[i_mon];
+							}
+							if (!TriggerHitCheck[volID]){
+								if (edep_error||Monitor_edep[i_mon]>0.5*keV){
+									TriggerHitCheck[volID] = true;
+									for (int i_time = 0; i_time < 20; i_time++){
+										double down_time = i_time*100*ns;
+										double up_time = down_time + 100*ns;
+										if (Monitor_t[i_mon]>=down_time&&Monitor_t[i_mon]<up_time){
+											TriggerHitCount[volID][i_time]++;
+										}
+									}
 								}
 							}
 						}
+						/*
 						if (Monitor_tid[i_mon]==prevtid&&i_MP==previ_MP&&(st_error||!Monitor_stopped[i_mon])){
 							if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 								std::cout<<prefix_ParticleInfoStart
@@ -673,6 +557,7 @@ int main(int argc, char* argv[]){
 							std::cout<<prefix_ParticleInfoStart
 									 <<"  First hit!"
 									 <<std::endl;
+						*/
 						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 							std::cout<<prefix_ParticleInfoStart
 									 <<"  Filling ..."
@@ -738,64 +623,7 @@ int main(int argc, char* argv[]){
 					}
 				}
 			}
-			if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-				std::cout<<prefix_ParticleInfoStart
-						 <<"  There are "<<McTruth_nTracks<<" particles in McTruth!"
-						 <<std::endl;
-			for ( int iMc = 0; iMc < McTruth_nTracks; iMc++ ){
-				//Hash
-				fMyRootInterface->set_ovalue("evt_num",evt_num);
-				fMyRootInterface->set_ovalue("run_num",run_num);
-				fMyRootInterface->set_ovalue("tid",McTruth_tid[iMc]);
-				//for simulation
-				fMyRootInterface->set_ovalue("pid",McTruth_pid[iMc]);
-				fMyRootInterface->set_ovalue("x",McTruth_x[iMc]/mm);
-				fMyRootInterface->set_ovalue("y",McTruth_y[iMc]/mm);
-				fMyRootInterface->set_ovalue("z",McTruth_z[iMc]/mm);
-				fMyRootInterface->set_ovalue("px",McTruth_px[iMc]/MeV);
-				fMyRootInterface->set_ovalue("py",McTruth_py[iMc]/MeV);
-				fMyRootInterface->set_ovalue("pz",McTruth_pz[iMc]/MeV);
-				fMyRootInterface->set_ovalue("t",McTruth_time[iMc]/ns);
-				//original
-				if (McTruth_tid[iMc]!=1||m_OriginalFile=="NONE"){ // we don't need original file to get initial information for primary particles. e.g. PTACS
-					fMyRootInterface->set_ovalue("ox",McTruth_x[iMc]/mm);
-					fMyRootInterface->set_ovalue("oy",McTruth_y[iMc]/mm);
-					fMyRootInterface->set_ovalue("oz",McTruth_z[iMc]/mm);
-					fMyRootInterface->set_ovalue("opx",McTruth_px[iMc]/MeV);
-					fMyRootInterface->set_ovalue("opy",McTruth_py[iMc]/MeV);
-					fMyRootInterface->set_ovalue("opz",McTruth_pz[iMc]/MeV);
-					fMyRootInterface->set_ovalue("ot",McTruth_time[iMc]/ns);
-					fMyRootInterface->set_ovalue("ppid",McTruth_ppid[iMc]);
-					fMyRootInterface->set_ovalue("process",McTruth_process[iMc]);
-					fMyRootInterface->set_ovalue("volume",McTruth_volume[iMc]);
-				}
-				else{ // We should use initial information instead
-					fMyRootInterface->set_ovalue("ot",ini_ot/ns);
-					fMyRootInterface->set_ovalue("ox",ini_ox/mm);
-					fMyRootInterface->set_ovalue("oy",ini_oy/mm);
-					fMyRootInterface->set_ovalue("oz",ini_oz/mm);
-					fMyRootInterface->set_ovalue("opx",ini_opx/MeV);
-					fMyRootInterface->set_ovalue("opy",ini_opy/MeV);
-					fMyRootInterface->set_ovalue("opz",ini_opz/MeV);
-					fMyRootInterface->set_ovalue("ppid",ini_ppid);
-					fMyRootInterface->set_ovalue("process",ini_process);
-					fMyRootInterface->set_ovalue("volume",ini_volume);
-				}
-				//initial 
-				fMyRootInterface->set_ovalue("i_t",ini_ot/ns);
-				fMyRootInterface->set_ovalue("i_x",ini_ox/mm);
-				fMyRootInterface->set_ovalue("i_y",ini_oy/mm);
-				fMyRootInterface->set_ovalue("i_z",ini_oz/mm);
-				fMyRootInterface->set_ovalue("i_px",ini_opx/MeV);
-				fMyRootInterface->set_ovalue("i_py",ini_opy/MeV);
-				fMyRootInterface->set_ovalue("i_pz",ini_opz/MeV);
-				//auxiliary
-				fMyRootInterface->set_ovalue("weight",weight0);
-				fMyRootInterface->set_ovalue("cvolume","McTruth");
-				fMyRootInterface->Fill();
-			}
 		}
-		if (filled)	inc_Ncut("Got particles");
 
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 		if (iEvent%writeModule==0){
@@ -804,82 +632,94 @@ int main(int argc, char* argv[]){
 		}
 
 	}/* end of loop in events*/
-	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_intCDC_"+"time"+m_suffix)) != -1 ){
-		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
-		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_CDCMonitor_"+"time"+m_suffix)) != -1 ){
-			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
-			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
-			for (int i = 1; i <= nbin; i++){
-				double i_time = h1d_temp->GetBinCenter(i);
-				int bin_l = h1d_temp2->FindBin(i_time);
-				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
+	CdcGeometryParameter *pCdcGeometryParameter = new CdcGeometryParameter("cdc");
+	pCdcGeometryParameter->InitFromFile(CdcFile);
+	for (int i_time = 0; i_time < 20; i_time++){
+		double hitRate_layer[20];
+		for (int i_layer = 0; i_layer < 20; i_layer++){
+			hitRate_layer[i_layer] = 0;
+		}
+		buff.str("");
+		buff.clear();
+		buff<<m_prefix<<"_CdcHit2D_"<<i_time<<m_suffix;
+		if ((index_temp = fMyRootInterface->get_TH2D_index(buff.str())) != -1 ){
+			h2d_temp=fMyRootInterface->get_TH2D(index_temp);
+//			std::cout<<"h2d_temp = fMyRootInterface->get_TH2D("<<index_temp<<")"<<std::endl;
+			h2d_temp->Print();
+			for ( int i_vol = 0; i_vol < 5000; i_vol++){
+//				std::cout<<"CellHitCount["<<i_vol<<"]["<<i_time<<"] = "<<CellHitCount[i_vol][i_time]<<std::endl;
+				int layerId = 0;
+				int cellId = 0;
+				int error = pCdcGeometryParameter->get_layerIdcellId(i_vol,&layerId,&cellId);
+				if (!error){
+					double nHits = CellHitCount[i_vol][i_time];
+					double hitRate = nHits*nProtonPerPulse*1e4/m_norm; // kHz
+//					std::cout<<"  hitRate = "<<hitRate<<std::endl;
+					hitRate_layer[layerId]+=hitRate;
+//					std::cout<<"   hitRate_layer["<<layerId<<"] = "<<hitRate_layer[layerId]<<std::endl;
+					h2d_temp->SetBinContent(cellId+1,layerId+1,hitRate);
+//					std::cout<<buff.str()<<"->SetBinContent("<<cellId+1<<","<<layerId+1<<","<<hitRate<<")"<<std::endl;
+				}
+//				else{
+//					std::cout<<"Cannot find i_vol = "<<i_vol<<std::endl;
+//				}
 			}
 		}
-	}
-	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_intCDC_100_"+"time"+m_suffix)) != -1 ){
-		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
-		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_CDCMonitor_100_"+"time"+m_suffix)) != -1 ){
-			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
-			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
-			for (int i = 1; i <= nbin; i++){
-				double i_time = h1d_temp->GetBinCenter(i);
-				int bin_l = h1d_temp2->FindBin(i_time);
-				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
+		else{
+			std::cout<<"Cannot find "<<buff.str()<<"!!!"<<std::endl;
+		}
+		buff.str("");
+		buff.clear();
+		buff<<m_prefix<<"_CdcHit1D_"<<i_time<<m_suffix;
+		if ((index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
+			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+//			std::cout<<"h1d_temp = fMyRootInterface->get_TH1D("<<index_temp<<")"<<std::endl;
+			h1d_temp->Print();
+			for (int i_layer = 0; i_layer < 20; i_layer++){
+				double nCells = pCdcGeometryParameter->get_layer_cell_num(i_layer);
+				if (nCells){
+					h1d_temp->SetBinContent(i_layer+1,hitRate_layer[i_layer]/nCells);
+//					std::cout<<buff.str()<<"->SetBinContent("<<i_layer+1<<","<<hitRate_layer[i_layer]/nCells<<")"<<std::endl;
+				}
+//				else{
+//					std::cout<<"Cannot find i_layer = "<<i_layer<<std::endl;
+//				}
 			}
 		}
-	}
-	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_intIni_"+"time"+m_suffix)) != -1 ){
-		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
-		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_"+"time"+m_suffix)) != -1 ){
-			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
-			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
-			for (int i = 1; i <= nbin; i++){
-				double i_time = h1d_temp->GetBinCenter(i);
-				int bin_l = h1d_temp2->FindBin(i_time);
-				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
-			}
+		else{
+			std::cout<<"Cannot find "<<buff.str()<<"!!!"<<std::endl;
 		}
-	}
-	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_intIni_100_"+"time"+m_suffix)) != -1 ){
-		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
-		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_initial_100_"+"time"+m_suffix)) != -1 ){
-			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
-			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
-			for (int i = 1; i <= nbin; i++){
-				double i_time = h1d_temp->GetBinCenter(i);
-				int bin_l = h1d_temp2->FindBin(i_time);
-				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
-			}
+		buff.str("");
+		buff.clear();
+		buff<<m_prefix<<"_Trigger0Hit"<<m_suffix;
+		if ((index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
+			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+//			std::cout<<"h1d_temp = fMyRootInterface->get_TH1D("<<index_temp<<")"<<std::endl;
+			h1d_temp->Print();
+			double nHits = TriggerHitCount[0][i_time];
+			double hitRate = nHits*nProtonPerPulse*1e4/m_norm; // kHz
+//			std::cout<<"  hitRate = "<<hitRate<<std::endl;
+			h1d_temp->SetBinContent(i_time+1,hitRate);
+//			std::cout<<buff.str()<<"->SetBinContent("<<i_time+1<<","<<hitRate<<")"<<std::endl;
 		}
-	}
-	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_int_"+"time"+m_suffix)) != -1 ){
-		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
-		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_"+"time"+m_suffix)) != -1 ){
-			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
-			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
-			for (int i = 1; i <= nbin; i++){
-				double i_time = h1d_temp->GetBinCenter(i);
-				int bin_l = h1d_temp2->FindBin(i_time);
-				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
-			}
+		else{
+			std::cout<<"Cannot find "<<buff.str()<<"!!!"<<std::endl;
 		}
-	}
-	if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_int_100_"+"time"+m_suffix)) != -1 ){
-		h1d_temp=fMyRootInterface->get_TH1D(index_temp);
-		int nbin = fMyRootInterface->get_bin1ForH1D(index_temp);
-		if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_stop_100_"+"time"+m_suffix)) != -1 ){
-			h1d_temp2=fMyRootInterface->get_TH1D(index_temp);
-			double bin_r=fMyRootInterface->get_bin1ForH1D(index_temp);
-			for (int i = 1; i <= nbin; i++){
-				double i_time = h1d_temp->GetBinCenter(i);
-				int bin_l = h1d_temp2->FindBin(i_time);
-				h1d_temp->SetBinContent(i,h1d_temp2->Integral(bin_l,bin_r));
-			}
+		buff.str("");
+		buff.clear();
+		buff<<m_prefix<<"_Trigger1Hit"<<m_suffix;
+		if ((index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
+			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+//			std::cout<<"h1d_temp = fMyRootInterface->get_TH1D("<<index_temp<<")"<<std::endl;
+			h1d_temp->Print();
+			double nHits = TriggerHitCount[1][i_time];
+			double hitRate = nHits*nProtonPerPulse*1e4/m_norm; // kHz
+//			std::cout<<"  hitRate = "<<hitRate<<std::endl;
+			h1d_temp->SetBinContent(i_time+1,hitRate);
+//			std::cout<<buff.str()<<"->SetBinContent("<<i_time+1<<","<<hitRate<<")"<<std::endl;
+		}
+		else{
+			std::cout<<"Cannot find "<<buff.str()<<"!!!"<<std::endl;
 		}
 	}
 
@@ -898,11 +738,6 @@ int main(int argc, char* argv[]){
 	dump_Ncut();
 
 	fMyRootInterface->dump();
-
-	std::cout<<"N_INI = "<<N_INI<<", eff = "<<((double)N_INI)/m_norm<<std::endl;
-	std::cout<<"N_CDC = "<<N_CDC<<", eff = "<<((double)N_CDC)/m_norm<<std::endl;
-	std::cout<<"N_CDC_75 = "<<N_CDC_75<<", eff = "<<((double)N_CDC_75)/m_norm<<std::endl;
-	std::cout<<"N_Stop = "<<N_Stop<<", eff = "<<((double)N_Stop)/m_norm<<std::endl;
 
 	return 0;
 }
@@ -924,6 +759,7 @@ void init_args()
 	UseWeight = 0;
 	PDGEncoding = 13;
 	backup = false;
+	CdcFile = "CdcFile";
 }
 
 void print_usage(char* prog_name)

@@ -49,3 +49,4 @@ Beam/Analyse/bp_beam/bp
 RPC/Analyse/bp
 ph2e/Analyse/bm
 Beam/Analyse/BeamProfile/GetEntries
+Signal/Analyse/hitRate

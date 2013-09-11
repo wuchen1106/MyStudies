@@ -190,9 +190,11 @@ int main(int argc, char* argv[]){
 	}
 	CdcGeometryParameter *pCdcGeometryParameter = new CdcGeometryParameter("cdc");
 	pCdcGeometryParameter->InitFromFile(CdcFile);
-	for (int i = 0; i < n_tracksVSlayer.size(); i++ ){
+//	for (int i = 0; i < n_tracksVSlayer.size(); i++ ){
+	for (int i = 0; i < 0; i++ ){
 		int nCell = pCdcGeometryParameter->get_layer_cell_num(i);
-		double rate = (double)(n_tracksVSlayer[i])/nCell;
+		double rate = 0;
+//		double rate = (double)(n_tracksVSlayer[i])/nCell;
 		h_RATE->SetBinContent(i+1,rate);
 	}
 
