@@ -485,6 +485,7 @@ int main(int argc, char* argv[]){
 				||PDGEncoding==1&&ini_pid<1e7 // only elementary particles
 				||ini_pid == PDGEncoding
 				||PDGEncoding==2&&ini_pid!=13&&ini_pid!=-211&&ini_pid!=11&&ini_pid<1e7 // only other particles
+				||PDGEncoding==-3 // only other particles
 				){
 				N_INI += weight0;
 				//std::cout<<"initial_pa->FIll("<<ini_pa/MeV<<","<<weight0<<")"<<std::endl;
@@ -550,6 +551,7 @@ int main(int argc, char* argv[]){
 						||Monitor_pid[i_mon] == PDGEncoding
 						||PDGEncoding==2&&Monitor_pid[i_mon]!=13&&Monitor_pid[i_mon]!=-211&&Monitor_pid[i_mon]!=11&&Monitor_pid[i_mon]<1e7 // only other particles
 						||PDGEncoding==-2&&(!st_error&&Monitor_stopped[i_mon])&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211) // only stopped particles
+						||PDGEncoding==-3&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211||Monitor_pid[i_mon]!=11) // only other particles
 						){
 						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 							std::cout<<prefix_ParticleInfoStart
@@ -578,6 +580,17 @@ int main(int argc, char* argv[]){
 						double mon_py = Monitor_py[i_mon];
 						double mon_pz = Monitor_pz[i_mon];
 						double mon_pa = sqrt(mon_px*mon_px+mon_py*mon_py+mon_pz*mon_pz);
+						if (PDGEncoding==-3){
+							if (Monitor_pid[i_mon]==13){
+								if (mon_pa<75*MeV) continue;
+							}
+							else if (Monitor_pid[i_mon]==11){
+								if (mon_pa<100*MeV) continue;
+							}
+							else if (Monitor_pid[i_mon]!=-211){
+								continue;
+							}
+						}
 						if (Volume=="CDCMonitor"){
 							if ((Monitor_tid[i_mon]!=prevtid||i_MP!=previ_MP)&&Monitor_pz[i_mon]>0){
 								if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)

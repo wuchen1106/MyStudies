@@ -1,8 +1,7 @@
-GEOCARDROOT       = geometry_BPandMT1
-#MAGFIELDCARDROOT  = MagField_B9_S003T
-MAGFIELDCARDROOT  = MagField_default
+GEOCARDROOT       = geometry_cdc
+MAGFIELDCARDROOT  = MagField_A9_130731
 GENFILEROOT       = gen_default
-OUTCARDROOT       = output_B9
+OUTCARDROOT       = output_Cdc
 
 ##geometry preset
 #detector_configure
@@ -15,7 +14,7 @@ OUTCARDROOT       = output_B9
 #
 #verbose
 verbose_configure_setCut
-setCut_bp.mac
+setCut_A9.mac
 #
 ##output
 #output_configure
@@ -23,4 +22,4 @@ setCut_bp.mac
 #run
 run_configure
 1
-291363
+1
