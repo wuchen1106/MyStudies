@@ -347,6 +347,7 @@ int main(int argc, char* argv[]){
 		double v = TMath::Gaus(x,0,100,kTRUE);
 		hProtonPuls->SetBinContent(i,v);
 	}
+	double PulseInterval = 1751*ns;
 
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
@@ -523,13 +524,16 @@ int main(int argc, char* argv[]){
 							if (!CellHitCheck[volID]){
 								if (edep_error||Monitor_edep[i_mon]>0.5*keV){
 									CellHitCheck[volID] = true;
-									for (int i_time = 0; i_time < 20; i_time++){
-										double down_time = i_time*100*ns;
-										double up_time = down_time + 100*ns;
-										int binDown = hProtonPuls->FindBin((down_time-Monitor_t[i_mon])/ns);
-										int binUp = hProtonPuls->FindBin((up_time-Monitor_t[i_mon])/ns);
-										double W = hProtonPuls->Integral(binDown,binUp);
-										CellHitCount[volID][i_time]+=W*weight0;
+									for (int i = 0; i <= 5; i++){
+										double shifttime = (i-2)*PulseInterval;
+										for (int i_time = 0; i_time < 20; i_time++){
+											double down_time = i_time*100*ns;
+											double up_time = down_time + 100*ns;
+											int binDown = hProtonPuls->FindBin((shifttime+down_time-Monitor_t[i_mon])/ns);
+											int binUp = hProtonPuls->FindBin((shifttime+up_time-Monitor_t[i_mon])/ns);
+											double W = hProtonPuls->Integral(binDown,binUp);
+											CellHitCount[volID][i_time]+=W*weight0;
+										}
 									}
 								}
 							}

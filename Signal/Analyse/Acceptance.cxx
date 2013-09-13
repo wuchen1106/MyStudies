@@ -335,6 +335,7 @@ int main(int argc, char* argv[]){
 		double v = TMath::Gaus(x,0,100,kTRUE);
 		hProtonPuls->SetBinContent(i,v);
 	}
+	double PulseInterval = 1751*ns;
 
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
@@ -636,10 +637,13 @@ int main(int argc, char* argv[]){
 		if (firstHitTime>TriggerHitTime) continue;
 		inc_Ncut("CellHit first");
 		// Time window probability
-		int binDown = hProtonPuls->FindBin(TimeWindowDown-firstHitTime);
-		int binUp = hProtonPuls->FindBin(TimeWindowUp-firstHitTime);
-		double W = hProtonPuls->Integral(binDown,binUp);
-		NPassed += W*weight0;
+		for (int i = 0; i <= 5; i++){
+			double shifttime = (i-2)*PulseInterval;
+			int binDown = hProtonPuls->FindBin((shifttime+TimeWindowDown-firstHitTime)/ns);
+			int binUp = hProtonPuls->FindBin((shifttime+TimeWindowUp-firstHitTime)/ns);
+			double W = hProtonPuls->Integral(binDown,binUp);
+			NPassed += W*weight0;
+		}
 		fMyRootInterface->set_ovalue("weight",NPassed);
 		fMyRootInterface->Fill();
 		// #####################CUT###########################
