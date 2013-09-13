@@ -16,6 +16,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TChain.h"
+#include "TMath.h"
 
 #include "CdcGeometryParameter.hh"
 #include "MyRootInterface.hxx"
@@ -336,6 +337,17 @@ int main(int argc, char* argv[]){
 	}
 	//**********************************************************************************************
 
+	CdcGeometryParameter *pCdcGeometryParameter = new CdcGeometryParameter("cdc");
+	pCdcGeometryParameter->InitFromFile(CdcFile);
+	double TimeWindowDown = 800*ns;
+	double TimeWindowUp = 1200*ns;
+	TH1D *hProtonPuls = new TH1D("ProtonPuls","ProtonPuls",40000,-20000,20000);
+	for (int i = 1; i<=40000; i++){
+		double x = hProtonPuls->GetBinCenter(i);
+		double v = TMath::Gaus(x,0,100,kTRUE);
+		hProtonPuls->SetBinContent(i,v);
+	}
+
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In DO THE DIRTY WORK###"<<std::endl;
@@ -514,9 +526,10 @@ int main(int argc, char* argv[]){
 									for (int i_time = 0; i_time < 20; i_time++){
 										double down_time = i_time*100*ns;
 										double up_time = down_time + 100*ns;
-										if (Monitor_t[i_mon]>=down_time&&Monitor_t[i_mon]<up_time){
-											CellHitCount[volID][i_time]++;
-										}
+										int binDown = hProtonPuls->FindBin((down_time-Monitor_t[i_mon])/ns);
+										int binUp = hProtonPuls->FindBin((up_time-Monitor_t[i_mon])/ns);
+										double W = hProtonPuls->Integral(binDown,binUp);
+										CellHitCount[volID][i_time]+=W*weight0;
 									}
 								}
 							}
@@ -538,9 +551,10 @@ int main(int argc, char* argv[]){
 									for (int i_time = 0; i_time < 20; i_time++){
 										double down_time = i_time*100*ns;
 										double up_time = down_time + 100*ns;
-										if (Monitor_t[i_mon]>=down_time&&Monitor_t[i_mon]<up_time){
-											TriggerHitCount[volID][i_time]++;
-										}
+										int binDown = hProtonPuls->FindBin((down_time-Monitor_t[i_mon])/ns);
+										int binUp = hProtonPuls->FindBin((up_time-Monitor_t[i_mon])/ns);
+										double W = hProtonPuls->Integral(binDown,binUp);
+										TriggerHitCount[volID][i_time]+=W*weight0;
 									}
 								}
 							}
@@ -632,8 +646,6 @@ int main(int argc, char* argv[]){
 		}
 
 	}/* end of loop in events*/
-	CdcGeometryParameter *pCdcGeometryParameter = new CdcGeometryParameter("cdc");
-	pCdcGeometryParameter->InitFromFile(CdcFile);
 	for (int i_time = 0; i_time < 20; i_time++){
 		double hitRate_layer[20];
 		for (int i_layer = 0; i_layer < 20; i_layer++){
