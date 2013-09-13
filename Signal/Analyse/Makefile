@@ -36,18 +36,22 @@ LIBS += -pthread -lm -ldl -rdynamic
 # Change this name to your program which contains the main function
 SIGNAL = signal
 HITRATE = hitRate
+ACCEPTANCE = Acceptance
 
 # Object list for user defined packages
 OBJ = 
 
 .PHONY: all
-all: $(SIGNAL) $(HITRATE)
+all: $(SIGNAL) $(HITRATE) $(ACCEPTANCE)
 
 $(SIGNAL): $(OBJ) $(SIGNAL).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(SIGNAL).cxx $(OBJ) -o $(SIGNAL)
 
 $(HITRATE): $(OBJ) $(HITRATE).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(HITRATE).cxx $(OBJ) -o $(HITRATE)
+
+$(ACCEPTANCE): $(OBJ) $(ACCEPTANCE).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(ACCEPTANCE).cxx $(OBJ) -o $(ACCEPTANCE)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
