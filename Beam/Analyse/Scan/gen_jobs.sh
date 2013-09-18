@@ -21,9 +21,10 @@ do
 			elif [ $pid = 1 ]; then pname="EP";
 			fi
 #			for app in "A" "H" "cg4"
-			for app in "A"
+			for app in "H"
 			do
-				for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
+#				for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
+				for phys in "original"
 				do
 					pbsfile=result/$monitorname.$pname.$Target.$app.$phys.boss
 					echo "#!/bin/bash" > $pbsfile
@@ -43,9 +44,13 @@ do
 						echo "((time $PWD/Scan -f $file -m $monitor -i $pid) > $PWD/$pbsfile""log ) 2> $PWD/$pbsfile""err" >> $pbsfile
 					elif [ $app == "H" ]; then
 						if [ $Target == "g60cm6mm_200gcm3" ]; then
-							file="$MYDATA/other/Hayashi/test0722_2mmGra1.2cm_60cm.root"
+#							file="$MYDATA/other/Hayashi/test0722_2mmGra1.2cm_60cm.root"
+							file="DUMMY"
 						elif [ $Target == "t16cm6mm" ]; then
-							file="$MYDATA/other/Hayashi/test0622_Tun16cm.root"
+#							file="$MYDATA/other/Hayashi/test0622_Tun16cm.root"
+							file="DUMMY"
+						elif [ $Target == "g40cm10mm" ]; then
+							file="$MYDATA/other/Hayashi/test_gra2cm_40cm.root"
 						else
 							file="DUMMY"
 						fi

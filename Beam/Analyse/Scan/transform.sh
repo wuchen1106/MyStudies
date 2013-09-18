@@ -12,7 +12,7 @@ do_trans="
 	echo -n \"                ox\" >> \$out
 	echo -n \"                oy\" >> \$out
 	echo -n \"                oz\" >> \$out
-	echo    \"               pid\" >> \$out
+	echo    \"             pid/I\" >> \$out
 	gawk 'BEGIN{FS=\"*\";RS=\"\n\";prev=-1;cur=-1;perv1=-1;cur1=-1;};{cur1=\$2;cur=\$4;if ((prev!=cur||prev1!=cur1)&&NF==16&&cur1!=\"    Row   \") print \$5 \$6 \$7 \$8 \$9 \$10 \$11 \$12 \$13 \$14 \$15;prev = cur;prev1=cur1;}' \$in >> \$out
 	num_line=\`gawk '{i++};END{print i}' \$out\`
 	if [ \$num_line -gt 1 ]; then
@@ -25,13 +25,12 @@ echo Hello
 for Target in "g40cm10mm"
 do
 #	for app in "A" "H" "cg4"
-	for app in "cg4"
+	for app in "H"
 	do
 #		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
-		for phys in "QB"
+		for phys in "original"
 		do
-#			for monitor in "MT1" "PTACS";
-			for monitor in "PTACS";
+			for monitor in "MT1" "PTACS"
 			do
 #				for pname in "em" "mum" "n0" "pim"
 				for pname in "all"
@@ -54,7 +53,7 @@ do
 							echo $logfile does not exist
 						fi
 					elif [ $monitor = "MT1" ]; then
-						for DF in "03T" "018T"
+						for DF in "0018T"
 						do
 							name=$monitor.$pname.$Target.$DF.$app.$phys
 							logfile=$PWD/result/$name.bosslog

@@ -509,7 +509,7 @@ int main(int argc, char* argv[]){
 			}
 			// Get Volume Monitor information if exist
 			int previ_MP = 0;
-			for ( int i_MP = 0; i_MP<Volumes.size(); previ_MP=i_MP,i_MP++ ){
+			for ( int i_MP = 0; i_MP<Volumes.size(); i_MP++ ){
 				std::string Volume=Volumes[i_MP];
 				Monitor_nHits = 0; // in case this volume does not exist
 				fMyRootInterface->get_value(Volume+"_nHits",Monitor_nHits);
@@ -538,7 +538,7 @@ int main(int argc, char* argv[]){
 				st_error = fMyRootInterface->get_value(Volume+"_stopped",Monitor_stopped);
 				fMyRootInterface->get_value(Volume+"_stop_time",Monitor_stop_time,ns);
 				int prevtid = -1;
-				for ( int i_mon = 0; i_mon < Monitor_nHits; prevtid=Monitor_tid[i_mon], i_mon++ ){
+				for ( int i_mon = 0; i_mon < Monitor_nHits; prevtid=Monitor_tid[i_mon],previ_MP=i_MP, i_mon++ ){
 					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 						std::cout<<prefix_ParticleInfoStart
 								 <<"  got "<<Monitor_pid[i_mon]<<" in "<<Volume<<"!"

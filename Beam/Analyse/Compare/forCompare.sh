@@ -38,10 +38,10 @@ do_id(){
 		LOG=1
 	fi
 	if [ -e $rootfile ]; then
-#		legendName=$phys
+		legendName=$phys
 #		legendName=$Target
 #		legendName=$app
-		legendName=$DF
+#		legendName=$DF
 		echo "" >> $input
 		echo "#   TYPE    | Directory                                                            | histoName" >> $input
 		echo "    refTH1D | "$rootfile" | "$histo >> $input
@@ -69,16 +69,16 @@ var_process(){
 	ny=$8
 	iFile=0
 #	for app in "A" "H" "cg4" "g4s"
-	for app in "g4s"
+	for app in "g4s" "H" "cg4" "A"
 	do
 #		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
-		for phys in "QBH"
+		for phys in "QBH" "original" "QB49201" "QB49302" "modified" "QB"
 		do
 #			for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
 			for Target in "g40cm10mm"
 			do
 				if [ $monitor = "MT1" ]; then
-					for DF in "003T" "0018TS"
+					for DF in "0018TS" "0018T"
 					do
 						do_id $iFile $var $vartype $monitor $pname $app $phys $Target $DF
 						iFile=$?
@@ -99,7 +99,7 @@ input="input"
 for Target in "g40cm10mm"
 do
 #	for monitor in "PTACS" "MT1"
-	for monitor in "MT1"
+	for monitor in "MT1" "PTACS"
 	do
 		for pname in "em" "mum" "pim" "n0"
 		do

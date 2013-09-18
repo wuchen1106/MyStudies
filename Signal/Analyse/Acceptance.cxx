@@ -332,8 +332,14 @@ int main(int argc, char* argv[]){
 	TH1D *hProtonPuls = new TH1D("ProtonPuls","ProtonPuls",40000,-20000,20000);
 	for (int i = 1; i<=40000; i++){
 		double x = hProtonPuls->GetBinCenter(i);
-		double v = TMath::Gaus(x,0,100,kTRUE);
-		hProtonPuls->SetBinContent(i,v);
+//		double v = TMath::Gaus(x,0,100,kTRUE);
+//		hProtonPuls->SetBinContent(i,v);
+		if (x>0&&x<1751){
+			hProtonPuls->SetBinContent(i,1./1751);
+		}
+		else{
+			hProtonPuls->SetBinContent(i,0);
+		}
 	}
 	double PulseInterval = 1751*ns;
 
@@ -438,9 +444,12 @@ int main(int argc, char* argv[]){
 				volID_error = fMyRootInterface->get_value(Volume+"_volID",Monitor_volID);
 				int ot_error = -1;
 				ot_error = fMyRootInterface->get_value(Volume+"_ot",Monitor_ot,ns);
-				fMyRootInterface->get_value(Volume+"_ox",Monitor_ox,cm);
-				fMyRootInterface->get_value(Volume+"_oy",Monitor_oy,cm);
-				fMyRootInterface->get_value(Volume+"_oz",Monitor_oz,cm);
+				int ox_error = -1;
+				ox_error = fMyRootInterface->get_value(Volume+"_ox",Monitor_ox,cm);
+				int oy_error = -1;
+				oy_error = fMyRootInterface->get_value(Volume+"_oy",Monitor_oy,cm);
+				int oz_error = -1;
+				oz_error = fMyRootInterface->get_value(Volume+"_oz",Monitor_oz,cm);
 				fMyRootInterface->get_value(Volume+"_opx",Monitor_opx,GeV);
 				fMyRootInterface->get_value(Volume+"_opy",Monitor_opy,GeV);
 				fMyRootInterface->get_value(Volume+"_opz",Monitor_opz,GeV);
@@ -508,7 +517,7 @@ int main(int argc, char* argv[]){
 										std::cout<<"!!!How??? volID = "<<volID<<std::endl;
 										return -2;
 									}
-									if (mon_pa>80*MeV){
+									if (mon_pa>0*MeV){
 										if (CDCtid!=-1){
 											if (CDCtid!=Monitor_tid[i_mon])
 												std::cout<<"More than one energetic track!!! iEvent = "<<iEvent<<std::endl;
@@ -526,13 +535,20 @@ int main(int argc, char* argv[]){
 											fMyRootInterface->set_ovalue("run_num",run_num);
 											fMyRootInterface->set_ovalue("tid",Monitor_tid[i_mon]);
 											// for simulation
-											fMyRootInterface->set_ovalue("pid",Monitor_pid[i_mon]);
-											fMyRootInterface->set_ovalue("x" ,Monitor_x[i_mon]/mm);
-											fMyRootInterface->set_ovalue("y" ,Monitor_y[i_mon]/mm);
-											fMyRootInterface->set_ovalue("z" ,Monitor_z[i_mon]/mm);
-											fMyRootInterface->set_ovalue("px",Monitor_px[i_mon]/MeV);
-											fMyRootInterface->set_ovalue("py",Monitor_py[i_mon]/MeV);
-											fMyRootInterface->set_ovalue("pz",Monitor_pz[i_mon]/MeV);
+											//fMyRootInterface->set_ovalue("pid",Monitor_pid[i_mon]);
+											//fMyRootInterface->set_ovalue("x" ,Monitor_x[i_mon]/mm);
+											//fMyRootInterface->set_ovalue("y" ,Monitor_y[i_mon]/mm);
+											//fMyRootInterface->set_ovalue("z" ,Monitor_z[i_mon]/mm);
+											//fMyRootInterface->set_ovalue("px",Monitor_px[i_mon]/MeV);
+											//fMyRootInterface->set_ovalue("py",Monitor_py[i_mon]/MeV);
+											//fMyRootInterface->set_ovalue("pz",Monitor_pz[i_mon]/MeV);
+											fMyRootInterface->set_ovalue("pid",ini_pid);
+											fMyRootInterface->set_ovalue("x" ,ini_x/mm);
+											fMyRootInterface->set_ovalue("y" ,ini_y/mm);
+											fMyRootInterface->set_ovalue("z" ,ini_z/mm);
+											fMyRootInterface->set_ovalue("px",ini_px/MeV);
+											fMyRootInterface->set_ovalue("py",ini_py/MeV);
+											fMyRootInterface->set_ovalue("pz",ini_pz/MeV);
 											if (!st_error&&Monitor_stopped[i_mon]){
 												fMyRootInterface->set_ovalue("t" ,Monitor_stop_time[i_mon]/ns);
 											}
@@ -545,9 +561,9 @@ int main(int argc, char* argv[]){
 													fMyRootInterface->set_ovalue("ot",Monitor_ot[i_mon]/ns);
 												else 
 													fMyRootInterface->set_ovalue("ot",Monitor_t[i_mon]/ns); 
-												fMyRootInterface->set_ovalue("ox",Monitor_ox[i_mon]/mm);
-												fMyRootInterface->set_ovalue("oy",Monitor_oy[i_mon]/mm);
-												fMyRootInterface->set_ovalue("oz",Monitor_oz[i_mon]/mm);
+												if (!ox_error) fMyRootInterface->set_ovalue("ox",Monitor_ox[i_mon]/mm);
+												if (!oy_error) fMyRootInterface->set_ovalue("oy",Monitor_oy[i_mon]/mm);
+												if (!oz_error) fMyRootInterface->set_ovalue("oz",Monitor_oz[i_mon]/mm);
 												fMyRootInterface->set_ovalue("opx",Monitor_opx[i_mon]/MeV);
 												fMyRootInterface->set_ovalue("opy",Monitor_opy[i_mon]/MeV);
 												fMyRootInterface->set_ovalue("opz",Monitor_opz[i_mon]/MeV);
@@ -615,36 +631,39 @@ int main(int argc, char* argv[]){
 			if (verbose >= Verbose_EventInfo || iEvent%writeModule == 0) std::cout<<prefix_EventInfoStart<<"Written file"<<std::endl;
 		}
 		// #####################CUT###########################
+		// No hit?
+		if (firstHitLayerID==-1) continue;
+		inc_Ncut("At least one CDC hit");
 		// first hit is the first layer?
-		if (firstHitLayerID!=0) continue;
-		inc_Ncut("first hit is the first layer");
-		// hit first 6 layers?
-		bool hitfirst6layers = true;
-		for ( int i = 0; i < 6; i++ ){
-			if (!first6layershit[i]){
-				hitfirst6layers = false;
-				break;
-			}
-		}
-		if (!hitfirst6layers) continue;
-		inc_Ncut("hit first 6 layers");
-		// Trigger hit
-		if (TriggerHitTrackID==-1) continue;
-		inc_Ncut("Trigger hit");
-		// CellHit first
-		if (TriggerHitTrackID!=CDCtid)
-			std::cout<<"!!! TriggerHitTrackID = "<<TriggerHitTrackID<<", CDCtid = "<<CDCtid<<std::endl;
-		if (firstHitTime>TriggerHitTime) continue;
-		inc_Ncut("CellHit first");
-		// Time window probability
-		for (int i = 0; i <= 5; i++){
-			double shifttime = (i-2)*PulseInterval;
-			int binDown = hProtonPuls->FindBin((shifttime+TimeWindowDown-firstHitTime)/ns);
-			int binUp = hProtonPuls->FindBin((shifttime+TimeWindowUp-firstHitTime)/ns);
-			double W = hProtonPuls->Integral(binDown,binUp);
-			NPassed += W*weight0;
-		}
-		fMyRootInterface->set_ovalue("weight",NPassed);
+		//if (firstHitLayerID!=0) continue;
+		//inc_Ncut("first hit is the first layer");
+		//// hit first 6 layers?
+		//bool hitfirst6layers = true;
+		//for ( int i = 0; i < 6; i++ ){
+		//	if (!first6layershit[i]){
+		//		hitfirst6layers = false;
+		//		break;
+		//	}
+		//}
+		//if (!hitfirst6layers) continue;
+		//inc_Ncut("hit first 6 layers");
+		//// Trigger hit
+		//if (TriggerHitTrackID==-1) continue;
+		//inc_Ncut("Trigger hit");
+		//// CellHit first
+		//if (TriggerHitTrackID!=CDCtid)
+		//	std::cout<<"!!! TriggerHitTrackID = "<<TriggerHitTrackID<<", CDCtid = "<<CDCtid<<std::endl;
+		//if (firstHitTime>TriggerHitTime) continue;
+		//inc_Ncut("CellHit first");
+		//// Time window probability
+		//for (int i = 0; i <= 5; i++){
+		//	double shifttime = (i-2)*PulseInterval;
+		//	int binDown = hProtonPuls->FindBin((shifttime+TimeWindowDown-firstHitTime)/ns);
+		//	int binUp = hProtonPuls->FindBin((shifttime+TimeWindowUp-firstHitTime)/ns);
+		//	double W = hProtonPuls->Integral(binDown,binUp);
+		//	NPassed += W*weight0;
+		//}
+		//fMyRootInterface->set_ovalue("weight",NPassed);
 		fMyRootInterface->Fill();
 		// #####################CUT###########################
 	}/* end of loop in events*/

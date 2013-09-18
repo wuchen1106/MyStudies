@@ -1,21 +1,21 @@
 #!/bin/bash
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
-for Target in "g50cm10mm"
+for Target in "g40cm10mm"
 do
 #	for app in "A" "H" "cg4" "g4s"
-	for app in "g4s"
+	for app in "H"
 	do
 #		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
-		for phys in "QBH"
+		for phys in "original"
 		do
 #			for monitor in "MT1" "PTACS"
-			for monitor in "MT1"
+			for monitor in "PTACS"
 			do
 				nEvents=1000000
 				if [ $app == "A" ]; then
 					nEvents=1000000
 				elif [ $app == "H" ]; then
-					nEvents=100000
+					nEvents=1000000
 				elif [ $app == "cg4" ]; then
 					if [ $phys == "modified" ]; then
 						if [ $Target = "g60cm6mm200gcm3" -o $Target = "t16cm6mm" ]; then
@@ -63,7 +63,7 @@ do
 					fi
 					if [ $monitor = "MT1" ]; then
 #						for DF in "003TS" "0018TS" "0018T" "003T"
-						for DF in "003TS"
+						for DF in "0018T"
 						do
 							prefix=$monitor"_"$pname
 							suffix="_"$Target"_"$DF"_"$app"_"$phys
