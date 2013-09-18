@@ -102,3 +102,8 @@
 	# auxiliary
 	oTBranch | cvolume                      | 2         | 0
 	oTBranch | weight                       | 0         | 0
+	# more
+	oTBranch | firstLayer                   | 1         | 0
+	oTBranch | sixLayers                    | 1         | 0
+	oTBranch | hitTrigger                   | 1         | 0
+	oTBranch | cdcFirst                     | 1         | 0

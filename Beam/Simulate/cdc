@@ -1,4 +1,4 @@
-GEOCARDROOT       = geometry_cdc
+GEOCARDROOT       = geometry_CDC
 MAGFIELDCARDROOT  = MagField_A9_130731
 GENFILEROOT       = gen_default
 OUTCARDROOT       = output_Cdc

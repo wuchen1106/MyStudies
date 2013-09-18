@@ -615,9 +615,12 @@ int main(int argc, char* argv[]){
 			if (verbose >= Verbose_EventInfo || iEvent%writeModule == 0) std::cout<<prefix_EventInfoStart<<"Written file"<<std::endl;
 		}
 		// #####################CUT###########################
+		if (CDCtid == -1) continue; // no CDC hit
 		// first hit is the first layer?
-		if (firstHitLayerID!=0) continue;
-		inc_Ncut("first hit is the first layer");
+		if (firstHitLayerID!=0)
+			fMyRootInterface->set_ovalue("firstLayer",0);
+		else
+			fMyRootInterface->set_ovalue("firstLayer",1);
 		// hit first 6 layers?
 		bool hitfirst6layers = true;
 		for ( int i = 0; i < 6; i++ ){
@@ -626,16 +629,22 @@ int main(int argc, char* argv[]){
 				break;
 			}
 		}
-		if (!hitfirst6layers) continue;
-		inc_Ncut("hit first 6 layers");
+		if (!hitfirst6layers)
+			fMyRootInterface->set_ovalue("sixLayers",0);
+		else
+			fMyRootInterface->set_ovalue("sixLayers",1);
 		// Trigger hit
-		if (TriggerHitTrackID==-1) continue;
-		inc_Ncut("Trigger hit");
+		if (TriggerHitTrackID==-1)
+			fMyRootInterface->set_ovalue("hitTrigger",0);
+		else
+			fMyRootInterface->set_ovalue("hitTrigger",1);
 		// CellHit first
 		if (TriggerHitTrackID!=CDCtid)
 			std::cout<<"!!! TriggerHitTrackID = "<<TriggerHitTrackID<<", CDCtid = "<<CDCtid<<std::endl;
-		if (firstHitTime>TriggerHitTime) continue;
-		inc_Ncut("CellHit first");
+		if (firstHitTime>TriggerHitTime)
+			fMyRootInterface->set_ovalue("cdcFirst",0);
+		else
+			fMyRootInterface->set_ovalue("cdcFirst",1);
 		// Time window probability
 		for (int i = 0; i <= 5; i++){
 			double shifttime = (i-2)*PulseInterval;
