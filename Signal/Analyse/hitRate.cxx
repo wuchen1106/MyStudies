@@ -342,9 +342,13 @@ int main(int argc, char* argv[]){
 	TH1D *hProtonPuls = new TH1D("ProtonPuls","ProtonPuls",40000,-20000,20000);
 	for (int i = 1; i<=40000; i++){
 		double x = hProtonPuls->GetBinCenter(i);
-		double v = TMath::Gaus(x,0,1,kTRUE);
+//		double v = TMath::Gaus(x,0,1,kTRUE);
+		double v = 0;
+		if (x<100&&x>-100) v = 1;
 		hProtonPuls->SetBinContent(i,v);
 	}
+	hProtonPuls->Scale(1/hProtonPuls->Integral());
+//	double PulseInterval = 1170*ns;
 	double PulseInterval = 1751*ns;
 
 	//=======================================================================================================
@@ -704,12 +708,13 @@ int main(int argc, char* argv[]){
 		}
 		buff.str("");
 		buff.clear();
-		buff<<m_prefix<<"_CellInnerHit"<<m_suffix;
+		buff<<m_prefix<<"_CellLayer0"<<m_suffix;
 		if ((index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
 			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
 //			std::cout<<"h1d_temp = fMyRootInterface->get_TH1D("<<index_temp<<")"<<std::endl;
 //			std::cout<<"  hitRate = "<<hitRate<<std::endl;
-			h1d_temp->SetBinContent(i_time+1,hitRate_layer[0]);
+			double nCells = pCdcGeometryParameter->get_layer_cell_num(0);
+			h1d_temp->SetBinContent(i_time+1,hitRate_layer[0]/nCells);
 //			std::cout<<buff.str()<<"->SetBinContent("<<i_time+1<<","<<hitRate<<")"<<std::endl;
 		}
 		else{
@@ -717,12 +722,41 @@ int main(int argc, char* argv[]){
 		}
 		buff.str("");
 		buff.clear();
-		buff<<m_prefix<<"_CellOuterHit"<<m_suffix;
+		buff<<m_prefix<<"_CellLayer1"<<m_suffix;
 		if ((index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
 			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
 //			std::cout<<"h1d_temp = fMyRootInterface->get_TH1D("<<index_temp<<")"<<std::endl;
 //			std::cout<<"  hitRate = "<<hitRate<<std::endl;
-			h1d_temp->SetBinContent(i_time+1,hitRate_layer[nLayers-1]);
+			double nCells = pCdcGeometryParameter->get_layer_cell_num(1);
+			h1d_temp->SetBinContent(i_time+1,hitRate_layer[1]/nCells);
+//			std::cout<<buff.str()<<"->SetBinContent("<<i_time+1<<","<<hitRate<<")"<<std::endl;
+		}
+		else{
+			std::cout<<"Cannot find "<<buff.str()<<"!!!"<<std::endl;
+		}
+		buff.str("");
+		buff.clear();
+		buff<<m_prefix<<"_CellLayer1m"<<m_suffix;
+		if ((index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
+			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+//			std::cout<<"h1d_temp = fMyRootInterface->get_TH1D("<<index_temp<<")"<<std::endl;
+//			std::cout<<"  hitRate = "<<hitRate<<std::endl;
+			double nCells = pCdcGeometryParameter->get_layer_cell_num(nLayers-2);
+			h1d_temp->SetBinContent(i_time+1,hitRate_layer[nLayers-2]/nCells);
+//			std::cout<<buff.str()<<"->SetBinContent("<<i_time+1<<","<<hitRate<<")"<<std::endl;
+		}
+		else{
+			std::cout<<"Cannot find "<<buff.str()<<"!!!"<<std::endl;
+		}
+		buff.str("");
+		buff.clear();
+		buff<<m_prefix<<"_CellLayer0m"<<m_suffix;
+		if ((index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
+			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+//			std::cout<<"h1d_temp = fMyRootInterface->get_TH1D("<<index_temp<<")"<<std::endl;
+//			std::cout<<"  hitRate = "<<hitRate<<std::endl;
+			double nCells = pCdcGeometryParameter->get_layer_cell_num(nLayers-1);
+			h1d_temp->SetBinContent(i_time+1,hitRate_layer[nLayers-1]/nCells);
 //			std::cout<<buff.str()<<"->SetBinContent("<<i_time+1<<","<<hitRate<<")"<<std::endl;
 		}
 		else{
