@@ -39,7 +39,9 @@ int writeModule = 10000;
 int UseWeight = 0;
 int PDGEncoding = 13;
 double m_norm = 0;
-double nProtonPerPulse = 2.5e12*1.751e-6;
+//double PulseInterval = 1170*ns;
+double PulseInterval = 1751*ns;
+double nProtonPerPulse = 2.5e12/s*PulseInterval;
 bool backup = false;
 std::string CdcFile = "";
 std::vector<int> Ncut;
@@ -348,8 +350,6 @@ int main(int argc, char* argv[]){
 		hProtonPuls->SetBinContent(i,v);
 	}
 	hProtonPuls->Scale(1/hProtonPuls->Integral());
-//	double PulseInterval = 1170*ns;
-	double PulseInterval = 1751*ns;
 
 	//=======================================================================================================
 	//************DO THE DIRTY WORK*******************
