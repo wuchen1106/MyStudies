@@ -344,7 +344,7 @@ int main(int argc, char* argv[]){
 		double x = hProtonPuls->GetBinCenter(i);
 //		double v = TMath::Gaus(x,0,1,kTRUE);
 		double v = 0;
-		if (x<100&&x>-100) v = 1;
+		if (x<50&&x>-50) v = 1;
 		hProtonPuls->SetBinContent(i,v);
 	}
 	hProtonPuls->Scale(1/hProtonPuls->Integral());
