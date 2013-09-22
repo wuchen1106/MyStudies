@@ -38,9 +38,9 @@ do_id(){
 		LOG=1
 	fi
 	if [ -e $rootfile ]; then
-		legendName=$phys
+#		legendName=$phys
 #		legendName=$Target
-#		legendName=$app
+		legendName=$app
 #		legendName=$DF
 		echo "" >> $input
 		echo "#   TYPE    | Directory                                                            | histoName" >> $input

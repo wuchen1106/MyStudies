@@ -62,6 +62,7 @@
 	oTBranch | process                      | 2         | 0
 	oTBranch | volume                       | 2         | 0
 	# initial particle
+	oTBranch | i_pid                        | 1         | 0
 	oTBranch | i_t                          | 0         | 0
 	oTBranch | i_x                          | 0         | 0
 	oTBranch | i_y                          | 0         | 0
@@ -69,6 +70,14 @@
 	oTBranch | i_px                         | 0         | 0
 	oTBranch | i_py                         | 0         | 0
 	oTBranch | i_pz                         | 0         | 0
+	oTBranch | ii_pid                       | 1         | 0
+	oTBranch | ii_t                         | 0         | 0
+	oTBranch | ii_x                         | 0         | 0
+	oTBranch | ii_y                         | 0         | 0
+	oTBranch | ii_z                         | 0         | 0
+	oTBranch | ii_px                        | 0         | 0
+	oTBranch | ii_py                        | 0         | 0
+	oTBranch | ii_pz                        | 0         | 0
 	# auxiliary
 	oTBranch | cvolume                      | 2         | 0
 	oTBranch | weight                       | 0         | 0

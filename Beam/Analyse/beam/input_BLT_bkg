@@ -41,10 +41,11 @@
 
 #	TYPE     | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2
+	# Hash
 	oTBranch | evt_num                      | 1         | 0
 	oTBranch | run_num                      | 1         | 0
 	oTBranch | tid                          | 1         | 0
-	oTBranch | ppid                         | 1         | 0
+	# for simulation
 	oTBranch | pid                          | 1         | 0
 	oTBranch | x                            | 0         | 0
 	oTBranch | y                            | 0         | 0
@@ -53,14 +54,26 @@
 	oTBranch | py                           | 0         | 0
 	oTBranch | pz                           | 0         | 0
 	oTBranch | t                            | 0         | 0
-	oTBranch | ot                           | 0         | 0
+	# original
 	oTBranch | ox                           | 0         | 0
 	oTBranch | oy                           | 0         | 0
 	oTBranch | oz                           | 0         | 0
 	oTBranch | opx                          | 0         | 0
 	oTBranch | opy                          | 0         | 0
 	oTBranch | opz                          | 0         | 0
+	oTBranch | ot                           | 0         | 0
+	oTBranch | ppid                         | 1         | 0
 	oTBranch | process                      | 2         | 0
 	oTBranch | volume                       | 2         | 0
+	# initial particle
+	oTBranch | i_pid                        | 1         | 0
+	oTBranch | i_t                          | 0         | 0
+	oTBranch | i_x                          | 0         | 0
+	oTBranch | i_y                          | 0         | 0
+	oTBranch | i_z                          | 0         | 0
+	oTBranch | i_px                         | 0         | 0
+	oTBranch | i_py                         | 0         | 0
+	oTBranch | i_pz                         | 0         | 0
+	# auxiliary
 	oTBranch | cvolume                      | 2         | 0
 	oTBranch | weight                       | 0         | 0

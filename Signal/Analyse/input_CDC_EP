@@ -104,13 +104,13 @@
 #	oTBranch | weight                       | 0         | 0
 
 #	TYPE    | NAME                  | TITLE                                     | xAxisName    | yAxisName              | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption|UseLeg|legendName              |legx1|legy1|legx2|legy2|npadx|npady
-	TH1D    | Trigger0Hit           | Hit Rate in Trigger Counter               | Time Interval| Hit Rate (kHz)         |  20 | 0     | 2000  | 0    |   1   |632| 1 | 0  | 0  | 3    | 0  |          |  1   | UpStream Trigger       | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
-	TH1D    | Trigger1Hit           | Hit Rate in Trigger Counter               | Time Interval| Hit Rate (kHz)         |  20 | 0     | 2000  | 0    |   1   |600| 0 | 0  | 0  | 3    | 0  |          |  1   | DownStream Trigger     | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | Trigger0Hit           | Hit Rate in Trigger Counter               | Time Interval| Hit Rate (kHz)         | 100 | 0     | 2000  | 0    |   1   |632| 1 | 0  | 0  | 3    | 0  |          |  1   | UpStream Trigger       | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | Trigger1Hit           | Hit Rate in Trigger Counter               | Time Interval| Hit Rate (kHz)         | 100 | 0     | 2000  | 0    |   1   |600| 0 | 0  | 0  | 3    | 0  |          |  1   | DownStream Trigger     | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
 
-	TH1D    | CellLayer0            | Hit Rate in CDC Chamber                   | Time Interval| Hit Rate per Cell (kHz)|  20 | 0     | 2000  | 0    |   1   |632| 3 | 0  | 1  | 3    | 0  |          |  1   | Innermost Layer        | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
-	TH1D    | CellLayer1            | Hit Rate in CDC Chamber                   | Time Interval| Hit Rate per Cell (kHz)|  20 | 0     | 2000  | 0    |   1   |800| 0 | 0  | 1  | 3    | 0  |          |  1   | Second Innermost Layer | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
-	TH1D    | CellLayer0m           | Hit Rate in CDC Chamber                   | Time Interval| Hit Rate per Cell (kHz)|  20 | 0     | 2000  | 0    |   1   |880| 0 | 0  | 1  | 3    | 0  |          |  1   | Second Outmost Layer   | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
-	TH1D    | CellLayer1m           | Hit Rate in CDC Chamber                   | Time Interval| Hit Rate per Cell (kHz)|  20 | 0     | 2000  | 0    |   1   |600| 0 | 0  | 1  | 3    | 0  |          |  1   | Outmost Layer          | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CellLayer0            | Hit Rate in CDC Chamber                   | Time Interval| Hit Rate per Cell (kHz)| 100 | 0     | 2000  | 0    |   1   |632| 3 | 0  | 1  | 3    | 0  |          |  1   | Innermost Layer        | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CellLayer1            | Hit Rate in CDC Chamber                   | Time Interval| Hit Rate per Cell (kHz)| 100 | 0     | 2000  | 0    |   1   |800| 0 | 0  | 1  | 3    | 0  |          |  1   | Second Innermost Layer | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CellLayer1m           | Hit Rate in CDC Chamber                   | Time Interval| Hit Rate per Cell (kHz)| 100 | 0     | 2000  | 0    |   1   |880| 0 | 0  | 1  | 3    | 0  |          |  1   | Second Outmost Layer   | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
+	TH1D    | CellLayer0m           | Hit Rate in CDC Chamber                   | Time Interval| Hit Rate per Cell (kHz)| 100 | 0     | 2000  | 0    |   1   |600| 0 | 0  | 1  | 3    | 0  |          |  1   | Outmost Layer          | 0.8 | 0.8 | 1.0 | 1.0 |  1  |  1
 
 	TH1D    | CdcHit1D_0            | Hit Rate from 0 ns to 100 ns              | Layer ID     | Hit Rate per Cell (kHz)|  18 | 0     | 18    | 0    |   1   | 1 | 0 | 0  | 0  | 3    | 0  | 
 	TH1D    | CdcHit1D_1            | Hit Rate from 100 ns to 200 ns            | Layer ID     | Hit Rate per Cell (kHz)|  18 | 0     | 18    | 0    |   1   | 1 | 0 | 0  | 0  | 3    | 0  | 

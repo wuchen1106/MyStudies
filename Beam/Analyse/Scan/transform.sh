@@ -28,9 +28,9 @@ do
 	for app in "H"
 	do
 #		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
-		for phys in "original"
+		for phys in "QB"
 		do
-			for monitor in "MT1" "PTACS"
+			for monitor in "MT1"
 			do
 #				for pname in "em" "mum" "n0" "pim"
 				for pname in "all"
