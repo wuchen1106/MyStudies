@@ -221,6 +221,7 @@ int main(int argc, char* argv[]){
 
 	// for initial information
 	int ini_tid;
+	int ini_ini_pid;
 	int ini_pid;
 	int ini_ppid = 0;
 	double ini_t;
@@ -237,6 +238,13 @@ int main(int argc, char* argv[]){
 	double ini_opx;
 	double ini_opy;
 	double ini_opz;
+	double ini_ini_t;
+	double ini_ini_x;
+	double ini_ini_y;
+	double ini_ini_z;
+	double ini_ini_px;
+	double ini_ini_py;
+	double ini_ini_pz;
 	std::string *p_process = 0;
 	std::string *p_volume = 0;
 	std::string ini_process = "NONE";
@@ -311,6 +319,7 @@ int main(int argc, char* argv[]){
 	if (m_OriginalFile!="NONE"){ // we need original file to get original information for primary particles. e.g. MT1 & A9
 		m_TChain->Add(m_OriginalFile.c_str());
 		m_OriginalNum = m_TChain->GetEntries();
+		m_TChain->SetBranchAddress("i_pid",&ini_ini_pid);
 		m_TChain->SetBranchAddress("t",&ini_t);
 		m_TChain->SetBranchAddress("x",&ini_x);
 		m_TChain->SetBranchAddress("y",&ini_y);
@@ -325,6 +334,13 @@ int main(int argc, char* argv[]){
 		m_TChain->SetBranchAddress("opx",&ini_opx);
 		m_TChain->SetBranchAddress("opy",&ini_opy);
 		m_TChain->SetBranchAddress("opz",&ini_opz);
+		m_TChain->SetBranchAddress("i_t",&ini_ini_t);
+		m_TChain->SetBranchAddress("i_x",&ini_ini_x);
+		m_TChain->SetBranchAddress("i_y",&ini_ini_y);
+		m_TChain->SetBranchAddress("i_z",&ini_ini_z);
+		m_TChain->SetBranchAddress("i_px",&ini_ini_px);
+		m_TChain->SetBranchAddress("i_py",&ini_ini_py);
+		m_TChain->SetBranchAddress("i_pz",&ini_ini_pz);
 		m_TChain->SetBranchAddress("pid",&ini_pid);
 		m_TChain->SetBranchAddress("tid",&ini_tid);
 		m_TChain->SetBranchAddress("ppid",&ini_ppid);
@@ -344,6 +360,13 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->GetEntry(iEvent);
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Got entries"<<std::endl;
 
+		ini_ini_pid = 0;
+		ini_ini_x = 0;
+		ini_ini_y = 0;
+		ini_ini_z = 0;
+		ini_ini_px = 0;
+		ini_ini_py = 0;
+		ini_ini_pz = 0;
 		if (m_OriginalFile!="NONE"){ // we need original file to get original information for primary particles. e.g. MT1 & A9
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"m_TChain->GetEntry("<<iEvent%m_OriginalNum<<")"<<std::endl;
 			m_TChain->GetEntry(iEvent%m_OriginalNum);
@@ -724,6 +747,8 @@ int main(int argc, char* argv[]){
 							fMyRootInterface->set_ovalue("volume",ini_volume);
 						}
 						// initial
+						fMyRootInterface->set_ovalue("ii_pid",ini_ini_pid);
+						fMyRootInterface->set_ovalue("i_pid",ini_pid);
 						fMyRootInterface->set_ovalue("i_t",ini_t/ns);
 						fMyRootInterface->set_ovalue("i_x",ini_x/mm);
 						fMyRootInterface->set_ovalue("i_y",ini_y/mm);
@@ -731,6 +756,13 @@ int main(int argc, char* argv[]){
 						fMyRootInterface->set_ovalue("i_px",ini_px/MeV);
 						fMyRootInterface->set_ovalue("i_py",ini_py/MeV);
 						fMyRootInterface->set_ovalue("i_pz",ini_pz/MeV);
+						fMyRootInterface->set_ovalue("ii_t",ini_ini_t/ns);
+						fMyRootInterface->set_ovalue("ii_x",ini_ini_x/mm);
+						fMyRootInterface->set_ovalue("ii_y",ini_ini_y/mm);
+						fMyRootInterface->set_ovalue("ii_z",ini_ini_z/mm);
+						fMyRootInterface->set_ovalue("ii_px",ini_ini_px/MeV);
+						fMyRootInterface->set_ovalue("ii_py",ini_ini_py/MeV);
+						fMyRootInterface->set_ovalue("ii_pz",ini_ini_pz/MeV);
 						// auxiliary
 						fMyRootInterface->set_ovalue("weight",weight);
 						fMyRootInterface->set_ovalue("cvolume",Volume);
@@ -782,13 +814,22 @@ int main(int argc, char* argv[]){
 					fMyRootInterface->set_ovalue("volume",ini_volume);
 				}
 				//initial 
-				fMyRootInterface->set_ovalue("i_t",ini_ot/ns);
-				fMyRootInterface->set_ovalue("i_x",ini_ox/mm);
-				fMyRootInterface->set_ovalue("i_y",ini_oy/mm);
-				fMyRootInterface->set_ovalue("i_z",ini_oz/mm);
-				fMyRootInterface->set_ovalue("i_px",ini_opx/MeV);
-				fMyRootInterface->set_ovalue("i_py",ini_opy/MeV);
-				fMyRootInterface->set_ovalue("i_pz",ini_opz/MeV);
+				fMyRootInterface->set_ovalue("ii_pid",ini_ini_pid);
+				fMyRootInterface->set_ovalue("i_pid",ini_pid);
+				fMyRootInterface->set_ovalue("i_t",ini_t/ns);
+				fMyRootInterface->set_ovalue("i_x",ini_x/mm);
+				fMyRootInterface->set_ovalue("i_y",ini_y/mm);
+				fMyRootInterface->set_ovalue("i_z",ini_z/mm);
+				fMyRootInterface->set_ovalue("i_px",ini_px/MeV);
+				fMyRootInterface->set_ovalue("i_py",ini_py/MeV);
+				fMyRootInterface->set_ovalue("i_pz",ini_pz/MeV);
+				fMyRootInterface->set_ovalue("ii_t",ini_ini_t/ns);
+				fMyRootInterface->set_ovalue("ii_x",ini_ini_x/mm);
+				fMyRootInterface->set_ovalue("ii_y",ini_ini_y/mm);
+				fMyRootInterface->set_ovalue("ii_z",ini_ini_z/mm);
+				fMyRootInterface->set_ovalue("ii_px",ini_ini_px/MeV);
+				fMyRootInterface->set_ovalue("ii_py",ini_ini_py/MeV);
+				fMyRootInterface->set_ovalue("ii_pz",ini_ini_pz/MeV);
 				//auxiliary
 				fMyRootInterface->set_ovalue("weight",weight0);
 				fMyRootInterface->set_ovalue("cvolume","McTruth");

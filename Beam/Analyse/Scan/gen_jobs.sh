@@ -24,7 +24,7 @@ do
 			for app in "H"
 			do
 #				for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
-				for phys in "original"
+				for phys in "QB"
 				do
 					pbsfile=result/$monitorname.$pname.$Target.$app.$phys.boss
 					echo "#!/bin/bash" > $pbsfile
@@ -50,7 +50,7 @@ do
 #							file="$MYDATA/other/Hayashi/test0622_Tun16cm.root"
 							file="DUMMY"
 						elif [ $Target == "g40cm10mm" ]; then
-							file="$MYDATA/other/Hayashi/test_gra2cm_40cm.root"
+							file="$MYDATA/other/Hayashi/test_gra2cm_40cm_2.root"
 						else
 							file="DUMMY"
 						fi
