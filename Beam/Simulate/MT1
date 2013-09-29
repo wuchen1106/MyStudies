@@ -15,7 +15,7 @@ OUTCARDROOT       = output_B9
 #
 #verbose
 verbose_configure_setCut
-setCut_bp.mac
+setCut_be.mac
 #
 ##output
 #output_configure
@@ -23,4 +23,4 @@ setCut_bp.mac
 #run
 run_configure
 1
-291363
+118810
