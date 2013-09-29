@@ -30,7 +30,7 @@ do
 #		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
 		for phys in "QB"
 		do
-			for monitor in "MT1"
+			for monitor in "MT1" "PTACS"
 			do
 #				for pname in "em" "mum" "n0" "pim"
 				for pname in "all"

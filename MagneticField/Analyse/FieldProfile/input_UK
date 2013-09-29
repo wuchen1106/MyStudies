@@ -10,9 +10,9 @@
 #	cg4_110812
 #	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/110812/defaultFieldMap.dat.root
 #	cg4_110812_devided
-	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/110812/arc_1.map.root
-	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/110812/seg_1.map.root
-	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/110812/seg_2.map.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/110812/arc_1.map.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/110812/seg_1.map.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/110812/seg_2.map.root
 
 #	cg4_111026
 #	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/111026/defaultFieldMap.dat.root
@@ -41,6 +41,9 @@
 #	cg4_130117
 #	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/130117/Phase1Field.dat.root
 
+#	g4s_003T
+	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/UK_130117/Phase1Field_MIX_003T.dat.root
+
 #	TYPE    | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2
 	TBranch | x                            | 0         | 0
@@ -51,9 +54,9 @@
 	TBranch | bz                           | 0         | 0
 
 #	TYPE    | NAME            | TITLE              | xAxisName    | yAxisName     | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm |DrawOption
-	TH1D    | bx              | B_{x}              | z(mm)        | B_{x}(tesla)  |2000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
-	TH1D    | by              | B^{y}              | z(mm)        | B_{y}(tesla)  |2000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
-	TH1D    | bz              | B^{z}              | z(mm)        | B_{z}(tesla)  |2000 | -1000 | 13200 | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | bx              | B_{x}              | z(m)         | B_{x}(tesla)  |2000 | -1    | 14    | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | by              | B^{y}              | z(m)         | B_{y}(tesla)  |2000 | -1    | 14    | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
+	TH1D    | bz              | B^{z}              | z(m)         | B_{z}(tesla)  |2000 | -1    | 14    | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
 	TH1D    | MT1_by_x        | B_{y} in MT1       | x(mm)        | B_{y}(tesla)  |100  | -400  | 400   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
 	TH1D    | MT1_by_y        | B_{y} in MT1       | y(mm)        | B_{y}(tesla)  |100  | -400  | 400   | 0    | 0     | 1 | 0 | 0  | 0  | 8    | 0   | P 
 
@@ -64,21 +67,24 @@
 	TH2D    | bx_zy           | B_{x}              | z(mm)             | y(mm)         |1400 | -1000 | 13200 | 130 | -650 | 650
 	TH2D    | by_zy           | B_{y}              | z(mm)             | y(mm)         |1400 | -1000 | 13200 | 130 | -650 | 650
 	TH2D    | bz_zy           | B_{z}              | z(mm)             | y(mm)         |1400 | -1000 | 13200 | 130 | -650 | 650
-	TH2D    | PTS_bx          | B_{x} in PTS       | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
-	TH2D    | PTS_by          | B_{y} in PTS       | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PTS_br          | B_{r} in PTS       | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PTS_bp          | B_{#phi} in PTS    | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
 	TH2D    | PTS_bz          | B_{z} in PTS       | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
-	TH2D    | PCS1_bx         | B_{x} in PCS1      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
-	TH2D    | PCS1_by         | B_{y} in PCS1      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PCS1_br         | B_{r} in PCS1      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PCS1_bp         | B_{#phi} in PCS1   | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
 	TH2D    | PCS1_bz         | B_{z} in PCS1      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
-	TH2D    | PCS2_bx         | B_{x} in PCS2      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
-	TH2D    | PCS2_by         | B_{y} in PCS2      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PCS2_br         | B_{r} in PCS2      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
+	TH2D    | PCS2_bp         | B_{#phi} in PCS2   | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
 	TH2D    | PCS2_bz         | B_{z} in PCS2      | x(mm)             | y(mm)         |130  | -650  | 650   | 130 | -650 | 650
-	TH2D    | BP_bx           | B_{x} in BP        | x(mm)             | y(mm)         |80   | -400  | 400   | 80  | -400 | 400
-	TH2D    | BP_by           | B_{y} in BP        | x(mm)             | y(mm)         |80   | -400  | 400   | 80  | -400 | 400
+	TH2D    | BP_br           | B_{r} in BP        | x(mm)             | y(mm)         |80   | -400  | 400   | 80  | -400 | 400
+	TH2D    | BP_bp           | B_{#phi} in BP     | x(mm)             | y(mm)         |80   | -400  | 400   | 80  | -400 | 400
 	TH2D    | BP_bz           | B_{z} in BP        | x(mm)             | y(mm)         |80   | -400  | 400   | 80  | -400 | 400
-	TH2D    | MT1_bx          | B_{x} in MT1       | x(mm)             | y(mm)         |50   | -400  | 400   | 50  | -400 | 400
-	TH2D    | MT1_by          | B_{y} in MT1       | x(mm)             | y(mm)         |50   | -400  | 400   | 50  | -400 | 400
+	TH2D    | MT1_br          | B_{r} in MT1       | x(mm)             | y(mm)         |50   | -400  | 400   | 50  | -400 | 400
+	TH2D    | MT1_bp          | B_{#phi} in MT1    | x(mm)             | y(mm)         |50   | -400  | 400   | 50  | -400 | 400
 	TH2D    | MT1_bz          | B_{z} in MT1       | x(mm)             | y(mm)         |50   | -400  | 400   | 50  | -400 | 400
-	TH2D    | BLT_bx          | B_{x} in BLT       | x(mm)             | y(mm)         |110  | -550  | 550   | 110 | -550 | 550
-	TH2D    | BLT_by          | B_{y} in BLT       | x(mm)             | y(mm)         |110  | -550  | 550   | 110 | -550 | 550
+	TH2D    | BLT_br          | B_{r} in BLT       | x(mm)             | y(mm)         |110  | -550  | 550   | 110 | -550 | 550
+	TH2D    | BLT_bp          | B_{#phi} in BLT    | x(mm)             | y(mm)         |110  | -550  | 550   | 110 | -550 | 550
 	TH2D    | BLT_bz          | B_{z} in BLT       | x(mm)             | y(mm)         |110  | -550  | 550   | 110 | -550 | 550
+	TH2D    | U2S_br          | B_{r} in U2S       | x(mm)             | y(mm)         |110  | -550  | 550   | 110 | -550 | 550
+	TH2D    | U2S_bp          | B_{#phi} in U2S    | x(mm)             | y(mm)         |110  | -550  | 550   | 110 | -550 | 550
+	TH2D    | U2S_bz          | B_{z} in U2S       | x(mm)             | y(mm)         |110  | -550  | 550   | 110 | -550 | 550

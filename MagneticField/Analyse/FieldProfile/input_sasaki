@@ -16,9 +16,12 @@
 #	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130720/DetectorArea130720fm.txt.root
 
 #	130731
-	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130731/TS3Area130731fm.txt.root
-	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130731/BESSArea130731fm.txt.root
-	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130731/DetArea130731fm.txt.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130731/TS3Area130731fm.txt.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130731/BESSArea130731fm.txt.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130731/DetArea130731fm.txt.root
+
+#	130927
+	oFILE   | /home/chen/MyWorkArea/MyStudies/MagneticField/result/sasaki_130927/Bmap130927fm.txt.root
 
 #	TYPE    | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2

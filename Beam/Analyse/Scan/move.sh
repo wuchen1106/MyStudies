@@ -17,7 +17,7 @@ do
 							mv $rootfile $rootdir
 						fi
 					elif [ $monitor = "MT1" ]; then
-						for DF in "03T" "018T"
+						for DF in "003T" "0018T"
 						do
 							rootfile="result/"$monitor".$pname."$Target"."$DF"."$app"."$phys".root"
 							rootdir="../../result/$Target"

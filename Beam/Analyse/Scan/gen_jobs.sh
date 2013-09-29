@@ -26,7 +26,12 @@ do
 #				for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
 				for phys in "QB"
 				do
-					pbsfile=result/$monitorname.$pname.$Target.$app.$phys.boss
+					if [ $monitorname = "MT1" ]; then
+						DF="003T"
+						pbsfile=result/$monitorname.$pname.$Target.$DF.$app.$phys.boss
+					elif [ $monitorname = "PTACS" ]; then
+						pbsfile=result/$monitorname.$pname.$Target.$app.$phys.boss
+					fi
 					echo "#!/bin/bash" > $pbsfile
 					echo "source $MYHOME/.setana.sh" >> $pbsfile
 					fileexist=false
@@ -50,7 +55,7 @@ do
 #							file="$MYDATA/other/Hayashi/test0622_Tun16cm.root"
 							file="DUMMY"
 						elif [ $Target == "g40cm10mm" ]; then
-							file="$MYDATA/other/Hayashi/test_gra2cm_40cm_2.root"
+							file="$MYDATA/other/Hayashi/test_gra2cm_40cm_3.root"
 						else
 							file="DUMMY"
 						fi
@@ -70,6 +75,7 @@ do
 						rm $pbsfile
 					else
 						chmod +x $pbsfile
+						nohup $pbsfile &
 					fi
 				done
 			done

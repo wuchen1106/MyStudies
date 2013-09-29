@@ -9,6 +9,7 @@
 
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TVector3.h"
 
 #include "MyRootInterface.hxx"
 
@@ -179,14 +180,47 @@ int main(int argc, char** argv){
 			fMyRootInterface->get_value("x",x,mm);
 			fMyRootInterface->get_value("y",y,mm);
 			fMyRootInterface->get_value("z",z,mm);
-			fMyRootInterface->get_value("bx",bx,-tesla);
+			fMyRootInterface->get_value("bx",bx,tesla);
 			fMyRootInterface->get_value("by",by,tesla);
-			fMyRootInterface->get_value("bz",bz,-tesla);
+			fMyRootInterface->get_value("bz",bz,tesla);
+			double LENGTH = 1.185288898037e+04*mm;
+			if (x>3000*mm){ // PTACS
+//				std::cout<<"in PTACS"<<std::endl;
+//				std::cout<<"  ("<<x<<","<<y<<","<<z<<","<<bx<<","<<by<<","<<bz<<")";
+				double xp = -z-5790.5;
+				double zp = 7350*mm - x +12.5*m - LENGTH;
+				double bzp = -bx;
+				double bxp = bz;
+				x = xp;
+				z = zp;
+				bx = bxp;
+				bz = bzp;
+			}
+			else if (z<-2790.5){ // MT1
+//				std::cout<<"in MT1"<<std::endl;
+//				std::cout<<"  ("<<x<<","<<y<<","<<z<<","<<bx<<","<<by<<","<<bz<<")";
+				double r = sqrt((3000*mm-x)*(3000*mm-x)+(z+2790.5*mm)*(z+2790.5*mm));
+				double phi = atan((3000*mm-x)/(-z-2790.5*mm));
+				double length = 3000*mm*phi;
+				z = length + 4350*mm+12.5*m-LENGTH;
+				x = r - 3000*mm;
+				double bzp=bz*sin(phi)-bx*cos(phi);
+				double bxp=bx*sin(phi)+bz*cos(phi);
+				bx=bxp;
+				bz=bzp;
+			}
+			else{ // BLTCDC
+//				std::cout<<"in BLTCDC"<<std::endl;
+//				std::cout<<"  ("<<x<<","<<y<<","<<z<<","<<bx<<","<<by<<","<<bz<<")";
+				z+=12.5*m;
+			}
+//			std::cout<<"  ->("<<x<<","<<y<<","<<z<<","<<bx<<","<<by<<","<<bz<<")"<<std::endl;;
+
 			if (x>600*mm||x<-600*mm) continue;
 
 			index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"bx");
 			if (index_temp!=-1) h1d_temp = fMyRootInterface->get_TH1D(index_temp);
-			int ibin_z = h1d_temp->FindBin(z/mm);
+			int ibin_z = h1d_temp->FindBin(z/m);
 
 			if (y==0&&x>-5*mm&&x<5*mm){
 				index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"bx");
@@ -195,15 +229,14 @@ int main(int argc, char** argv){
 				if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->SetBinContent(ibin_z,by/tesla);
 				index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"bz");
 				if (index_temp!=-1) fMyRootInterface->get_TH1D(index_temp)->SetBinContent(ibin_z,bz/tesla);
-				index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"bz");
 			}
-			if (z>6591&&z<6601&&y==0){
+			if (z>(6591*mm+12.5*m-LENGTH)&&z<(6601*mm+12.5*m-LENGTH)&&y==0){
 				index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"MT1_by_x");
 				if (index_temp!=-1) h1d_temp = fMyRootInterface->get_TH1D(index_temp);
 				int ibin_x = h1d_temp->FindBin(x/mm);
 				h1d_temp->SetBinContent(ibin_x,by/tesla);
 			}
-			if (z>6591&&z<6601&&x>-5*mm&&x<5*mm){
+			if (z>(6591*mm+12.5*m-LENGTH)&&z<(6601*mm+12.5*m-LENGTH)&&x>-5*mm&&x<5*mm){
 				index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"MT1_by_y");
 				if (index_temp!=-1) h1d_temp = fMyRootInterface->get_TH1D(index_temp);
 				int ibin_y = h1d_temp->FindBin(y/mm);
@@ -214,19 +247,22 @@ int main(int argc, char** argv){
 			if (z==0&&x<1500*mm){
 				monitor="PTS";
 			}
-			else if (z==1570&&x<1500*mm){
+			else if (z==(1570*mm+12.5*m-LENGTH)&&x<1500*mm){
 				monitor="PCS1";
 			}
-			else if (z==2730&&x<1500*mm){
+			else if (z==(2730*mm+12.5*m-LENGTH)&&x<1500*mm){
 				monitor="PCS2";
 			}
-			else if (z==3750&&x<1500*mm){
+			else if (z==(3750*mm+12.5*m-LENGTH)&&x<1500*mm){
 				monitor="BP";
 			}
-			else if (z>6591&&z<6601){
+			else if (z>(6591*mm+12.5*m-LENGTH)&&(z<6601*mm+12.5*m-LENGTH)){
 				monitor="MT1";
 			}
-			else if (z>9697&&z<9707){
+			else if (z>(9697*mm+12.5*m-LENGTH)&&z<(9707*mm+12.5*m-LENGTH)){
+				monitor="BLT";
+			}
+			else if (z>(9.06238898037000035e+03*mm-5*mm)&&z<(9.06238898037000035e+03*mm+5*mm)){
 				monitor="BLT";
 			}
 
@@ -236,9 +272,15 @@ int main(int argc, char** argv){
 				int ibin_x = h2d_temp->GetXaxis()->FindBin(x/mm);
 				int ibin_y = h2d_temp->GetYaxis()->FindBin(y/mm);
 
-				index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+monitor+"_bx");
+				TVector3 vpos(x,y,0);
+				TVector3 vb(bx,by,0);
+				if (x!=0||y!=0){
+					double br = (vpos.Cross(vb)*(1/vpos.Mag())).Mag();
+					double bp = vpos.Dot(vb)/vpos.Mag();
+				}
+				index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+monitor+"_br");
 				if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->SetBinContent(ibin_x,ibin_y,bx/tesla);
-				index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+monitor+"_by");
+				index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+monitor+"_bp");
 				if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->SetBinContent(ibin_x,ibin_y,by/tesla);
 				index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+monitor+"_bz");
 				if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->SetBinContent(ibin_x,ibin_y,bz/tesla);
@@ -247,7 +289,7 @@ int main(int argc, char** argv){
 			index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"bx_zx");
 			if (index_temp!=-1) h2d_temp = fMyRootInterface->get_TH2D(index_temp);
 			int ibin_x = h2d_temp->GetYaxis()->FindBin(x/mm);
-			ibin_z = h2d_temp->GetYaxis()->FindBin(z/mm);
+			ibin_z = h2d_temp->GetYaxis()->FindBin(z/m);
 			index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"bx_zx");
 			if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->SetBinContent(ibin_z,ibin_x,bx/tesla);
 			index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"by_zx");
@@ -258,7 +300,7 @@ int main(int argc, char** argv){
 			index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"bx_zy");
 			if (index_temp!=-1) h2d_temp = fMyRootInterface->get_TH2D(index_temp);
 			int ibin_y = h2d_temp->GetYaxis()->FindBin(y/mm)+1;
-			ibin_z = h2d_temp->GetYaxis()->FindBin(z/mm)+1;
+			ibin_z = h2d_temp->GetYaxis()->FindBin(z/m)+1;
 			index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"bx_zy");
 			if (index_temp!=-1) fMyRootInterface->get_TH2D(index_temp)->SetBinContent(ibin_z,ibin_y,bx/tesla);
 			index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"by_zy");

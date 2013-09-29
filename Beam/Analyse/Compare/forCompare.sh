@@ -69,10 +69,10 @@ var_process(){
 	ny=$8
 	iFile=0
 #	for app in "A" "H" "cg4" "g4s"
-	for app in "g4s" "H" "cg4" "A"
+	for app in "H" "cg4"
 	do
 #		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
-		for phys in "QBH" "original" "QB49201" "QB49302" "modified" "QB"
+		for phys in "QB"
 		do
 #			for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
 			for Target in "g40cm10mm"
@@ -95,6 +95,7 @@ var_process(){
 }
 
 input="input"
+echo "" > $input
 #for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
 for Target in "g40cm10mm"
 do
