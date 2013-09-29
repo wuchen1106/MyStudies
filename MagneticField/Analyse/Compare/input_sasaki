@@ -21,27 +21,56 @@
 	refTH1D | ../../result/sasaki_130731/result/output.root       | sasaki_130731_BESS_bz_r
 	refTH1D | ../../result/sasaki_130731/result/output.root       | sasaki_130731_CDC_bz_r
 
-#   TYPE    | NAME                        | TITLE | xAxisName | yAxisName | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm   |DrawOption|UseLeg|legendName      |legx1|legy1|legx2|legy2|npadx|npady|SEP 
-	TH1D    | sasaki_130701_bz            |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 2 | 0  | 0  | 8    | 0     | P        |   1  | 130701         |0.8 |0.8 |1 |1 |1 |2               |
-	TH1D    | sasaki_130720_bz            |       |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130720         
-	TH1D    | sasaki_130731_bz            |       |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130731         
+	refTH1D | ../../result/sasaki_130828/result/output.root       | sasaki_130828_br
+	refTH1D | ../../result/sasaki_130828/result/output.root       | sasaki_130828_bz
+	refTH1D | ../../result/sasaki_130828/result/output.root       | sasaki_130828_BESS_br_r
+	refTH1D | ../../result/sasaki_130828/result/output.root       | sasaki_130828_CDC_br_r
+	refTH1D | ../../result/sasaki_130828/result/output.root       | sasaki_130828_BESS_bz_r
+	refTH1D | ../../result/sasaki_130828/result/output.root       | sasaki_130828_CDC_bz_r
 
-	TH1D    | sasaki_130701_br            |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 2 | 0  | 0  | 8    | 0     | P        |   1  | 130701         |0.8 |0.8 |1 |1 |1 |2               |
+	refTH1D | ../../result/sasaki_130927/result/output.root       | sasaki_130927_br
+	refTH1D | ../../result/sasaki_130927/result/output.root       | sasaki_130927_bz
+	refTH1D | ../../result/sasaki_130927/result/output.root       | sasaki_130927_BESS_br_r
+	refTH1D | ../../result/sasaki_130927/result/output.root       | sasaki_130927_CDC_br_r
+	refTH1D | ../../result/sasaki_130927/result/output.root       | sasaki_130927_BESS_bz_r
+	refTH1D | ../../result/sasaki_130927/result/output.root       | sasaki_130927_CDC_bz_r
+
+#	refTH1D | ../../result/UK_130117/result/output.root           | UK_130117_bz
+
+#   TYPE    | NAME                        | TITLE | xAxisName | yAxisName | BIN | LEFT  | RIGHT | minX | minY  |COL|COM|LOGX|LOGY|Marker|Norm   |DrawOption|UseLeg|legendName      |legx1|legy1|legx2|legy2|npadx|npady|SEP 
+#	TH1D    | UK_130117_bz                |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 5 | 0  | 0  | 8    | 0     | P        |   1  | UK_130117      |0.8 |0.8 |1 |1 |1 |1               |
+#	TH1D    | sasaki_130701_bz            |       |           |           |  1  |   1   |   1   | 0    | 0     |880| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130701         
+#	TH1D    | sasaki_130720_bz            |       |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130720         
+#	TH1D    | sasaki_130731_bz            |       |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130731         
+#	TH1D    | sasaki_130828_bz            |       |           |           |  1  |   1   |   1   | 0    | 0     |400| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130828         
+#	TH1D    | sasaki_130927_bz            |       |           |           |  1  |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130927         
+
+	TH1D    | sasaki_130701_br            |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 4 | 0  | 0  | 8    | 0     | P        |   1  | 130701         |0.8 |0.8 |1 |1 |1 |2               |
 	TH1D    | sasaki_130720_br            |       |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130720         
 	TH1D    | sasaki_130731_br            |       |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130731         
+	TH1D    | sasaki_130828_br            |       |           |           |  1  |   1   |   1   | 0    | 0     |400| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130828         
+	TH1D    | sasaki_130927_br            |       |           |           |  1  |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130927         
 
-	TH1D    | sasaki_130701_BESS_br_r     |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 2 | 0  | 0  | 8    | 0     | P        |   1  | 130701         |0.8 |0.8 |1 |1 |2 |2               |
+	TH1D    | sasaki_130701_BESS_br_r     |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 4 | 0  | 0  | 8    | 0     | P        |   1  | 130701         |0.8 |0.8 |1 |1 |2 |2               |
 	TH1D    | sasaki_130720_BESS_br_r     |       |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130720         
 	TH1D    | sasaki_130731_BESS_br_r     |       |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130731         
+	TH1D    | sasaki_130828_BESS_br_r     |       |           |           |  1  |   1   |   1   | 0    | 0     |400| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130828         
+	TH1D    | sasaki_130927_BESS_br_r     |       |           |           |  1  |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130927         
 
-	TH1D    | sasaki_130701_CDC_br_r      |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 2 | 0  | 0  | 8    | 0     | P        |   1  | 130701         |0.8 |0.8 |1 |1 |2 |2               |
+	TH1D    | sasaki_130701_CDC_br_r      |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 4 | 0  | 0  | 8    | 0     | P        |   1  | 130701         |0.8 |0.8 |1 |1 |2 |2               |
 	TH1D    | sasaki_130720_CDC_br_r      |       |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130720         
 	TH1D    | sasaki_130731_CDC_br_r      |       |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130731         
+	TH1D    | sasaki_130828_CDC_br_r      |       |           |           |  1  |   1   |   1   | 0    | 0     |400| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130828         
+	TH1D    | sasaki_130927_CDC_br_r      |       |           |           |  1  |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130927         
 
-	TH1D    | sasaki_130701_BESS_bz_r     |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 2 | 0  | 0  | 8    | 0     | P        |   1  | 130701         |0.8 |0.8 |1 |1 |2 |2               |
+	TH1D    | sasaki_130701_BESS_bz_r     |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 4 | 0  | 0  | 8    | 0     | P        |   1  | 130701         |0.8 |0.8 |1 |1 |2 |2               |
 	TH1D    | sasaki_130720_BESS_bz_r     |       |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130720         
 	TH1D    | sasaki_130731_BESS_bz_r     |       |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130731         
+	TH1D    | sasaki_130828_BESS_bz_r     |       |           |           |  1  |   1   |   1   | 0    | 0     |400| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130828         
+	TH1D    | sasaki_130927_BESS_bz_r     |       |           |           |  1  |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130927         
 
-	TH1D    | sasaki_130701_CDC_bz_r      |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 2 | 0  | 0  | 8    | 0     | P        |   1  | 130701         |0.8 |0.8 |1 |1 |2 |2               |
+	TH1D    | sasaki_130701_CDC_bz_r      |       |           |           |  1  |   1   |   1   | 0    | 0     | 1 | 4 | 0  | 0  | 8    | 0     | P        |   1  | 130701         |0.8 |0.8 |1 |1 |2 |2               |
 	TH1D    | sasaki_130720_CDC_bz_r      |       |           |           |  1  |   1   |   1   | 0    | 0     |600| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130720         
 	TH1D    | sasaki_130731_CDC_bz_r      |       |           |           |  1  |   1   |   1   | 0    | 0     |416| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130731         
+	TH1D    | sasaki_130828_CDC_bz_r      |       |           |           |  1  |   1   |   1   | 0    | 0     |400| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130828         
+	TH1D    | sasaki_130927_CDC_bz_r      |       |           |           |  1  |   1   |   1   | 0    | 0     |632| 0 | 0  | 0  | 8    | 0     | P        |   1  | 130927         

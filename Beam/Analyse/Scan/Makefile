@@ -17,8 +17,8 @@ CXXFLAGS = -g -O2 -W -Wall
   # LIBS is the list of shared library files you would use.They can be found in LIBDIR. ( Names changing rule: libXXX.so to -lXXX )
 
 # Take root as an example. ( Root is a widely used package developed by CERN for analysing. )
-INCDIR = -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
-LIBDIR = $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
+INCDIR = -I$(shell $(ROOTSYS)/bin/root-config --incdir)
+LIBDIR = $(shell $(ROOTSYS)/bin/root-config --glibs)
 LIBS = -pthread -lm -ldl -rdynamic
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
