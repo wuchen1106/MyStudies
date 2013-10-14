@@ -1,5 +1,5 @@
 GEOCARDROOT       = geometry_A9
-MAGFIELDCARDROOT  = MagField_default
+MAGFIELDCARDROOT  = MagField_A9_130928
 GENFILEROOT       = gen_default
 OUTCARDROOT       = output_BLT
 

@@ -14,7 +14,7 @@ OUTCARDROOT       = output_CDC
 #
 #verbose
 verbose_configure_setCut
-setCut_cdc.mac
+setCut_be.mac
 #
 ##output
 #output_configure
@@ -22,4 +22,4 @@ setCut_cdc.mac
 #run
 run_configure
 1
-10
+139135
