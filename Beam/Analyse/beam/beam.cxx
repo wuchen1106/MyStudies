@@ -308,6 +308,7 @@ int main(int argc, char* argv[]){
 	Volumes.push_back("BLTCollimator");
 	Volumes.push_back("PTACSMonitor");
 	Volumes.push_back("PTACSMonitorF");
+	Volumes.push_back("DumpMonitor");
 	Volumes.push_back("MT1Monitor");
 	Volumes.push_back("M13");
 	Volumes.push_back("CDCMonitor");
