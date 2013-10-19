@@ -11,41 +11,40 @@
 
 #	TYPE    | Path
 #	oFILE   | /home/chen/MyWorkArea/g4sim/output/raw_g4sim.root
+#	oFILE   | /home/chen/MyWorkArea/MyStudies/Beam/result/g40cm10mm/A9.all.g40cm10mm.03T.0731.75.g4s.QBH.root
 
 #	TYPE    | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2
 	TBranch | evt_num                      | 1         | 0
 	TBranch | run_num                      | 1         | 0
-	TBranch | CDCMonitor_nHits             | 1         | 0
-	TBranch | CDCMonitor_t                 | 0         | 1
-	TBranch | CDCMonitor_tid               | 1         | 1
-	TBranch | CDCMonitor_pid               | 1         | 1
-	TBranch | CDCMonitor_ppid              | 1         | 1
-	TBranch | CDCMonitor_x                 | 0         | 1
-	TBranch | CDCMonitor_y                 | 0         | 1
-	TBranch | CDCMonitor_z                 | 0         | 1
-	TBranch | CDCMonitor_px                | 0         | 1
-	TBranch | CDCMonitor_py                | 0         | 1
-	TBranch | CDCMonitor_pz                | 0         | 1
-	TBranch | CDCMonitor_ox                | 0         | 1
-	TBranch | CDCMonitor_oy                | 0         | 1
-	TBranch | CDCMonitor_oz                | 0         | 1
-	TBranch | CDCMonitor_opx               | 0         | 1
-	TBranch | CDCMonitor_opy               | 0         | 1
-	TBranch | CDCMonitor_opz               | 0         | 1
-	TBranch | CDCMonitor_oprocess          | 2         | 1
-	TBranch | CDCMonitor_ovolName          | 2         | 1
+	TBranch | PTACSMonitorF_nHits          | 1         | 0
+	TBranch | PTACSMonitorF_t              | 0         | 1
+	TBranch | PTACSMonitorF_tid            | 1         | 1
+	TBranch | PTACSMonitorF_pid            | 1         | 1
+	TBranch | PTACSMonitorF_ppid           | 1         | 1
+	TBranch | PTACSMonitorF_ox             | 0         | 1
+	TBranch | PTACSMonitorF_oy             | 0         | 1
+	TBranch | PTACSMonitorF_oz             | 0         | 1
+	TBranch | PTACSMonitorF_opx            | 0         | 1
+	TBranch | PTACSMonitorF_opy            | 0         | 1
+	TBranch | PTACSMonitorF_opz            | 0         | 1
+	TBranch | PTACSMonitorF_x              | 0         | 1
+	TBranch | PTACSMonitorF_y              | 0         | 1
+	TBranch | PTACSMonitorF_z              | 0         | 1
+	TBranch | PTACSMonitorF_px             | 0         | 1
+	TBranch | PTACSMonitorF_py             | 0         | 1
+	TBranch | PTACSMonitorF_pz             | 0         | 1
+	TBranch | PTACSMonitorF_oprocess       | 2         | 1
+	TBranch | PTACSMonitorF_ovolName       | 2         | 1
 
 #	TYPE     | Name
 	oTreeName | t
 
 #	TYPE     | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2
-	# Hash
 #	oTBranch | evt_num                      | 1         | 0
 #	oTBranch | run_num                      | 1         | 0
 #	oTBranch | tid                          | 1         | 0
-#	# for simulation
 #	oTBranch | pid                          | 1         | 0
 #	oTBranch | x                            | 0         | 0
 #	oTBranch | y                            | 0         | 0
@@ -54,28 +53,17 @@
 #	oTBranch | py                           | 0         | 0
 #	oTBranch | pz                           | 0         | 0
 #	oTBranch | t                            | 0         | 0
-#	# original
+#	oTBranch | ot                           | 0         | 0
 #	oTBranch | ox                           | 0         | 0
 #	oTBranch | oy                           | 0         | 0
 #	oTBranch | oz                           | 0         | 0
 #	oTBranch | opx                          | 0         | 0
 #	oTBranch | opy                          | 0         | 0
 #	oTBranch | opz                          | 0         | 0
-#	oTBranch | ot                           | 0         | 0
 #	oTBranch | ppid                         | 1         | 0
+#	oTBranch | particle                     | 2         | 0
 #	oTBranch | process                      | 2         | 0
 #	oTBranch | volume                       | 2         | 0
-#	# initial particle
-#	oTBranch | i_pid                        | 1         | 0
-#	oTBranch | i_t                          | 0         | 0
-#	oTBranch | i_x                          | 0         | 0
-#	oTBranch | i_y                          | 0         | 0
-#	oTBranch | i_z                          | 0         | 0
-#	oTBranch | i_px                         | 0         | 0
-#	oTBranch | i_py                         | 0         | 0
-#	oTBranch | i_pz                         | 0         | 0
-#	# auxiliary
-#	oTBranch | cvolume                      | 2         | 0
 #	oTBranch | weight                       | 0         | 0
 
 	oTBranch | pid                          | 1         | 0
