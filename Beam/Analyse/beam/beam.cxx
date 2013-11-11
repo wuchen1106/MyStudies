@@ -307,6 +307,7 @@ int main(int argc, char* argv[]){
 	Volumes.push_back("BLTShell");
 	Volumes.push_back("BLTCollimator");
 	Volumes.push_back("PTACSMonitor");
+	Volumes.push_back("PTACSMonitorF");
 	Volumes.push_back("DumpMonitor");
 	Volumes.push_back("MT1Monitor");
 	Volumes.push_back("M13");
@@ -347,7 +348,7 @@ int main(int argc, char* argv[]){
 		m_TChain->SetBranchAddress("ppid",&ini_ppid);
 		m_TChain->SetBranchAddress("process",&p_process);
 		m_TChain->SetBranchAddress("volume",&p_volume);
-		m_TChain->SetBranchAddress("weight",&weight0);
+		//m_TChain->SetBranchAddress("weight",&weight0);
 		if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"Need original file, m_OriginalNum = "<<m_OriginalNum<<std::endl;
 	}
 	//**********************************************************************************************
@@ -529,6 +530,25 @@ int main(int argc, char* argv[]){
 				}
 				if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_initial_"+"paVSy"+m_suffix)) != -1 ){
 					fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight0);
+				}
+				if (m_MonitorPlane=="CDC"){
+					N_CDC += weight0;
+					if (ini_pa>75*MeV) N_CDC_75+=weight0;
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"CDCMonitor"+"_"+"pa"+m_suffix)) != -1 ){
+						fMyRootInterface->get_TH1D(index_temp)->Fill(ini_pa/MeV,weight0);
+					}
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"CDCMonitor"+"_"+"y"+m_suffix)) != -1 ){
+						fMyRootInterface->get_TH1D(index_temp)->Fill(ini_y/mm,weight0);
+					}
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"CDCMonitor"+"_"+"time"+m_suffix)) != -1 ){
+						fMyRootInterface->get_TH1D(index_temp)->Fill(ini_t/ns,weight0);
+					}
+					if ( (index_temp = fMyRootInterface->get_TH1D_index(m_prefix+"_"+"CDCMonitor"+"_100_"+"time"+m_suffix)) != -1 ){
+						fMyRootInterface->get_TH1D(index_temp)->Fill((ini_t+gRandom->Gaus()*100*ns)/ns,weight0);
+					}
+					if ( (index_temp = fMyRootInterface->get_TH2D_index(m_prefix+"_"+"CDCMonitor"+"_"+"paVSy"+m_suffix)) != -1 ){
+						fMyRootInterface->get_TH2D(index_temp)->Fill(ini_pa/MeV,ini_y/mm,weight0);
+					}
 				}
 			}
 			// Get Volume Monitor information if exist
