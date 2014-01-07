@@ -1,0 +1,31 @@
+#GEOCARDROOT       = geometry_A9_1p5_0927
+#GEOCARDROOT       = geometry_A9_1p5_0731
+#GEOCARDROOT       = geometry_A9_2p4_0927
+#GEOCARDROOT       = geometry_A9_2p4_0731
+GEOCARDROOT       = geometry_A9_2p4_0731_simple
+MAGFIELDCARDROOT  = MagField_A9_130731
+#MAGFIELDCARDROOT  = MagField_A9_130927
+GENFILEROOT       = gen_rpc
+#OUTCARDROOT       = output_rpc
+OUTCARDROOT       = output_rpc_simple
+
+##geometry preset
+#detector_configure
+#
+##magnet field (uniform file)
+#magField_configure
+#
+##generator
+#gen_configure
+#
+#verbose
+verbose_configure_setCut
+setCut_default.mac
+#
+##output
+#output_configure
+
+#run
+run_configure
+1
+80999
