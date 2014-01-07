@@ -49,7 +49,7 @@
 //	c->Add(runName+".root");
 
 	std::stringstream buff;
-	for (int i = 0; i<1; i++){
+	for (int i = 0; i<10; i++){
 		buff.str("");
 		buff.clear();
 		buff<<runName<<"/"<<i<<"_job0.raw";
@@ -122,7 +122,9 @@
 		t->Branch("weight",&weight);
 	}
 	int nEvents = c->GetEntries();
+	std::cout<<nEvents<<" events!!!"<<std::endl;
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
+		if (iEvent%1000==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
 		nTotal += weight;
 		stopped=false;
@@ -159,20 +161,19 @@
 				h05->Fill(Oz,weight);
 				t->Fill();
 			}
-		}
-		h0->Fill((*T_Ot)[0],weight);
-		for (int i_window = 0; i_window <5; i_window++){
-			for (int ibin = 1; ibin <= 200; ibin++){
-				double timeDown = h1->GetBinLowEdge(ibin);
-				double timeUp = h1->GetBinLowEdge(ibin+1);
-				double timep = (i_window-2)*PulseInterval+t;
-				int binDown = hCurve->FindBin(timeDown-timep);
-				int binUp = hCurve->FindBin(timeUp-timep)-1;
-				double w = hCurve->Integral(binDown,binUp);
-	//			std::cout<<"timep = "<<timep<<", timeDown = "<<timeDown<<", timeUp = "<<timeUp<<", w = "<<w<<std::endl;
-				count2 += w*weight;
-				h1->AddBinContent(ibin,w*weight);
-			}
+			h0->Fill((*T_Ot)[0],weight);
+//			for (int i_window = 0; i_window <5; i_window++){
+//				for (int ibin = 1; ibin <= 200; ibin++){
+//					double timeDown = h1->GetBinLowEdge(ibin);
+//					double timeUp = h1->GetBinLowEdge(ibin+1);
+//					double timep = (i_window-2)*PulseInterval+t;
+//					int binDown = hCurve->FindBin(timeDown-timep);
+//					int binUp = hCurve->FindBin(timeUp-timep)-1;
+//					double w = hCurve->Integral(binDown,binUp);
+//					//			std::cout<<"timep = "<<timep<<", timeDown = "<<timeDown<<", timeUp = "<<timeUp<<", w = "<<w<<std::endl;
+//					h1->AddBinContent(ibin,w*weight);
+//				}
+//			}
 		}
 	}
 	h1->Scale(h1->Integral());
