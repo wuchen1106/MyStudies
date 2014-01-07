@@ -36,19 +36,23 @@ LIBS += -pthread -lm -ldl -rdynamic
 # Change this name to your program which contains the main function
 SIGNAL = signal
 HITRATE = hitRate
+CURRENT = Current
 ACCEPTANCE = Acceptance
 
 # Object list for user defined packages
 OBJ = 
 
 .PHONY: all
-all: $(SIGNAL) $(HITRATE) $(ACCEPTANCE)
+all: $(SIGNAL) $(HITRATE) $(ACCEPTANCE) $(CURRENT)
 
 $(SIGNAL): $(OBJ) $(SIGNAL).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(SIGNAL).cxx $(OBJ) -o $(SIGNAL)
 
 $(HITRATE): $(OBJ) $(HITRATE).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(HITRATE).cxx $(OBJ) -o $(HITRATE)
+
+$(CURRENT): $(OBJ) $(CURRENT).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(CURRENT).cxx $(OBJ) -o $(CURRENT)
 
 $(ACCEPTANCE): $(OBJ) $(ACCEPTANCE).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(ACCEPTANCE).cxx $(OBJ) -o $(ACCEPTANCE)
@@ -61,3 +65,4 @@ clean:
 	$(RM) $(OBJ)
 	$(RM) $(SIGNAL)
 	$(RM) $(HITRATE)
+	$(RM) $(CURRENT)

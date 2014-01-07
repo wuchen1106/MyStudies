@@ -37,8 +37,8 @@ int nEvents = 0;
 int printModule = 1;
 int writeModule = 10000;
 int UseWeight = 0;
-int PDGEncoding = 13;
-double m_norm = 0;
+int PDGEncoding = 1;
+double m_norm = 1;
 double PulseInterval = 1170*ns;
 //double PulseInterval = 1751*ns;
 double nProtonPerPulse = 2.5e12/s*PulseInterval;
@@ -208,7 +208,7 @@ int main(int argc, char* argv[]){
 		std::string name = fMyRootInterface->get_nameForH2D(iHist);
 		fMyRootInterface->set_nameForH2D(iHist,m_prefix+"_"+name+m_suffix);
 	}
-	fMyRootInterface->set_DirNames(0,m_InputDir);
+	if (m_InputDir!="") fMyRootInterface->set_DirNames(0,m_InputDir);
 	fMyRootInterface->set_OutputName(m_runName);
 	fMyRootInterface->init();
 
@@ -266,6 +266,7 @@ int main(int argc, char* argv[]){
 	std::vector<int> Monitor_ppid;
 	std::vector<std::string> Monitor_oprocess;
 	std::vector<std::string> Monitor_ovolName;
+	std::vector<std::string> Monitor_volName;
 	std::vector<double> Monitor_t;
 	std::vector<double> Monitor_x;
 	std::vector<double> Monitor_y;
@@ -307,7 +308,7 @@ int main(int argc, char* argv[]){
 	// for volumes
 	std::vector<std::string> Volumes;
 	Volumes.push_back("CdcCell");
-	Volumes.push_back("Trigger");
+//	Volumes.push_back("Trigger");
 
 	//***********************************If We Need Original File***********************************
 	TChain* m_TChain = new TChain("t");
@@ -334,7 +335,8 @@ int main(int argc, char* argv[]){
 		m_TChain->SetBranchAddress("ppid",&ini_ppid);
 		m_TChain->SetBranchAddress("process",&p_process);
 		m_TChain->SetBranchAddress("volume",&p_volume);
-		m_TChain->SetBranchAddress("weight",&weight0);
+// FIXME: temperary way		
+//		m_TChain->SetBranchAddress("weight",&weight0);
 		if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"Need original file, m_OriginalNum = "<<m_OriginalNum<<std::endl;
 	}
 	//**********************************************************************************************
@@ -405,6 +407,37 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
 			fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
 		}
+		Monitor_nHits = 0; // in case this volume does not exist
+		fMyRootInterface->get_value("C_nHits",Monitor_nHits);
+		fMyRootInterface->get_value("C_t",Monitor_t,ns);
+		fMyRootInterface->get_value("C_tid",Monitor_tid);
+		fMyRootInterface->get_value("C_pid",Monitor_pid);
+		fMyRootInterface->get_value("C_ppid",Monitor_ppid);
+		fMyRootInterface->get_value("C_oprocess",Monitor_oprocess);
+		fMyRootInterface->get_value("C_ovolName",Monitor_ovolName);
+		fMyRootInterface->get_value("C_volName",Monitor_volName);
+		int edep_error = -1;
+		edep_error = fMyRootInterface->get_value("C_edep",Monitor_edep,GeV);
+		int volID_error = -1;
+		volID_error = fMyRootInterface->get_value("C_volID",Monitor_volID);
+		int ot_error = -1;
+		ot_error = fMyRootInterface->get_value("C_ot",Monitor_ot,ns);
+		fMyRootInterface->get_value("C_ox",Monitor_ox,cm);
+		fMyRootInterface->get_value("C_oy",Monitor_oy,cm);
+		fMyRootInterface->get_value("C_oz",Monitor_oz,cm);
+		fMyRootInterface->get_value("C_opx",Monitor_opx,GeV);
+		fMyRootInterface->get_value("C_opy",Monitor_opy,GeV);
+		fMyRootInterface->get_value("C_opz",Monitor_opz,GeV);
+		fMyRootInterface->get_value("C_x",Monitor_x,cm);
+		fMyRootInterface->get_value("C_y",Monitor_y,cm);
+		fMyRootInterface->get_value("C_z",Monitor_z,cm);
+		fMyRootInterface->get_value("C_charge",Monitor_charge);
+		fMyRootInterface->get_value("C_px",Monitor_px,GeV);
+		fMyRootInterface->get_value("C_py",Monitor_py,GeV);
+		fMyRootInterface->get_value("C_pz",Monitor_pz,GeV);
+		bool st_error = -1;
+		st_error = fMyRootInterface->get_value("C_stopped",Monitor_stopped);
+		fMyRootInterface->get_value("C_stop_time",Monitor_stop_time,ns);
 
 		// find particles
 		if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"###Getting information"<<std::endl;
@@ -428,48 +461,16 @@ int main(int argc, char* argv[]){
 				TriggerHitCheck[j] = false;
 			}
 			// Get Volume Monitor information if exist
-			int previ_MP = 0;
-			for ( int i_MP = 0; i_MP<Volumes.size(); previ_MP=i_MP,i_MP++ ){
-				std::string Volume=Volumes[i_MP];
-				Monitor_nHits = 0; // in case this volume does not exist
-				fMyRootInterface->get_value(Volume+"_nHits",Monitor_nHits);
-				fMyRootInterface->get_value(Volume+"_t",Monitor_t,ns);
-				fMyRootInterface->get_value(Volume+"_tid",Monitor_tid);
-				fMyRootInterface->get_value(Volume+"_pid",Monitor_pid);
-				fMyRootInterface->get_value(Volume+"_ppid",Monitor_ppid);
-				fMyRootInterface->get_value(Volume+"_oprocess",Monitor_oprocess);
-				fMyRootInterface->get_value(Volume+"_ovolName",Monitor_ovolName);
-				int edep_error = -1;
-				edep_error = fMyRootInterface->get_value(Volume+"_edep",Monitor_edep,GeV);
-				int volID_error = -1;
-				volID_error = fMyRootInterface->get_value(Volume+"_volID",Monitor_volID);
-				int ot_error = -1;
-				ot_error = fMyRootInterface->get_value(Volume+"_ot",Monitor_ot,ns);
-				fMyRootInterface->get_value(Volume+"_ox",Monitor_ox,cm);
-				fMyRootInterface->get_value(Volume+"_oy",Monitor_oy,cm);
-				fMyRootInterface->get_value(Volume+"_oz",Monitor_oz,cm);
-				fMyRootInterface->get_value(Volume+"_opx",Monitor_opx,GeV);
-				fMyRootInterface->get_value(Volume+"_opy",Monitor_opy,GeV);
-				fMyRootInterface->get_value(Volume+"_opz",Monitor_opz,GeV);
-				fMyRootInterface->get_value(Volume+"_x",Monitor_x,cm);
-				fMyRootInterface->get_value(Volume+"_y",Monitor_y,cm);
-				fMyRootInterface->get_value(Volume+"_z",Monitor_z,cm);
-				fMyRootInterface->get_value(Volume+"_charge",Monitor_charge);
-				fMyRootInterface->get_value(Volume+"_px",Monitor_px,GeV);
-				fMyRootInterface->get_value(Volume+"_py",Monitor_py,GeV);
-				fMyRootInterface->get_value(Volume+"_pz",Monitor_pz,GeV);
-				bool st_error = -1;
-				st_error = fMyRootInterface->get_value(Volume+"_stopped",Monitor_stopped);
-				fMyRootInterface->get_value(Volume+"_stop_time",Monitor_stop_time,ns);
-				int prevtid = -1;
-				for ( int i_mon = 0; i_mon < Monitor_nHits; prevtid=Monitor_tid[i_mon], i_mon++ ){
+			for ( int i_mon = 0; i_mon < Monitor_nHits; i_mon++ ){
+				for ( int i_MP = 0; i_MP<Volumes.size(); i_MP++ ){
+					std::string Volume=Volumes[i_MP];
+//	To simplify, don't use volName to distinguish. -- Chen Wu @ 131203
+//					if (Volume!=Monitor_volName[i_mon]) continue;
 					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 						std::cout<<prefix_ParticleInfoStart
 								 <<"  got "<<Monitor_pid[i_mon]<<" in "<<Volume<<"!"
 								 <<",  tid = "<<Monitor_tid[i_mon]
 								 <<",  i_MP = "<<i_MP
-								 <<",  previ_MP = "<<previ_MP
-								 <<",  prevtid = "<<prevtid
 								 <<std::endl;
 					if (!PDGEncoding // all particles
 						||PDGEncoding==-1&&Monitor_pid[i_mon]>=1e7 // only nuclears
@@ -502,9 +503,9 @@ int main(int argc, char* argv[]){
 //								continue;
 							}
 						}
-						double mon_px = Monitor_px[i_mon];
-						double mon_py = Monitor_py[i_mon];
-						double mon_pz = Monitor_pz[i_mon];
+						double mon_px = Monitor_opx[i_mon];
+						double mon_py = Monitor_opy[i_mon];
+						double mon_pz = Monitor_opz[i_mon];
 						double mon_pa = sqrt(mon_px*mon_px+mon_py*mon_py+mon_pz*mon_pz);
 						if (PDGEncoding==-3){
 							if (Monitor_pid[i_mon]==13){
@@ -531,10 +532,22 @@ int main(int argc, char* argv[]){
 										for (int i_time = 0; i_time < 100; i_time++){
 											double down_time = i_time*20*ns;
 											double up_time = down_time + 20*ns;
-											int binDown = hProtonPuls->FindBin((shifttime+down_time-Monitor_t[i_mon])/ns);
-											int binUp = hProtonPuls->FindBin((shifttime+up_time-Monitor_t[i_mon])/ns);
+// FIXME:
+// This is only temperary way:
+											int binDown = hProtonPuls->FindBin((shifttime+down_time-(Monitor_t[i_mon]+ini_t))/ns);
+											int binUp = hProtonPuls->FindBin((shifttime+up_time-(Monitor_t[i_mon]+ini_t))/ns);
+//											int binDown = hProtonPuls->FindBin((shifttime+down_time-Monitor_t[i_mon])/ns);
+//											int binUp = hProtonPuls->FindBin((shifttime+up_time-Monitor_t[i_mon])/ns);
 											double W = hProtonPuls->Integral(binDown,binUp);
+//											std::cout<<"t = "<<(Monitor_t[i_mon]+ini_t)/ns<<", shifttime = "<<shifttime/ns<<", down_time = "<<down_time/ns<<", up_time = "<<up_time/ns<<std::endl;
+//											std::cout<<"tdown = "<<(shifttime+down_time-(Monitor_t[i_mon]+ini_t))/ns<<std::endl;
+//											std::cout<<"tup = "<<(shifttime+up_time-(Monitor_t[i_mon]+ini_t))/ns<<std::endl;
+//											std::cout<<"binDown = "<<binDown/ns<<std::endl;
+//											std::cout<<"binUp = "<<binUp/ns<<std::endl;
+//											std::cout<<"W = "<<W<<std::endl;
 											CellHitCount[volID][i_time]+=W*weight0;
+//											if (W*weight0)
+//												std::cout<<"CellHitCount["<<volID<<"]["<<i_time<<"] = "<<CellHitCount[volID][i_time]<<std::endl;
 										}
 									}
 								}
@@ -591,9 +604,9 @@ int main(int argc, char* argv[]){
 						fMyRootInterface->set_ovalue("x" ,Monitor_x[i_mon]/mm);
 						fMyRootInterface->set_ovalue("y" ,Monitor_y[i_mon]/mm);
 						fMyRootInterface->set_ovalue("z" ,Monitor_z[i_mon]/mm);
-						fMyRootInterface->set_ovalue("px",Monitor_px[i_mon]/MeV);
-						fMyRootInterface->set_ovalue("py",Monitor_py[i_mon]/MeV);
-						fMyRootInterface->set_ovalue("pz",Monitor_pz[i_mon]/MeV);
+						fMyRootInterface->set_ovalue("px",Monitor_opx[i_mon]/MeV);
+						fMyRootInterface->set_ovalue("py",Monitor_opy[i_mon]/MeV);
+						fMyRootInterface->set_ovalue("pz",Monitor_opz[i_mon]/MeV);
 						if (!st_error&&Monitor_stopped[i_mon]){
 							fMyRootInterface->set_ovalue("t" ,Monitor_stop_time[i_mon]/ns);
 						}
@@ -606,9 +619,9 @@ int main(int argc, char* argv[]){
 								fMyRootInterface->set_ovalue("ot",Monitor_ot[i_mon]/ns);
 							else 
 								fMyRootInterface->set_ovalue("ot",Monitor_t[i_mon]/ns); 
-							fMyRootInterface->set_ovalue("ox",Monitor_ox[i_mon]/mm);
-							fMyRootInterface->set_ovalue("oy",Monitor_oy[i_mon]/mm);
-							fMyRootInterface->set_ovalue("oz",Monitor_oz[i_mon]/mm);
+//							fMyRootInterface->set_ovalue("ox",Monitor_ox[i_mon]/mm);
+//							fMyRootInterface->set_ovalue("oy",Monitor_oy[i_mon]/mm);
+//							fMyRootInterface->set_ovalue("oz",Monitor_oz[i_mon]/mm);
 							fMyRootInterface->set_ovalue("opx",Monitor_opx[i_mon]/MeV);
 							fMyRootInterface->set_ovalue("opy",Monitor_opy[i_mon]/MeV);
 							fMyRootInterface->set_ovalue("opz",Monitor_opz[i_mon]/MeV);
@@ -658,6 +671,7 @@ int main(int argc, char* argv[]){
 		int nCells = pCdcGeometryParameter->get_layer_cell_num(ilayer);
 		if (nCell_max<nCells) nCell_max = nCells;
 	}
+	double totalhits = 0;
 	for (int i_time = 0; i_time < 100; i_time++){
 		double hitRate_layer[100];
 		for (int i_layer = 0; i_layer < nLayers; i_layer++){
@@ -668,29 +682,34 @@ int main(int argc, char* argv[]){
 		buff<<m_prefix<<"_CdcHit2D_"<<i_time/5<<m_suffix;
 		if ((index_temp = fMyRootInterface->get_TH2D_index(buff.str())) != -1 ){
 			h2d_temp=fMyRootInterface->get_TH2D(index_temp);
-			for ( int i_vol = 0; i_vol < 50000; i_vol++){
-				int layerId = 0;
-				int cellId = 0;
-				int error = pCdcGeometryParameter->get_layerIdcellId(i_vol,&layerId,&cellId);
-				if (!error){
-					double nCells = pCdcGeometryParameter->get_layer_cell_num(layerId);
-					double nHits = CellHitCount[i_vol][i_time];
-					double hitRate = nHits*nProtonPerPulse*5e4/m_norm/nCells; // kHz
-					hitRate_layer[layerId]+=hitRate;
-					h2d_temp->Fill(cellId,layerId,hitRate);
-				}
-				else{
-					std::cout<<"Cannot find i_vol = "<<i_vol<<std::endl;
-					break;
-				}
-			}
 		}
 		else{
 			std::cout<<"Cannot find "<<buff.str()<<"!!!"<<std::endl;
 		}
+		for ( int i_vol = 0; i_vol < 50000; i_vol++){
+			int layerId = 0;
+			int cellId = 0;
+			int error = pCdcGeometryParameter->get_layerIdcellId(i_vol,&layerId,&cellId);
+			if (!error){
+				double nCells = pCdcGeometryParameter->get_layer_cell_num(layerId);
+//				std::cout<<"nCells["<<layerId<<"] = "<<nCells<<std::endl;
+				double nHits = CellHitCount[i_vol][i_time];
+				totalhits+=nHits;
+				double hitRate = nHits*nProtonPerPulse*5e4/m_norm/nCells; // kHz
+				hitRate_layer[layerId]+=hitRate;
+				if (h2d_temp) h2d_temp->Fill(cellId,layerId,hitRate);
+			}
+			else{
+				std::cout<<"Cannot find i_vol = "<<i_vol<<std::endl;
+				break;
+			}
+		}
 		buff.str("");
 		buff.clear();
 		buff<<m_prefix<<"_CdcHit1D_"<<i_time/5<<m_suffix;
+		for (int i_layer = 0; i_layer < nLayers; i_layer++){
+			std::cout<<"hitRate_layer["<<i_layer<<"] = "<<hitRate_layer[i_layer]<<std::endl;
+		}
 		if ((index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
 			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
 			for (int i_layer = 0; i_layer < nLayers; i_layer++){
@@ -716,6 +735,16 @@ int main(int argc, char* argv[]){
 		if ((index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
 			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
 			h1d_temp->SetBinContent(i_time+1,hitRate_layer[1]);
+		}
+		else{
+			std::cout<<"Cannot find "<<buff.str()<<"!!!"<<std::endl;
+		}
+		buff.str("");
+		buff.clear();
+		buff<<m_prefix<<"_CellLayer2"<<m_suffix;
+		if ((index_temp = fMyRootInterface->get_TH1D_index(buff.str())) != -1 ){
+			h1d_temp=fMyRootInterface->get_TH1D(index_temp);
+			h1d_temp->SetBinContent(i_time+1,hitRate_layer[2]);
 		}
 		else{
 			std::cout<<"Cannot find "<<buff.str()<<"!!!"<<std::endl;
@@ -771,6 +800,7 @@ int main(int argc, char* argv[]){
 			std::cout<<"Cannot find "<<buff.str()<<"!!!"<<std::endl;
 		}
 	}
+	std::cout<<"totalhits = "<<totalhits<<std::endl;
 
 	//=>For output
 	clock_t t_END = clock();
@@ -793,12 +823,13 @@ int main(int argc, char* argv[]){
 
 void init_args()
 {
-	m_prefix="";
+	m_prefix="test";
 	m_suffix="";
 	m_InputDir="";
+	m_runName="test";
 	m_OriginalFile="NONE";
 	m_workMode="monitor";
-	m_MonitorPlane="PTACS";
+	m_MonitorPlane="CDC";
 	m_OutputDir="result";
 	m_input="input";
 	verbose = 0;
@@ -806,7 +837,8 @@ void init_args()
 	printModule = 10000;
 	writeModule = 10000;
 	UseWeight = 0;
-	PDGEncoding = 13;
+	PDGEncoding = 1;
+	m_norm = 1;
 	backup = false;
 	CdcFile = "CdcFile";
 }
