@@ -534,7 +534,7 @@ int main(int argc, char* argv[]){
 											int binDown = hProtonPuls->FindBin((shifttime+down_time-Monitor_t[i_mon])/ns);
 											int binUp = hProtonPuls->FindBin((shifttime+up_time-Monitor_t[i_mon])/ns);
 											double W = hProtonPuls->Integral(binDown,binUp);
-											CellHitCount[volID][i_time]+=W*weight0;
+											CellHitCount[volID][i_time]+=W*weight0*Monitor_edep[i_mon]/keV;
 										}
 									}
 								}
@@ -793,12 +793,13 @@ int main(int argc, char* argv[]){
 
 void init_args()
 {
-	m_prefix="";
+	m_prefix="test";
 	m_suffix="";
 	m_InputDir="";
+	m_runName="test";
 	m_OriginalFile="NONE";
 	m_workMode="monitor";
-	m_MonitorPlane="PTACS";
+	m_MonitorPlane="CDC";
 	m_OutputDir="result";
 	m_input="input";
 	verbose = 0;
@@ -806,7 +807,8 @@ void init_args()
 	printModule = 10000;
 	writeModule = 10000;
 	UseWeight = 0;
-	PDGEncoding = 13;
+	PDGEncoding = 1;
+	m_norm=1e10;
 	backup = false;
 	CdcFile = "CdcFile";
 }
