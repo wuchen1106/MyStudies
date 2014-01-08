@@ -1,5 +1,6 @@
 //double NperP = 1126785./1e8;
 double NperP = 3e-15;
+double PulseInterval = 1170;
 
 //TString runName = "OT.11.p5";
 TString runName = "signal";
@@ -42,6 +43,8 @@ int get_layer_index(int volID){
 }
 
 void getRate(){
+	TFile *f = 0;
+
 	TChain *c = new TChain("tree");
 	c->Add(runName+".root");
 //	std::stringstream buff;
@@ -52,7 +55,10 @@ void getRate(){
 //		c->Add( buff.str().c_str());
 //	}
 
-	TH1D * h1 = new TH1D("h1","Hit Rate @ Innermost Layer",150,0,);
+	TH1D * h1 = new TH1D("h1","Hit Rate @ 1st Innermost Layer",150,0,PulseInterval);
+	TH1D * h2 = new TH1D("h2","Hit Rate @ 2nd Innermost Layer",150,0,PulseInterval);
+	TH1D * h3 = new TH1D("h3","Hit Rate @ 1st Outmost Layer",150,0,PulseInterval);
+	TH1D * h4 = new TH1D("h4","Hit Rate @ 2nd Outmost Layer",150,0,PulseInterval);
 	std::vector<double> vLayerID;
 	std::vector<double> vHitrate;
 	std::vector<double> vCharge;
@@ -61,6 +67,13 @@ void getRate(){
 		vHitrate.push_back(0);
 		vCharge.push_back(0);
 	}
+
+
+	f = new TFile("Curves.s100.root");
+	std::cout<<"Integrating..."<<std::endl;
+//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+	hCurve->RebinX(20);
 
 	std::vector<int> *C_volID;
 	std::vector<double> *C_edep;
@@ -73,7 +86,7 @@ void getRate(){
 	double edep = -1;
 	double time = -1;
 	int volID = -1;
-	TFile *f = new TFile(runName+".output.root","RECREATE");
+	f = new TFile(runName+".output.root","RECREATE");
 	TTree *t  = new TTree("t","t");
 	int nEvents = c->GetEntries();
 	std::stringstream buff;
@@ -101,6 +114,13 @@ void getRate(){
 			hitcount[layerID]++;
 			foundhit = true;
 			if (layerID>layerID_max) layerID_max = layerID;
+			for (int i_window = 0; i_window <5; i_window++){
+				double newtime = time+hCurve->GetRandom()+i_window*PulseInterval;
+				if (layerID==0) h1->Fill(newtime,weight);
+				else if (layerID==1) h2->Fill(newtime,weight);
+				else if (layerID==17) h3->Fill(newtime,weight);
+				else if (layerID==16) h4->Fill(newtime,weight);
+			}
 		}
 //		if (foundhit){
 		if (0){
@@ -156,5 +176,9 @@ void getRate(){
 	c1->SaveAs(runName+"_rate.png");
 	c1->SaveAs(runName+"_rate.pdf");
 
+	h1->Write();
+	h2->Write();
+	h3->Write();
+	h4->Write();
 	t->Write();
 }

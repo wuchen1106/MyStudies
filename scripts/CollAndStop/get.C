@@ -5,10 +5,12 @@
 
 	bool withStopPosition = true;
 	double PulseInterval = 1170;
-	double PulseInterval0 = PulseInterval;
 
 	f = new TFile("Curves.s100.root");
-	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+	std::cout<<"Integrating..."<<std::endl;
+//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+	hCurve->RebinX(20);
 
 	double NperP = 860498./1e8;
 	TString par = "#mu^{-}";
@@ -34,7 +36,7 @@
 //	TString runName = "pion.10.p25";
 //	TString option = "Rmin = 10 cm, L = 25 cm";
 
-	TString runName = "muon.11.p5";
+	TString runName = "muon.11.p5"; // 7418778 events
 	TString option = "Rmin = 11 cm, L = 50 cm";
 
 //	TString runName = "pion.11.p5";
@@ -62,8 +64,8 @@
 	TH1D * h04 = new TH1D("h04",par+" Transverse Distribution",100,0,100);
 //	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,-900,900);
 	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,-1000,0);
-	TH1D *h0 = new TH1D("h0","h0",200,0,PulseInterval0);
-	TH1D *h1 = new TH1D("h1","h1",200,0,PulseInterval0);
+	TH1D *h0 = new TH1D("h0","h0",200,0,PulseInterval);
+	TH1D *h1 = new TH1D("h1","h1",200,0,PulseInterval);
 	std::vector<int> *T_tid;
 	std::vector<std::string> *T_volName;
 	std::vector<double> *McTruth_x;
@@ -162,23 +164,14 @@
 				t->Fill();
 			}
 			h0->Fill((*T_Ot)[0],weight);
-//			for (int i_window = 0; i_window <5; i_window++){
-//				for (int ibin = 1; ibin <= 200; ibin++){
-//					double timeDown = h1->GetBinLowEdge(ibin);
-//					double timeUp = h1->GetBinLowEdge(ibin+1);
-//					double timep = (i_window-2)*PulseInterval+t;
-//					int binDown = hCurve->FindBin(timeDown-timep);
-//					int binUp = hCurve->FindBin(timeUp-timep)-1;
-//					double w = hCurve->Integral(binDown,binUp);
-//					//			std::cout<<"timep = "<<timep<<", timeDown = "<<timeDown<<", timeUp = "<<timeUp<<", w = "<<w<<std::endl;
-//					h1->AddBinContent(ibin,w*weight);
-//				}
-//			}
+			for (int i_window = 0; i_window <5; i_window++){
+				h1->Fill(Ot+hCurve->GetRandom()+i_window*PulseInterval,weight);
+			}
 		}
 	}
 	h1->Scale(h1->Integral());
 	h0->Scale(h0->Integral());
-	TH1D *h2 = new TH1D("h2","h2",200,0,PulseInterval0);
+	TH1D *h2 = new TH1D("h2","h2",200,0,PulseInterval);
 	for (int i = 1; i<=200; i++){
 		double n = h1->Integral(i,200);
 		h2->SetBinContent(i,n);
