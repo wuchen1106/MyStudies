@@ -55,10 +55,29 @@ void getRate(){
 //		c->Add( buff.str().c_str());
 //	}
 
-	TH1D * h1 = new TH1D("h1","Hit Rate @ 1st Innermost Layer",150,0,PulseInterval);
-	TH1D * h2 = new TH1D("h2","Hit Rate @ 2nd Innermost Layer",150,0,PulseInterval);
-	TH1D * h3 = new TH1D("h3","Hit Rate @ 1st Outmost Layer",150,0,PulseInterval);
-	TH1D * h4 = new TH1D("h4","Hit Rate @ 2nd Outmost Layer",150,0,PulseInterval);
+    int Color_1 = 632;
+    int Color_2 = 800;
+    int Color_3 = 880;
+    int Color_4 = 600;
+
+    int Style_1 = 20; 
+    int Style_2 = 20; 
+    int Style_3 = 20; 
+    int Style_4 = 20; 
+    
+    TString xtitle1 = "Time (ns)";
+    TString ytitle1 = "Hit Rate per Cell (kHz)";
+
+    TString hName1 = "Innermost Layer";
+    TString hName2 = "Seccond Innermost Layer";
+    TString hName3 = "Seccond Outmost Layer";
+    TString hName4 = "Outmost Layer";
+
+    TH1D *h1 = new TH1D("Innermost Layer","Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)",150,0,PulseInterval);
+    TH1D *h2 = new TH1D("Seccond Innermost Layer","Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)",150,0,PulseInterval);
+    TH1D *h3 = new TH1D("Seccond Outmost Layer","Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)",150,0,PulseInterval);
+    TH1D *h4 = new TH1D("Outmost Layer","Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)",150,0,PulseInterval);
+
 	std::vector<double> vLayerID;
 	std::vector<double> vHitrate;
 	std::vector<double> vCharge;
@@ -154,14 +173,18 @@ void getRate(){
 	g2->SetTitle(runName+":Q (C/cm/day)");
 
 	TCanvas *c1 = new TCanvas("c","c");
-	TPad * p1 = new TPad("p1","p1",0,0,1./2,1);
-	TPad * p2 = new TPad("p2","p2",1./2,0,2./2,1);
+	TPad * p1 = new TPad("p1","p1",0,0,1./2,0.5);
+	TPad * p2 = new TPad("p2","p2",1./2,0,2./2,0.5);
+	TPad * p3 = new TPad("p3","p3",0,0.5,1,1);
 	p1->Draw();
 	p2->Draw();
+	p3->Draw();
 	p1->SetGridx(1);
 	p1->SetGridy(1);
 	p2->SetGridx(1);
 	p2->SetGridy(1);
+	p3->SetGridx(1);
+	p3->SetGridy(1);
 	gStyle->SetPalette(1);
 	gStyle->SetOptStat(0);
 	gStyle->SetPadTickX(1);
@@ -173,6 +196,35 @@ void getRate(){
 	p2->cd();
 	g2->SetMarkerStyle(3);
 	g2->Draw("LAP");
+
+	p3->cd();
+    if (h1) h1->GetYaxis()->SetTitle(ytitle1);
+//  if (h1) h1->GetYaxis()->SetTitleOffset(2);
+    if (h1) h1->GetXaxis()->SetTitle(xtitle1);
+    if (h1) h1->SetMarkerStyle(Style_1);
+    if (h1) h1->SetMarkerColor(Color_1);
+    if (h1) h1->SetLineColor(Color_1);
+    if (h1) h1->Draw("LP");
+    if (h2) h2->SetMarkerStyle(Style_2);
+    if (h2) h2->SetMarkerColor(Color_2);
+    if (h2) h2->SetLineColor(Color_2);
+    if (h2) h2->Draw("LPSAME");
+    if (h3) h3->SetMarkerStyle(Style_3);
+    if (h3) h3->SetMarkerColor(Color_3);
+    if (h3) h3->SetLineColor(Color_3);
+    if (h3) h3->Draw("LPSAME");
+    if (h4) h4->SetMarkerStyle(Style_4);
+    if (h4) h4->SetMarkerColor(Color_4);
+    if (h4) h4->SetLineColor(Color_4);
+    if (h4) h4->Draw("LPSAME");
+
+    TLegend *legend = new TLegend(0.8,0.8,1,1);
+    if (h1) legend->AddEntry(h1,hName1);
+    if (h2) legend->AddEntry(h2,hName2);
+    if (h3) legend->AddEntry(h3,hName3);
+    if (h4) legend->AddEntry(h4,hName4);
+    legend->Draw("SAME");
+
 	c1->SaveAs(runName+"_rate.png");
 	c1->SaveAs(runName+"_rate.pdf");
 
