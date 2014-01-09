@@ -1,17 +1,16 @@
-//double NperP = 1126785./1e8;
-double NperP = 3e-15;
+double nProtons = 1e9;
 double PulseInterval = 1170;
 
-//TString runName = "OT.11.p5";
 TString runName = "signal";
+TString DirName = "em";
 
 double proton_rate = 2.5e12; // Hz
 double W_He = 41; // eV
 double W_iC4H10 = 23; // eV
 double gain = 1e5; // and  <--- smaller than 1e5 due to space charge? 
 double cdc_length = 150 ; // cm
-double edep2charge = proton_rate*NperP*(0.9/W_He+0.1/W_iC4H10)*gain*1.6e-19/cdc_length*24*3600; // C/cm/day
-double hit2rate = proton_rate*NperP/1000; // kHz
+double edep2charge = proton_rate/nProtons*(0.9/W_He+0.1/W_iC4H10)*gain*1.6e-19/cdc_length*24*3600; // C/cm/day
+double hit2rate = proton_rate/nProtons/1000; // kHz
 
 int cellNo[18];
 int cellNoIntegral[18];
@@ -46,14 +45,14 @@ void getRate(){
 	TFile *f = 0;
 
 	TChain *c = new TChain("tree");
-	c->Add(runName+".root");
-//	std::stringstream buff;
-//	for (int i = 0; i<10; i++){
-//		buff.str("");
-//		buff.clear();
-//		buff<<"/home/chen/MyWorkArea/Data/raw/g4sim/PMC.1p5_0731_uniform/"<<i<<"_job0.raw";
-//		c->Add( buff.str().c_str());
-//	}
+//	c->Add(runName+".root");
+	std::stringstream buff;
+	for (int i = 0; i<100; i++){
+		buff.str("");
+		buff.clear();
+		buff<<DirName<<"/"<<i<<"_job0.raw";
+		c->Add( buff.str().c_str());
+	}
 
     int Color_1 = 632;
     int Color_2 = 800;
@@ -90,8 +89,8 @@ void getRate(){
 
 	f = new TFile("Curves.s100.root");
 	std::cout<<"Integrating..."<<std::endl;
-//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
 	hCurve->RebinX(20);
 
 	std::vector<int> *C_volID;
@@ -110,7 +109,7 @@ void getRate(){
 	int nEvents = c->GetEntries();
 	std::stringstream buff;
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
-		if (iEvent%100==0) std::cout<<(double)iEvent/nEvents<<" % ..."<<std::endl;
+		if (iEvent%5000==0) std::cout<<(double)iEvent/nEvents<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
 		int nHits = C_edep->size();
 		int hitcount[18] = {0};
@@ -128,8 +127,8 @@ void getRate(){
 			time = (*C_t)[iHit];
 			edep = (*C_edep)[iHit]*1e9;
 			int layerID = get_layer_index(volID);
-			vHitrate[layerID]+=hit2rate/cellNo[layerID]/nEvents;
-			vCharge[layerID]+=edep*edep2charge/cellNo[layerID]/nEvents;
+			vHitrate[layerID]+=hit2rate/cellNo[layerID];
+			vCharge[layerID]+=edep*edep2charge/cellNo[layerID];
 			hitcount[layerID]++;
 			foundhit = true;
 			if (layerID>layerID_max) layerID_max = layerID;
@@ -168,9 +167,11 @@ void getRate(){
 	TGraph * g1 = new TGraph(vLayerID.size(),&(vLayerID[0]),&(vHitrate[0]));
 	g1->SetTitle(runName+": Hit Rate Per Cell (kHz)");
 	g1->GetHistogram()->GetXaxis()->SetTitle("Layer ID (1-18)");
+	g1->SetName("g1");
 	TGraph * g2 = new TGraph(vLayerID.size(),&(vLayerID[0]),&(vCharge[0]));
 	g2->GetHistogram()->GetXaxis()->SetTitle("Layer ID (1-18)");
 	g2->SetTitle(runName+":Q (C/cm/day)");
+	g2->SetName("g2");
 
 	TCanvas *c1 = new TCanvas("c","c");
 	TPad * p1 = new TPad("p1","p1",0,0,1./2,0.5);
@@ -228,6 +229,8 @@ void getRate(){
 	c1->SaveAs(runName+"_rate.png");
 	c1->SaveAs(runName+"_rate.pdf");
 
+	g1->Write();
+	g2->Write();
 	h1->Write();
 	h2->Write();
 	h3->Write();

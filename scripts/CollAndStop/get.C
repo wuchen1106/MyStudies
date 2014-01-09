@@ -66,6 +66,21 @@
 	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,-1000,0);
 	TH1D *h0 = new TH1D("h0","h0",200,0,PulseInterval);
 	TH1D *h1 = new TH1D("h1","h1",200,0,PulseInterval);
+
+	TH1D *h1_1 = new TH1D("#mu Reached Collimator","Momentum Before Collimator",150,0,150);
+	h1_1->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
+	h1_1->GetYaxis()->SetTitle("count");
+	h1_1->GetYaxis()->SetTitleOffset(1.5);
+	TH1D *h1_2 = new TH1D("#mu Passed Collimator","Momentum Before Collimator",150,0,150);
+	TH1D *h1_3 = new TH1D("#mu Stopped in Target","Momentum Before Collimator",150,0,150);
+
+	TH1D *h2_1 = new TH1D("#mu Reached Collimator","y Position Before Collimator",150,-200,200);
+	h2_1->GetXaxis()->SetTitle("y position (mm)");
+	h2_1->GetYaxis()->SetTitle("count");
+	h2_1->GetYaxis()->SetTitleOffset(1.5);
+	TH1D *h2_2 = new TH1D("#mu Passed Collimator","y Position Before Collimator",150,-200,200);
+	TH1D *h2_3 = new TH1D("#mu Stopped in Target","y Position Before Collimator",150,-200,200);
+
 	std::vector<int> *T_tid;
 	std::vector<std::string> *T_volName;
 	std::vector<double> *McTruth_x;
@@ -151,13 +166,19 @@
 			stopped=true;
 		}
 		h01->Fill(pa,y,weight);
+		h1_1->Fill(pa,weight);
+		h2_1->Fill(y,weight);
 		if (passed){
 			nPassed+=weight;
 			h02->Fill(pa,y,weight);
+			h1_2->Fill(pa,weight);
+			h2_2->Fill(y,weight);
 		}
 		if (stopped){
 			nStopped+=weight;
 			h03->Fill(pa,y,weight);
+			h1_3->Fill(pa,weight);
+			h2_3->Fill(y,weight);
 			if (withStopPosition){
 				h04->Fill(r,weight);
 				h05->Fill(Oz,weight);
@@ -165,7 +186,7 @@
 			}
 			h0->Fill((*T_Ot)[0],weight);
 			for (int i_window = 0; i_window <5; i_window++){
-				h1->Fill(Ot+hCurve->GetRandom()+i_window*PulseInterval,weight);
+				h1->Fill(Ot+hCurve->GetRandom()+(i_window-2)*PulseInterval,weight);
 			}
 		}
 	}
@@ -232,4 +253,48 @@
 		c2->SaveAs(runName+".SP.pdf");
 		c2->SaveAs(runName+".SP.png");
 	}
+
+	TCanvas *c3 = new TCanvas();
+	TPad *apad = new TPad("p1","p1",0,0,0.5,1);
+	TPad *bpad = new TPad("p2","p2",0.5,0,1,1);
+	apad->Draw();
+	bpad->Draw();
+
+	apad->cd();
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
+	h1_1->SetMarkerColor(1);
+	h1_1->SetLineColor(1);
+	h1_1->Draw();
+	h1_2->SetMarkerColor(600);
+	h1_2->SetLineColor(600);
+	h1_2->Draw("SAME");
+	h1_3->SetMarkerColor(632);
+	h1_3->SetLineColor(632);
+	h1_3->Draw("SAME");
+	legend = new TLegend(0.8,0.8,1,1);
+	legend->AddEntry(h1_1,h1_1->GetName());
+	legend->AddEntry(h1_2,h1_2->GetName());
+	legend->AddEntry(h1_3,h1_3->GetName());
+	legend->Draw("SAME");
+
+	bpad->cd();
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
+	h2_1->SetMarkerColor(1);
+	h2_1->SetLineColor(1);
+	h2_1->Draw();
+	h2_2->SetMarkerColor(600);
+	h2_2->SetLineColor(600);
+	h2_2->Draw("SAME");
+	h2_3->SetMarkerColor(632);
+	h2_3->SetLineColor(632);
+	h2_3->Draw("SAME");
+	legend = new TLegend(0.8,0.8,1,1);
+	legend->AddEntry(h2_1,h2_1->GetName());
+	legend->AddEntry(h2_2,h2_2->GetName());
+	legend->AddEntry(h2_3,h2_3->GetName());
+	legend->Draw("SAME");
+	c2->SaveAs(runName+".pa_y.pdf");
+	c2->SaveAs(runName+".pa_y.png");
 }
