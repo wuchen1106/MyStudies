@@ -838,7 +838,7 @@ void init_args()
 	writeModule = 10000;
 	UseWeight = 0;
 	PDGEncoding = 1;
-	m_norm = 1;
+	m_norm=1e10;
 	backup = false;
 	CdcFile = "CdcFile";
 }
