@@ -1,8 +1,8 @@
-double nProtons = 1e9;
+double nProtons = 1e10;
 double PulseInterval = 1170;
 
-TString runName = "signal";
-TString DirName = "em";
+TString runName = "emOT";
+TString DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH";
 
 double proton_rate = 2.5e12; // Hz
 double W_He = 41; // eV
@@ -53,6 +53,20 @@ void getRate(){
 		buff<<DirName<<"/"<<i<<"_job0.raw";
 		c->Add( buff.str().c_str());
 	}
+	DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH";
+	for (int i = 0; i<100; i++){
+		buff.str("");
+		buff.clear();
+		buff<<DirName<<"/"<<i<<"_job0.raw";
+		c->Add( buff.str().c_str());
+	}
+//	DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/CDChit.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH/raw";
+//	for (int i = 0; i<100; i++){
+//		buff.str("");
+//		buff.clear();
+//		buff<<DirName<<"/"<<i<<"_job0.raw";
+//		c->Add( buff.str().c_str());
+//	}
 
     int Color_1 = 632;
     int Color_2 = 800;
@@ -107,10 +121,12 @@ void getRate(){
 	f = new TFile(runName+".output.root","RECREATE");
 	TTree *t  = new TTree("t","t");
 	int nEvents = c->GetEntries();
+	std::cout<<"nEvents = "<<nEvents<<std::endl;
 	std::stringstream buff;
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
-		if (iEvent%5000==0) std::cout<<(double)iEvent/nEvents<<" % ..."<<std::endl;
+		if (iEvent%5000==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
+		if (iEvent>=11094) weight*=100./31;
 		int nHits = C_edep->size();
 		int hitcount[18] = {0};
 		bool foundhit = false;
