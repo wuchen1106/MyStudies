@@ -1,6 +1,7 @@
 double total = 0;
 
-TString runName = "11.p5";
+TString runName = "1p5_0927_root";
+TString DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim";
 total = 246067;
 
 int cellNo[18];
@@ -34,14 +35,14 @@ int get_layer_index(int volID){
 
 void get(){
 	TChain *c = new TChain("tree");
-	c->Add(runName+".root");
-//	std::stringstream buff;
-//	for (int i = 0; i<100; i++){
-//		buff.str("");
-//		buff.clear();
-//		buff<<"/home/chen/MyWorkArea/Data/raw/g4sim/RPC.2p4_0731_root/"<<i<<"_job0.raw";
-//		c->Add( buff.str().c_str());
-//	}
+//	c->Add(runName+".root");
+	std::stringstream buff;
+	for (int i = 0; i<100; i++){
+		buff.str("");
+		buff.clear();
+		buff<<DirName+"/RPC."<<runName<<"/"<<i<<"_job0.raw";
+		c->Add( buff.str().c_str());
+	}
 
 	TFile *f = new TFile(runName+".output.root","RECREATE");
 	TTree *t = new TTree("t","t");
