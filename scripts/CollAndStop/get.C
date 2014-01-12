@@ -67,15 +67,15 @@
 	h11->GetYaxis()->SetTitle("count/p^{+}");
 	h11->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D *h20 = new TH1D("h20",par+" Arrive Time",200,0,PulseInterval);
+	TH1D *h20 = new TH1D("h20","Arrival Time Before Collimator",200,0,PulseInterval);
 	h20->GetXaxis()->SetTitle("Time (ns)");
 	h20->GetYaxis()->SetTitle("count/p^{+}");
 	h20->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h30 = new TH1D("h30",par+" Arrive Time",200,0,PulseInterval);
+	TH1D *h30 = new TH1D("h30","Arrival Time Before Collimator",200,0,PulseInterval);
 	h30->GetXaxis()->SetTitle("Time (ns)");
 	h30->GetYaxis()->SetTitle("count/p^{+}");
 	h30->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h40 = new TH1D("h40",par+" Arrive Time",200,0,PulseInterval);
+	TH1D *h40 = new TH1D("h40","Arrival Time Before Collimator",200,0,PulseInterval);
 	h40->GetXaxis()->SetTitle("Time (ns)");
 	h40->GetYaxis()->SetTitle("count/p^{+}");
 	h40->GetYaxis()->SetTitleOffset(1.5);
@@ -374,7 +374,6 @@
 	legend->AddEntry(h20,par+" Reached Collimator");
 	legend->AddEntry(h30,par+" Passed Collimator");
 	legend->AddEntry(h40,par+" Stopped in Target");
-	legend->SetTextSize(22);
 	legend->Draw("SAME");
 	sum->Draw();
 	c3->SaveAs(runName+".pa_y.pdf");
