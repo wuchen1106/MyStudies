@@ -4,6 +4,7 @@
 
 	double time_right = 1150;
 	double time_left = 700;
+	double tSep = 1170;
 
 	TChain *c = new TChain("tree");
 
@@ -13,22 +14,22 @@
 	f = new TFile("Curves.s100.root");
 	std::cout<<"Integrating..."<<std::endl;
 
-	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-	double NperP = 860498./1e8;
-	TString parName = "mu";
-	TString DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH";
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 860498./1e8;
+//	TString parName = "mu";
+//	TString DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH";
 
-//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-//	double NperP = 706288./1e9;
-//	TString parName = "pi";
-//	TString DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.pim.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH";
+	double minimum = 1e-21;
+	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+	double NperP = 706288./1e9;
+	TString parName = "pi";
+	TString DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.pim.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH";
 
 	hCurve->RebinX(20);
 	TString par = "#"+parName+"^{-}";
 	TString runName = parName+"on.11.p5";
 	TString option = "Rmin = 11 cm, L = 50 cm";
-
-//	c->Add(runName+".root");
 
 	std::stringstream buff;
 	for (int i = 0; i<10; i++){
@@ -416,21 +417,23 @@
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gPad->SetLogy(1);
-	h0->GetYaxis()->SetRangeUser(minimum,h10->GetMaximum()*2);
-	h0->Draw();
+	h10->GetYaxis()->SetRangeUser(minimum,h10->GetMaximum()*2);
+	h10->Draw();
 
 	bpad->cd();
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gPad->SetLogy(1);
-	h1->GetYaxis()->SetRangeUser(minimum,h1->GetMaximum()*2);
-	h1->Draw();
+	h11->GetYaxis()->SetRangeUser(minimum,h11->GetMaximum()*2);
+	h11->Draw();
 	info->Draw();
 
 	cpad->cd();
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gPad->SetLogy(1);
-	h2->GetYaxis()->SetRangeUser(minimum,h2->GetMaximum()*2);
-	h2->Draw();
+	h12->GetYaxis()->SetRangeUser(minimum,h12->GetMaximum()*2);
+	h12->Draw();
+	c4->SaveAs(runName+".time.pdf");
+	c4->SaveAs(runName+".time.png");
 }
