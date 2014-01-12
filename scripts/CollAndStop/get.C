@@ -2,6 +2,9 @@
 	TFile *f = 0;
 	TLegend * legend;
 
+	double time_right = 1150;
+	double time_left = 700;
+
 	TChain *c = new TChain("tree");
 
 	bool withStopPosition = true;
@@ -60,11 +63,11 @@
 
 	TH1D *h10 = new TH1D("h10",par+" Stop Time (Before Smear)",200,0,PulseInterval);
 	h10->GetXaxis()->SetTitle("Time (ns)");
-	h10->GetYaxis()->SetTitle("count/p^{+}");
+	h10->GetYaxis()->SetTitle(par+" Stopped / P^{+} / 5.849 ns");
 	h10->GetYaxis()->SetTitleOffset(1.5);
 	TH1D *h11 = new TH1D("h11",par+" Capture/Decay Time (After Smear)",200,0,PulseInterval);
 	h11->GetXaxis()->SetTitle("Time (ns)");
-	h11->GetYaxis()->SetTitle("count/p^{+}");
+	h11->GetYaxis()->SetTitle(par+" Stopped / P^{+} / 5.849 ns");
 	h11->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D *h20 = new TH1D("h20",par+" Arrive Time",200,0,PulseInterval);
@@ -249,14 +252,19 @@
 	h2_2->Write();
 	h2_3->Write();
 
-	TH1D *h12 = new TH1D("h12","h12",200,0,PulseInterval);
-	for (int i = 1; i<=200; i++){
-		double n = h11->Integral(i,200);
+	TH1D *h12 = new TH1D("h12",par+" Decayed/Captured in Time Window (After Smear)",200,0,PulseInterval);
+	h12->GetXaxis()->SetTitle("Left End of Time Window (ns)");
+	h12->GetYaxis()->SetTitle(par+" Stopped / P^{+} in Time Window");
+	h12->GetYaxis()->SetTitleOffset(1.5);
+	int BinMax = h11->FindBin(time_right);
+	for (int i = 1; i<=BinMax; i++){
+		double n = h11->Integral(i,BinMax);
 		h12->SetBinContent(i,n);
 	}
 	h12->Write();
 
 	TPaveText *sum = new TPaveText(0.5,0.75,0.9,0.9,"brNDC");
+	sum->SetName("sum");
 	sum->AddText(option);
 	buff.str("");
 	buff.clear();
@@ -273,6 +281,25 @@
 	buff<<"N_{"<<par<<"_{stop}}/N_{p^{+}} = "<<nStopped<<std::endl;
 	sum->AddText(buff.str().c_str());
 	sum->Write();
+
+	TPaveText *info = new TPaveText(0.3,0.7,0.9,0.9,"brNDC");
+	info->SetName("Info");
+	buff.str("");
+	buff.clear();
+	buff<<"Seperation of Proton Bunches: "<<tSep<<" ns."<<std::endl;
+	info->AddText(buff.str().c_str());
+	buff.str("");
+	buff.clear();
+	buff<<"Proton Pulse Shape: 100 ns squre wave"<<std::endl;
+	info->AddText(buff.str().c_str());
+	buff.str("");
+	buff.clear();
+	buff<<"Right End of Time Window: "<<time_right<<" ns."<<std::endl;
+	info->AddText(buff.str().c_str());
+	buff.str("");
+	buff.clear();
+	buff<<"N_{"<<par<<"_{In Window}} = "<<h12->GetBinContent(h12->FindBin(time_left))<<", A_{Time} = "<<h12->GetBinContent(h12->FindBin(time_left))/nStopped<<std::endl;
+	info->AddText(buff.str().c_str());
 
 //*************************************************************************************
 	gStyle->SetPalette(1);
@@ -379,4 +406,32 @@
 	sum->Draw();
 	c3->SaveAs(runName+".pa_y.pdf");
 	c3->SaveAs(runName+".pa_y.png");
+
+	// Draw Time Distribution
+	TCanvas *c4 = new TCanvas("c4","c4",1024,768);
+	apad->Draw();
+	bpad->Draw();
+	cpad->Draw();
+
+	apad->cd();
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
+	gPad->SetLogy(1);
+	h0->GetYaxis()->SetRangeUser(minimum,h10->GetMaximum()*2);
+	h0->Draw();
+
+	bpad->cd();
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
+	gPad->SetLogy(1);
+	h1->GetYaxis()->SetRangeUser(minimum,h1->GetMaximum()*2);
+	h1->Draw();
+	info->Draw();
+
+	cpad->cd();
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
+	gPad->SetLogy(1);
+	h2->GetYaxis()->SetRangeUser(minimum,h2->GetMaximum()*2);
+	h2->Draw();
 }
