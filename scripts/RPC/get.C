@@ -35,12 +35,11 @@ int get_layer_index(int volID){
 
 void get(){
 	TChain *c = new TChain("tree");
-//	c->Add(runName+".root");
 	std::stringstream buff;
-	for (int i = 0; i<100; i++){
+	for (int i = 0; i<150; i++){
 		buff.str("");
 		buff.clear();
-		buff<<DirName+"/RPC."<<runName<<"/"<<i<<"_job0.raw";
+		buff<<DirName+"/RMC."<<runName<<"/"<<i<<"_job0.raw";
 		c->Add( buff.str().c_str());
 	}
 
@@ -55,6 +54,9 @@ void get(){
 	std::vector<double> *M_t;
 	std::vector<int> *C_tid;
 	std::vector<double> *C_t;
+	std::vector<double> *C_x;
+	std::vector<double> *C_y;
+	std::vector<double> *C_z;
 	std::vector<double> *C_px;
 	std::vector<double> *C_py;
 	std::vector<double> *C_pz;
@@ -66,6 +68,9 @@ void get(){
 	c->SetBranchAddress("M_t",&M_t);
 	c->SetBranchAddress("C_tid",&C_tid);
 	c->SetBranchAddress("C_t",&C_t);
+	c->SetBranchAddress("C_x",&C_x);
+	c->SetBranchAddress("C_y",&C_y);
+	c->SetBranchAddress("C_z",&C_z);
 	c->SetBranchAddress("C_px",&C_px);
 	c->SetBranchAddress("C_py",&C_py);
 	c->SetBranchAddress("C_pz",&C_pz);
@@ -76,11 +81,22 @@ void get(){
 	double time = -1;
 	std::stringstream buff;
 	double pa = -1;
+	double px = -1;
+	double py = -1;
+	double pz = -1;
+	double x = -1;
+	double y = -1;
+	double z = -1;
 	std::string *process;
 	std::string *volume;
 	t->Branch("process",&process);
 	t->Branch("volume",&volume);
-	t->Branch("pa",&pa);
+	t->Branch("x",&x);
+	t->Branch("y",&y);
+	t->Branch("z",&z);
+	t->Branch("px",&px);
+	t->Branch("py",&py);
+	t->Branch("pz",&pz);
 	t->Branch("weight",&weight);
 	int nEvents = c->GetEntries();
 	double nTarget=0;
@@ -98,9 +114,12 @@ void get(){
 			if (prevtid!= (*C_tid)[iHit]){
 				prevtid=(*C_tid)[iHit];
 //				std::cout<<"new track: "<<(*C_tid)[iHit]<<std::endl;
-				double px = (*C_px)[iHit]*1000;
-				double py = (*C_py)[iHit]*1000;
-				double pz = (*C_pz)[iHit]*1000;
+				x = (*C_x)[iHit]*10;
+				y = (*C_y)[iHit]*10;
+				z = (*C_z)[iHit]*10;
+				px = (*C_px)[iHit]*1000;
+				py = (*C_py)[iHit]*1000;
+				pz = (*C_pz)[iHit]*1000;
 				double i_pa = sqrt(px*px+py*py+pz*pz);
 				if (i_pa > pa){
 //					std::cout<<"    pa is max!"<<std::endl;

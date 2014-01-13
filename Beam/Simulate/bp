@@ -1,7 +1,7 @@
 MAGFIELDCARDROOT  = MagField_none
 OUTCARDROOT       = output_default
 GEOCARDROOT	      = geometry_default
-GENFILEROOT       = gen_rmc
+GENFILEROOT       = gen_root
 
 ##geometry preset
 #detector_configure
@@ -23,4 +23,4 @@ cdctrack.mac
 #run
 run_configure
 1
-10952540
+54371510
