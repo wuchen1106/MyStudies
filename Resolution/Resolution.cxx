@@ -21,7 +21,7 @@ int nEvents = 0;
 int printModule = 1;
 bool backup = false;
 double sig_up = 106;
-double sig_low = 103.8;
+double sig_low = 103.6;
 
 void init_args();
 void print_usage(char* prog_name);

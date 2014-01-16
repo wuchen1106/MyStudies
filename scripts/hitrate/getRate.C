@@ -1,10 +1,33 @@
-double nProtons = 1e10;
-double PulseInterval = 1170;
 
+// About this run
 TString runName = "emOT";
-TString DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH";
+std::vector<TString> DirName;
+std::vector<int> nRuns;
+ // ########Should Modify#########
+DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
+nRuns.push_back(100);
+DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
+nRuns.push_back(100);
+DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
+nRuns.push_back(100);
+double nProtons = 1e10;
+ // ########Should Modify#########
 
+// Beam Structure
+double PulseInterval = 1170; // ns
+double dutyFactor = 1./3;
 double proton_rate = 2.5e12; // Hz
+double right_end = 1150; // ns
+double left_end = 700; // ns
+f = new TFile("Curves.s100.root");
+std::cout<<"Integrating..."<<std::endl;
+ // ########Should Modify#########
+TH1D *hCurve = (TH1D*) f->Get("ProtonPuls"); // for beam particles and stopped pions
+//TH1D *hCurve = (TH1D*) f->Get("Convoluted"); // for stopped muons
+ // ########Should Modify#########
+hCurve->RebinX(20);
+
+// CDC Info
 double W_He = 41; // eV
 double W_iC4H10 = 23; // eV
 double gain = 1e5; // and  <--- smaller than 1e5 due to space charge? 
@@ -47,26 +70,14 @@ void getRate(){
 	TChain *c = new TChain("tree");
 //	c->Add(runName+".root");
 	std::stringstream buff;
-	for (int i = 0; i<100; i++){
-		buff.str("");
-		buff.clear();
-		buff<<DirName<<"/"<<i<<"_job0.raw";
-		c->Add( buff.str().c_str());
+	for (int iRun = 0; iRun < nRuns.size(); iRun++ ){
+		for (int i = 0; i<nRuns[iRun]; i++){
+			buff.str("");
+			buff.clear();
+			buff<<DirName[iRun]<<"/"<<i<<"_job0.raw";
+			c->Add( buff.str().c_str());
+		}
 	}
-	DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH";
-	for (int i = 0; i<100; i++){
-		buff.str("");
-		buff.clear();
-		buff<<DirName<<"/"<<i<<"_job0.raw";
-		c->Add( buff.str().c_str());
-	}
-//	DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/CDChit.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH/raw";
-//	for (int i = 0; i<100; i++){
-//		buff.str("");
-//		buff.clear();
-//		buff<<DirName<<"/"<<i<<"_job0.raw";
-//		c->Add( buff.str().c_str());
-//	}
 
     int Color_1 = 632;
     int Color_2 = 800;
@@ -86,10 +97,91 @@ void getRate(){
     TString hName3 = "Seccond Outmost Layer";
     TString hName4 = "Outmost Layer";
 
-    TH1D *h1 = new TH1D("Innermost Layer","Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)",150,0,PulseInterval);
-    TH1D *h2 = new TH1D("Seccond Innermost Layer","Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)",150,0,PulseInterval);
-    TH1D *h3 = new TH1D("Seccond Outmost Layer","Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)",150,0,PulseInterval);
-    TH1D *h4 = new TH1D("Outmost Layer","Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)",150,0,PulseInterval);
+	TString tilte = "Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)";
+
+	// hit rate in different cdc layers
+    TH1D *h1 = new TH1D("h1",tilte,100,0,PulseInterval);
+    h1->GetYaxis()->SetTitle(ytitle1);
+    h1->GetXaxis()->SetTitle(xtitle1);
+    h1->SetMarkerStyle(Style_1);
+    h1->SetMarkerColor(Color_1);
+    h1->SetLineColor(Color_1);
+    TH1D *h2 = new TH1D("h2",tilte,100,0,PulseInterval);
+    h2->SetMarkerStyle(Style_2);
+    h2->SetMarkerColor(Color_2);
+    h2->SetLineColor(Color_2);
+    TH1D *h3 = new TH1D("h3",tilte,100,0,PulseInterval);
+    h3->SetMarkerStyle(Style_3);
+    h3->SetMarkerColor(Color_3);
+    h3->SetLineColor(Color_3);
+    TH1D *h4 = new TH1D("h4",tilte,100,0,PulseInterval);
+    h4->SetMarkerStyle(Style_4);
+    h4->SetMarkerColor(Color_4);
+    h4->SetLineColor(Color_4);
+
+	// hit rate in Upstream Trigger counter
+    TH1D *h11 = new TH1D("h11",tilte,100,0,PulseInterval);
+    h11->GetYaxis()->SetTitle(ytitle1);
+    h11->GetXaxis()->SetTitle(xtitle1);
+    h11->SetMarkerStyle(Style_1);
+    h11->SetMarkerColor(Color_1);
+    h11->SetLineColor(Color_1);
+    TH1D *h12 = new TH1D("h12",tilte,100,0,PulseInterval);
+    h12->SetMarkerStyle(Style_2);
+    h12->SetMarkerColor(Color_2);
+    h12->SetLineColor(Color_2);
+    TH1D *h13 = new TH1D("h13",tilte,100,0,PulseInterval);
+    h13->SetMarkerStyle(Style_3);
+    h13->SetMarkerColor(Color_3);
+    h13->SetLineColor(Color_3);
+
+	// hit rate in Downstream Trigger counter
+    TH1D *h21 = new TH1D("h21",tilte,100,0,PulseInterval);
+    h21->GetYaxis()->SetTitle(ytitle1);
+    h21->GetXaxis()->SetTitle(xtitle1);
+    h21->SetMarkerStyle(Style_1);
+    h21->SetMarkerColor(Color_1);
+    h21->SetLineColor(Color_1);
+    TH1D *h22 = new TH1D("h22",tilte,100,0,PulseInterval);
+    h22->SetMarkerStyle(Style_2);
+    h22->SetMarkerColor(Color_2);
+    h22->SetLineColor(Color_2);
+    TH1D *h23 = new TH1D("h23",tilte,100,0,PulseInterval);
+    h23->SetMarkerStyle(Style_3);
+    h23->SetMarkerColor(Color_3);
+    h23->SetLineColor(Color_3);
+
+	// Momentum Distribution in Upstream Trigger counter
+    TH1D *h31 = new TH1D("h31",tilte,100,0,PulseInterval);
+    h31->GetYaxis()->SetTitle(ytitle1);
+    h31->GetXaxis()->SetTitle(xtitle1);
+    h31->SetMarkerStyle(Style_1);
+    h31->SetMarkerColor(Color_1);
+    h31->SetLineColor(Color_1);
+    TH1D *h32 = new TH1D("h32",tilte,100,0,PulseInterval);
+    h32->SetMarkerStyle(Style_2);
+    h32->SetMarkerColor(Color_2);
+    h32->SetLineColor(Color_2);
+    TH1D *h33 = new TH1D("h33",tilte,100,0,PulseInterval);
+    h33->SetMarkerStyle(Style_3);
+    h33->SetMarkerColor(Color_3);
+    h33->SetLineColor(Color_3);
+
+	// Momentum Distribution in Downstream Trigger counter
+    TH1D *h41 = new TH1D("h41",tilte,100,0,PulseInterval);
+    h41->GetYaxis()->SetTitle(ytitle1);
+    h41->GetXaxis()->SetTitle(xtitle1);
+    h41->SetMarkerStyle(Style_1);
+    h41->SetMarkerColor(Color_1);
+    h41->SetLineColor(Color_1);
+    TH1D *h42 = new TH1D("h42",tilte,100,0,PulseInterval);
+    h42->SetMarkerStyle(Style_2);
+    h42->SetMarkerColor(Color_2);
+    h42->SetLineColor(Color_2);
+    TH1D *h43 = new TH1D("h43",tilte,100,0,PulseInterval);
+    h43->SetMarkerStyle(Style_3);
+    h43->SetMarkerColor(Color_3);
+    h43->SetLineColor(Color_3);
 
 	std::vector<double> vLayerID;
 	std::vector<double> vHitrate;
@@ -99,13 +191,6 @@ void getRate(){
 		vHitrate.push_back(0);
 		vCharge.push_back(0);
 	}
-
-
-	f = new TFile("Curves.s100.root");
-	std::cout<<"Integrating..."<<std::endl;
-	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-	hCurve->RebinX(20);
 
 	std::vector<int> *C_volID;
 	std::vector<double> *C_edep;
@@ -215,31 +300,17 @@ void getRate(){
 	g2->Draw("LAP");
 
 	p3->cd();
-    if (h1) h1->GetYaxis()->SetTitle(ytitle1);
-//  if (h1) h1->GetYaxis()->SetTitleOffset(2);
-    if (h1) h1->GetXaxis()->SetTitle(xtitle1);
-    if (h1) h1->SetMarkerStyle(Style_1);
-    if (h1) h1->SetMarkerColor(Color_1);
-    if (h1) h1->SetLineColor(Color_1);
-    if (h1) h1->Draw("LP");
-    if (h2) h2->SetMarkerStyle(Style_2);
-    if (h2) h2->SetMarkerColor(Color_2);
-    if (h2) h2->SetLineColor(Color_2);
-    if (h2) h2->Draw("LPSAME");
-    if (h3) h3->SetMarkerStyle(Style_3);
-    if (h3) h3->SetMarkerColor(Color_3);
-    if (h3) h3->SetLineColor(Color_3);
-    if (h3) h3->Draw("LPSAME");
-    if (h4) h4->SetMarkerStyle(Style_4);
-    if (h4) h4->SetMarkerColor(Color_4);
-    if (h4) h4->SetLineColor(Color_4);
-    if (h4) h4->Draw("LPSAME");
+	p3->SetLogy(1);
+    h1->Draw("LP");
+    h2->Draw("LPSAME");
+    h3->Draw("LPSAME");
+    h4->Draw("LPSAME");
 
     TLegend *legend = new TLegend(0.8,0.8,1,1);
-    if (h1) legend->AddEntry(h1,hName1);
-    if (h2) legend->AddEntry(h2,hName2);
-    if (h3) legend->AddEntry(h3,hName3);
-    if (h4) legend->AddEntry(h4,hName4);
+    legend->AddEntry(h1,hName1);
+    legend->AddEntry(h2,hName2);
+    legend->AddEntry(h3,hName3);
+    legend->AddEntry(h4,hName4);
     legend->Draw("SAME");
 
 	c1->SaveAs(runName+"_rate.png");

@@ -1,6 +1,7 @@
 {
 	TFile *f = 0;
 	TLegend * legend;
+	TString MyData = getenv("MYDATA");
 
 	double time_right = 1150;
 	double time_left = 700;
@@ -9,9 +10,10 @@
 	TChain *c = new TChain("tree");
 
 	bool withStopPosition = true;
+	bool withCollPosition = true;
 	double PulseInterval = 1170;
 
-	f = new TFile("Curves.s100.root");
+	f = new TFile("result/Curves.s100.root");
 	std::cout<<"Integrating..."<<std::endl;
 
 //	double minimum = 1e-11;
@@ -19,12 +21,17 @@
 //	double NperP = 860498./1e8;
 //	TString parName = "mu";
 //	TString DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH";
+//	int nProcs = 4;
+//	int nJobs = 10;
 
+	int PID = -211;
 	double minimum = 1e-21;
 	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
 	double NperP = 706288./1e9;
 	TString parName = "pi";
-	TString DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.pim.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH";
+	TString DirName = MyData+"/raw/g4sim/Coll.pim.g60cm10mm.005T.BL.g4s.QBH";
+	int nProcs = 4;
+	int nJobs = 10;
 
 	hCurve->RebinX(20);
 	TString par = "#"+parName+"^{-}";
@@ -32,11 +39,13 @@
 	TString option = "Rmin = 11 cm, L = 50 cm";
 
 	std::stringstream buff;
-	for (int i = 0; i<10; i++){
-		buff.str("");
-		buff.clear();
-		buff<<DirName<<"/"<<i<<"_job0.raw";
-		c->Add( buff.str().c_str());
+	for (int i = 0; i<nProcs; i++){
+		for (int j = 0; j<nJobs; j++){
+			buff.str("");
+			buff.clear();
+			buff<<DirName<<"/"<<i<<"_job"<<j<<".raw";
+			c->Add( buff.str().c_str());
+		}
 	}
 
 	TH2D * h01 = new TH2D("h01",par+" Before Collimator",50,0,180,50,-200,200);
@@ -107,6 +116,14 @@
 	std::vector<double> *McTruth_px;
 	std::vector<double> *McTruth_py;
 	std::vector<double> *McTruth_pz;
+	std::vector<double> *V_t;
+	std::vector<double> *V_x;
+	std::vector<double> *V_y;
+	std::vector<double> *V_z;
+	std::vector<double> *V_px;
+	std::vector<double> *V_py;
+	std::vector<double> *V_pz;
+	std::vector<int> *V_pid;
 	std::vector<double> *T_Ox;
 	std::vector<double> *T_Oy;
 	std::vector<double> *T_Oz;
@@ -130,6 +147,14 @@
 	c->SetBranchAddress("McTruth_x",&McTruth_x);
 	c->SetBranchAddress("McTruth_y",&McTruth_y);
 	c->SetBranchAddress("McTruth_z",&McTruth_z);
+	c->SetBranchAddress("V_pid",&V_pid);
+	c->SetBranchAddress("V_t",&V_t);
+	c->SetBranchAddress("V_px",&V_px);
+	c->SetBranchAddress("V_py",&V_py);
+	c->SetBranchAddress("V_pz",&V_pz);
+	c->SetBranchAddress("V_x",&V_x);
+	c->SetBranchAddress("V_y",&V_y);
+	c->SetBranchAddress("V_z",&V_z);
 	c->SetBranchAddress("weight",&weight);
 	double Ox = 0;
 	double Oy = 0;
@@ -148,8 +173,16 @@
 	double nPassedH = 0;
 	double nStopped = 0;
 	double nTotal = 0;
+	int v_pid = 0;
+	double v_x = 0;
+	double v_y = 0;
+	double v_z = 0;
+	double v_px = 0;
+	double v_py = 0;
+	double v_pz = 0;
+	double v_t = 0;
 	if (withStopPosition){
-		f = new TFile(runName+".output.root","RECREATE");
+		f = new TFile("ST."+runName+".output.root","RECREATE");
 	}
 	TTree *t  = new TTree("t","t");
 	if (withStopPosition){
@@ -159,11 +192,40 @@
 		t->Branch("t",&Ot);
 		t->Branch("weight",&weight);
 	}
+	TTree *t2;
+	if (withCollPosition){
+		t2 = new TTree("t","t");
+		t2->Branch("pid",&V_pid);
+		t2->Branch("x",&V_x);
+		t2->Branch("y",&V_y);
+		t2->Branch("z",&V_z);
+		t2->Branch("t",&V_t);
+		t2->Branch("px",&V_px);
+		t2->Branch("py",&V_py);
+		t2->Branch("pz",&V_pz);
+		t2->Branch("weight",&weight);
+	}
 	int nEvents = c->GetEntries();
 	std::cout<<nEvents<<" events!!!"<<std::endl;
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
 		if (iEvent%1000==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
+		// coll
+		if (withCollPosition){
+			for (int iHit = 0; iHit < V_pid->size(); iHit++){
+				v_pid = (*V_pid)[iHit];
+				v_x = (*V_x)[iHit]*10;
+				v_y = (*V_y)[iHit]*10;
+				v_z = (*V_z)[iHit]*10;
+				v_px = (*V_px)[iHit]*1000;
+				v_py = (*V_py)[iHit]*1000;
+				v_pz = (*V_pz)[iHit]*1000;
+				v_t = (*V_t)[iHit];
+				t2->Fill();
+			}
+		}
+
+		// stop
 		nTotal += weight;
 		stopped=false;
 		passed=false;
@@ -252,6 +314,9 @@
 	h2_1->Write();
 	h2_2->Write();
 	h2_3->Write();
+	if (withStopPosition){
+		t->Write();
+	}
 
 	TH1D *h12 = new TH1D("h12",par+" Decayed/Captured in Time Window (After Smear)",200,0,PulseInterval);
 	h12->GetXaxis()->SetTitle("Left End of Time Window (ns)");
@@ -282,6 +347,18 @@
 	buff<<"N_{"<<par<<"_{stop}}/N_{p^{+}} = "<<nStopped<<std::endl;
 	sum->AddText(buff.str().c_str());
 	sum->Write();
+
+	std::cout<<__LINE__<<std::endl;
+//	f->Close();
+	std::cout<<__LINE__<<std::endl;
+	if (withCollPosition){
+	std::cout<<__LINE__<<std::endl;
+		f = new TFile("Coll."+runName+".output.root","RECREATE");
+	std::cout<<__LINE__<<std::endl;
+		t2->Write();
+	std::cout<<__LINE__<<std::endl;
+	}
+	std::cout<<__LINE__<<std::endl;
 
 	TPaveText *info = new TPaveText(0.3,0.7,0.9,0.9,"brNDC");
 	info->SetName("Info");
@@ -320,10 +397,16 @@
 	h02->SetContour(50);
 	h03->SetContour(50);
 	p1->cd();
+	p1->SetGridx(1);
+	p1->SetGridy(1);
 	h01->Draw("CONT0 COLZ");
 	p2->cd();
+	p2->SetGridx(1);
+	p2->SetGridy(1);
 	h02->Draw("CONT0 COLZ");
 	p3->cd();
+	p3->SetGridx(1);
+	p3->SetGridy(1);
 	h03->Draw("CONT0 COLZ");
 	sum->Draw();
 	c1->SaveAs(runName+".paVSy.pdf");
@@ -337,13 +420,14 @@
 		p4->Draw();
 		p5->Draw();
 		p4->cd();
+		p4->SetGridx(1);
+		p4->SetGridy(1);
 		h04->Draw();
 		p5->cd();
+		p5->SetGridx(1);
+		p5->SetGridy(1);
 		h05->Draw();
 		std::cout<<"nStopped = "<<nStopped<<std::endl;
-		if (withStopPosition){
-			t->Write();
-		}
 		c2->SaveAs(runName+".SP.pdf");
 		c2->SaveAs(runName+".SP.png");
 	}
@@ -363,6 +447,7 @@
 	h1_1->SetMarkerColor(1);
 	h1_1->SetLineColor(1);
 	h1_1->Draw();
+	h1_1->Print();
 	h1_2->SetMarkerColor(600);
 	h1_2->SetLineColor(600);
 	h1_2->Draw("SAME");
@@ -409,6 +494,12 @@
 
 	// Draw Time Distribution
 	TCanvas *c4 = new TCanvas("c4","c4",1024,768);
+	apad = new TPad("pa2","pa2",0,0,1./3,1);
+	bpad = new TPad("pb2","pb2",1./3,0,2../3,1);
+	cpad = new TPad("pc2","pc2",2./3,0,1,1);
+	apad->Draw();
+	bpad->Draw();
+	cpad->Draw();
 	apad->Draw();
 	bpad->Draw();
 	cpad->Draw();
@@ -436,4 +527,5 @@
 	h12->Draw();
 	c4->SaveAs(runName+".time.pdf");
 	c4->SaveAs(runName+".time.png");
+
 }

@@ -1,26 +1,64 @@
 {
 	TFile *f = 0;
 	TLegend *legend = 0;
-	TString par = "#mu^{-}";
-	f = new TFile("muon.11.p5.output.root");
+//	TString parName = "mu";
+//	double minimum = 1e-11;
+	TString parName = "pi";
+	double minimum = 1e-21;
 
-	TH2D * h01 = (TH2D*) f->Get("h01");
-	TH2D * h02 = (TH2D*) f->Get("h02");
-	TH2D * h03 = (TH2D*) f->Get("h03");
-	TH1D * h04 = (TH1D*) f->Get("h04");
-	TH1D * h05 = (TH1D*) f->Get("h05");
-	TH1D *h10 = (TH1D*) f->Get("h10");
-	TH1D *h11 = (TH1D*) f->Get("h11");
-	TH1D *h20 = (TH1D*) f->Get("h20");
-	TH1D *h30 = (TH1D*) f->Get("h30");
-	TH1D *h40 = (TH1D*) f->Get("h40");
-	TH1D *h1_1 = (TH1D*) f->Get("h1_1");
-	TH1D *h1_2 = (TH1D*) f->Get("h1_2");
-	TH1D *h1_3 = (TH1D*) f->Get("h1_3");
-	TH1D *h2_1 = (TH1D*) f->Get("h2_1");
-	TH1D *h2_2 = (TH1D*) f->Get("h2_2");
-	TH1D *h2_3 = (TH1D*) f->Get("h2_3");
-	TPaveText *sum = (TPaveText*) f->Get("TPave");
+	TString par = "#"+parName+"^{-}";
+	f = new TFile("result/"+parName+"on.11.p5.output.root");
+
+	TH2D * h01  = (TH2D*) f->Get("h01");
+	TH2D * h02  = (TH2D*) f->Get("h02");
+	TH2D * h03  = (TH2D*) f->Get("h03");
+	TH1D * h04  = (TH1D*) f->Get("h04");
+	TH1D * h05  = (TH1D*) f->Get("h05");
+	TH1D * h10  = (TH1D*) f->Get("h10");
+	TH1D * h11  = (TH1D*) f->Get("h11");
+	TH1D * h20  = (TH1D*) f->Get("h20");
+	TH1D * h30  = (TH1D*) f->Get("h30");
+	TH1D * h40  = (TH1D*) f->Get("h40");
+	TH1D * h1_1 = (TH1D*) f->Get("h1_1");
+	TH1D * h1_2 = (TH1D*) f->Get("h1_2");
+	TH1D * h1_3 = (TH1D*) f->Get("h1_3");
+	TH1D * h2_1 = (TH1D*) f->Get("h2_1");
+	TH1D * h2_2 = (TH1D*) f->Get("h2_2");
+	TH1D * h2_3 = (TH1D*) f->Get("h2_3");
+	h01 ->GetXaxis()->SetTitleFont(22);
+	h02 ->GetXaxis()->SetTitleFont(22);
+	h03 ->GetXaxis()->SetTitleFont(22);
+	h04 ->GetXaxis()->SetTitleFont(22);
+	h05 ->GetXaxis()->SetTitleFont(22);
+	h10 ->GetXaxis()->SetTitleFont(22);
+	h11 ->GetXaxis()->SetTitleFont(22);
+	h20 ->GetXaxis()->SetTitleFont(22);
+	h30 ->GetXaxis()->SetTitleFont(22);
+	h40 ->GetXaxis()->SetTitleFont(22);
+	h1_1->GetXaxis()->SetTitleFont(22);
+	h1_2->GetXaxis()->SetTitleFont(22);
+	h1_3->GetXaxis()->SetTitleFont(22);
+	h2_1->GetXaxis()->SetTitleFont(22);
+	h2_2->GetXaxis()->SetTitleFont(22);
+	h2_3->GetXaxis()->SetTitleFont(22);
+	h01 ->GetYaxis()->SetTitleFont(22);
+	h02 ->GetYaxis()->SetTitleFont(22);
+	h03 ->GetYaxis()->SetTitleFont(22);
+	h04 ->GetYaxis()->SetTitleFont(22);
+	h05 ->GetYaxis()->SetTitleFont(22);
+	h10 ->GetYaxis()->SetTitleFont(22);
+	h11 ->GetYaxis()->SetTitleFont(22);
+	h20 ->GetYaxis()->SetTitleFont(22);
+	h30 ->GetYaxis()->SetTitleFont(22);
+	h40 ->GetYaxis()->SetTitleFont(22);
+	h1_1->GetYaxis()->SetTitleFont(22);
+	h1_2->GetYaxis()->SetTitleFont(22);
+	h1_3->GetYaxis()->SetTitleFont(22);
+	h2_1->GetYaxis()->SetTitleFont(22);
+	h2_2->GetYaxis()->SetTitleFont(22);
+	h2_3->GetYaxis()->SetTitleFont(22);
+	TPaveText *sum = (TPaveText*) f->Get("sum");
+	TPaveText *info = (TPaveText*) f->Get("info");
 
 //*************************************************************************************
 	gStyle->SetPalette(1);
@@ -40,22 +78,33 @@
 	h02->SetContour(50);
 	h03->SetContour(50);
 	p1->cd();
+	p1->SetGridx(1);
+	p1->SetGridy(1);
 	h01->Draw("CONT0 COLZ");
 	p2->cd();
+	p2->SetGridx(1);
+	p2->SetGridy(1);
 	h02->Draw("CONT0 COLZ");
 	p3->cd();
+	p3->SetGridx(1);
+	p3->SetGridy(1);
 	h03->Draw("CONT0 COLZ");
 	sum->Draw();
 
 	// Draw stop position
+
 	TCanvas *c2 = new TCanvas("c2","c2",1024,768);
 	TPad * p4 = new TPad("p4","p4",0,0,1./2,1);
 	TPad * p5 = new TPad("p5","p5",1./2,0,2./2,1);
 	p4->Draw();
 	p5->Draw();
 	p4->cd();
+	p4->SetGridx(1);
+	p4->SetGridy(1);
 	h04->Draw();
 	p5->cd();
+	p5->SetGridx(1);
+	p5->SetGridy(1);
 	h05->Draw();
 
 	// Draw pa y and t
@@ -112,4 +161,32 @@
 	legend->AddEntry(h40,par+" Stopped in Target");
 	legend->Draw("SAME");
 	sum->Draw();
+
+	// Draw Time Distribution
+	TCanvas *c4 = new TCanvas("c4","c4",1024,768);
+	apad->Draw();
+	bpad->Draw();
+	cpad->Draw();
+
+	apad->cd();
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
+	gPad->SetLogy(1);
+	h10->GetYaxis()->SetRangeUser(minimum,h10->GetMaximum()*2);
+	h10->Draw();
+
+	bpad->cd();
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
+	gPad->SetLogy(1);
+	h11->GetYaxis()->SetRangeUser(minimum,h11->GetMaximum()*2);
+	h11->Draw();
+	if(info) info->Draw();
+
+	cpad->cd();
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
+	gPad->SetLogy(1);
+	h12->GetYaxis()->SetRangeUser(minimum,h12->GetMaximum()*2);
+	h12->Draw();
 }
