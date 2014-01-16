@@ -16,22 +16,23 @@
 	f = new TFile("result/Curves.s100.root");
 	std::cout<<"Integrating..."<<std::endl;
 
-//	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 860498./1e8;
-//	TString parName = "mu";
-//	TString DirName = "/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH";
+	int PID = 13;
+	double minimum = 1e-11;
+	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+	double NperP = 860498./1e8;
+	TString parName = "mu";
+	TString DirName = MyData+"/raw/g4sim/Coll.OT.g60cm10mm.005T.BL.g4s.QBH";
+	int nProcs = 10;
+	int nJobs = 1;
+
+//	int PID = -211;
+//	double minimum = 1e-21;
+//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+//	double NperP = 706288./1e9;
+//	TString parName = "pi";
+//	TString DirName = MyData+"/raw/g4sim/Coll.pim.g60cm10mm.005T.BL.g4s.QBH";
 //	int nProcs = 4;
 //	int nJobs = 10;
-
-	int PID = -211;
-	double minimum = 1e-21;
-	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-	double NperP = 706288./1e9;
-	TString parName = "pi";
-	TString DirName = MyData+"/raw/g4sim/Coll.pim.g60cm10mm.005T.BL.g4s.QBH";
-	int nProcs = 4;
-	int nJobs = 10;
 
 	hCurve->RebinX(20);
 	TString par = "#"+parName+"^{-}";
@@ -110,6 +111,7 @@
 	std::vector<int> *T_tid;
 	std::vector<std::string> *T_volName;
 	std::vector<double> *McTruth_time;
+	std::vector<int> *McTruth_pid;
 	std::vector<double> *McTruth_x;
 	std::vector<double> *McTruth_y;
 	std::vector<double> *McTruth_z;
@@ -141,6 +143,7 @@
 	c->SetBranchAddress("T_nHits",&T_nHits);
 	c->SetBranchAddress("V_nHits",&V_nHits);
 	c->SetBranchAddress("McTruth_time",&McTruth_time);
+	c->SetBranchAddress("McTruth_pid",&McTruth_pid);
 	c->SetBranchAddress("McTruth_px",&McTruth_px);
 	c->SetBranchAddress("McTruth_py",&McTruth_py);
 	c->SetBranchAddress("McTruth_pz",&McTruth_pz);
@@ -208,8 +211,10 @@
 	int nEvents = c->GetEntries();
 	std::cout<<nEvents<<" events!!!"<<std::endl;
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
-		if (iEvent%1000==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
+		if (iEvent%1000==0){
+			std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
+		}
 		// coll
 		if (withCollPosition){
 			for (int iHit = 0; iHit < V_pid->size(); iHit++){
@@ -226,6 +231,10 @@
 		}
 
 		// stop
+		if ( (*McTruth_pid)[0] != PID ) continue;
+		if (iEvent%1000==0){
+			std::cout<<"Got Muon!"<<std::endl;
+		}
 		nTotal += weight;
 		stopped=false;
 		passed=false;
@@ -263,6 +272,7 @@
 		}
 		if (stopped){
 			nStopped+=weight;
+			std::cout<<"nStopped = "<<nStopped<<std::endl;
 			h03->Fill(pa,y,weight);
 			h1_3->Fill(pa,weight);
 			h2_3->Fill(y,weight);
@@ -282,6 +292,7 @@
 	nPassedH/=nProton;
 	nPassed/=nProton;
 	nStopped/=nProton;
+	std::cout<<"nStopped = "<<nStopped<<std::endl;
 	h01->Scale(1/nProton);
 	h02->Scale(1/nProton);
 	h03->Scale(1/nProton);
@@ -348,17 +359,11 @@
 	sum->AddText(buff.str().c_str());
 	sum->Write();
 
-	std::cout<<__LINE__<<std::endl;
 //	f->Close();
-	std::cout<<__LINE__<<std::endl;
 	if (withCollPosition){
-	std::cout<<__LINE__<<std::endl;
 		f = new TFile("Coll."+runName+".output.root","RECREATE");
-	std::cout<<__LINE__<<std::endl;
 		t2->Write();
-	std::cout<<__LINE__<<std::endl;
 	}
-	std::cout<<__LINE__<<std::endl;
 
 	TPaveText *info = new TPaveText(0.3,0.7,0.9,0.9,"brNDC");
 	info->SetName("Info");

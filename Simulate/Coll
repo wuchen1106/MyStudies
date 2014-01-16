@@ -1,7 +1,7 @@
 MAGFIELDCARDROOT  = MagField_none
 OUTCARDROOT       = output_default
 GEOCARDROOT	      = geometry_default
-GENFILEROOT       = gen_root
+GENFILEROOT       = gen_default
 
 ##geometry preset
 #detector_configure
