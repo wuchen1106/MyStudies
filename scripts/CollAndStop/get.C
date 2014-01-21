@@ -16,23 +16,23 @@
 	f = new TFile("result/Curves.s100.root");
 	std::cout<<"Integrating..."<<std::endl;
 
-	int PID = 13;
-	double minimum = 1e-11;
-	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-	double NperP = 860498./1e8;
-	TString parName = "mu";
-	TString DirName = MyData+"/raw/g4sim/Coll.OT.g60cm10mm.005T.BL.g4s.QBH";
-	int nProcs = 10;
-	int nJobs = 1;
+//	int PID = 13;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 860498./1e8;
+//	TString parName = "mu";
+//	TString DirName = MyData+"/raw/g4sim/Coll.OT.g60cm10mm.005T.BL.g4s.QBH";
+//	int nProcs = 10;
+//	int nJobs = 1;
 
-//	int PID = -211;
-//	double minimum = 1e-21;
-//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-//	double NperP = 706288./1e9;
-//	TString parName = "pi";
-//	TString DirName = MyData+"/raw/g4sim/Coll.pim.g60cm10mm.005T.BL.g4s.QBH";
-//	int nProcs = 4;
-//	int nJobs = 10;
+	int PID = -211;
+	double minimum = 1e-21;
+	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+	double NperP = 706288./1e9;
+	TString parName = "pi";
+	TString DirName = MyData+"/raw/g4sim/Coll.pim.g60cm10mm.005T.BL.g4s.QBH";
+	int nProcs = 4;
+	int nJobs = 10;
 
 	hCurve->RebinX(20);
 	TString par = "#"+parName+"^{-}";
@@ -126,6 +126,7 @@
 	std::vector<double> *V_py;
 	std::vector<double> *V_pz;
 	std::vector<int> *V_pid;
+	std::vector<int> *T_pid;
 	std::vector<double> *T_Ox;
 	std::vector<double> *T_Oy;
 	std::vector<double> *T_Oz;
@@ -135,6 +136,7 @@
 
 	double weight;
 	if (withStopPosition){
+		c->SetBranchAddress("T_pid",&T_pid);
 		c->SetBranchAddress("T_Ox",&T_Ox);
 		c->SetBranchAddress("T_Oy",&T_Oy);
 		c->SetBranchAddress("T_Oz",&T_Oz);
@@ -232,9 +234,6 @@
 
 		// stop
 		if ( (*McTruth_pid)[0] != PID ) continue;
-		if (iEvent%1000==0){
-			std::cout<<"Got Muon!"<<std::endl;
-		}
 		nTotal += weight;
 		stopped=false;
 		passed=false;
@@ -250,13 +249,17 @@
 		if (V_nHits>0) passed=true;
 		if (T_nHits>0){
 			if (withStopPosition){
+				st_pid = (*T_pid)[0];
+				if (st_pid==PID) stopped=true;
 				Ox = (*T_Ox)[0]*10;
 				Oy = (*T_Oy)[0]*10;
 				Oz = (*T_Oz)[0]*10;
 				Ot = (*T_Ot)[0];
 				r = sqrt(Ox*Ox+Oy*Oy);
 			}
-			stopped=true;
+			else{
+				stopped=true;
+			}
 		}
 		h01->Fill(pa,y,weight);
 		h1_1->Fill(pa,weight);
@@ -272,7 +275,6 @@
 		}
 		if (stopped){
 			nStopped+=weight;
-			std::cout<<"nStopped = "<<nStopped<<std::endl;
 			h03->Fill(pa,y,weight);
 			h1_3->Fill(pa,weight);
 			h2_3->Fill(y,weight);
@@ -292,7 +294,6 @@
 	nPassedH/=nProton;
 	nPassed/=nProton;
 	nStopped/=nProton;
-	std::cout<<"nStopped = "<<nStopped<<std::endl;
 	h01->Scale(1/nProton);
 	h02->Scale(1/nProton);
 	h03->Scale(1/nProton);
@@ -432,7 +433,6 @@
 		p5->SetGridx(1);
 		p5->SetGridy(1);
 		h05->Draw();
-		std::cout<<"nStopped = "<<nStopped<<std::endl;
 		c2->SaveAs(runName+".SP.pdf");
 		c2->SaveAs(runName+".SP.png");
 	}
