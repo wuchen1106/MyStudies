@@ -3,7 +3,7 @@
 	TLegend * legend;
 	TString MyData = getenv("MYDATA");
 
-	double time_right = 1150;
+	double time_right = 1140;
 	double time_left = 700;
 	double tSep = 1170;
 
@@ -16,6 +16,7 @@
 	f = new TFile("result/Curves.s100.root");
 	std::cout<<"Integrating..."<<std::endl;
 
+	TString RunName = "none";
 //	int PID = 13;
 //	double minimum = 1e-11;
 //	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
@@ -25,12 +26,21 @@
 //	int nProcs = 10;
 //	int nJobs = 1;
 
+//	int PID = -211;
+//	double minimum = 1e-21;
+//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+//	double NperP = 706288./1e9;
+//	TString parName = "pi";
+//	TString DirName = MyData+"/raw/g4sim/Coll.pim.g60cm10mm.005T.BL.g4s.QBH";
+//	int nProcs = 4;
+//	int nJobs = 10;
+
 	int PID = -211;
 	double minimum = 1e-21;
 	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-	double NperP = 706288./1e9;
+	double NperP = 706288./1e9; // Number of initial particles (i.e. mu/pi at MT1) per proton
 	TString parName = "pi";
-	TString DirName = MyData+"/raw/g4sim/Coll.pim.g60cm10mm.005T.BL.g4s.QBH";
+	TString RunName = "/home/chen/MyWorkArea/g4sim/output/test.root";
 	int nProcs = 4;
 	int nJobs = 10;
 
@@ -40,13 +50,18 @@
 	TString option = "Rmin = 11 cm, L = 50 cm";
 
 	std::stringstream buff;
-	for (int i = 0; i<nProcs; i++){
-		for (int j = 0; j<nJobs; j++){
-			buff.str("");
-			buff.clear();
-			buff<<DirName<<"/"<<i<<"_job"<<j<<".raw";
-			c->Add( buff.str().c_str());
+	if (RunName == "none"){
+		for (int i = 0; i<nProcs; i++){
+			for (int j = 0; j<nJobs; j++){
+				buff.str("");
+				buff.clear();
+				buff<<DirName<<"/"<<i<<"_job"<<j<<".raw";
+				c->Add( buff.str().c_str());
+			}
 		}
+	}
+	else{
+		c->Add(RunName);
 	}
 
 	TH2D * h01 = new TH2D("h01",par+" Before Collimator",50,0,180,50,-200,200);
@@ -136,13 +151,15 @@
 
 	double weight;
 	if (withStopPosition){
-		c->SetBranchAddress("T_pid",&T_pid);
-		c->SetBranchAddress("T_Ox",&T_Ox);
-		c->SetBranchAddress("T_Oy",&T_Oy);
-		c->SetBranchAddress("T_Oz",&T_Oz);
-		c->SetBranchAddress("T_Ot",&T_Ot);
+//		c->SetBranchAddress("T2_pid",&T_pid);
+		T_pid = new std::vector<int>;
+		T_pid->push_back(-211);
+		c->SetBranchAddress("T2_Ox",&T_Ox);
+		c->SetBranchAddress("T2_Oy",&T_Oy);
+		c->SetBranchAddress("T2_Oz",&T_Oz);
+		c->SetBranchAddress("T2_Ot",&T_Ot);
 	}
-	c->SetBranchAddress("T_nHits",&T_nHits);
+	c->SetBranchAddress("T2_nHits",&T_nHits);
 	c->SetBranchAddress("V_nHits",&V_nHits);
 	c->SetBranchAddress("McTruth_time",&McTruth_time);
 	c->SetBranchAddress("McTruth_pid",&McTruth_pid);
