@@ -3,7 +3,7 @@
 	TLegend * legend;
 	TString MyData = getenv("MYDATA");
 
-	double time_right = 1150;
+	double time_right = 1140;
 	double time_left = 700;
 	double tSep = 1170;
 
@@ -16,14 +16,15 @@
 	f = new TFile("result/Curves.s100.root");
 	std::cout<<"Integrating..."<<std::endl;
 
-	int PID = 13;
-	double minimum = 1e-11;
-	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-	double NperP = 860498./1e8;
-	TString parName = "mu";
-	TString DirName = MyData+"/raw/g4sim/Coll.OT.g60cm10mm.005T.BL.g4s.QBH";
-	int nProcs = 10;
-	int nJobs = 1;
+	TString RunName = "none";
+//	int PID = 13;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 860498./1e8;
+//	TString parName = "mu";
+//	TString DirName = MyData+"/raw/g4sim/Coll.OT.g60cm10mm.005T.BL.g4s.QBH";
+//	int nProcs = 10;
+//	int nJobs = 1;
 
 //	int PID = -211;
 //	double minimum = 1e-21;
@@ -34,19 +35,33 @@
 //	int nProcs = 4;
 //	int nJobs = 10;
 
+	int PID = -211;
+	double minimum = 1e-21;
+	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+	double NperP = 706288./1e9; // Number of initial particles (i.e. mu/pi at MT1) per proton
+	TString parName = "pi";
+	TString RunName = "/home/chen/MyWorkArea/g4sim/output/test.root";
+	int nProcs = 4;
+	int nJobs = 10;
+
 	hCurve->RebinX(20);
 	TString par = "#"+parName+"^{-}";
 	TString runName = parName+"on.11.p5";
 	TString option = "Rmin = 11 cm, L = 50 cm";
 
 	std::stringstream buff;
-	for (int i = 0; i<nProcs; i++){
-		for (int j = 0; j<nJobs; j++){
-			buff.str("");
-			buff.clear();
-			buff<<DirName<<"/"<<i<<"_job"<<j<<".raw";
-			c->Add( buff.str().c_str());
+	if (RunName == "none"){
+		for (int i = 0; i<nProcs; i++){
+			for (int j = 0; j<nJobs; j++){
+				buff.str("");
+				buff.clear();
+				buff<<DirName<<"/"<<i<<"_job"<<j<<".raw";
+				c->Add( buff.str().c_str());
+			}
 		}
+	}
+	else{
+		c->Add(RunName);
 	}
 
 	TH2D * h01 = new TH2D("h01",par+" Before Collimator",50,0,180,50,-200,200);
@@ -126,6 +141,7 @@
 	std::vector<double> *V_py;
 	std::vector<double> *V_pz;
 	std::vector<int> *V_pid;
+	std::vector<int> *T_pid;
 	std::vector<double> *T_Ox;
 	std::vector<double> *T_Oy;
 	std::vector<double> *T_Oz;
@@ -135,12 +151,15 @@
 
 	double weight;
 	if (withStopPosition){
-		c->SetBranchAddress("T_Ox",&T_Ox);
-		c->SetBranchAddress("T_Oy",&T_Oy);
-		c->SetBranchAddress("T_Oz",&T_Oz);
-		c->SetBranchAddress("T_Ot",&T_Ot);
+//		c->SetBranchAddress("T2_pid",&T_pid);
+		T_pid = new std::vector<int>;
+		T_pid->push_back(-211);
+		c->SetBranchAddress("T2_Ox",&T_Ox);
+		c->SetBranchAddress("T2_Oy",&T_Oy);
+		c->SetBranchAddress("T2_Oz",&T_Oz);
+		c->SetBranchAddress("T2_Ot",&T_Ot);
 	}
-	c->SetBranchAddress("T_nHits",&T_nHits);
+	c->SetBranchAddress("T2_nHits",&T_nHits);
 	c->SetBranchAddress("V_nHits",&V_nHits);
 	c->SetBranchAddress("McTruth_time",&McTruth_time);
 	c->SetBranchAddress("McTruth_pid",&McTruth_pid);
@@ -232,9 +251,6 @@
 
 		// stop
 		if ( (*McTruth_pid)[0] != PID ) continue;
-		if (iEvent%1000==0){
-			std::cout<<"Got Muon!"<<std::endl;
-		}
 		nTotal += weight;
 		stopped=false;
 		passed=false;
@@ -250,13 +266,17 @@
 		if (V_nHits>0) passed=true;
 		if (T_nHits>0){
 			if (withStopPosition){
+				st_pid = (*T_pid)[0];
+				if (st_pid==PID) stopped=true;
 				Ox = (*T_Ox)[0]*10;
 				Oy = (*T_Oy)[0]*10;
 				Oz = (*T_Oz)[0]*10;
 				Ot = (*T_Ot)[0];
 				r = sqrt(Ox*Ox+Oy*Oy);
 			}
-			stopped=true;
+			else{
+				stopped=true;
+			}
 		}
 		h01->Fill(pa,y,weight);
 		h1_1->Fill(pa,weight);
@@ -272,7 +292,6 @@
 		}
 		if (stopped){
 			nStopped+=weight;
-			std::cout<<"nStopped = "<<nStopped<<std::endl;
 			h03->Fill(pa,y,weight);
 			h1_3->Fill(pa,weight);
 			h2_3->Fill(y,weight);
@@ -292,7 +311,6 @@
 	nPassedH/=nProton;
 	nPassed/=nProton;
 	nStopped/=nProton;
-	std::cout<<"nStopped = "<<nStopped<<std::endl;
 	h01->Scale(1/nProton);
 	h02->Scale(1/nProton);
 	h03->Scale(1/nProton);
@@ -432,7 +450,6 @@
 		p5->SetGridx(1);
 		p5->SetGridy(1);
 		h05->Draw();
-		std::cout<<"nStopped = "<<nStopped<<std::endl;
 		c2->SaveAs(runName+".SP.pdf");
 		c2->SaveAs(runName+".SP.png");
 	}
