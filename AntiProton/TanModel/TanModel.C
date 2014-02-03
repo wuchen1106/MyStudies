@@ -286,6 +286,7 @@ int main(int argc, char* argv[]){
 			if(iterator<segments.size()) beamPx = string2double(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			if(iterator<segments.size()) beamPy = string2double(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
 			if(iterator<segments.size()) beamPz = string2double(segments[iterator++]); else {std::cout<<"Not enough segments in"<<s_card<<"!!!"<<std::endl; return -1;}
+			std::cout<<"BEAM momentum:("<<beamPx<<", "<<beamPy<<", "<<beamPz<<") GeV"<<std::endl;
 		}
 		else{
 			std::cout<<"Cannot recogonize this line: "<<s_card<<std::endl;
@@ -326,10 +327,10 @@ int main(int argc, char* argv[]){
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET Statistics###"<<std::endl;
 
 	//=>About Statistical
-	int N0 = 0;
-	int N1 = 0;
-	int N2 = 0;
-	int N3 = 0;
+	double N0 = 0;
+	double N1 = 0;
+	double N2 = 0;
+	double N3 = 0;
 
 	//=======================================================================================================
 	//************Get Fermi Momentum Distribution histogram********************
@@ -354,14 +355,42 @@ int main(int argc, char* argv[]){
 	}
 	else if (!strcmp(m_workMode,"gen")){
 		TLorentzVector beam(0.,0.,0.,0.);
-		beam.SetVectM(TVector3(beamPx,beamPy,beamPz), M_p);
 		//(Momentum, Energy units are Gev/C, GeV)
 		Double_t masses[4] = { M_p, M_p, M_p, M_p} ;
 		TGenPhaseSpace event;
+		// Set Output Tree
+		double weight;
+		double ipx;
+		double ipy;
+		double ipz;
+		double px;
+		double py;
+		double pz;
+		double x;
+		double y;
+		double z;
+		TFile * f_in = new TFile("../result/StepPosition.root");
+		TTree * t_in = (TTree*) f_in->Get("t");
+		t_in->SetBranchAddress("x",&x);
+		t_in->SetBranchAddress("y",&y);
+		t_in->SetBranchAddress("z",&z);
+		t_in->SetBranchAddress("px",&ipx);
+		t_in->SetBranchAddress("py",&ipy);
+		t_in->SetBranchAddress("pz",&ipz);
+		int N_in = t_in->GetEntries();
+		TFile * f_out = new TFile("tree.root","RECREATE");
+		TTree * t_out = new TTree("t","t");
+		t_out->Branch("px",&px);
+		t_out->Branch("py",&py);
+		t_out->Branch("pz",&pz);
+		t_out->Branch("x",&x);
+		t_out->Branch("y",&y);
+		t_out->Branch("z",&z);
+		t_out->Branch("weight",&weight);
 		//loop in events
 		for( Long64_t iEvent = 0; iEvent < nEvents; iEvent++ ){
+			t_in->GetEntry(iEvent%N_in);
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
-			N0++;
 			// Generate a nucleon
 			double pFermi = h_FM->GetRandom();
 			G4double dir_x = 0., dir_y = 0., dir_z = 0.;
@@ -376,11 +405,15 @@ int main(int argc, char* argv[]){
 			dir_3Vec.SetMag(pFermi);
 
 			// Generate the collision
+			beamPx = ipx/1000;
+			beamPy = ipy/1000;
+			beamPz = ipz/1000;
+			beam.SetVectM(TVector3(beamPx,beamPy,beamPz), M_p);
 			TLorentzVector target(0.,0.,0.,0.);
 			target.SetVectM(dir_3Vec, 0.9382723);
 			TLorentzVector W = beam + target;
 			event.SetDecay(W, 4, masses);
-			Double_t weight = event.Generate();
+			weight = event.Generate();
 			TLorentzVector *pDaughter1 = event.GetDecay(0);
 			TLorentzVector *pDaughter2 = event.GetDecay(1);
 			TLorentzVector *pDaughter3 = event.GetDecay(2);
@@ -393,6 +426,13 @@ int main(int argc, char* argv[]){
 			double Emax = (s - MX*MX + Mp*Mp)/2*sqrt(s);
 			double xR = pDaughter1->E()/Emax;
 			double pt = pDaughter1->Pt();
+			px = pDaughter1->Px()*1000;
+			py = pDaughter1->Py()*1000;
+			pz = pDaughter1->Pz()*1000;
+			if (isnan(px)
+			  ||isnan(py)
+			  ||isnan(pz))
+			continue;
 			double fr = 0;
 			if ( a3 < xR ){
 				fr = (sigmga00-a1)*pow(1-xR,a4);
@@ -407,6 +447,12 @@ int main(int argc, char* argv[]){
 			// Get the total weight
 			weight *=  weight2;
 			weight /= (double) nEvents;
+			N0+=weight;
+			double pa = pDaughter1->P()*1000;
+			//****************** Cut**************************
+			if (pa > 500) continue;
+			//****************** Cut**************************
+			N1+=weight;
 
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  weight = "<<weight
 																										 <<", p("<<pAllDaughters.Px()
@@ -438,6 +484,7 @@ int main(int argc, char* argv[]){
 																										 <<", "<<W.BoostVector().Z()
 																										 <<") E="<<W.E()
 																										 <<std::endl;
+			t_out->Fill();
 
 			if ( (index_temp = get_TH1D("Tan_Mx")) != -1 ){
 				vecH1D[index_temp]->Fill(X.M(),weight);
@@ -526,6 +573,8 @@ int main(int argc, char* argv[]){
 
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfo<<"Finished!"<<std::endl;
 		}/* end of loop in events*/
+		t_out->Write();
+		f_out->Close();
 	}
 
 	//=======================================================================================================

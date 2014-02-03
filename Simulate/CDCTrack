@@ -14,7 +14,7 @@ GEOCARDROOT	      = geometry_default
 #
 #verbose
 verbose_configure_setCut
-cdchit.mac
+cdctrack.mac
 #coll.mac
 #
 ##output
