@@ -25,7 +25,7 @@
 
 char m_workMode[128];
 int verbose = 0;
-int nEvents = 0;
+float nEvents = 0;
 int printModule = 1;
 
 std::vector<std::string> oFileName;
@@ -129,8 +129,8 @@ int main(int argc, char* argv[]){
 				printf("verbose level: %d\n",verbose);
 				break;
 			case 'n':
-				nEvents = atoi(optarg);
-				printf("nEvent: %d\n",nEvents);
+				nEvents = atof(optarg);
+				printf("nEvent: %f\n",nEvents);
 				break;
 			case 'p':
 				printModule = atoi(optarg);
@@ -388,6 +388,7 @@ int main(int argc, char* argv[]){
 		t_out->Branch("z",&z);
 		t_out->Branch("weight",&weight);
 		//loop in events
+		std::cout<<nEvents<<" events to be processed"<<std::endl;
 		for( Long64_t iEvent = 0; iEvent < nEvents; iEvent++ ){
 			t_in->GetEntry(iEvent%N_in);
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
@@ -450,7 +451,7 @@ int main(int argc, char* argv[]){
 			N0+=weight;
 			double pa = pDaughter1->P()*1000;
 			//****************** Cut**************************
-			if (pa > 500) continue;
+//			if (pa > 500) continue;
 			//****************** Cut**************************
 			N1+=weight;
 
