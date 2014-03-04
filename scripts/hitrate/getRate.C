@@ -1,15 +1,17 @@
 
 // About this run
-TString runName = "emOT";
+TString runName = "OT";
 std::vector<TString> DirName;
 std::vector<int> nRuns;
+TString FileName = "";
  // ########Should Modify#########
-DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
-nRuns.push_back(100);
-DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
-nRuns.push_back(100);
-DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
-nRuns.push_back(100);
+FileName="result/OT.root";
+//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
+//nRuns.push_back(100);
+//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
+//nRuns.push_back(100);
+//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
+//nRuns.push_back(100);
 double nProtons = 1e10;
  // ########Should Modify#########
 
@@ -19,8 +21,8 @@ double dutyFactor = 1./3;
 double proton_rate = 2.5e12; // Hz
 double right_end = 1150; // ns
 double left_end = 700; // ns
-f = new TFile("Curves.s100.root");
-std::cout<<"Integrating..."<<std::endl;
+TFile * f = new TFile("result/Curves.s100.root");
+
  // ########Should Modify#########
 TH1D *hCurve = (TH1D*) f->Get("ProtonPuls"); // for beam particles and stopped pions
 //TH1D *hCurve = (TH1D*) f->Get("Convoluted"); // for stopped muons
@@ -65,11 +67,13 @@ int get_layer_index(int volID){
 }
 
 void getRate(){
-	TFile *f = 0;
+//	TFile *f = 0;
 
 	TChain *c = new TChain("tree");
-//	c->Add(runName+".root");
+	if (FileName!="")
+		c->Add(FileName);
 	std::stringstream buff;
+	std::cout<<"nRuns = "<<nRuns.size()<<std::endl;
 	for (int iRun = 0; iRun < nRuns.size(); iRun++ ){
 		for (int i = 0; i<nRuns[iRun]; i++){
 			buff.str("");
@@ -211,7 +215,7 @@ void getRate(){
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
 		if (iEvent%5000==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
-		if (iEvent>=11094) weight*=100./31;
+//		if (iEvent>=11094) weight*=100./31;
 		int nHits = C_edep->size();
 		int hitcount[18] = {0};
 		bool foundhit = false;
@@ -235,10 +239,10 @@ void getRate(){
 			if (layerID>layerID_max) layerID_max = layerID;
 			for (int i_window = 0; i_window <5; i_window++){
 				double newtime = time+hCurve->GetRandom()+i_window*PulseInterval;
-				if (layerID==0) h1->Fill(newtime,weight);
-				else if (layerID==1) h2->Fill(newtime,weight);
-				else if (layerID==17) h3->Fill(newtime,weight);
-				else if (layerID==16) h4->Fill(newtime,weight);
+				if (layerID==0) h1->Fill(newtime,weight*hit2rate*100);
+				else if (layerID==1) h2->Fill(newtime,weight*hit2rate*100);
+				else if (layerID==17) h3->Fill(newtime,weight*hit2rate*100);
+				else if (layerID==16) h4->Fill(newtime,weight*hit2rate*100);
 			}
 		}
 //		if (foundhit){
