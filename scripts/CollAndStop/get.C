@@ -16,6 +16,8 @@
 	f = new TFile("result/Curves.s100.root");
 	std::cout<<"Integrating..."<<std::endl;
 
+//=======================User Setting============================	
+
 	TString RunName = "none";
 //	int PID = 13;
 //	double minimum = 1e-11;
@@ -26,6 +28,16 @@
 //	int nProcs = 10;
 //	int nJobs = 1;
 
+	int PID = 13;
+	double minimum = 1e-11;
+	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+	double NperP = 860498./1e8;
+	TString parName = "mu";
+	TString opt = "a2_3t5_40";
+	TString DirName = MyData+"/raw/g4sim/Coll.mum.g60cm10mm.005T."+opt+".g4s.QBH";
+	int nProcs = 8;
+	int nJobs = 1;
+
 //	int PID = -211;
 //	double minimum = 1e-21;
 //	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
@@ -35,19 +47,33 @@
 //	int nProcs = 4;
 //	int nJobs = 10;
 
-	int PID = -211;
-	double minimum = 1e-21;
-	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-	double NperP = 706288./1e9; // Number of initial particles (i.e. mu/pi at MT1) per proton
-	TString parName = "pi";
-	TString RunName = "/home/chen/MyWorkArea/g4sim/output/test.root";
-	int nProcs = 4;
-	int nJobs = 10;
+//	int PID = -211;
+//	double minimum = 1e-21;
+//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+//	double NperP = 706288./1e9; // Number of initial particles (i.e. mu/pi at MT1) per proton
+//	TString parName = "pi";
+//	TString RunName = "/home/chen/MyWorkArea/g4sim/output/test.root";
+//	int nProcs = 4;
+//	int nJobs = 10;
+
+//	int PID = -211;
+//	double minimum = 1e-21;
+//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+//	double NperP = 706288./1e9; // Number of initial particles (i.e. mu/pi at MT1) per proton
+//	TString parName = "pi";
+//	TString DirName = MyData+"/raw/g4sim/Coll.pim.g60cm10mm.005T.b_5.g4s.QBH";
+//	int nProcs = 35;
+//	int nJobs = 1;
 
 	hCurve->RebinX(20);
 	TString par = "#"+parName+"^{-}";
-	TString runName = parName+"on.11.p5";
-	TString option = "Rmin = 11 cm, L = 50 cm";
+//	TString runName = parName+"on.11.p5";
+//	TString option = "Rmin = 11 cm, L = 50 cm";
+
+	TString runName = parName+"on."+opt;
+	TString option = opt;
+
+//=======================User Setting============================	
 
 	std::stringstream buff;
 	if (RunName == "none"){
@@ -81,7 +107,7 @@
 	h04->GetXaxis()->SetTitle("Radius (mm)");
 	h04->GetYaxis()->SetTitle("count/p^{+}");
 	h04->GetYaxis()->SetTitleOffset(1.5);
-//	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,-900,900);
+//	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,-750,250);
 	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,-1000,0);
 	h05->GetXaxis()->SetTitle("z position (mm)");
 	h05->GetYaxis()->SetTitle("count/p^{+}");
@@ -151,15 +177,13 @@
 
 	double weight;
 	if (withStopPosition){
-//		c->SetBranchAddress("T2_pid",&T_pid);
-		T_pid = new std::vector<int>;
-		T_pid->push_back(-211);
-		c->SetBranchAddress("T2_Ox",&T_Ox);
-		c->SetBranchAddress("T2_Oy",&T_Oy);
-		c->SetBranchAddress("T2_Oz",&T_Oz);
-		c->SetBranchAddress("T2_Ot",&T_Ot);
+		c->SetBranchAddress("T_pid",&T_pid);
+		c->SetBranchAddress("T_Ox",&T_Ox);
+		c->SetBranchAddress("T_Oy",&T_Oy);
+		c->SetBranchAddress("T_Oz",&T_Oz);
+		c->SetBranchAddress("T_Ot",&T_Ot);
 	}
-	c->SetBranchAddress("T2_nHits",&T_nHits);
+	c->SetBranchAddress("T_nHits",&T_nHits);
 	c->SetBranchAddress("V_nHits",&V_nHits);
 	c->SetBranchAddress("McTruth_time",&McTruth_time);
 	c->SetBranchAddress("McTruth_pid",&McTruth_pid);
@@ -177,6 +201,9 @@
 	c->SetBranchAddress("V_x",&V_x);
 	c->SetBranchAddress("V_y",&V_y);
 	c->SetBranchAddress("V_z",&V_z);
+//	TChain * chain2 = new TChain("t");
+//	chain2->Add("/home/chen/MyWorkArea/g4sim/data/MT1.pim.g60cm10mm.005T.g4s.QBH.root");
+//	chain2->SetBranchAddress("weight",&weight);
 	c->SetBranchAddress("weight",&weight);
 	double Ox = 0;
 	double Oy = 0;
@@ -231,6 +258,7 @@
 	std::cout<<nEvents<<" events!!!"<<std::endl;
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
 		c->GetEntry(iEvent);
+//		chain2->GetEntry(iEvent);
 		if (iEvent%1000==0){
 			std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		}
@@ -308,6 +336,7 @@
 		}
 	}
 	double nProton = nTotal/NperP;
+	std::cout<<"nProton = "<<nProton<<std::endl;
 	nPassedH/=nProton;
 	nPassed/=nProton;
 	nStopped/=nProton;

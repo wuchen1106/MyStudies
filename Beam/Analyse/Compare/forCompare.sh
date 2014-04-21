@@ -69,13 +69,13 @@ var_process(){
 	ny=$8
 	iFile=0
 #	for app in "A" "H" "cg4" "g4s"
-	for app in "H" "cg4"
+	for app in "g4s" "cg4"
 	do
 #		for phys in "QB" "QBH" "original" "modified" "nomuec" "QB49302" "QB49201"
 		for phys in "QB"
 		do
 #			for Target in "g40cm10mm" "g50cm10mm" "g30cm10mm" "t16cm6mm" "g60cm6mm170gcm3"
-			for Target in "g40cm10mm"
+			for Target in "g60cm6mm170gcm3"
 			do
 				if [ $monitor = "MT1" ]; then
 					for DF in "0018TS" "0018T"

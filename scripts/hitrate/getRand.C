@@ -1,18 +1,23 @@
 {
+TString MyData = getenv("MYDATA");
 	// About this run
-	TString runName = "OT";
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
 	TString FileName = "";
+//	TString InFileName = "/home/chen/MyWorkArea/g4sim/data/MT1.pim.g60cm10mm.005T.g4s.QBH.root";
 	TString InFileName = "/home/chen/MyWorkArea/g4sim/data/MT1.OT.g60cm10mm.005T.g4s.QBH.root";
 	 // ########Should Modify#########
-	FileName="result/OT.root";
+	TString runName = "OT";
+//	FileName="result/pim.root";
+	FileName="OT.140331.root";
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
+//	DirName.push_back(MyData+"/raw/g4sim/CDCHit.OT.g60cm10mm.005T.140331.g4s.QBH");
+//	nRuns.push_back(100);
 	double nProtons = 1e10;
 	 // ########Should Modify#########
 
@@ -35,8 +40,8 @@
 
 	int  C_nHits = 0;
 	double  weight;
-	double  R0;
-	double  R1;
+	int     R0;
+	int     R1;
 	int     pid;
 	int     ppid;
 	double  x;
@@ -60,6 +65,7 @@
 	c->SetBranchAddress("evt_num",&evt_num);
 	c->SetBranchAddress("R0",&R0);
 	c->SetBranchAddress("R1",&R1);
+	ci->SetBranchAddress("pid",&pid);
 	ci->SetBranchAddress("x",&x);
 	ci->SetBranchAddress("y",&y);
 	ci->SetBranchAddress("z",&z);
@@ -82,9 +88,13 @@
 	TTree *tree  = new TTree("t","t");
 	tree->Branch("R0",&R0);
 	tree->Branch("R1",&R1);
+	tree->Branch("pid",&pid);
 	tree->Branch("x",&x);
 	tree->Branch("y",&y);
 	tree->Branch("z",&z);
+	tree->Branch("px",&px);
+	tree->Branch("py",&py);
+	tree->Branch("pz",&pz);
 	tree->Branch("t",&t);
 	tree->Branch("ox",&ox);
 	tree->Branch("oy",&oy);

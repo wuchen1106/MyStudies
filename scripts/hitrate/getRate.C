@@ -1,41 +1,4 @@
-
-// About this run
-TString runName = "OT";
-std::vector<TString> DirName;
-std::vector<int> nRuns;
-TString FileName = "";
- // ########Should Modify#########
-FileName="result/OT.root";
-//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
-//nRuns.push_back(100);
-//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
-//nRuns.push_back(100);
-//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
-//nRuns.push_back(100);
-double nProtons = 1e10;
- // ########Should Modify#########
-
-// Beam Structure
-double PulseInterval = 1170; // ns
-double dutyFactor = 1./3;
-double proton_rate = 2.5e12; // Hz
-double right_end = 1150; // ns
-double left_end = 700; // ns
-TFile * f = new TFile("result/Curves.s100.root");
-
- // ########Should Modify#########
-TH1D *hCurve = (TH1D*) f->Get("ProtonPuls"); // for beam particles and stopped pions
-//TH1D *hCurve = (TH1D*) f->Get("Convoluted"); // for stopped muons
- // ########Should Modify#########
-hCurve->RebinX(20);
-
-// CDC Info
-double W_He = 41; // eV
-double W_iC4H10 = 23; // eV
-double gain = 1e5; // and  <--- smaller than 1e5 due to space charge? 
-double cdc_length = 150 ; // cm
-double edep2charge = proton_rate/nProtons*(0.9/W_He+0.1/W_iC4H10)*gain*1.6e-19/cdc_length*24*3600; // C/cm/day
-double hit2rate = proton_rate/nProtons/1000; // kHz
+TString MyData = getenv("MYDATA");
 
 int cellNo[18];
 int cellNoIntegral[18];
@@ -67,11 +30,55 @@ int get_layer_index(int volID){
 }
 
 void getRate(){
-//	TFile *f = 0;
+
+	// About this run
+	TString runName = "BP";
+	std::vector<TString> DirName;
+	std::vector<int> nRuns;
+	std::vector<TString> FileNames;
+	 // ########Should Modify#########
+//	FileNames.push_back("result/OT.root");
+//	FileNames.push_back("pim.root");
+	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
+	//nRuns.push_back(100);
+	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
+	//nRuns.push_back(100);
+	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
+	//nRuns.push_back(100);
+	DirName.push_back(MyData+"/raw/g4sim/CDCHit.OT.g60cm10mm.005T.140331.g4s.QBH");
+	nRuns.push_back(100);
+	double nProtons = 1e10;
+	 // ########Should Modify#########
+
+	// Beam Structure
+	double PulseInterval = 1170; // ns
+	double dutyFactor = 1./3;
+	double proton_rate = 2.5e12; // Hz
+	double right_end = 1150; // ns
+	double left_end = 700; // ns
+	TFile * f = new TFile("result/Curves.s100.root");
+
+	 // ########Should Modify#########
+	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls"); // for beam particles and stopped pions
+	//TH1D *hCurve = (TH1D*) f->Get("Convoluted"); // for stopped muons
+	 // ########Should Modify#########
+	hCurve->RebinX(20);
+
+	// CDC Info
+	double W_He = 41; // eV
+	double W_iC4H10 = 23; // eV
+	double gain = 1e5; // and  <--- smaller than 1e5 due to space charge? 
+	double cdc_length = 150 ; // cm
+	double edep2charge = proton_rate/nProtons*(0.9/W_He+0.1/W_iC4H10)*gain*1.6e-19/cdc_length*24*3600; // C/cm/day
+	double hit2rate = proton_rate/nProtons/1000; // kHz
+	//	TFile *f = 0;
 
 	TChain *c = new TChain("tree");
-	if (FileName!="")
-		c->Add(FileName);
+	std::cout<<"FileNames.size() = "<<(FileNames.size())<<std::endl;
+	for (int i = 0; i<FileNames.size(); i++){
+		std::cout<<"FileNames["<<i<<"] = \""<<FileNames[i]<<"\""<<std::endl;
+		c->Add(FileNames[i]);
+	}
 	std::stringstream buff;
 	std::cout<<"nRuns = "<<nRuns.size()<<std::endl;
 	for (int iRun = 0; iRun < nRuns.size(); iRun++ ){
@@ -122,6 +129,10 @@ void getRate(){
     h4->SetMarkerStyle(Style_4);
     h4->SetMarkerColor(Color_4);
     h4->SetLineColor(Color_4);
+    TH1D *h5 = new TH1D("h5",tilte,200,0,1000);
+//    h5->SetMarkerStyle(Style_4);
+//    h5->SetMarkerColor(Color_4);
+//    h5->SetLineColor(Color_4);
 
 	// hit rate in Upstream Trigger counter
     TH1D *h11 = new TH1D("h11",tilte,100,0,PulseInterval);
@@ -199,10 +210,16 @@ void getRate(){
 	std::vector<int> *C_volID;
 	std::vector<double> *C_edep;
 	std::vector<double> *C_t;
+	std::vector<double> *C_px;
+	std::vector<double> *C_py;
+	std::vector<double> *C_pz;
 	double weight;
 	c->SetBranchAddress("C_volID",&C_volID);
 	c->SetBranchAddress("C_edep",&C_edep);
 	c->SetBranchAddress("C_t",&C_t);
+	c->SetBranchAddress("C_px",&C_px);
+	c->SetBranchAddress("C_py",&C_py);
+	c->SetBranchAddress("C_pz",&C_pz);
 	c->SetBranchAddress("weight",&weight);
 	double edep = -1;
 	double time = -1;
@@ -232,18 +249,26 @@ void getRate(){
 			time = (*C_t)[iHit];
 			edep = (*C_edep)[iHit]*1e9;
 			int layerID = get_layer_index(volID);
-			vHitrate[layerID]+=hit2rate/cellNo[layerID];
+			vHitrate[layerID]+=weight*hit2rate/cellNo[layerID];
 			vCharge[layerID]+=edep*edep2charge/cellNo[layerID];
 			hitcount[layerID]++;
 			foundhit = true;
 			if (layerID>layerID_max) layerID_max = layerID;
 			for (int i_window = 0; i_window <5; i_window++){
 				double newtime = time+hCurve->GetRandom()+i_window*PulseInterval;
-				if (layerID==0) h1->Fill(newtime,weight*hit2rate*100);
-				else if (layerID==1) h2->Fill(newtime,weight*hit2rate*100);
-				else if (layerID==17) h3->Fill(newtime,weight*hit2rate*100);
-				else if (layerID==16) h4->Fill(newtime,weight*hit2rate*100);
+				if (layerID==0) h1->Fill(newtime,weight*hit2rate*100/cellNo[layerID]);
+				else if (layerID==1) h2->Fill(newtime,weight*hit2rate*100/cellNo[layerID]);
+				else if (layerID==17) h3->Fill(newtime,weight*hit2rate*100/cellNo[layerID]);
+				else if (layerID==16) h4->Fill(newtime,weight*hit2rate*100/cellNo[layerID]);
 			}
+		}
+		if (nHits>0){
+			double px = (*C_px)[0]*1000;
+			double py = (*C_py)[0]*1000;
+			double pz = (*C_pz)[0]*1000;
+			double pa = sqrt(px*px+py*py+pz*pz);
+			if (pa>10)
+				h5->Fill(pa,weight);
 		}
 //		if (foundhit){
 		if (0){
@@ -326,5 +351,6 @@ void getRate(){
 	h2->Write();
 	h3->Write();
 	h4->Write();
+	h5->Write();
 	t->Write();
 }
