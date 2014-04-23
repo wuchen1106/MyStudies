@@ -16,6 +16,13 @@
 	double o140331K_rgam = 4454;
 	double o140331K_rpim = BLK_rpim;
 
+	double c_rem  = 693;
+	double c_rep  = 2233;
+	double c_rmup = 45.5;
+	double c_rmum = 92.3;
+	double c_rgam = 4454;
+	double c_rpim = 399;
+
 	double rem  = o140331K_rem ;
 	double rep  = o140331K_rep ;
 	double rmup = BLK_rmup;
@@ -66,6 +73,14 @@
 			rmum = o140331K_rmum;
 			rgam = BLK_rgam;
 			rpim = BLK_rpim;
+		}
+		else if (opt == 7){
+			rem  = c_rem ;
+			rep  = c_rep ;
+			rmup = c_rmup;
+			rmum = c_rmum;
+			rgam = c_rgam;
+			rpim = c_rpim;
 		}
 		else{
 			rem  = o140331K_rem ;
