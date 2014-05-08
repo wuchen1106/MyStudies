@@ -95,9 +95,9 @@
 		v_mum.push_back(mum/rmum);
 		v_mup.push_back(mup/rmup);
 		v_gam.push_back(gam/rgam);
-		v_pim.push_back(pim/rpim);
+		v_pim.push_back(0.5);
 //		v_tot.push_back(tot);
-		v_tot.push_back(em/rem+ep/rep+mum/rmum+mup/rmup+gam/rgam+pim/rpim);
+		v_tot.push_back(em/rem+ep/rep+mum/rmum+mup/rmup+gam/rgam+0.5);
 		v_opt.push_back(opt);
 		std::cout<<"opt = "<<opt<<std::endl;
 		std::cout<<"	r_em = "<<em<<"/"<<rem<<" = "<<em/rem<<std::endl;
@@ -118,11 +118,11 @@
 	TGraph * g_pim = new TGraph(v_opt.size(),&v_opt[0],&v_pim[0]);
 	TGraph * g_tot = new TGraph(v_opt.size(),&v_opt[0],&v_tot[0]);
 
-	g_tot->SetTitle("Number of #gammas Hitting CDC per 10^{6} Initial Proton");
+	g_tot->SetTitle("Occupancy @ Second Inner Most Layer");
 	TAxis * axisx = g_tot->GetXaxis();
 	axisx->SetTitle("Option Index");
 	TAxis * axisy = g_tot->GetYaxis();
-	axisy->SetTitle("Number of #gammas Hitting CDC per 10^{6} Initial Proton");
+	axisy->SetTitle("Occupancy @ Second Inner Most Layer (%)");
 	g_tot->GetHistogram()->SetMinimum(0);
 
 	g_em->SetMarkerStyle(20);

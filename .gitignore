@@ -21,7 +21,7 @@ endOfRun.rndm
 result/
 .svn/
 configure
-macros
+#macros
 cometg4_configure
 cometg4_run.sh
 cmdlog
