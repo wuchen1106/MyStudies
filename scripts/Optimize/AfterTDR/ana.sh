@@ -1,14 +1,16 @@
 #!/bin/bash
 echo "RUNNAME		opt/I		em/D		ep/D		mup/D			mum/D			gam/D			pim/D			tot/D" >> optimize
 opt=0
-for RUNNAME in 'BL' \
-		       'BLK' \
-		       '140331' \
-		       '140331K' \
-		       'a_p3_35' \
-		       'a_p3_35_B_5' \
-		       'b_p3_25' \
-		       'c'
+#for RUNNAME in 'BL' \
+#		       'BLK' \
+#		       '140331' \
+#		       '140331K' \
+#		       'a_p3_35' \
+#		       'a_p3_35_B_5' \
+#		       'b_p3_25' \
+#		       'c' \
+#		       '0506bl' \
+#		       '0506nw'
 ##		       'b_p3_35' \
 ##		       'b_p5_20' \
 ##		       'a2_3t10_30' \
@@ -19,6 +21,7 @@ for RUNNAME in 'BL' \
 ##		       'a_p3_35_B2' \
 ##		       'a_p3_35_B3' \
 ##		       'a_p3_35_B4' \
+for RUNNAME in '0508.nocoll'
 do
 	echo -n "$RUNNAME			" >> optimize
 	echo -n "$opt			" >> optimize
@@ -33,7 +36,7 @@ do
 		N=0
 		if [ -e result/$RUNNAME.$PAR.root ]; then
 			N=`./getNGamma -o result/$RUNNAME.$PAR.root -r $RUNNAME.$PAR.output`
-			./getNGamma -o result/$RUNNAME.$PAR.root -r $RUNNAME.$PAR.hit -m GAM
+#			./getNGamma -o result/$RUNNAME.$PAR.root -r $RUNNAME.$PAR.hit -m GAM
 #			echo "Found result/$RUNNAME.$PAR.root !!!"
 		else
 			echo "Cannot find result/$RUNNAME.$PAR.root !!!"

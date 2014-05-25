@@ -1,6 +1,7 @@
 /control/getEnv MYG4SIMROOT
 /control/getEnv RUNNAME
 /control/execute macros/cdchit.mac
+#/control/execute macros/coll.mac
 
 # mup
 /g4sim/gun/root_filename MT1.mup.g60cm10mm.005T.g4s.QBH.root
@@ -30,12 +31,12 @@
 /g4sim/myAnalysisSvc/set_run_name {RUNNAME}.mum
 /run/beamOn  86049
 
-# pim
-/g4sim/gun/root_filename MT1.pim.g60cm10mm.005T.g4s.QBH.root
-/g4sim/gun/initialize
-/g4sim/myAnalysisSvc/set_ofile_name result/{RUNNAME}.pim.root
-/g4sim/myAnalysisSvc/set_run_name {RUNNAME}.pim
-/run/beamOn  54371
+## pim
+#/g4sim/gun/root_filename MT1.pim.g60cm10mm.005T.g4s.QBH.root
+#/g4sim/gun/initialize
+#/g4sim/myAnalysisSvc/set_ofile_name result/{RUNNAME}.pim.root
+#/g4sim/myAnalysisSvc/set_run_name {RUNNAME}.pim
+#/run/beamOn  54371
 #
 ## gam
 #/g4sim/gun/root_filename MT1.gam.g60cm10mm.005T.g4s.QBH.root
@@ -43,3 +44,11 @@
 #/g4sim/myAnalysisSvc/set_ofile_name result/{RUNNAME}.gam.root
 #/g4sim/myAnalysisSvc/set_run_name {RUNNAME}.gam
 #/run/beamOn  10170
+
+## mum
+#/g4sim/gun/root_filename MT1.mum.g60cm10mm.005T.g4s.QBH.root
+#/g4sim/gun/initialize
+#/g4sim/myAnalysisSvc/set_ofile_name result/{RUNNAME}.yield.root
+#/g4sim/myAnalysisSvc/set_run_name {RUNNAME}.yield
+#/run/beamOn  86049
+#
