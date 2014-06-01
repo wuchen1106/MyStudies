@@ -32,21 +32,23 @@ int get_layer_index(int volID){
 void getRate(){
 
 	// About this run
-	TString runName = "BP";
+	TString runName = "OT.0508.1mm";
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
 //	FileNames.push_back("result/OT.root");
-//	FileNames.push_back("pim.root");
+//	FileNames.push_back(runName+".root");
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
-	DirName.push_back(MyData+"/raw/g4sim/CDCHit.OT.g60cm10mm.005T.140331.g4s.QBH");
+	DirName.push_back(MyData+"/raw/g4sim/CDCHit.OT.g60cm10mm.005T.0508.1mm.g4s.QBH");
 	nRuns.push_back(100);
+//	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
+//	nRuns.push_back(50);
 	double nProtons = 1e10;
 	 // ########Should Modify#########
 
@@ -230,7 +232,7 @@ void getRate(){
 	std::cout<<"nEvents = "<<nEvents<<std::endl;
 	std::stringstream buff;
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
-		if (iEvent%5000==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
+		if (iEvent%1000==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
 //		if (iEvent>=11094) weight*=100./31;
 		int nHits = C_edep->size();
@@ -249,6 +251,10 @@ void getRate(){
 			time = (*C_t)[iHit];
 			edep = (*C_edep)[iHit]*1e9;
 			int layerID = get_layer_index(volID);
+//			if (iEvent%1000==0){
+//				std::cout<<volID<<std::endl;
+//				std::cout<<"	vHitrate["<<layerID<<"] = "<<vHitrate[layerID]<<" + "<<weight<<"*"<<hit2rate<<"/"<<cellNo[layerID]<<" = "<<vHitrate[layerID]<<" + "<<weight*hit2rate/cellNo[layerID]<<" = "<<vHitrate[layerID]+weight*hit2rate/cellNo[layerID]<<std::endl;
+//			}
 			vHitrate[layerID]+=weight*hit2rate/cellNo[layerID];
 			vCharge[layerID]+=edep*edep2charge/cellNo[layerID];
 			hitcount[layerID]++;
