@@ -3,30 +3,39 @@ TString MyData = getenv("MYDATA");
 	// About this run
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
-	TString FileName = "";
-//	TString InFileName = "/home/chen/MyWorkArea/g4sim/data/MT1.pim.g60cm10mm.005T.g4s.QBH.root";
-	TString InFileName = "/home/chen/MyWorkArea/g4sim/data/MT1.OT.g60cm10mm.005T.g4s.QBH.root";
+	std::vector<TString> FileNames;
+	TString InFileName = "/home/chen/MyWorkArea/MyStudies/Simulate/comet/data/MT1.OT.g60cm10mm.005T.g4s.QBH.root";
 	 // ########Should Modify#########
-	TString runName = "OT";
-//	FileName="result/pim.root";
-	FileName="OT.140331.root";
+	TString parName = "OT";
+	TString suffixName = "0508_l100cm";
+	TString runName = parName+"."+suffixName;
+//	FileNames.push_back("result/OT.root");
+//	FileNames.push_back(runName+".root");
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
-//	DirName.push_back(MyData+"/raw/g4sim/CDCHit.OT.g60cm10mm.005T.140331.g4s.QBH");
-//	nRuns.push_back(100);
-	double nProtons = 1e10;
+	DirName.push_back(MyData+"/raw/g4sim/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
+	nRuns.push_back(20);
+	int nEvents_per_run = 176779;
+//	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
+//	nRuns.push_back(50);
 	 // ########Should Modify#########
+	if (parName == "pim"){
+		InFileName = "/home/chen/MyWorkArea/MyStudies/Simulate/comet/data/MT1.pim.g60cm10mm.005T.g4s.QBH.root";
+	}
 
 	TChain *ci = new TChain("t");
 	ci->Add(InFileName);
 
 	TChain *c = new TChain("tree");
-	if (FileName!="")
-		c->Add(FileName);
+	std::cout<<"FileNames.size() = "<<(FileNames.size())<<std::endl;
+	for (int i = 0; i<FileNames.size(); i++){
+		std::cout<<"FileNames["<<i<<"] = \""<<FileNames[i]<<"\""<<std::endl;
+		c->Add(FileNames[i]);
+	}
 	std::stringstream buff;
 	std::cout<<"nRuns = "<<nRuns.size()<<std::endl;
 	for (int iRun = 0; iRun < nRuns.size(); iRun++ ){
@@ -59,10 +68,12 @@ TString MyData = getenv("MYDATA");
 	double  opy;
 	double  opz;
 	int  evt_num;
+	int  run_num;
 	std::string * process;
 	std::string * volume;
 	c->SetBranchAddress("C_nHits",&C_nHits);
 	c->SetBranchAddress("evt_num",&evt_num);
+	c->SetBranchAddress("run_num",&run_num);
 	c->SetBranchAddress("R0",&R0);
 	c->SetBranchAddress("R1",&R1);
 	ci->SetBranchAddress("pid",&pid);
@@ -84,7 +95,7 @@ TString MyData = getenv("MYDATA");
 	ci->SetBranchAddress("process",&process);
 	ci->SetBranchAddress("volume",&volume);
 
-	TFile * f = new TFile(runName+".output.root","RECREATE");
+	TFile * f = new TFile(runName+".rand.root","RECREATE");
 	TTree *tree  = new TTree("t","t");
 	tree->Branch("R0",&R0);
 	tree->Branch("R1",&R1);
@@ -113,12 +124,18 @@ TString MyData = getenv("MYDATA");
 	int nEvents = c->GetEntries();
 	std::cout<<"nEvents = "<<nEvents<<std::endl;
 	std::stringstream buff;
+	int iRun = 0;
+	int  pre_run_num = -1;
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
 		if (iEvent%5000==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
 		if (C_nHits>0){
-			ci->GetEntry(evt_num);
+			ci->GetEntry(evt_num+iRun*nEvents_per_run);
 			tree->Fill();
+		}
+		if (run_num!=pre_run_num){
+			pre_run_num = run_num;
+			iRun++;
 		}
 	}
 

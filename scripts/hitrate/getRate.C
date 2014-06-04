@@ -31,25 +31,38 @@ int get_layer_index(int volID){
 
 void getRate(){
 
+	// About Drift time
+	int nSample = 10;
+	TFile * f_drifttime = TFile::Open("drifttime.root");
+	TH2D * tminVStmax = (TH2D*) f_drifttime->Get("tminVStmax");
+
 	// About this run
-	TString runName = "OT.0508.1mm";
+	TString parName = "OT";
+	TString suffixName = "test";
+	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
 //	FileNames.push_back("result/OT.root");
-//	FileNames.push_back(runName+".root");
+	FileNames.push_back(runName+".root");
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
-	DirName.push_back(MyData+"/raw/g4sim/CDCHit.OT.g60cm10mm.005T.0508.1mm.g4s.QBH");
-	nRuns.push_back(100);
+//	DirName.push_back(MyData+"/raw/g4sim/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
+//	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
 //	nRuns.push_back(50);
-	double nProtons = 1e10;
+	double nProtons = 1e8;
+	if (parName == "pim")
+		nProtons = 1e9;
+	else if (parName == "OT")
+		nProtons = 1e8;
+	nProtons = 1e10;
+//	nProtons*=19./20;
 	 // ########Should Modify#########
 
 	// Beam Structure
@@ -64,15 +77,16 @@ void getRate(){
 	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls"); // for beam particles and stopped pions
 	//TH1D *hCurve = (TH1D*) f->Get("Convoluted"); // for stopped muons
 	 // ########Should Modify#########
-	hCurve->RebinX(20);
+//	hCurve->RebinX(20);
 
 	// CDC Info
 	double W_He = 41; // eV
 	double W_iC4H10 = 23; // eV
 	double gain = 1e5; // and  <--- smaller than 1e5 due to space charge? 
 	double cdc_length = 150 ; // cm
-	double edep2charge = proton_rate/nProtons*(0.9/W_He+0.1/W_iC4H10)*gain*1.6e-19/cdc_length*24*3600; // C/cm/day
+	double edep2charge = proton_rate/nProtons*(0.9/W_He+0.1/W_iC4H10)*gain*1.6e-19/cdc_length*24*3600*1e3; // mC/cm/day
 	double hit2rate = proton_rate/nProtons/1000; // kHz
+	double rate2occ = PulseInterval/1e4; // %
 	//	TFile *f = 0;
 
 	TChain *c = new TChain("tree");
@@ -103,34 +117,38 @@ void getRate(){
     int Style_4 = 20; 
     
     TString xtitle1 = "Time (ns)";
-    TString ytitle1 = "Hit Rate per Cell (kHz)";
+    TString ytitle1 = "Occupancy (%)";
 
     TString hName1 = "Innermost Layer";
     TString hName2 = "Seccond Innermost Layer";
     TString hName3 = "Seccond Outmost Layer";
     TString hName4 = "Outmost Layer";
 
-	TString tilte = "Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)";
+	TString tilte = "Cell Occupancy in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)";
 
 	// hit rate in different cdc layers
-    TH1D *h1 = new TH1D("h1",tilte,100,0,PulseInterval);
-    h1->GetYaxis()->SetTitle(ytitle1);
-    h1->GetXaxis()->SetTitle(xtitle1);
-    h1->SetMarkerStyle(Style_1);
-    h1->SetMarkerColor(Color_1);
-    h1->SetLineColor(Color_1);
-    TH1D *h2 = new TH1D("h2",tilte,100,0,PulseInterval);
-    h2->SetMarkerStyle(Style_2);
-    h2->SetMarkerColor(Color_2);
-    h2->SetLineColor(Color_2);
-    TH1D *h3 = new TH1D("h3",tilte,100,0,PulseInterval);
-    h3->SetMarkerStyle(Style_3);
-    h3->SetMarkerColor(Color_3);
-    h3->SetLineColor(Color_3);
-    TH1D *h4 = new TH1D("h4",tilte,100,0,PulseInterval);
-    h4->SetMarkerStyle(Style_4);
-    h4->SetMarkerColor(Color_4);
-    h4->SetLineColor(Color_4);
+    TH1D * h[18];
+    for ( int i =0; i <18; i++){
+		h[i] = new TH1D("h",tilte,100,0,PulseInterval);
+    }
+    h[0]->GetYaxis()->SetTitle(ytitle1);
+    h[0]->GetXaxis()->SetTitle(xtitle1);
+    h[0]->SetMarkerStyle(Style_1);
+    h[0]->SetMarkerSize(0.5);
+    h[0]->SetMarkerColor(Color_1);
+    h[0]->SetLineColor(Color_1);
+    h[1]->SetMarkerStyle(Style_2);
+    h[1]->SetMarkerSize(0.5);
+    h[1]->SetMarkerColor(Color_2);
+    h[1]->SetLineColor(Color_2);
+    h[2]->SetMarkerStyle(Style_3);
+    h[2]->SetMarkerSize(0.5);
+    h[2]->SetMarkerColor(Color_3);
+    h[2]->SetLineColor(Color_3);
+    h[3]->SetMarkerStyle(Style_4);
+    h[3]->SetMarkerSize(0.5);
+    h[3]->SetMarkerColor(Color_4);
+    h[3]->SetLineColor(Color_4);
     TH1D *h5 = new TH1D("h5",tilte,200,0,1000);
 //    h5->SetMarkerStyle(Style_4);
 //    h5->SetMarkerColor(Color_4);
@@ -141,14 +159,17 @@ void getRate(){
     h11->GetYaxis()->SetTitle(ytitle1);
     h11->GetXaxis()->SetTitle(xtitle1);
     h11->SetMarkerStyle(Style_1);
+    h11->SetMarkerSize(0.5);
     h11->SetMarkerColor(Color_1);
     h11->SetLineColor(Color_1);
     TH1D *h12 = new TH1D("h12",tilte,100,0,PulseInterval);
     h12->SetMarkerStyle(Style_2);
+    h12->SetMarkerSize(0.5);
     h12->SetMarkerColor(Color_2);
     h12->SetLineColor(Color_2);
     TH1D *h13 = new TH1D("h13",tilte,100,0,PulseInterval);
     h13->SetMarkerStyle(Style_3);
+    h13->SetMarkerSize(0.5);
     h13->SetMarkerColor(Color_3);
     h13->SetLineColor(Color_3);
 
@@ -157,14 +178,17 @@ void getRate(){
     h21->GetYaxis()->SetTitle(ytitle1);
     h21->GetXaxis()->SetTitle(xtitle1);
     h21->SetMarkerStyle(Style_1);
+    h21->SetMarkerSize(0.5);
     h21->SetMarkerColor(Color_1);
     h21->SetLineColor(Color_1);
     TH1D *h22 = new TH1D("h22",tilte,100,0,PulseInterval);
     h22->SetMarkerStyle(Style_2);
+    h22->SetMarkerSize(0.5);
     h22->SetMarkerColor(Color_2);
     h22->SetLineColor(Color_2);
     TH1D *h23 = new TH1D("h23",tilte,100,0,PulseInterval);
     h23->SetMarkerStyle(Style_3);
+    h23->SetMarkerSize(0.5);
     h23->SetMarkerColor(Color_3);
     h23->SetLineColor(Color_3);
 
@@ -173,14 +197,17 @@ void getRate(){
     h31->GetYaxis()->SetTitle(ytitle1);
     h31->GetXaxis()->SetTitle(xtitle1);
     h31->SetMarkerStyle(Style_1);
+    h31->SetMarkerSize(0.5);
     h31->SetMarkerColor(Color_1);
     h31->SetLineColor(Color_1);
     TH1D *h32 = new TH1D("h32",tilte,100,0,PulseInterval);
     h32->SetMarkerStyle(Style_2);
+    h32->SetMarkerSize(0.5);
     h32->SetMarkerColor(Color_2);
     h32->SetLineColor(Color_2);
     TH1D *h33 = new TH1D("h33",tilte,100,0,PulseInterval);
     h33->SetMarkerStyle(Style_3);
+    h33->SetMarkerSize(0.5);
     h33->SetMarkerColor(Color_3);
     h33->SetLineColor(Color_3);
 
@@ -189,24 +216,35 @@ void getRate(){
     h41->GetYaxis()->SetTitle(ytitle1);
     h41->GetXaxis()->SetTitle(xtitle1);
     h41->SetMarkerStyle(Style_1);
+    h41->SetMarkerSize(0.5);
     h41->SetMarkerColor(Color_1);
     h41->SetLineColor(Color_1);
     TH1D *h42 = new TH1D("h42",tilte,100,0,PulseInterval);
     h42->SetMarkerStyle(Style_2);
+    h42->SetMarkerSize(0.5);
     h42->SetMarkerColor(Color_2);
     h42->SetLineColor(Color_2);
     TH1D *h43 = new TH1D("h43",tilte,100,0,PulseInterval);
     h43->SetMarkerStyle(Style_3);
+    h43->SetMarkerSize(0.5);
     h43->SetMarkerColor(Color_3);
     h43->SetLineColor(Color_3);
 
 	std::vector<double> vLayerID;
-	std::vector<double> vHitrate;
+	std::vector<double> vOccupancy;
 	std::vector<double> vCharge;
+	std::vector<double> vEx;
+	std::vector<double> vEyOcc;
+	std::vector<double> vEyChar;
+	std::vector<int> vEntries;
 	for (int i = 0; i < 18; i++){
 		vLayerID.push_back(i+1);
-		vHitrate.push_back(0);
+		vOccupancy.push_back(0);
 		vCharge.push_back(0);
+		vEx.push_back(0);
+		vEyOcc.push_back(0);
+		vEyChar.push_back(0);
+		vEntries.push_back(0);
 	}
 
 	std::vector<int> *C_volID;
@@ -240,6 +278,7 @@ void getRate(){
 		bool foundhit = false;
 		int layerID_max = 0;
 		double pa = -1;
+		double tmin, tmax;
 		for (int iHit = 0; iHit < nHits; iHit++){
 //			if (pa==-1){
 //				double px = (*C_px)[iHit]*1000;
@@ -251,21 +290,26 @@ void getRate(){
 			time = (*C_t)[iHit];
 			edep = (*C_edep)[iHit]*1e9;
 			int layerID = get_layer_index(volID);
-//			if (iEvent%1000==0){
+//			if (iEvent%1==0){
 //				std::cout<<volID<<std::endl;
-//				std::cout<<"	vHitrate["<<layerID<<"] = "<<vHitrate[layerID]<<" + "<<weight<<"*"<<hit2rate<<"/"<<cellNo[layerID]<<" = "<<vHitrate[layerID]<<" + "<<weight*hit2rate/cellNo[layerID]<<" = "<<vHitrate[layerID]+weight*hit2rate/cellNo[layerID]<<std::endl;
+//				std::cout<<"	vOccupancy["<<layerID<<"] = "<<vOccupancy[layerID]<<" + "<<weight<<"*"<<hit2rate<<"/"<<cellNo[layerID]<<" = "<<vOccupancy[layerID]<<" + "<<weight*hit2rate/cellNo[layerID]<<" = "<<vOccupancy[layerID]+weight*hit2rate/cellNo[layerID]<<std::endl;
 //			}
-			vHitrate[layerID]+=weight*hit2rate/cellNo[layerID];
+////			vOccupancy[layerID]+=weight*hit2rate*rate2occ/cellNo[layerID];
 			vCharge[layerID]+=edep*edep2charge/cellNo[layerID];
 			hitcount[layerID]++;
+			vEntries[layerID]++;
 			foundhit = true;
 			if (layerID>layerID_max) layerID_max = layerID;
-			for (int i_window = 0; i_window <5; i_window++){
+			for (int i_window = -4; i_window <=1; i_window++){
 				double newtime = time+hCurve->GetRandom()+i_window*PulseInterval;
-				if (layerID==0) h1->Fill(newtime,weight*hit2rate*100/cellNo[layerID]);
-				else if (layerID==1) h2->Fill(newtime,weight*hit2rate*100/cellNo[layerID]);
-				else if (layerID==17) h3->Fill(newtime,weight*hit2rate*100/cellNo[layerID]);
-				else if (layerID==16) h4->Fill(newtime,weight*hit2rate*100/cellNo[layerID]);
+				for (int iSample = 0; iSample < nSample; iSample++){
+					tminVStmax->GetRandom2(tmin,tmax);
+					int binmin = h[0]->FindBin(newtime+tmin);
+					int binmax = h[0]->FindBin(newtime+tmax);
+					for (int ibin = binmin; ibin<=binmax; ibin++){
+						h[layerID]->AddBinContent(ibin,weight*hit2rate*rate2occ/cellNo[layerID]/nSample);
+					}
+				}
 			}
 		}
 		if (nHits>0){
@@ -299,17 +343,34 @@ void getRate(){
 			c2->WaitPrimitive();
 		}
 	}
+	double maxOcc = 0;
+	double maxCha = 0;
+	for ( int ilayer  =0; ilayer<18; ilayer++){
+		vOccupancy[ilayer] = h[ilayer]->GetMaximum();
+		if (vEntries[ilayer]){
+			vEyOcc[ilayer] = sqrt(1./vEntries[ilayer])*vOccupancy[ilayer];
+			vEyChar[ilayer] = sqrt(1./vEntries[ilayer])*vCharge[ilayer];
+		}
+//		if (maxCha<vCharge[ilayer]) maxCha = vCharge[ilayer];
+//		if (maxOcc<vOccupancy[ilayer]) maxOcc = vOccupancy[ilayer];
+	}
+	maxOcc = 2.6;
+	maxCha = 0.17;
+	if (parName == "pim"){
+		maxOcc = 0.32;
+		maxCha = 0.06;
+	}
 
-	TGraph * g1 = new TGraph(vLayerID.size(),&(vLayerID[0]),&(vHitrate[0]));
-	g1->SetTitle(runName+": Hit Rate Per Cell (kHz)");
+	TGraphErrors * g1 = new TGraphErrors(vLayerID.size(),&(vLayerID[0]),&(vOccupancy[0]),&(vEx[0]),&(vEyOcc[0]));
+	g1->SetTitle(runName+": Occupancy at Each Layer (%)");
 	g1->GetHistogram()->GetXaxis()->SetTitle("Layer ID (1-18)");
 	g1->SetName("g1");
-	TGraph * g2 = new TGraph(vLayerID.size(),&(vLayerID[0]),&(vCharge[0]));
+	TGraphErrors * g2 = new TGraphErrors(vLayerID.size(),&(vLayerID[0]),&(vCharge[0]),&(vEx[0]),&(vEyChar[0]));
 	g2->GetHistogram()->GetXaxis()->SetTitle("Layer ID (1-18)");
-	g2->SetTitle(runName+":Q (C/cm/day)");
+	g2->SetTitle(runName+":Q (mC/cm/day)");
 	g2->SetName("g2");
 
-	TCanvas *c1 = new TCanvas("c","c");
+	TCanvas *c1 = new TCanvas("c","c",800,600);
 	TPad * p1 = new TPad("p1","p1",0,0,1./2,0.5);
 	TPad * p2 = new TPad("p2","p2",1./2,0,2./2,0.5);
 	TPad * p3 = new TPad("p3","p3",0,0.5,1,1);
@@ -328,24 +389,29 @@ void getRate(){
 	gStyle->SetPadTickY(1);
 
 	p1->cd();
-	g1->SetMarkerStyle(3);
+	g1->SetMarkerStyle(21);
+	g1->SetMarkerSize(0.5);
+	g1->GetYaxis()->SetRangeUser(0,maxOcc);
 	g1->Draw("LAP");
 	p2->cd();
-	g2->SetMarkerStyle(3);
+	g2->SetMarkerStyle(21);
+	g2->SetMarkerSize(0.5);
+	g2->GetYaxis()->SetRangeUser(0,maxCha);
 	g2->Draw("LAP");
 
 	p3->cd();
-	p3->SetLogy(1);
-    h1->Draw("LP");
-    h2->Draw("LPSAME");
-    h3->Draw("LPSAME");
-    h4->Draw("LPSAME");
+//	p3->SetLogy(1);
+	h[0]->GetYaxis()->SetRangeUser(0,maxOcc);
+    h[0]->Draw("LP");
+    h[1]->Draw("LPSAME");
+    h[2]->Draw("LPSAME");
+    h[3]->Draw("LPSAME");
 
-    TLegend *legend = new TLegend(0.8,0.8,1,1);
-    legend->AddEntry(h1,hName1);
-    legend->AddEntry(h2,hName2);
-    legend->AddEntry(h3,hName3);
-    legend->AddEntry(h4,hName4);
+    TLegend *legend = new TLegend(0.8,0.6,1,0.9);
+    legend->AddEntry(h[0],hName1);
+    legend->AddEntry(h[1],hName2);
+    legend->AddEntry(h[2],hName3);
+    legend->AddEntry(h[3],hName4);
     legend->Draw("SAME");
 
 	c1->SaveAs(runName+"_rate.png");
@@ -353,10 +419,10 @@ void getRate(){
 
 	g1->Write();
 	g2->Write();
-	h1->Write();
-	h2->Write();
-	h3->Write();
-	h4->Write();
+	h[0]->Write();
+	h[1]->Write();
+	h[2]->Write();
+	h[3]->Write();
 	h5->Write();
 	t->Write();
 }
