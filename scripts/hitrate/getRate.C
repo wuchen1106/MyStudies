@@ -38,22 +38,22 @@ void getRate(){
 
 	// About this run
 	TString parName = "OT";
-	TString suffixName = "test";
+	TString suffixName = "0508_1e9";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
 //	FileNames.push_back("result/OT.root");
-	FileNames.push_back(runName+".root");
+//	FileNames.push_back(runName+".root");
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
-//	DirName.push_back(MyData+"/raw/g4sim/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
-//	nRuns.push_back(100);
+	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
+	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
 //	nRuns.push_back(50);
 	double nProtons = 1e8;
@@ -61,7 +61,7 @@ void getRate(){
 		nProtons = 1e9;
 	else if (parName == "OT")
 		nProtons = 1e8;
-	nProtons = 1e10;
+	nProtons = 1e9;
 //	nProtons*=19./20;
 	 // ########Should Modify#########
 
