@@ -38,7 +38,7 @@ void getRate(){
 
 	// About this run
 	TString parName = "OT";
-	TString suffixName = "0508_1e9";
+	TString suffixName = "0508_100cm_1e9";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
@@ -69,8 +69,8 @@ void getRate(){
 	double PulseInterval = 1170; // ns
 	double dutyFactor = 1./3;
 	double proton_rate = 2.5e12; // Hz
-	double right_end = 1150; // ns
 	double left_end = 700; // ns
+	double duration = 400*2; // ns
 	TFile * f = new TFile("result/Curves.s100.root");
 
 	 // ########Should Modify#########
@@ -118,119 +118,148 @@ void getRate(){
     
     TString xtitle1 = "Time (ns)";
     TString ytitle1 = "Occupancy (%)";
+    TString ytitle2 = "Hit Rate per Cell (kHz)";
 
     TString hName1 = "Innermost Layer";
     TString hName2 = "Seccond Innermost Layer";
     TString hName3 = "Seccond Outmost Layer";
     TString hName4 = "Outmost Layer";
 
-	TString tilte = "Cell Occupancy in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)";
+	TString title = "Cell Occupancy in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)";
+	TString title2 = "Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)";
 
 	// hit rate in different cdc layers
     TH1D * h[18];
     for ( int i =0; i <18; i++){
-		h[i] = new TH1D("h",tilte,100,0,PulseInterval);
+    	buff.str("");
+    	buff.clear();
+    	buff<<"hOccu"<<i;
+		h[i] = new TH1D(buff.str().c_str(),title,100,0,PulseInterval);
+		h[i]->GetYaxis()->SetTitle(ytitle1);
+		h[i]->GetXaxis()->SetTitle(xtitle1);
+		h[i]->SetMarkerSize(0.5);
+		h[i]->SetMarkerStyle(Style_1);
     }
-    h[0]->GetYaxis()->SetTitle(ytitle1);
-    h[0]->GetXaxis()->SetTitle(xtitle1);
     h[0]->SetMarkerStyle(Style_1);
-    h[0]->SetMarkerSize(0.5);
     h[0]->SetMarkerColor(Color_1);
     h[0]->SetLineColor(Color_1);
     h[1]->SetMarkerStyle(Style_2);
-    h[1]->SetMarkerSize(0.5);
     h[1]->SetMarkerColor(Color_2);
     h[1]->SetLineColor(Color_2);
     h[2]->SetMarkerStyle(Style_3);
-    h[2]->SetMarkerSize(0.5);
     h[2]->SetMarkerColor(Color_3);
     h[2]->SetLineColor(Color_3);
     h[3]->SetMarkerStyle(Style_4);
-    h[3]->SetMarkerSize(0.5);
     h[3]->SetMarkerColor(Color_4);
     h[3]->SetLineColor(Color_4);
-    TH1D *h5 = new TH1D("h5",tilte,200,0,1000);
+    TH1D * h1[18];
+    for ( int i =0; i <18; i++){
+    	buff.str("");
+    	buff.clear();
+    	buff<<"hRate_"<<i;
+		h1[i] = new TH1D(buff.str().c_str(),title2,100,0,PulseInterval);
+		h1[i]->GetYaxis()->SetTitle(ytitle2);
+		h1[i]->GetXaxis()->SetTitle(xtitle1);
+		h1[i]->SetMarkerSize(0.5);
+		h1[i]->SetMarkerStyle(Style_1);
+    }
+    h1[0]->SetMarkerStyle(Style_1);
+    h1[0]->SetMarkerColor(Color_1);
+    h1[0]->SetLineColor(Color_1);
+    h1[1]->SetMarkerStyle(Style_2);
+    h1[1]->SetMarkerColor(Color_2);
+    h1[1]->SetLineColor(Color_2);
+    h1[2]->SetMarkerStyle(Style_3);
+    h1[2]->SetMarkerColor(Color_3);
+    h1[2]->SetLineColor(Color_3);
+    h1[3]->SetMarkerStyle(Style_4);
+    h1[3]->SetMarkerColor(Color_4);
+    h1[3]->SetLineColor(Color_4);
+    TH1D *h5 = new TH1D("h5",title,200,0,1000);
 //    h5->SetMarkerStyle(Style_4);
 //    h5->SetMarkerColor(Color_4);
 //    h5->SetLineColor(Color_4);
 
+	/*
 	// hit rate in Upstream Trigger counter
-    TH1D *h11 = new TH1D("h11",tilte,100,0,PulseInterval);
+    TH1D *h11 = new TH1D("h11",title,100,0,PulseInterval);
     h11->GetYaxis()->SetTitle(ytitle1);
     h11->GetXaxis()->SetTitle(xtitle1);
     h11->SetMarkerStyle(Style_1);
     h11->SetMarkerSize(0.5);
     h11->SetMarkerColor(Color_1);
     h11->SetLineColor(Color_1);
-    TH1D *h12 = new TH1D("h12",tilte,100,0,PulseInterval);
+    TH1D *h12 = new TH1D("h12",title,100,0,PulseInterval);
     h12->SetMarkerStyle(Style_2);
     h12->SetMarkerSize(0.5);
     h12->SetMarkerColor(Color_2);
     h12->SetLineColor(Color_2);
-    TH1D *h13 = new TH1D("h13",tilte,100,0,PulseInterval);
+    TH1D *h13 = new TH1D("h13",title,100,0,PulseInterval);
     h13->SetMarkerStyle(Style_3);
     h13->SetMarkerSize(0.5);
     h13->SetMarkerColor(Color_3);
     h13->SetLineColor(Color_3);
 
 	// hit rate in Downstream Trigger counter
-    TH1D *h21 = new TH1D("h21",tilte,100,0,PulseInterval);
+    TH1D *h21 = new TH1D("h21",title,100,0,PulseInterval);
     h21->GetYaxis()->SetTitle(ytitle1);
     h21->GetXaxis()->SetTitle(xtitle1);
     h21->SetMarkerStyle(Style_1);
     h21->SetMarkerSize(0.5);
     h21->SetMarkerColor(Color_1);
     h21->SetLineColor(Color_1);
-    TH1D *h22 = new TH1D("h22",tilte,100,0,PulseInterval);
+    TH1D *h22 = new TH1D("h22",title,100,0,PulseInterval);
     h22->SetMarkerStyle(Style_2);
     h22->SetMarkerSize(0.5);
     h22->SetMarkerColor(Color_2);
     h22->SetLineColor(Color_2);
-    TH1D *h23 = new TH1D("h23",tilte,100,0,PulseInterval);
+    TH1D *h23 = new TH1D("h23",title,100,0,PulseInterval);
     h23->SetMarkerStyle(Style_3);
     h23->SetMarkerSize(0.5);
     h23->SetMarkerColor(Color_3);
     h23->SetLineColor(Color_3);
 
 	// Momentum Distribution in Upstream Trigger counter
-    TH1D *h31 = new TH1D("h31",tilte,100,0,PulseInterval);
+    TH1D *h31 = new TH1D("h31",title,100,0,PulseInterval);
     h31->GetYaxis()->SetTitle(ytitle1);
     h31->GetXaxis()->SetTitle(xtitle1);
     h31->SetMarkerStyle(Style_1);
     h31->SetMarkerSize(0.5);
     h31->SetMarkerColor(Color_1);
     h31->SetLineColor(Color_1);
-    TH1D *h32 = new TH1D("h32",tilte,100,0,PulseInterval);
+    TH1D *h32 = new TH1D("h32",title,100,0,PulseInterval);
     h32->SetMarkerStyle(Style_2);
     h32->SetMarkerSize(0.5);
     h32->SetMarkerColor(Color_2);
     h32->SetLineColor(Color_2);
-    TH1D *h33 = new TH1D("h33",tilte,100,0,PulseInterval);
+    TH1D *h33 = new TH1D("h33",title,100,0,PulseInterval);
     h33->SetMarkerStyle(Style_3);
     h33->SetMarkerSize(0.5);
     h33->SetMarkerColor(Color_3);
     h33->SetLineColor(Color_3);
 
 	// Momentum Distribution in Downstream Trigger counter
-    TH1D *h41 = new TH1D("h41",tilte,100,0,PulseInterval);
+    TH1D *h41 = new TH1D("h41",title,100,0,PulseInterval);
     h41->GetYaxis()->SetTitle(ytitle1);
     h41->GetXaxis()->SetTitle(xtitle1);
     h41->SetMarkerStyle(Style_1);
     h41->SetMarkerSize(0.5);
     h41->SetMarkerColor(Color_1);
     h41->SetLineColor(Color_1);
-    TH1D *h42 = new TH1D("h42",tilte,100,0,PulseInterval);
+    TH1D *h42 = new TH1D("h42",title,100,0,PulseInterval);
     h42->SetMarkerStyle(Style_2);
     h42->SetMarkerSize(0.5);
     h42->SetMarkerColor(Color_2);
     h42->SetLineColor(Color_2);
-    TH1D *h43 = new TH1D("h43",tilte,100,0,PulseInterval);
+    TH1D *h43 = new TH1D("h43",title,100,0,PulseInterval);
     h43->SetMarkerStyle(Style_3);
     h43->SetMarkerSize(0.5);
     h43->SetMarkerColor(Color_3);
     h43->SetLineColor(Color_3);
+    */
 
 	std::vector<double> vLayerID;
+	std::vector<double> vHitrate;
 	std::vector<double> vOccupancy;
 	std::vector<double> vCharge;
 	std::vector<double> vEx;
@@ -239,6 +268,7 @@ void getRate(){
 	std::vector<int> vEntries;
 	for (int i = 0; i < 18; i++){
 		vLayerID.push_back(i+1);
+		vHitrate.push_back(0);
 		vOccupancy.push_back(0);
 		vCharge.push_back(0);
 		vEx.push_back(0);
@@ -295,6 +325,7 @@ void getRate(){
 //				std::cout<<"	vOccupancy["<<layerID<<"] = "<<vOccupancy[layerID]<<" + "<<weight<<"*"<<hit2rate<<"/"<<cellNo[layerID]<<" = "<<vOccupancy[layerID]<<" + "<<weight*hit2rate/cellNo[layerID]<<" = "<<vOccupancy[layerID]+weight*hit2rate/cellNo[layerID]<<std::endl;
 //			}
 ////			vOccupancy[layerID]+=weight*hit2rate*rate2occ/cellNo[layerID];
+			vHitrate[layerID]+=weight*hit2rate/cellNo[layerID];
 			vCharge[layerID]+=edep*edep2charge/cellNo[layerID];
 			hitcount[layerID]++;
 			vEntries[layerID]++;
@@ -310,6 +341,7 @@ void getRate(){
 						h[layerID]->AddBinContent(ibin,weight*hit2rate*rate2occ/cellNo[layerID]/nSample);
 					}
 				}
+				h1[layerID]->Fill(newtime,weight*hit2rate*100/cellNo[layerID]);
 			}
 		}
 		if (nHits>0){
@@ -370,19 +402,23 @@ void getRate(){
 	g2->SetTitle(runName+":Q (mC/cm/day)");
 	g2->SetName("g2");
 
-	TCanvas *c1 = new TCanvas("c","c",800,600);
-	TPad * p1 = new TPad("p1","p1",0,0,1./2,0.5);
-	TPad * p2 = new TPad("p2","p2",1./2,0,2./2,0.5);
-	TPad * p3 = new TPad("p3","p3",0,0.5,1,1);
+	TCanvas *c1 = new TCanvas("c","c",800,900);
+	TPad * p1 = new TPad("p1","p1",0,0,1./2,1./3);
+	TPad * p2 = new TPad("p2","p2",1./2,0,2./2,1./3);
+	TPad * p3 = new TPad("p3","p3",0,1./3,1,2./3);
+	TPad * p4 = new TPad("p4","p4",0,2./3,1,1);
 	p1->Draw();
 	p2->Draw();
 	p3->Draw();
+	p4->Draw();
 	p1->SetGridx(1);
 	p1->SetGridy(1);
 	p2->SetGridx(1);
 	p2->SetGridy(1);
 	p3->SetGridx(1);
 	p3->SetGridy(1);
+	p4->SetGridx(1);
+	p4->SetGridy(1);
 	gStyle->SetPalette(1);
 	gStyle->SetOptStat(0);
 	gStyle->SetPadTickX(1);
@@ -407,6 +443,13 @@ void getRate(){
     h[2]->Draw("LPSAME");
     h[3]->Draw("LPSAME");
 
+	p4->cd();
+	p4->SetLogy(1);
+    h1[0]->Draw("LP");
+    h1[1]->Draw("LPSAME");
+    h1[2]->Draw("LPSAME");
+    h1[3]->Draw("LPSAME");
+
     TLegend *legend = new TLegend(0.8,0.6,1,0.9);
     legend->AddEntry(h[0],hName1);
     legend->AddEntry(h[1],hName2);
@@ -419,10 +462,10 @@ void getRate(){
 
 	g1->Write();
 	g2->Write();
-	h[0]->Write();
-	h[1]->Write();
-	h[2]->Write();
-	h[3]->Write();
+	for ( int i = 0; i< 18; i++){
+		h[i]->Write();
+		h1[i]->Write();
+	}
 	h5->Write();
 	t->Write();
 }
