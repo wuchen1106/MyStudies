@@ -67,7 +67,7 @@ void getRate(){
 
 	// Beam Structure
 	double PulseInterval = 1170; // ns
-	double dutyFactor = 1./3;
+	double dutyFactor = 1./2.4;
 	double proton_rate = 2.5e12; // Hz
 	double left_end = 700; // ns
 	double duration = 400*2; // ns
@@ -86,7 +86,7 @@ void getRate(){
 	double cdc_length = 150 ; // cm
 	double edep2charge = proton_rate/nProtons*(0.9/W_He+0.1/W_iC4H10)*gain*1.6e-19/cdc_length*24*3600*1e3; // mC/cm/day
 	double hit2rate = proton_rate/nProtons/1000; // kHz
-	double rate2occ = PulseInterval/1e4; // %
+	double scale2bunch = proton_rate*PulseInterval*1e-9/nProtons/dutyFactor;
 	//	TFile *f = 0;
 
 	TChain *c = new TChain("tree");
@@ -116,17 +116,21 @@ void getRate(){
     int Style_3 = 20; 
     int Style_4 = 20; 
     
-    TString xtitle1 = "Time (ns)";
-    TString ytitle1 = "Occupancy (%)";
-    TString ytitle2 = "Hit Rate per Cell (kHz)";
+    TString xtitle1 = "Signal Arrival Time (ns)";
+    TString xtitle2 = "Hit Time (ns)";
+    buff.str("");
+    buff.clear();
+    buff<<"nHits/Bunch/bin("<<PulseInterval/100<<"ns)";
+    TString ytitle1 = buff.str().c_str();
+    TString ytitle2 = buff.str().c_str();
 
     TString hName1 = "Innermost Layer";
     TString hName2 = "Seccond Innermost Layer";
     TString hName3 = "Seccond Outmost Layer";
     TString hName4 = "Outmost Layer";
 
-	TString title = "Cell Occupancy in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)";
-	TString title2 = "Hit Rate in CDC Caused by Beam Particles (Stopped #mu^{-} #pi^{-} Not Included)";
+	TString title = "Signal Arrival Time of Noise in CDC";
+	TString title2 = "Hit Time of Noise in CDC";
 
 	// hit rate in different cdc layers
     TH1D * h[18];
@@ -159,7 +163,7 @@ void getRate(){
     	buff<<"hRate_"<<i;
 		h1[i] = new TH1D(buff.str().c_str(),title2,100,0,PulseInterval);
 		h1[i]->GetYaxis()->SetTitle(ytitle2);
-		h1[i]->GetXaxis()->SetTitle(xtitle1);
+		h1[i]->GetXaxis()->SetTitle(xtitle2);
 		h1[i]->SetMarkerSize(0.5);
 		h1[i]->SetMarkerStyle(Style_1);
     }
@@ -175,7 +179,12 @@ void getRate(){
     h1[3]->SetMarkerStyle(Style_4);
     h1[3]->SetMarkerColor(Color_4);
     h1[3]->SetLineColor(Color_4);
-    TH1D *h5 = new TH1D("h5",title,200,0,1000);
+	TString title3 = "Momentum of Noise Tracks in CDC";
+    TH1D *h5 = new TH1D("h5",title3,200,-9,4);
+	h5->GetYaxis()->SetTitle("Count");
+	h5->GetXaxis()->SetTickLength(0);
+	h5->GetXaxis()->SetTitleOffset(3);
+	h5->GetXaxis()->SetLabelOffset(3);
 //    h5->SetMarkerStyle(Style_4);
 //    h5->SetMarkerColor(Color_4);
 //    h5->SetLineColor(Color_4);
@@ -260,19 +269,21 @@ void getRate(){
 
 	std::vector<double> vLayerID;
 	std::vector<double> vHitrate;
-	std::vector<double> vOccupancy;
+	std::vector<double> vHitCount;
 	std::vector<double> vCharge;
 	std::vector<double> vEx;
-	std::vector<double> vEyOcc;
+	std::vector<double> vEyHitCount;
+	std::vector<double> vEyHitrate;
 	std::vector<double> vEyChar;
 	std::vector<int> vEntries;
 	for (int i = 0; i < 18; i++){
 		vLayerID.push_back(i+1);
 		vHitrate.push_back(0);
-		vOccupancy.push_back(0);
+		vHitCount.push_back(0);
 		vCharge.push_back(0);
 		vEx.push_back(0);
-		vEyOcc.push_back(0);
+		vEyHitCount.push_back(0);
+		vEyHitrate.push_back(0);
 		vEyChar.push_back(0);
 		vEntries.push_back(0);
 	}
@@ -322,35 +333,40 @@ void getRate(){
 			int layerID = get_layer_index(volID);
 //			if (iEvent%1==0){
 //				std::cout<<volID<<std::endl;
-//				std::cout<<"	vOccupancy["<<layerID<<"] = "<<vOccupancy[layerID]<<" + "<<weight<<"*"<<hit2rate<<"/"<<cellNo[layerID]<<" = "<<vOccupancy[layerID]<<" + "<<weight*hit2rate/cellNo[layerID]<<" = "<<vOccupancy[layerID]+weight*hit2rate/cellNo[layerID]<<std::endl;
 //			}
-////			vOccupancy[layerID]+=weight*hit2rate*rate2occ/cellNo[layerID];
 			vHitrate[layerID]+=weight*hit2rate/cellNo[layerID];
 			vCharge[layerID]+=edep*edep2charge/cellNo[layerID];
 			hitcount[layerID]++;
 			vEntries[layerID]++;
 			foundhit = true;
 			if (layerID>layerID_max) layerID_max = layerID;
-			for (int i_window = -4; i_window <=1; i_window++){
-				double newtime = time+hCurve->GetRandom()+i_window*PulseInterval;
-				for (int iSample = 0; iSample < nSample; iSample++){
-					tminVStmax->GetRandom2(tmin,tmax);
-					int binmin = h[0]->FindBin(newtime+tmin);
-					int binmax = h[0]->FindBin(newtime+tmax);
-					for (int ibin = binmin; ibin<=binmax; ibin++){
-						h[layerID]->AddBinContent(ibin,weight*hit2rate*rate2occ/cellNo[layerID]/nSample);
-					}
+			double newtime = time+hCurve->GetRandom();
+			newtime -= ((int)(newtime/PulseInterval))*PulseInterval;
+			if (newtime<0) newtime += PulseInterval;
+			for (int iSample = 0; iSample < nSample; iSample++){
+				tminVStmax->GetRandom2(tmin,tmax);
+				double tarrival = newtime + tmin;
+				double tstop = newtime + tmax;
+				tarrival -= ((int)(tarrival/PulseInterval))*PulseInterval;
+				tstop -= ((int)(tstop/PulseInterval))*PulseInterval;
+				h[layerID]->Fill(tarrival,weight/nSample);
+				bool gotthishit = false;
+				if (left_end+duration>PulseInterval){
+					if (tarrival>left_end) gotthishit = true;
+					else if (tarrival<left_end+duration-PulseInterval) gotthishit = true;
+					else if ((tstop>tarrival&&tstop>left_end)||(tstop<tarrival)) gotthishit = true;
 				}
-				h1[layerID]->Fill(newtime,weight*hit2rate*100/cellNo[layerID]);
+				if (gotthishit) vHitCount[layerID]+=weight/nSample;
 			}
+			h1[layerID]->Fill(newtime,weight);
 		}
 		if (nHits>0){
 			double px = (*C_px)[0]*1000;
 			double py = (*C_py)[0]*1000;
 			double pz = (*C_pz)[0]*1000;
 			double pa = sqrt(px*px+py*py+pz*pz);
-			if (pa>10)
-				h5->Fill(pa,weight);
+//			if (pa>10)
+				h5->Fill(log(pa),weight);
 		}
 //		if (foundhit){
 		if (0){
@@ -375,76 +391,83 @@ void getRate(){
 			c2->WaitPrimitive();
 		}
 	}
-	double maxOcc = 0;
+	double maxHits = 0;
 	double maxCha = 0;
+	double maxRate= 0;
 	for ( int ilayer  =0; ilayer<18; ilayer++){
-		vOccupancy[ilayer] = h[ilayer]->GetMaximum();
+		h[ilayer]->Scale(scale2bunch);
+		h1[ilayer]->Scale(scale2bunch);
+		vHitCount[ilayer]*=scale2bunch;
 		if (vEntries[ilayer]){
-			vEyOcc[ilayer] = sqrt(1./vEntries[ilayer])*vOccupancy[ilayer];
+			vEyHitrate[ilayer] = sqrt(1./vEntries[ilayer])*vHitrate[ilayer];
+			vEyHitCount[ilayer] = sqrt(1./vEntries[ilayer])*vHitCount[ilayer];
 			vEyChar[ilayer] = sqrt(1./vEntries[ilayer])*vCharge[ilayer];
 		}
-//		if (maxCha<vCharge[ilayer]) maxCha = vCharge[ilayer];
-//		if (maxOcc<vOccupancy[ilayer]) maxOcc = vOccupancy[ilayer];
+		if (maxCha<vCharge[ilayer]*1.2) maxCha = vCharge[ilayer]*1.2;
+		if (maxHits<vHitCount[ilayer]*1.2) maxHits = vHitCount[ilayer]*1.2;
+		if (maxRate<vHitrate[ilayer]*1.2) maxRate = vHitrate[ilayer]*1.2;
 	}
-	maxOcc = 2.6;
-	maxCha = 0.17;
-	if (parName == "pim"){
-		maxOcc = 0.32;
-		maxCha = 0.06;
-	}
+//	maxHits = 2.6;
+//	maxCha = 0.17;
+//	maxRate = 0.17;
+//	if (parName == "pim"){
+//		maxHits = 0.32;
+//		maxCha = 0.06;
+//		maxRate = 0.06;
+//	}
 
-	TGraphErrors * g1 = new TGraphErrors(vLayerID.size(),&(vLayerID[0]),&(vOccupancy[0]),&(vEx[0]),&(vEyOcc[0]));
-	g1->SetTitle(runName+": Occupancy at Each Layer (%)");
+	TGraphErrors * g1 = new TGraphErrors(vLayerID.size(),&(vLayerID[0]),&(vHitCount[0]),&(vEx[0]),&(vEyHitCount[0]));
+	buff.str("");
+	buff.clear();
+	buff<<"nHits per Bunch in Each Layer in Measure Window ("<<left_end<<","<<left_end+duration<<")ns";
+	g1->SetTitle(buff.str().c_str());
 	g1->GetHistogram()->GetXaxis()->SetTitle("Layer ID (1-18)");
+	g1->GetHistogram()->GetYaxis()->SetTitle("nHits/Bunch");
 	g1->SetName("g1");
 	TGraphErrors * g2 = new TGraphErrors(vLayerID.size(),&(vLayerID[0]),&(vCharge[0]),&(vEx[0]),&(vEyChar[0]));
 	g2->GetHistogram()->GetXaxis()->SetTitle("Layer ID (1-18)");
-	g2->SetTitle(runName+":Q (mC/cm/day)");
+	g2->GetHistogram()->GetYaxis()->SetTitle("nHits/Bunch");
+	g2->SetTitle("Charge Accumulating Speed in Each Layer (mC/cm/day/wire)");
 	g2->SetName("g2");
+	TGraphErrors * g3 = new TGraphErrors(vLayerID.size(),&(vLayerID[0]),&(vHitrate[0]),&(vEx[0]),&(vEyHitrate[0]));
+	g3->GetHistogram()->GetXaxis()->SetTitle("Layer ID (1-18)");
+	g3->GetHistogram()->GetYaxis()->SetTitle("Hit Rate [kHz]");
+	g3->SetTitle("Hit Rate in Each Layer over All Time");
+	g3->SetName("g3");
 
-	TCanvas *c1 = new TCanvas("c","c",800,900);
-	TPad * p1 = new TPad("p1","p1",0,0,1./2,1./3);
-	TPad * p2 = new TPad("p2","p2",1./2,0,2./2,1./3);
-	TPad * p3 = new TPad("p3","p3",0,1./3,1,2./3);
-	TPad * p4 = new TPad("p4","p4",0,2./3,1,1);
+	TCanvas *c1 = new TCanvas("c1","c1",768,512);
+	TPad * p1 = new TPad("p1","p1",0   ,0   ,1   ,1./2);
+	TPad * p2 = new TPad("p2","p2",0   ,1./2,1   ,1   );
 	p1->Draw();
 	p2->Draw();
-	p3->Draw();
-	p4->Draw();
 	p1->SetGridx(1);
 	p1->SetGridy(1);
 	p2->SetGridx(1);
 	p2->SetGridy(1);
-	p3->SetGridx(1);
-	p3->SetGridy(1);
-	p4->SetGridx(1);
-	p4->SetGridy(1);
 	gStyle->SetPalette(1);
 	gStyle->SetOptStat(0);
 	gStyle->SetPadTickX(1);
 	gStyle->SetPadTickY(1);
 
 	p1->cd();
-	g1->SetMarkerStyle(21);
-	g1->SetMarkerSize(0.5);
-	g1->GetYaxis()->SetRangeUser(0,maxOcc);
-	g1->Draw("LAP");
-	p2->cd();
-	g2->SetMarkerStyle(21);
-	g2->SetMarkerSize(0.5);
-	g2->GetYaxis()->SetRangeUser(0,maxCha);
-	g2->Draw("LAP");
-
-	p3->cd();
-//	p3->SetLogy(1);
-	h[0]->GetYaxis()->SetRangeUser(0,maxOcc);
+//	p1->SetLogy(1);
+//	h[0]->GetYaxis()->SetRangeUser(0,maxHits);
+	h[0]->GetXaxis()->SetTitleSize(0.05);
+	h[0]->GetXaxis()->SetTitleOffset(0.8);
+	h[0]->GetYaxis()->SetTitleSize(0.06);
+	h[0]->GetYaxis()->SetTitleOffset(0.5);
     h[0]->Draw("LP");
     h[1]->Draw("LPSAME");
     h[2]->Draw("LPSAME");
     h[3]->Draw("LPSAME");
 
-	p4->cd();
-	p4->SetLogy(1);
+	p2->cd();
+//	p2->SetLogy(1);
+//	h1[0]->GetYaxis()->SetRangeUser(0,maxHits);
+	h1[0]->GetXaxis()->SetTitleSize(0.05);
+	h1[0]->GetXaxis()->SetTitleOffset(0.8);
+	h1[0]->GetYaxis()->SetTitleSize(0.06);
+	h1[0]->GetYaxis()->SetTitleOffset(0.5);
     h1[0]->Draw("LP");
     h1[1]->Draw("LPSAME");
     h1[2]->Draw("LPSAME");
@@ -457,11 +480,70 @@ void getRate(){
     legend->AddEntry(h[3],hName4);
     legend->Draw("SAME");
 
-	c1->SaveAs(runName+"_rate.png");
-	c1->SaveAs(runName+"_rate.pdf");
+	c1->SaveAs(runName+"_time.png");
+	c1->SaveAs(runName+"_time.pdf");
+
+	TCanvas *c2 = new TCanvas("c2","c2",768,768);
+	TPad * p3 = new TPad("p3","p3",0   ,0   ,1   ,1./3);
+	TPad * p4 = new TPad("p4","p4",0   ,1./3,1   ,2./3);
+	TPad * p5 = new TPad("p5","p5",0   ,2./3,1   ,1   );
+	p3->Draw();
+	p4->Draw();
+	p5->Draw();
+	p3->SetGridx(1);
+	p3->SetGridy(1);
+	p4->SetGridx(1);
+	p4->SetGridy(1);
+	p5->SetGridx(1);
+	p5->SetGridy(1);
+
+	p3->cd();
+	g2->SetMarkerStyle(21);
+	g2->SetMarkerSize(0.5);
+	g2->GetYaxis()->SetRangeUser(0,maxCha);
+	g2->GetXaxis()->SetTitleSize(0.05);
+	g2->GetXaxis()->SetTitleOffset(0.8);
+	g2->GetYaxis()->SetTitleSize(0.06);
+	g2->GetYaxis()->SetTitleOffset(0.5);
+	g2->Draw("LAP");
+	p4->cd();
+	g3->SetMarkerStyle(21);
+	g3->SetMarkerSize(0.5);
+	g3->GetYaxis()->SetRangeUser(0,maxRate);
+	g3->GetXaxis()->SetTitleSize(0.05);
+	g3->GetXaxis()->SetTitleOffset(0.8);
+	g3->GetYaxis()->SetTitleSize(0.06);
+	g3->GetYaxis()->SetTitleOffset(0.5);
+	g3->Draw("LAP");
+	p5->cd();
+	g1->SetMarkerStyle(21);
+	g1->SetMarkerSize(0.5);
+	g1->GetYaxis()->SetRangeUser(0,maxHits);
+	g1->GetXaxis()->SetTitleSize(0.05);
+	g1->GetXaxis()->SetTitleOffset(0.8);
+	g1->GetYaxis()->SetTitleSize(0.06);
+	g1->GetYaxis()->SetTitleOffset(0.5);
+	g1->Draw("LAP");
+
+	c2->SaveAs(runName+"_bunch.png");
+	c2->SaveAs(runName+"_bunch.pdf");
+
+	TCanvas *c3 = new TCanvas("c3","c3",768,512);
+//	gPad->SetLogy(1);
+	gPad->SetGridx(1);
+	gPad->SetGridy(1);
+	gStyle->SetOptStat(1);
+	h5->Draw();
+	TGaxis * axis = new TGaxis(-9,0,4,0,exp(-9),exp(4),50510,"G");
+	axis->SetTitle("Momentum [MeV/c]");
+	axis->Draw();
+
+	c3->SaveAs(runName+"_mom.png");
+	c3->SaveAs(runName+"_mom.pdf");
 
 	g1->Write();
 	g2->Write();
+	g3->Write();
 	for ( int i = 0; i< 18; i++){
 		h[i]->Write();
 		h1[i]->Write();
