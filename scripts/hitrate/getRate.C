@@ -426,8 +426,8 @@ void getRate(){
 	g1->SetName("g1");
 	TGraphErrors * g2 = new TGraphErrors(vLayerID.size(),&(vLayerID[0]),&(vCharge[0]),&(vEx[0]),&(vEyChar[0]));
 	g2->GetHistogram()->GetXaxis()->SetTitle("Layer ID (1-18)");
-	g2->GetHistogram()->GetYaxis()->SetTitle("nHits/Bunch");
-	g2->SetTitle("Charge Accumulating Speed in Each Layer (mC/cm/day/wire)");
+	g2->GetHistogram()->GetYaxis()->SetTitle("Q/wire");
+	g2->SetTitle("Charge Accumulating Speed in Each Layer Q:(mC/cm/day/wire)");
 	g2->SetName("g2");
 	TGraphErrors * g3 = new TGraphErrors(vLayerID.size(),&(vLayerID[0]),&(vHitrate[0]),&(vEx[0]),&(vEyHitrate[0]));
 	g3->GetHistogram()->GetXaxis()->SetTitle("Layer ID (1-18)");
