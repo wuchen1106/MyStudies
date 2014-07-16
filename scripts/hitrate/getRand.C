@@ -1,34 +1,31 @@
 {
-TString MyData = getenv("MYDATA");
+	TString MyData = getenv("MYDATA");
 	// About this run
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
-	TString InFileName = "/home/chen/MyWorkArea/MyStudies/Simulate/comet/data/MT1.OT.g60cm10mm.005T.g4s.QBH.root";
 	 // ########Should Modify#########
-	TString parName = "OT";
-	TString suffixName = "0508_l100cm";
+	TString parName = "OTWC";
+	TString suffixName = "0508_100cm_1e9";
+//	TString suffixName = "140331";
 	TString runName = parName+"."+suffixName;
-//	FileNames.push_back("result/OT.root");
+	std::vector<TString> DirName;
+	std::vector<int> nRuns;
+	std::vector<TString> FileNames;
+	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
+	nRuns.push_back(100);
 //	FileNames.push_back(runName+".root");
-	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
-	//nRuns.push_back(100);
-	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.OT.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
-	//nRuns.push_back(100);
-	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
-	//nRuns.push_back(100);
-	DirName.push_back(MyData+"/raw/g4sim/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
-	nRuns.push_back(20);
-	int nEvents_per_run = 176779;
-//	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
-//	nRuns.push_back(50);
+	//Long64_t nEvents_per_run = 176779;
+	Long64_t nEvents_per_run = 353558;
 	 // ########Should Modify#########
+	TString InFileName = "/home/chen/MyWorkArea/Simulate/comet/data/MT1.EP.OT.g60cm10mm.005T.g4s.QBH.root";
 	if (parName == "pim"){
-		InFileName = "/home/chen/MyWorkArea/MyStudies/Simulate/comet/data/MT1.pim.g60cm10mm.005T.g4s.QBH.root";
+		InFileName = "/home/chen/MyWorkArea/Simulate/comet/data/MT1.pim.g60cm10mm.005T.g4s.QBH.root";
 	}
 
 	TChain *ci = new TChain("t");
 	ci->Add(InFileName);
+	Long64_t nEvent_ci = ci->GetEntries();
 
 	TChain *c = new TChain("tree");
 	std::cout<<"FileNames.size() = "<<(FileNames.size())<<std::endl;
@@ -121,16 +118,16 @@ TString MyData = getenv("MYDATA");
 	tree->Branch("process",&process);
 	tree->Branch("volume",&volume);
 
-	int nEvents = c->GetEntries();
+	Long64_t nEvents = c->GetEntries();
 	std::cout<<"nEvents = "<<nEvents<<std::endl;
 	std::stringstream buff;
 	int iRun = 0;
 	int  pre_run_num = -1;
-	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
+	for (Long64_t iEvent = 0; iEvent < nEvents; iEvent++ ){
 		if (iEvent%5000==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
 		if (C_nHits>0){
-			ci->GetEntry(evt_num+iRun*nEvents_per_run);
+			ci->GetEntry((evt_num+iRun*nEvents_per_run)%nEvent_ci);
 			tree->Fill();
 		}
 		if (run_num!=pre_run_num){

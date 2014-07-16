@@ -37,7 +37,7 @@ void getRate(){
 	TH2D * tminVStmax = (TH2D*) f_drifttime->Get("tminVStmax");
 
 	// About this run
-	TString parName = "OT";
+	TString parName = "pimWC";
 	TString suffixName = "0508_100cm_1e9";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
@@ -56,12 +56,9 @@ void getRate(){
 	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
 //	nRuns.push_back(50);
-	double nProtons = 1e8;
-	if (parName == "pim")
-		nProtons = 1e9;
-	else if (parName == "OT")
-		nProtons = 1e8;
-	nProtons = 1e9;
+	double nProtons = 1e9;
+	if (parName == "pim" || parName == "pimWC")
+		nProtons *= 10;
 //	nProtons*=19./20;
 	 // ########Should Modify#########
 
