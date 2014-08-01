@@ -54,3 +54,11 @@ Signal/Analyse/hitRate
 Signal/Analyse/Acceptance
 FZW/MyVAnalyse
 Signal/Analyse/Current
+Optimize/AfterTDR/getNGamma
+
+# results
+*.root
+*.png
+*.pdf
+*.tar
+*.zip
