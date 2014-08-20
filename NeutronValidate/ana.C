@@ -27,6 +27,7 @@ int ana(){
 	nRuns.push_back(50);
 	TString yyBfilename = MyData+"/20140729_YangYe_Target001/TargetBackward.root";
 	TString yyFfilename = MyData+"/20140729_YangYe_Target001/TargetForward.root";
+	TString yyFLBfilename = MyData+"/20140731_YangYe_Target001/FLUKA.root";
 	 // ########Should Modify#########
 
 	// input
@@ -111,12 +112,16 @@ int ana(){
 	TTree *yyBtree  = (TTree*) yyBfile->Get("RooTracker");
 	TFile * yyFfile = new TFile(yyFfilename);
 	TTree *yyFtree  = (TTree*) yyFfile->Get("RooTracker");
+	TFile * yyFLBfile = new TFile(yyFLBfilename);
+	TTree *yyFLBtree  = (TTree*) yyFLBfile->Get("t");
 
 	int yypid;
 	float yyekin;
 	float yypx;
 	float yypy;
 	float yypz;
+
+	double yyeh,yyel,yyflux;
 
 	yyBtree->SetBranchAddress("pdgcode",&yypid);
 	yyBtree->SetBranchAddress("energy",&yyekin);
@@ -129,6 +134,10 @@ int ana(){
 	yyFtree->SetBranchAddress("px",&yypx);
 	yyFtree->SetBranchAddress("py",&yypy);
 	yyFtree->SetBranchAddress("pz",&yypz);
+
+	yyFLBtree->SetBranchAddress("eh",&yyeh);
+	yyFLBtree->SetBranchAddress("el",&yyel);
+	yyFLBtree->SetBranchAddress("flux",&yyflux);
 
 	// output
 	TFile * f = new TFile("output.root","RECREATE");
@@ -188,7 +197,8 @@ int ana(){
 	tree->Branch("ptid",&ptid);
 
 	// Histos
-	TH1D * h_yy_B_n0_ekin = new TH1D("h_yy_B_n0_ekin","h_yy_B_n0_ekin",128,-1.5,4);
+	TH1D * h_yy_B_n0_ekin = new TH1D("h_yy_B_n0_ekin","h_yy_B_n0_ekin",128,-6,4);
+	TH1D * h_yyFL_B_n0_ekin = new TH1D("h_yyFL_B_n0_ekin","h_yyFL_B_n0_ekin",128,-6,4);
 	TH1D * h_yy_F_n0_ekin = new TH1D("h_yy_F_n0_ekin","h_yy_F_n0_ekin",128,-1.5,4);
 	TH1D * h_yy_B_pp_ekin = new TH1D("h_yy_B_pp_ekin","h_yy_B_pp_ekin",128,0,300);
 	TH1D * h_yy_F_pp_ekin = new TH1D("h_yy_F_pp_ekin","h_yy_F_pp_ekin",128,0,8100);
@@ -206,7 +216,7 @@ int ana(){
 	TH1D * h_yy_B_pip_cos = new TH1D("h_yy_B_pip_cos","h_yy_B_pip_cos",128,-1,-0.4);
 	TH1D * h_yy_F_pip_cos = new TH1D("h_yy_F_pip_cos","h_yy_F_pip_cos",128,0.4,1);
 
-	TH1D * h_c_B_n0_ekin = new TH1D("h_c_B_n0_ekin","h_c_B_n0_ekin",128,-1.5,4);
+	TH1D * h_c_B_n0_ekin = new TH1D("h_c_B_n0_ekin","h_c_B_n0_ekin",128,-6,4);
 	TH1D * h_c_F_n0_ekin = new TH1D("h_c_F_n0_ekin","h_c_F_n0_ekin",128,-1.5,4);
 	TH1D * h_c_B_pp_ekin = new TH1D("h_c_B_pp_ekin","h_c_B_pp_ekin",128,0,300);
 	TH1D * h_c_F_pp_ekin = new TH1D("h_c_F_pp_ekin","h_c_F_pp_ekin",128,0,8100);
@@ -349,8 +359,47 @@ int ana(){
 		}
 	}
 
+	nEvents = yyFLBtree->GetEntries();
+	std::cout<<"nEvents = "<<nEvents<<std::endl;
+	double monitorarea = 3.1416*20*20;
+	for (Long64_t iEvent = 0; iEvent < nEvents; iEvent++ ){
+		if (iEvent%printModulo==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
+		yyFLBtree->GetEntry(iEvent);
+		std::cout<<yyel<<","<<yyeh<<","<<yyflux<<std::endl;
+		if (yyflux==0) continue;
+		for ( int ibin = 1; ibin<=h_yyFL_B_n0_ekin->GetNbinsX(); ibin++){
+			double left = h_yyFL_B_n0_ekin->GetBinLowEdge(ibin);
+			double right = h_yyFL_B_n0_ekin->GetBinLowEdge(ibin+1);
+			double left1 = log(yyel*1e3)/log(10);
+			double right1 = log(yyeh*1e3)/log(10);
+			double width = 0;
+			if (left1<left){
+				if (right1>left){
+					if (right1<right){
+						width = right1-left;
+					}
+					else{
+						width = right-left;
+					}
+				}
+			}
+			else if (left1<right){
+				if (right1<right){
+					width = right1-left1;
+				}
+				else{
+					width = right-left1;
+				}
+			}
+			double weight = yyflux*monitorarea*5e5*width/(right1-left1);
+			std::cout<<"("<<left<<","<<right<<")"<<" ("<<left1<<","<<right1<<")"<<" "<<width<<", "<<right1-left1<<"; "<<yyflux<<", "<<weight<<std::endl;
+			h_yyFL_B_n0_ekin->AddBinContent(ibin,weight);
+		}
+	}
+
 	// save
 	h_yy_B_n0_ekin->Write();
+	h_yyFL_B_n0_ekin->Write();
 	h_yy_F_n0_ekin->Write();
 	h_yy_B_pp_ekin->Write();
 	h_yy_F_pp_ekin->Write();

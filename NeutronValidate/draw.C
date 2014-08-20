@@ -1,5 +1,40 @@
 std::stringstream buf;
 
+void drawit(TCanvas *c, TPad* p, TH1D* h1, TH1D* h2, TH1D* h3, TString title, TString tx, TString ty, TString t1, TString t2, TString t3, int c1, int c2, int c3, bool log = false, int opt = 1){
+	c->cd();p->Draw(); p->cd();
+	p->SetGridx(1);
+	p->SetGridy(1);
+	if (log) p->SetLogy(1);
+	h1->SetLineColor(c1);
+	h2->SetLineColor(c2);
+	h3->SetLineColor(c3);
+	h1->SetTitle(title);
+	h1->GetXaxis()->SetTitle(tx);
+	h1->GetYaxis()->SetTitle(ty);
+	h1->Scale(1./5e5/5e5);
+	h2->Scale(1./5e5);
+	h3->Scale(1./5e5);
+	h1->Draw();
+	h2->Draw("SAME");
+	h3->Draw("SAME");
+    if (opt){
+		TLegend * legend = 0;
+		if (opt==1){
+			legend = new TLegend(0.1,0.7,0.55,0.9);
+		}
+		else if (opt == -1){
+			legend = new TLegend(0.55,0.7,1,0.9);
+		}
+		buf.str("");buf.clear();buf<<t1<<": "<<h1->Integral();
+		legend->AddEntry(h1,buf.str().c_str());
+		buf.str("");buf.clear();buf<<t2<<": "<<h2->Integral();
+		legend->AddEntry(h2,buf.str().c_str());
+		buf.str("");buf.clear();buf<<t3<<": "<<h3->Integral();
+		legend->AddEntry(h3,buf.str().c_str());
+		legend->Draw("SAME");
+	}
+}
+
 void drawit(TCanvas *c, TPad* p, TH1D* h1, TH1D* h2, TString title, TString tx, TString ty, TString t1, TString t2, int c1, int c2, bool log = false, int opt = 1){
 	c->cd();p->Draw(); p->cd();
 	p->SetGridx(1);
@@ -72,7 +107,7 @@ int draw(){
 	// Backward
 	TCanvas *c2 = new TCanvas("c2","c2",1024,768);
 	TPad * p1_1 = new TPad("p1_1","p1_1",0,0,1./4,0.5);
-	drawit(c2,p1_1,h_c_B_n0_ekin,h_yy_B_n0_ekin,"Backward Neutron: Kinetic Energy","log_{10}(E_{kin}/MeV)","Count per Proton","G","P",632,600,false,0);
+	drawit(c2,p1_1,h_yyFL_B_n0_ekin,h_c_B_n0_ekin,h_yy_B_n0_ekin,"Backward Neutron: Kinetic Energy","log_{10}(E_{kin}/MeV)","Count per Proton","F","G","P",616,632,600,true,1);
 
 	TPad * p1_2 = new TPad("p1_3","p1_3",1./4,0,2./4,0.5);
 	c2->cd();p1_2->Draw(); p1_2->cd();
