@@ -27,6 +27,39 @@ int get_cell_layer(int volID,int &cell,int &layer){
 	return 0;
 }
 
+void gettopo(int &topo,std::vector<std::string> * process,std::vector<int> * pid,std::vector<double> *o_px,std::vector<double> *o_py,std::vector<double> *o_pz){
+	if (pid->size()<=1||(*pid)[pid->size()-1]!=13) topo = 0; // primary or not from muon
+	else{ // from muon
+		if ((*process)[process->size()-2]=="muMinusCaptureAtRest"){
+			topo=1000;
+			if (pid->size()==2){ // directly from muon
+				topo += 0;
+			}
+			else{ // indirectly from muon
+				if ((*pid)[pid->size()-2]==22) topo += 1;
+				else if ((*pid)[pid->size()-2]==2212) topo += 2;
+				else if ((*pid)[pid->size()-2]==11){
+					double px_temp = (*o_px)[o_px->size()-2];
+					double py_temp = (*o_py)[o_py->size()-2];
+					double pz_temp = (*o_pz)[o_pz->size()-2];
+					double pa_temp=sqrt(px_temp*px_temp+py_temp*py_temp+pz_temp*pz_temp);
+					if (pa_temp>1) topo += 3;
+					else topo += 4;
+				}
+				else if ((*pid)[pid->size()-2]==2112) topo += 5;
+				else topo += 6;
+			}
+		}
+		else if ((*process)[process->size()-2]=="Decay"){
+			topo=2000;
+		}
+		else if ((*process)[process->size()-2]=="muIoni"){
+			topo=3000;
+		}
+	}
+	return;
+}
+
 void setName(std::string &name){
 	if (name.substr(0,7)=="CdcCell") name="CdcCell";
 	else if (name.substr(0,8)=="EndPlate") name="EndPlate";
@@ -47,15 +80,16 @@ int main(int argc, char *argv[]){
 //int tri(){
 	std::stringstream buff;
 	// About this run
-	TString parName = "n0";
-//	TString parName = "OTWC";
-	TString suffixName = "0508_100cm_1e7";
+//	TString parName = "n0";
+	TString parName = "OTWC";
+//	TString suffixName = "0508_100cm_1e7";
+	TString suffixName = "0508_100cm_1e9";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
-	FileNames.push_back(MyData+"/n0.root");
+//	FileNames.push_back(MyData+"/n0.root");
 //	FileNames.push_back(runName+".root");
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
@@ -63,8 +97,8 @@ int main(int argc, char *argv[]){
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
-//	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
-//	nRuns.push_back(300);
+	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
+	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
 //	nRuns.push_back(50);
 	double nProtons = 1e9;
@@ -162,11 +196,13 @@ int main(int argc, char *argv[]){
 	//		c->SetBranchAddress("R1",&R1);
 	//	}
 
+	int set_C_setpL = 1;
+	int set_M_setpL = 1;
 	c->SetBranchAddress("C_nHits",&C_nHits);
 	c->SetBranchAddress("C_volID",&C_volID);
 	c->SetBranchAddress("C_ptid",&C_ptid);
 	c->SetBranchAddress("C_edep",&C_edep);
-	c->SetBranchAddress("C_stepL",&C_stepL);
+	set_C_setpL=c->SetBranchAddress("C_stepL",&C_stepL);
 	c->SetBranchAddress("C_t",&C_t);
 	c->SetBranchAddress("C_px",&C_px);
 	c->SetBranchAddress("C_py",&C_py);
@@ -184,7 +220,7 @@ int main(int argc, char *argv[]){
 	c->SetBranchAddress("M_volID",&M_volID);
 	c->SetBranchAddress("M_opx",&M_opx);
 	c->SetBranchAddress("M_edep",&M_edep);
-	c->SetBranchAddress("M_stepL",&M_stepL);
+	set_M_setpL=c->SetBranchAddress("M_stepL",&M_stepL);
 	c->SetBranchAddress("M_t",&M_t);
 	c->SetBranchAddress("M_px",&M_px);
 	c->SetBranchAddress("M_py",&M_py);
@@ -219,6 +255,7 @@ int main(int argc, char *argv[]){
 	int nHits;
 	int type; 
 	int cpid; 
+	int topo;
 
 	std::vector<int> *O_cellID = 0;
 	std::vector<int> *O_layerID = 0;
@@ -253,6 +290,7 @@ int main(int argc, char *argv[]){
 	tree->Branch("run_num",&run_num);
 	tree->Branch("nHits",&nHits);
 	tree->Branch("type",&type);
+	tree->Branch("topo",&topo);
 	tree->Branch("cpid",&cpid);
 	tree->Branch("weight",&weight);
 
@@ -326,6 +364,9 @@ int main(int argc, char *argv[]){
 			if (ppid) delete ppid; ppid = new std::vector<int>;
 
 			int pretid = -1;
+			int prepid = -1;
+			std::string preprocess = "";
+			std::string prevolume = "";
 			if (iEvent%printModulo==0) std::cout<<"==> Start looping in CDC hits, nHits = "<<C_nHits<<std::endl;
 			for ( int iHit = 0; iHit<C_nHits;iHit++){
 				if (iEvent%printModulo2==0) std::cout<<"	# "<<iHit
@@ -336,7 +377,7 @@ int main(int argc, char *argv[]){
 					                                <<","<<(*C_ovolName)[iHit]
 					                                <<std::endl;
 				int tptid = (*C_ptid)[iHit];
-				if (tptid != pretid){ // new track
+				if (tptid != pretid || (*C_oprocess)[iHit] != preprocess || (*C_ovolName)[iHit] != prevolume || (*C_pid)[iHit] != prepid ){ // new track
 					if (iEvent%printModulo2==0) std::cout<<"		Found new track!"<<std::endl;
 					if (iHit!=0){
 						tree->Fill();
@@ -344,7 +385,10 @@ int main(int argc, char *argv[]){
 					}
 
 					cpid = (*C_pid)[iHit];
+					prepid = (*C_pid)[iHit];
 					pretid = tptid;
+					preprocess = (*C_oprocess)[iHit];
+					prevolume = (*C_ovolName)[iHit];
 					nHits = 0;
 
 					if(O_cellID) delete O_cellID; O_cellID = new std::vector<int>;
@@ -380,8 +424,24 @@ int main(int argc, char *argv[]){
 					int maxdepth = 1;
 					int idepth = 0;
 					if (iEvent%printModulo2==0) std::cout<<"			==> Start looping in McTruth, nMc = "<<McTruth_pid->size()<<std::endl;
+					bool foundfirst = false;
 					for(int iMc = McTruth_pid->size()-1; iMc>=0; iMc--){
-						if ((ppid->size()==0&&tptid==(*McTruth_ptid)[iMc]&&(*C_pid)[iHit]==(*McTruth_pid)[iMc])||tptid==(*McTruth_tid)[iMc]){
+						bool isfirst=false;
+						if (!foundfirst){
+							if (ppid->size()==0){
+								double pa_temp1 = sqrt((*C_px)[iHit]*(*C_px)[iHit]+(*C_py)[iHit]*(*C_py)[iHit]+(*C_pz)[iHit]*(*C_pz)[iHit]);
+								double pa_temp2 = sqrt((*McTruth_px)[iMc]*(*McTruth_px)[iMc]+(*McTruth_py)[iMc]*(*McTruth_py)[iMc]+(*McTruth_pz)[iMc]*(*McTruth_pz)[iMc]);
+								if( tptid==(*McTruth_ptid)[iMc] // same mother
+										&&(*C_pid)[iHit]==(*McTruth_pid)[iMc] // same pid
+										&&(*C_ovolName)[iHit]==(*McTruth_volume)[iMc] // from same volume
+										&&(*C_oprocess)[iHit]==(*McTruth_process)[iMc] // from same process
+										&&pa_temp2>=pa_temp1){
+									isfirst=true;
+									foundfirst = true;
+								}
+							}
+						}
+						if(isfirst||(foundfirst&&tptid==(*McTruth_tid)[iMc])){
 //							if (++idepth>maxdepth) break;
 							ppid->push_back((*McTruth_ppid)[iMc]);
 							pid->push_back((*McTruth_pid)[iMc]);
@@ -407,6 +467,9 @@ int main(int argc, char *argv[]){
 								                                                       <<std::endl;
 						}
 					}
+					if (!foundfirst) topo = -1;
+					else
+						gettopo(topo,process,pid,o_px,o_py,o_pz);
 					if (iEvent%printModulo2==0) std::cout<<"			<== End looping in McTruth, nMc = "<<McTruth_pid->size()<<std::endl;
 				}
 				nHits++;
@@ -415,7 +478,8 @@ int main(int argc, char *argv[]){
 				O_layerID->push_back(layer);
 				O_cellID->push_back(cell);
 				O_edep->push_back((*C_edep)[iHit]);
-				O_stepL->push_back((*C_stepL)[iHit]);
+				if (!set_C_setpL) O_stepL->push_back((*C_stepL)[iHit]);
+				else O_stepL->push_back(0);
 				O_t->push_back((*C_t)[iHit]);
 				O_px->push_back((*C_px)[iHit]*1000);
 				O_py->push_back((*C_py)[iHit]*1000);
@@ -530,6 +594,7 @@ int main(int argc, char *argv[]){
 							tptid = (*McTruth_ptid)[iMc];
 						}
 					}
+					gettopo(topo,process,pid,o_px,o_py,o_pz);
 				}
 				nHits++;
 				int triType,triPos;
@@ -554,7 +619,8 @@ int main(int argc, char *argv[]){
 				O_triID->push_back((*M_volID)[iHit]);
 				O_edep->push_back((*M_edep)[iHit]);
 				if (iEvent%printModulo==0) std::cout<<"O_edep->push_back("<<(*M_edep)[iHit]<<")"<<std::endl;
-				O_stepL->push_back((*M_stepL)[iHit]);
+				if (!set_C_setpL) O_stepL->push_back((*M_stepL)[iHit]);
+				else O_stepL->push_back(0);
 				O_t->push_back((*M_t)[iHit]);
 				O_px->push_back((*M_px)[iHit]*1000);
 				O_py->push_back((*M_py)[iHit]*1000);
