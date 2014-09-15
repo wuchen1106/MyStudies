@@ -578,12 +578,15 @@ int main(int argc, char* argv[]){
 				for ( int i_mon = 0; i_mon < Monitor_nHits; prevtid=Monitor_tid[i_mon],previ_MP=i_MP, i_mon++ ){
 					if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 						std::cout<<prefix_ParticleInfoStart
-								 <<"  got "<<Monitor_pid[i_mon]<<" in "<<Volume<<"!"
+								 <<"  got "<<Monitor_pid[i_mon]<<" in "<<Monitor_volName[i_mon]<<"!"
 								 <<",  tid = "<<Monitor_tid[i_mon]
 								 <<",  i_MP = "<<i_MP
 								 <<",  previ_MP = "<<previ_MP
 								 <<",  prevtid = "<<prevtid
 								 <<std::endl;
+					if (Monitor_volName[i_mon]!=m_MonitorPlane){
+						continue;
+					}
 					if (!PDGEncoding // all particles
 						||PDGEncoding==-1&&Monitor_pid[i_mon]>=1e7 // only nuclears
 						||PDGEncoding==1&&Monitor_pid[i_mon]<1e7 // only elementary particles
@@ -591,6 +594,7 @@ int main(int argc, char* argv[]){
 						||PDGEncoding==2&&Monitor_pid[i_mon]!=13&&Monitor_pid[i_mon]!=-211&&Monitor_pid[i_mon]!=11&&Monitor_pid[i_mon]<1e7 // only other particles
 						||PDGEncoding==-2&&(!st_error&&Monitor_stopped[i_mon])&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211) // only stopped particles
 						||PDGEncoding==-3&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211||Monitor_pid[i_mon]!=11) // only other particles
+						||PDGEncoding==-4&&(Monitor_pid[i_mon]==13||Monitor_pid[i_mon]==-211) // only stopped particles
 						){
 						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 							std::cout<<prefix_ParticleInfoStart
@@ -699,13 +703,13 @@ int main(int argc, char* argv[]){
 								}
 							}
 						}
-						if (Monitor_tid[i_mon]==prevtid&&i_MP==previ_MP&&(st_error||!Monitor_stopped[i_mon])){
-							if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-								std::cout<<prefix_ParticleInfoStart
-										 <<"  Occurred once!"
-										 <<std::endl;
-							continue;
-						}
+//						if (Monitor_tid[i_mon]==prevtid&&i_MP==previ_MP&&(st_error||!Monitor_stopped[i_mon])){
+//							if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+//								std::cout<<prefix_ParticleInfoStart
+//										 <<"  Occurred once!"
+//										 <<std::endl;
+//							continue;
+//						}
 						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 							std::cout<<prefix_ParticleInfoStart
 									 <<"  First hit!"
@@ -970,7 +974,7 @@ void init_args()
 	m_InputDir="";
 	m_OriginalFile="NONE";
 	m_workMode="monitor";
-	m_MonitorPlane="PTACS";
+	m_MonitorPlane="CS";
 	m_OutputDir="result";
 	m_input="input";
 	verbose = 0;
