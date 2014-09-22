@@ -17,7 +17,8 @@ int main(int argc, char** argv){
 	TH1D * h_xt = (TH1D*)(new TFile("/home/chen/MyWorkArea/Simulate/comet/data/xt.root"))->Get("xt");
 	TH1D * h_stoptime = (TH1D*)(new TFile("/home/chen/MyWorkArea/Simulate/comet/data/ST.mum.g60cm10mm.005T.BL.g4s.QBH.root"))->Get("h10");
 
-	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.005.root");
+//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.geantino.root");
+	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.006.root");
 	TTree * it = (TTree*) ifile->Get("tree");
 	TFile * of = new TFile("output.root","RECREATE");
 	TTree * ot = new TTree("tree","tree");
@@ -59,6 +60,7 @@ int main(int argc, char** argv){
 	int O_nHits = 0;
 	std::vector<int> * O_hittype = 0;
 	std::vector<double> * O_t = 0;
+	std::vector<double> * O_tof = 0;
 	std::vector<double> * O_wx = 0;
 	std::vector<double> * O_wy = 0;
 	std::vector<double> * O_wz = 0;
@@ -119,6 +121,7 @@ int main(int argc, char** argv){
 	ot->Branch("CdcCell_pz",&O_pz);
 	ot->Branch("CdcCell_driftD",&O_driftD);
 	ot->Branch("CdcCell_driftDtrue",&O_driftDtrue);
+	ot->Branch("CdcCell_tof",&O_tof);
 	ot->Branch("CdcCell_tstart",&O_tstart);
 	ot->Branch("CdcCell_tstop",&O_tstop);
 	ot->Branch("CdcCell_cellID",&O_cellID);
@@ -137,6 +140,8 @@ int main(int argc, char** argv){
 	c_BKG->Add("/home/chen/MyWorkArea/MyStudies/hitrate/result/ALL.cdc.root");
 //	c_BKG->Add("/home/chen/MyWorkArea/MyStudies/hitrate/result/n0.root");
 	int nBKG = c_BKG->GetEntries();
+	// FIXME
+	nBKG = 0;
 	int index = 0;
 	int BKG_nHits = 0;
 	int type = 0;
@@ -171,7 +176,6 @@ int main(int argc, char** argv){
 	c_BKG->SetBranchAddress("O_cellID",&BKG_cellID);
 	c_BKG->SetBranchAddress("O_layerID",&BKG_layerID);
 	c_BKG->SetBranchAddress("O_posflag",&BKG_posflag);
-	c_BKG->SetBranchAddress("O_t",&BKG_t);
 	c_BKG->SetBranchAddress("O_wx",&BKG_wx);
 	c_BKG->SetBranchAddress("O_wy",&BKG_wy);
 	c_BKG->SetBranchAddress("O_wz",&BKG_wz);
@@ -193,12 +197,13 @@ int main(int argc, char** argv){
 				dict[j][k]=-1;
 			}
 		}
-		if (i%10==0) printf("%lf%...\n",(double)i/it->GetEntries()*100);
+		if (i%1==0) printf("%lf%...\n",(double)i/it->GetEntries()*100);
 		it->GetEntry(i);
 		if (CdcCell_nHits==0) continue;
 		O_nHits = 0;
 		O_hittype = new std::vector<int>;
 		O_t = new std::vector<double>;
+		O_tof = new std::vector<double>;
 		O_wx = new std::vector<double>;
 		O_wy = new std::vector<double>;
 		O_wz = new std::vector<double>;
@@ -242,6 +247,7 @@ int main(int argc, char** argv){
 				}
 			}
 		}
+		//FIXME
 		if (!triggerd) continue;
 
 		decaytime = h_stoptime->GetRandom()-864*log(gRandom->Uniform());
@@ -250,6 +256,7 @@ int main(int argc, char** argv){
 		O_mt += shifttime;
 
 		double hittime;
+		double tof;
 		double starttime;
 		double stoptime;
 		int hittype;
@@ -263,15 +270,14 @@ int main(int argc, char** argv){
 			starttime = (*CdcCell_tstart)[j] + shifttime;
 			stoptime = (*CdcCell_tstop)[j] + shifttime;
 			hittime = (*CdcCell_t)[j] + shifttime;
+			tof = (*CdcCell_t)[j];
 			if (dict[(*CdcCell_layerID)[j]][(*CdcCell_cellID)[j]]==-1){
 				dict[(*CdcCell_layerID)[j]][(*CdcCell_cellID)[j]]=O_nHits;
 				O_nHits++;
 				O_t->push_back(hittime);
+				O_tof->push_back(tof);
 				O_tstart->push_back(starttime);
 				O_tstop->push_back(stoptime);
-				//O_tstart->push_back((*CdcCell_tstart)[j]);
-				//O_tstop->push_back((*CdcCell_tstop)[j]);
-				//O_t->push_back((*CdcCell_t)[j]);
 				O_wx->push_back((*CdcCell_wx)[j]);
 				O_wy->push_back((*CdcCell_wy)[j]);
 				O_wz->push_back((*CdcCell_wz)[j]);
@@ -336,6 +342,7 @@ int main(int argc, char** argv){
 					O_nHits++;
 					dict[((*BKG_layerID)[ibkghit])][((*BKG_cellID)[ibkghit])]=O_nHits;
 					O_t->push_back(hittime);
+					O_tof->push_back(O_mt-hittime);
 					O_wx->push_back((*BKG_wx)[ibkghit]/10);
 					O_wy->push_back((*BKG_wy)[ibkghit]/10);
 					O_wz->push_back((*BKG_wz)[ibkghit]/10);
@@ -359,6 +366,7 @@ int main(int argc, char** argv){
 					if (starttime<(*O_tstart)[ihit]){ // update!
 						(*O_tstart)[ihit] = starttime;
 						(*O_t)[ihit] = hittime;
+						(*O_tof)[ihit] = O_mt-hittime;
 						(*O_driftD)[ihit] = dd;
 						(*O_edep)[ihit] = (*O_edep)[ihit] + (*BKG_edep)[ibkghit];
 					}

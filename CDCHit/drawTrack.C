@@ -2,7 +2,8 @@
 	double edep_cut = 5e-6; // GeV
 	double twindow_left = 700; // ns
 //	TFile * ifile = new TFile("signal.004.root");
-	TFile * ifile = new TFile("signal.005.noise.root");
+//	TFile * ifile = new TFile("signal.geantino.root");
+	TFile * ifile = new TFile("signal.005.noise.new.root");
 	TTree * it = (TTree*) ifile->Get("tree");
 	TFile * of = new TFile("output.root","RECREATE");
 
@@ -114,7 +115,7 @@
 		buf<<"Entry$=="<<i;
 		it->Draw("CdcCell_y:CdcCell_x>>h",buf.str().c_str(),"");
 		buf<<"&&CdcCell_hittype==0";
-		it->Draw("CdcCell_y:CdcCell_x>>h2",buf.str().c_str());
+		it->Draw("CdcCell_wy:CdcCell_wx>>h2",buf.str().c_str());
 		buf.str("");
 		buf.clear();
 		buf<<"#"<<i<<": Triggered @ "<<CdcCell_mt<<" ns, Ngood = "<<h2->GetEntries()<<", Nnoise = "<<h->GetEntries()-h2->GetEntries();
@@ -126,6 +127,10 @@
 		buf.clear();
 		buf<<"Entry$=="<<i<<"&&CdcCell_edep<"<<edep_cut<<"&&CdcCell_hittype==0";
 		it->Draw("CdcCell_y:CdcCell_x",buf.str().c_str(),"SAMELINE");
+		it->SetMarkerStyle(7);
+		it->Draw("CdcCell_y:CdcCell_x",buf.str().c_str(),"SAME");
+		it->SetMarkerColor(kRed);
+		it->Draw("CdcCell_wy:CdcCell_wx",buf.str().c_str(),"SAME");
 		buf.str("");
 		buf.clear();
 		ewiret = new TEllipse(0,0,82,82);
