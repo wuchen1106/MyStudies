@@ -38,6 +38,14 @@ OBJ =
 $(PROJECT): $(OBJ) $(PROJECT).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT).cxx $(OBJ) -o $(PROJECT)
 
+#--------------------------PART 3: about your own packages and the main program-------------------------------------------
+# Names of user defined packages
+
+# Change this name to your program which contains the main function
+PROJECT = gethist
+$(PROJECT): $(OBJ) $(PROJECT).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT).cxx $(OBJ) -o $(PROJECT)
+
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
 # Here is an example showing how to make clean and make a specified user defined package
