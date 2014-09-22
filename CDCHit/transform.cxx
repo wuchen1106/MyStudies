@@ -18,7 +18,7 @@ int main(int argc, char** argv){
 	TH1D * h_stoptime = (TH1D*)(new TFile("/home/chen/MyWorkArea/Simulate/comet/data/ST.mum.g60cm10mm.005T.BL.g4s.QBH.root"))->Get("h10");
 
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.geantino.root");
-	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.006.root");
+	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
 	TTree * it = (TTree*) ifile->Get("tree");
 	TFile * of = new TFile("output.root","RECREATE");
 	TTree * ot = new TTree("tree","tree");
