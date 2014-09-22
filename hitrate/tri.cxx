@@ -12,6 +12,7 @@
 #include "TTree.h"
 
 TString MyData = getenv("MYDATA");
+TString MyWork = getenv("MYWORKAREA");
 
 void gettopo(int &topo,std::vector<std::string> * process,std::vector<int> * pid,std::vector<double> *o_px,std::vector<double> *o_py,std::vector<double> *o_pz){
 	if (pid->size()<=1||(*pid)[pid->size()-1]!=13) topo = 0; // primary or not from muon
@@ -77,12 +78,10 @@ int main(int argc, char *argv[]){
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
-//	FileNames.push_back(MyData+"/n0.root");
+	FileNames.push_back(MyWork+"/Simulate/comet/output/CDC.ALL.root");
 //	FileNames.push_back(runName+".root");
-//	DirName.push_back(MyData+"/CDCHit."+parName+".140822.PHITS");
-//	nRuns.push_back(20);
-	DirName.push_back(MyData+"/CDC."+parName+".140625"+".g496p02QBH");
-	nRuns.push_back(150);
+//	DirName.push_back(MyData+"/DET."+parName+".g60cm20mm.005T"+".g496QBH");
+//	nRuns.push_back(150);
 //	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
 //	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
