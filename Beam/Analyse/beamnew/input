@@ -7,9 +7,9 @@
 	TreeName | tree
 
 #	TYPE    | Directory                                                                   | runname | #CPU | #job
-	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS2.g60cm20mm.005T.g496QBH2              |         | 300  | 1
-#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/B9.g60cm20mm.005T.g496QBH                |         | 300  | 1
-#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/B9.g60cm20mm.005T.g496QBH2               |         | 20  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS2.g60cm20mm.005T.g496QBH2              |         | 300  | 1
+	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/B9.g60cm20mm.005T.g496QBH                |         | 300  | 1
+	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/B9.g60cm20mm.005T.g496QBH2               |         | 20  | 1
 
 #	TYPE    | Path
 #	oFILE   | /home/chen/MyWorkArea/g4sim/output/raw_g4sim.root

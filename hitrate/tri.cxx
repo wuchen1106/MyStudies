@@ -79,7 +79,9 @@ int main(int argc, char *argv[]){
 	 // ########Should Modify#########
 //	FileNames.push_back(MyData+"/n0.root");
 //	FileNames.push_back(runName+".root");
-	DirName.push_back(MyData+"/DET."+parName+".g60cm20mm.005T"+".g496QBH");
+//	DirName.push_back(MyData+"/CDCHit."+parName+".140822.PHITS");
+//	nRuns.push_back(20);
+	DirName.push_back(MyData+"/CDC."+parName+".140625"+".g496p02QBH");
 	nRuns.push_back(150);
 //	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
 //	nRuns.push_back(100);
@@ -88,8 +90,8 @@ int main(int argc, char *argv[]){
 	double nProtons = 1e9;
 	if (parName == "pim" || parName == "pimWC")
 		nProtons *= 10;
-	else if (parName == "n0")
-		nProtons *= 0.9;
+//	else if (parName == "n0")
+//		nProtons *= 0.9;
 	nProtons*=318./320;
 	 // ########Should Modify#########
 
@@ -282,6 +284,7 @@ int main(int argc, char *argv[]){
 	std::vector<double> *o_x = 0;
 	std::vector<double> *o_y = 0;
 	std::vector<double> *o_z = 0;
+	std::vector<int> *o_dep = 0;
 	std::vector<std::string> *process = 0;
 	std::vector<std::string> *volume = 0;
 	std::vector<std::string> *particle = 0;
@@ -326,13 +329,14 @@ int main(int argc, char *argv[]){
 	tree->Branch("O_z",&O_z);
 
 	// about topo
-	tree->Branch("o_t",&o_t);
-	tree->Branch("o_px",&o_px);
-	tree->Branch("o_py",&o_py);
-	tree->Branch("o_pz",&o_pz);
-	tree->Branch("o_x",&o_x);
-	tree->Branch("o_y",&o_y);
-	tree->Branch("o_z",&o_z);
+	tree->Branch("t",&o_t);
+	tree->Branch("px",&o_px);
+	tree->Branch("py",&o_py);
+	tree->Branch("pz",&o_pz);
+	tree->Branch("x",&o_x);
+	tree->Branch("y",&o_y);
+	tree->Branch("z",&o_z);
+	tree->Branch("dep",&o_dep);
 	tree->Branch("process",&process);
 	tree->Branch("volume",&volume);
 	tree->Branch("particle",&particle);
@@ -461,7 +465,6 @@ int main(int argc, char *argv[]){
 					int idepth = 0;
 					if (iEvent%printModulo2==0) std::cout<<"			==> Start looping in McTruth, nMc = "<<McTruth_pid->size()<<std::endl;
 					for(int iMc = McTruth_pid->size()-1; iMc>=0; iMc--){
-						idepth++;
 						if(ttid==(*McTruth_tid)[iMc]){
 							if (cpid==0) cpid = (*McTruth_pid)[iMc];
 //							if (idepth>maxdepth) break;
@@ -479,6 +482,8 @@ int main(int argc, char *argv[]){
 							o_x->push_back((*McTruth_x)[iMc]*10);
 							o_y->push_back((*McTruth_y)[iMc]*10);
 							o_z->push_back((*McTruth_z)[iMc]*10);
+							o_dep->push_back(idepth);
+							idepth++;
 							ttid = (*McTruth_ptid)[iMc];
 							if (iEvent%printModulo2==0) std::cout<<"				=>"<<iMc
 								                                                       <<","<<idepth
@@ -504,6 +509,12 @@ int main(int argc, char *argv[]){
 				O_tstart->push_back((*C_tstart)[iHit]);
 				O_posflag->push_back((*C_posflag)[iHit]);
 				O_nPair->push_back((*C_nPair)[iHit]);
+				O_wx->push_back((*C_wx)[iHit]*10);
+				O_wy->push_back((*C_wy)[iHit]*10);
+				O_wz->push_back((*C_wz)[iHit]*10);
+				O_triType->push_back(-1);
+				O_triID->push_back(-1);
+				O_triPos->push_back(-1);
 				// common
 				O_edep->push_back((*C_edep)[iHit]);
 				O_stepL->push_back((*C_stepL)[iHit]);
@@ -523,6 +534,7 @@ int main(int argc, char *argv[]){
 			if (iEvent%printModulo==0) std::cout<<"<== End looping in CDC hits"<<std::endl;
 		}
 		if (M_nHits>0){
+//		if (0){
 			nHits = 0;
 			type = 1;
 
@@ -563,6 +575,7 @@ int main(int argc, char *argv[]){
 			if(o_x) delete o_x; o_x  = new std::vector<double>;
 			if(o_y) delete o_y; o_y  = new std::vector<double>;
 			if(o_z) delete o_z; o_z  = new std::vector<double>;
+			if(o_dep) delete o_dep; o_dep  = new std::vector<int>;
 			if(process) delete process; process  = new std::vector<std::string>;
 			if(volume) delete volume; volume  = new std::vector<std::string>;
 			if(particle) delete particle; particle  = new std::vector<std::string>;
@@ -619,6 +632,7 @@ int main(int argc, char *argv[]){
 					if(o_y) delete o_y; o_y  = new std::vector<double>;
 					if(o_z) delete o_z; o_z  = new std::vector<double>;
 					if(process) delete process; process  = new std::vector<std::string>;
+					if(o_dep) delete o_dep; o_dep  = new std::vector<int>;
 					if(volume) delete volume; volume  = new std::vector<std::string>;
 					if(particle) delete particle; particle  = new std::vector<std::string>;
 					if(pid) delete pid; pid  = new std::vector<int>;
@@ -628,7 +642,6 @@ int main(int argc, char *argv[]){
 					int idepth = 0;
 					if (iEvent%printModulo2==0) std::cout<<"			==> Start looping in McTruth, nMc = "<<McTruth_pid->size()<<std::endl;
 					for(int iMc = McTruth_pid->size()-1; iMc>=0; iMc--){
-						idepth++;
 						if(ttid==(*McTruth_tid)[iMc]){
 							if (cpid==0) cpid = (*McTruth_pid)[iMc];
 //							if (idepth>maxdepth) break;
@@ -646,6 +659,8 @@ int main(int argc, char *argv[]){
 							o_x->push_back((*McTruth_x)[iMc]*10);
 							o_y->push_back((*McTruth_y)[iMc]*10);
 							o_z->push_back((*McTruth_z)[iMc]*10);
+							o_dep->push_back(idepth);
+							idepth++;
 							ttid = (*McTruth_ptid)[iMc];
 							if (iEvent%printModulo2==0) std::cout<<"				=>"<<iMc
 								                                                       <<","<<idepth
@@ -683,6 +698,17 @@ int main(int argc, char *argv[]){
 				O_triType->push_back(triType);
 				O_triPos->push_back(triPos);
 				O_triID->push_back((*M_volID)[iHit]);
+				O_layerID->push_back(-1);
+				O_cellID->push_back(-1);
+				O_driftD->push_back(-1);
+				O_driftDtrue->push_back(-1);
+				O_tstop->push_back(-1);
+				O_tstart->push_back(-1);
+				O_posflag->push_back(-1);
+				O_nPair->push_back(-1);
+				O_wx->push_back(-1);
+				O_wy->push_back(-1);
+				O_wz->push_back(-1);
 				// common
 				O_edep->push_back((*M_edep)[iHit]);
 				O_stepL->push_back((*M_stepL)[iHit]);
