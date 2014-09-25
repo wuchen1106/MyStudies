@@ -68,9 +68,34 @@ int main(int argc, char** argv){
 	pcolors.push_back(6); // proton
 	pcolors.push_back(1); // gamma
 
+	TFile *f = 0;
+	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/CS.root");
+	f = new TFile("/home/chen/MyWorkArea/Simulate/comet/data/TS2.ALL.g60cm20mm.005T.g496QBH.root");
+	double nProtons = 1E8*316./320;
+	TTree *t = (TTree*)f->Get("t");
+	double weight = 1;
+	double px;
+	double py;
+	double pz;
+	double time;
+	int pid;
+//	t->SetBranchAddress("weight",&weight);
+	t->SetBranchAddress("px",&px);
+	t->SetBranchAddress("py",&py);
+	t->SetBranchAddress("pz",&pz);
+	t->SetBranchAddress("t",&time);
+	t->SetBranchAddress("pid",&pid);
+
+	TFile *fo = new TFile("output.root","RECREATE");
+
+	std::stringstream buf;
+
 	TH1D* h_pa[20];
 	for (int i=0; i<pnames.size(); i++){
-		TH1D *h = new TH1D(pnames[i],pnames[i],150,0,250);
+		buf.str("");
+		buf.clear();
+		buf<<"h_"<<i<<"_pa";
+		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",150,0,250);
 		h->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 		h->GetYaxis()->SetTitle("count / initial proton");
 		if (pcharges[i] == 0) h->SetLineStyle(9);
@@ -82,7 +107,10 @@ int main(int argc, char** argv){
 
 	TH1D* h_time[20];
 	for (int i=0; i<pnames.size(); i++){
-		TH1D *h = new TH1D(pnames[i],pnames[i],150,0,tsep);
+		buf.str("");
+		buf.clear();
+		buf<<"h_"<<i<<"_time";
+		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_t",150,0,tsep);
 		h->GetXaxis()->SetTitle("Time Distribution (MeV/c)");
 		h->GetYaxis()->SetTitle("count / initial proton");
 		if (pcharges[i] == 0) h->SetLineStyle(9);
@@ -92,43 +120,28 @@ int main(int argc, char** argv){
 		h_time[i]=h;
 	}
 
-	TFile *f = 0;
-	for (int i = 0; i<1; i++){
-		std::cout<<"##In File "<<i<<std::endl;
-		double nProtons = 1;
-		if (i==0){
-			f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/CS.root");
-			nProtons = 1E7;
-		}
-		double weight = 1;
-		double px;
-		double py;
-		double pz;
-		double time;
-		int pid;
-		TTree *t = (TTree*)f->Get("t");
-//		t->SetBranchAddress("weight",&weight);
-		t->SetBranchAddress("px",&px);
-		t->SetBranchAddress("py",&py);
-		t->SetBranchAddress("pz",&pz);
-		t->SetBranchAddress("t",&time);
-		t->SetBranchAddress("pid",&pid);
-		int nEvents = t->GetEntries();
-		nEvents = 10000;
-		for (int iEvent = 0; iEvent<nEvents; iEvent++){
-			t->GetEntry(iEvent);
-			if (iEvent%1000==0) std::cout<<(double)iEvent/nEvents*100<<"% ..."<<std::endl;
-			if (iEvent%1000==0) std::cout<<"pid = "<<pid<<std::endl;
-			double pa = sqrt(px*px+py*py+pz*pz);
-			for (int ipid = 0; ipid<pids.size(); ipid++){
-				if (pids[ipid]==pid){
-					h_pa[ipid]->Fill(pa,weight/nProtons);
-					h_time[ipid]->Fill(fmod(time,tsep),weight/nProtons);
-					if (iEvent%1000==0) std::cout<<"Found "<<pnames[ipid]<<"!"<<std::endl;
-					break;
-				}
+	int nEvents = t->GetEntries();
+	nEvents = 10000;
+	for (int iEvent = 0; iEvent<nEvents; iEvent++){
+		t->GetEntry(iEvent);
+		if (iEvent%1000==0) std::cout<<(double)iEvent/nEvents*100<<"% ..."<<std::endl;
+		if (iEvent%1000==0) std::cout<<"pid = "<<pid<<std::endl;
+		double pa = sqrt(px*px+py*py+pz*pz);
+		for (int ipid = 0; ipid<pids.size(); ipid++){
+			if (pids[ipid]==pid){
+				h_pa[ipid]->Fill(pa,weight/nProtons);
+				h_time[ipid]->Fill(fmod(time,tsep),weight/nProtons);
+				if (iEvent%1000==0) std::cout<<"Found "<<pnames[ipid]<<"!"<<std::endl;
+				break;
 			}
 		}
+	}
+	for (int i = 0; i<pids.size(); i++){
+		printf("%ld:\n",i);
+		h_pa[i]->Print();
+		h_time[i]->Print();
+		h_pa[i]->Write();
+		h_time[i]->Write();
 	}
 
 //	TFile *f = new TFile("MT1.g40cm10mm.0018T.root");
@@ -136,6 +149,7 @@ int main(int argc, char** argv){
 //		h_pa[i]=(TH1D*) f->Get(pnames[i]);
 //	}
 
+	/*
 	double maximumpa = 0;
 	maximumpa = 0.05;
 	for (int i = 0; i<pids.size(); i++){
@@ -155,10 +169,6 @@ int main(int argc, char** argv){
 		std::cout<<"maximumtime = "<<maximumtime<<std::endl;
 	}
 	maximumtime*=2;
-
-	std::stringstream buff;
-
-	TFile *fo = new TFile("output.root","RECREATE");
 
 	gStyle->SetOptStat(0);
 	gStyle->SetPadTickX(1);
@@ -182,11 +192,11 @@ int main(int argc, char** argv){
 		}
 		else h_pa[i]->Draw("SAME");
 		double num = h_pa[i]->Integral();
-		buff.str("");
-		buff.clear();
-		buff<<std::scientific;
-		buff<<pnames[i]<<": "<<std::setprecision(2)<<num;
-		legend1->AddEntry(h_pa[i],buff.str().c_str());
+		buf.str("");
+		buf.clear();
+		buf<<std::scientific;
+		buf<<pnames[i]<<": "<<std::setprecision(2)<<num;
+		legend1->AddEntry(h_pa[i],buf.str().c_str());
 		h_pa[i]->Write();
 	}
 	legend1->Draw("SAME");
@@ -209,12 +219,13 @@ int main(int argc, char** argv){
 		}
 		else h_time[i]->Draw("SAME");
 		double num = h_time[i]->Integral();
-		buff.str("");
-		buff.clear();
-		buff<<std::scientific;
-		buff<<pnames[i]<<": "<<std::setprecision(2)<<num;
-		legend2->AddEntry(h_time[i],buff.str().c_str());
+		buf.str("");
+		buf.clear();
+		buf<<std::scientific;
+		buf<<pnames[i]<<": "<<std::setprecision(2)<<num;
+		legend2->AddEntry(h_time[i],buf.str().c_str());
 		h_time[i]->Write();
 	}
 	legend2->Draw("SAME");
+	*/
 }

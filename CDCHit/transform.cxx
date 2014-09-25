@@ -17,8 +17,8 @@ int main(int argc, char** argv){
 	TH1D * h_xt = (TH1D*)(new TFile("/home/chen/MyWorkArea/Simulate/comet/data/xt.root"))->Get("xt");
 	TH1D * h_stoptime = (TH1D*)(new TFile("/home/chen/MyWorkArea/Simulate/comet/data/ST.mum.g60cm10mm.005T.BL.g4s.QBH.root"))->Get("h10");
 
-//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.geantino.root");
-	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
+	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.005.root");
+//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
 	TTree * it = (TTree*) ifile->Get("tree");
 	TFile * of = new TFile("output.root","RECREATE");
 	TTree * ot = new TTree("tree","tree");
@@ -137,15 +137,16 @@ int main(int argc, char** argv){
 
 	// for bkg
 	TChain * c_BKG = new TChain("tree");
-	c_BKG->Add("/home/chen/MyWorkArea/MyStudies/hitrate/result/ALL.cdc.root");
+	c_BKG->Add("/home/chen/MyWorkArea/MyStudies/hitrate/result/ALL.cdc.new.root");
 //	c_BKG->Add("/home/chen/MyWorkArea/MyStudies/hitrate/result/n0.root");
 	int nBKG = c_BKG->GetEntries();
 	// FIXME
-	nBKG = 0;
+//	nBKG = 0;
 	int index = 0;
 	int BKG_nHits = 0;
 	int type = 0;
 	int topo = 0;
+	int cpid = 0;
 	std::vector<double> * BKG_t = 0;
 	std::vector<double> * BKG_driftD = 0;
 	std::vector<double> * BKG_driftDtrue = 0;
@@ -167,6 +168,7 @@ int main(int argc, char** argv){
 	c_BKG->SetBranchAddress("type",&type);
 	c_BKG->SetBranchAddress("nHits",&BKG_nHits);
 	c_BKG->SetBranchAddress("topo",&topo);
+	c_BKG->SetBranchAddress("cpid",&cpid);
 	c_BKG->SetBranchAddress("O_t",&BKG_t);
 	c_BKG->SetBranchAddress("O_driftD",&BKG_driftD);
 	c_BKG->SetBranchAddress("O_driftDtrue",&BKG_driftDtrue);
@@ -186,12 +188,14 @@ int main(int argc, char** argv){
 	c_BKG->SetBranchAddress("O_py",&BKG_py);
 	c_BKG->SetBranchAddress("O_pz",&BKG_pz);
 
-	int nbkg = nBKG/1.e9*2.5e12*tsep*1e-9*2.4;
+	int nbkg = nBKG/1.e8*2.5e12*tsep*1e-9*2.4;
 	bool triggerd = false;
 	double firsthittime = 0;
 	double decaytime = 0;
 	int nGoodHit = 0;
-	for ( int i = 0; i<it->GetEntries(); i++){
+	//FIXME
+//	for ( int i = 0; i<it->GetEntries(); i++){
+	for ( int i = 0; i<10; i++){
 		for(int j = 0; j<18; j++){
 			for (int k = 0; k<350; k++){
 				dict[j][k]=-1;
@@ -302,6 +306,9 @@ int main(int argc, char** argv){
 		// mixture bkg
 		for (int ibkg = 0; ibkg<nbkg; ibkg++){
 			c_BKG->GetEntry((int)(gRandom->Uniform()*nBKG)%nBKG);
+			if (type!=0) {ibkg--; continue;}
+			if (topo == 1000&&cpid==2212) if(gRandom->Uniform()>1./2.85){printf("not pass!\n"); continue;}else printf("pass!\n");
+			if (topo == 1001&&gRandom->Uniform()>0.67) continue;
 //			index = index+ibkg;
 //			int nindex = index%nBKG;
 //			c_BKG->GetEntry(nindex);

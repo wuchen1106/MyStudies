@@ -22,29 +22,17 @@ cellNoIntegral[count]=cellNoIntegral[count-1]+288;cellNo[count]=288;count++;
 cellNoIntegral[count]=cellNoIntegral[count-1]+294;cellNo[count]=294;count++;
 cellNoIntegral[count]=cellNoIntegral[count-1]+300;cellNo[count]=300;count++;
 
-int get_layer_index(int volID){
-	for (int i = 0; i< 18; i++){
-		if (volID<cellNoIntegral[i]) break;
-	}
-	return i;
-}
-
 void getRate(){
 
-	// About Drift time
-	int nSample = 10;
-	TFile * f_drifttime = TFile::Open("drifttime.root");
-	TH2D * tminVStmax = (TH2D*) f_drifttime->Get("tminVStmax");
-
 	// About this run
-	TString parName = "pimWC";
-	TString suffixName = "0508_100cm_1e9";
+	TString parName = "ALL";
+	TString suffixName = "new";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
-//	FileNames.push_back("result/OT.root");
+	FileNames.push_back("result/"+runName+".root");
 //	FileNames.push_back(runName+".root");
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
@@ -52,8 +40,8 @@ void getRate(){
 	//nRuns.push_back(100);
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.mum.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
-	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
-	nRuns.push_back(100);
+//	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
+//	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
 //	nRuns.push_back(50);
 	double nProtons = 1e9;
@@ -285,23 +273,29 @@ void getRate(){
 		vEntries.push_back(0);
 	}
 
-	std::vector<int> *C_volID;
+	std::vector<int> *C_layerID;
 	std::vector<double> *C_edep;
 	std::vector<double> *C_t;
+	std::vector<double> *C_tmin;
+	std::vector<double> *C_tmax;
 	std::vector<double> *C_px;
 	std::vector<double> *C_py;
 	std::vector<double> *C_pz;
+	int type = 0;
 	double weight;
-	c->SetBranchAddress("C_volID",&C_volID);
-	c->SetBranchAddress("C_edep",&C_edep);
-	c->SetBranchAddress("C_t",&C_t);
-	c->SetBranchAddress("C_px",&C_px);
-	c->SetBranchAddress("C_py",&C_py);
-	c->SetBranchAddress("C_pz",&C_pz);
+	c->SetBranchAddress("O_layerID",&C_layerID);
+	c->SetBranchAddress("O_edep",&C_edep);
+	c->SetBranchAddress("O_t",&C_t);
+	c->SetBranchAddress("O_tstart",&C_tmin);
+	c->SetBranchAddress("O_tstop",&C_tmax);
+	c->SetBranchAddress("O_px",&C_px);
+	c->SetBranchAddress("O_py",&C_py);
+	c->SetBranchAddress("O_pz",&C_pz);
+	c->SetBranchAddress("type",&type);
 	c->SetBranchAddress("weight",&weight);
 	double edep = -1;
 	double time = -1;
-	int volID = -1;
+	int layerID = -1;
 	f = new TFile(runName+".output.root","RECREATE");
 	TTree *t  = new TTree("t","t");
 	int nEvents = c->GetEntries();
@@ -310,6 +304,7 @@ void getRate(){
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
 		if (iEvent%1000==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
+		if (type != 0) continue;
 //		if (iEvent>=11094) weight*=100./31;
 		int nHits = C_edep->size();
 		int hitcount[18] = {0};
@@ -324,10 +319,11 @@ void getRate(){
 //				double pz = (*C_pz)[iHit]*1000;
 //				pa = sqrt(px*px+py*py+pz*pz);
 //			}
-			volID = (*C_volID)[iHit];
+			layerID = (*C_layerID)[iHit];
 			time = (*C_t)[iHit];
 			edep = (*C_edep)[iHit]*1e9;
-			int layerID = get_layer_index(volID);
+			tmax = (*C_tmax)[iHit];
+			tmin = (*C_tmin)[iHit];
 //			if (iEvent%1==0){
 //				std::cout<<volID<<std::endl;
 //			}
@@ -341,7 +337,6 @@ void getRate(){
 			newtime -= ((int)(newtime/PulseInterval))*PulseInterval;
 			if (newtime<0) newtime += PulseInterval;
 			for (int iSample = 0; iSample < nSample; iSample++){
-				tminVStmax->GetRandom2(tmin,tmax);
 				double tarrival = newtime + tmin;
 				double tstop = newtime + tmax;
 				tarrival -= ((int)(tarrival/PulseInterval))*PulseInterval;
