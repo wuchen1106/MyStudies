@@ -70,8 +70,8 @@ int main(int argc, char** argv){
 
 	TFile *f = 0;
 	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/CS.root");
-	f = new TFile("/home/chen/MyWorkArea/Simulate/comet/data/TS2.ALL.g60cm20mm.005T.g496QBH.root");
-	double nProtons = 1E8*316./320;
+	f = new TFile("result/CS.root");
+	double nProtons = 1E7*316./320;
 	TTree *t = (TTree*)f->Get("t");
 	double weight = 1;
 	double px;
@@ -121,7 +121,6 @@ int main(int argc, char** argv){
 	}
 
 	int nEvents = t->GetEntries();
-	nEvents = 10000;
 	for (int iEvent = 0; iEvent<nEvents; iEvent++){
 		t->GetEntry(iEvent);
 		if (iEvent%1000==0) std::cout<<(double)iEvent/nEvents*100<<"% ..."<<std::endl;
@@ -136,20 +135,12 @@ int main(int argc, char** argv){
 			}
 		}
 	}
-	for (int i = 0; i<pids.size(); i++){
-		printf("%ld:\n",i);
-		h_pa[i]->Print();
-		h_time[i]->Print();
-		h_pa[i]->Write();
-		h_time[i]->Write();
-	}
 
 //	TFile *f = new TFile("MT1.g40cm10mm.0018T.root");
 //	for (int i = 0; i<pids.size(); i++){
 //		h_pa[i]=(TH1D*) f->Get(pnames[i]);
 //	}
 
-	/*
 	double maximumpa = 0;
 	maximumpa = 0.05;
 	for (int i = 0; i<pids.size(); i++){
@@ -227,5 +218,6 @@ int main(int argc, char** argv){
 		h_time[i]->Write();
 	}
 	legend2->Draw("SAME");
-	*/
+	c1->SaveAs("pa.png");
+	c2->SaveAs("time.png");
 }
