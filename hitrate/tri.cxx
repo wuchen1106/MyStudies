@@ -15,8 +15,10 @@ TString MyData = getenv("MYDATA");
 TString MyWork = getenv("MYWORKAREA");
 
 void gettopo(int &topo,std::vector<std::string> * process,std::vector<int> * pid,std::vector<double> *o_px,std::vector<double> *o_py,std::vector<double> *o_pz){
-	if (pid->size()<=1||(*pid)[pid->size()-1]!=13) topo = 0; // primary or not from muon
-	else{ // from muon
+	if (pid->size()<=1) topo = 0; // from primary
+	else if ((*pid)[pid->size()-1]==2112) topo = -1; // from neutron
+	else if ((*pid)[pid->size()-1]==-211) topo = -2; // from pion
+	else if ((*pid)[pid->size()-1]==13){ // from muon
 		if ((*process)[process->size()-2]=="muMinusCaptureAtRest"){
 			topo=1000;
 			if (pid->size()==2){ // directly from muon
@@ -44,6 +46,7 @@ void gettopo(int &topo,std::vector<std::string> * process,std::vector<int> * pid
 			topo=3000;
 		}
 	}
+	else topo = 1; // from other particles
 	return;
 }
 
@@ -67,7 +70,7 @@ int main(int argc, char *argv[]){
 //int tri(){
 	std::stringstream buff;
 	// About this run
-//	TString parName = "n0";
+//	TString parName = "n0PHITS140822";
 //	TString parName = "OTWC";
 	TString parName = "ALL";
 //	TString suffixName = "0508_100cm_1e7";
@@ -78,10 +81,10 @@ int main(int argc, char *argv[]){
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
-	FileNames.push_back(MyWork+"/Simulate/comet/output/CDC.ALL.root");
+//	FileNames.push_back(MyWork+"/Simulate/comet/output/CDC.ALL.root");
 //	FileNames.push_back(runName+".root");
-//	DirName.push_back(MyData+"/DET."+parName+".g60cm20mm.005T"+".g496QBH");
-//	nRuns.push_back(150);
+	DirName.push_back(MyData+"/CDC."+parName+".140625M01"+".g496p02QBH");
+	nRuns.push_back(150);
 //	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
 //	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
@@ -532,6 +535,7 @@ int main(int argc, char *argv[]){
 			}
 			if (iEvent%printModulo==0) std::cout<<"<== End looping in CDC hits"<<std::endl;
 		}
+		//FIXME
 		if (M_nHits>0){
 //		if (0){
 			nHits = 0;
