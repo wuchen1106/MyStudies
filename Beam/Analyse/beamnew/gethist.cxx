@@ -70,8 +70,8 @@ int main(int argc, char** argv){
 
 	TFile *f = 0;
 	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/CS.root");
-	f = new TFile("result/CS.root");
-	double nProtons = 1E7*316./320;
+	f = new TFile("/home/chen/MyWorkArea/Simulate/comet/data/TS2.ALL.g60cm20mm.005T.g496QBH.root");
+	double nProtons = 1E8*316./320;
 	TTree *t = (TTree*)f->Get("t");
 	double weight = 1;
 	double px;
@@ -95,7 +95,8 @@ int main(int argc, char** argv){
 		buf.str("");
 		buf.clear();
 		buf<<"h_"<<i<<"_pa";
-		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",150,0,250);
+//		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",150,0,250);
+		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",150,0,170);
 		h->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 		h->GetYaxis()->SetTitle("count / initial proton");
 		if (pcharges[i] == 0) h->SetLineStyle(9);
@@ -175,10 +176,11 @@ int main(int argc, char** argv){
 	gPad->SetGridy(1);
 	for (int i = 0; i<pids.size(); i++){
 		std::cout<<"Setting for "<<pnames[i]<<": SetRangeUser(1e-9,"<<maximumpa<<")"<<std::endl;
-		h_pa[i]->GetYaxis()->SetRangeUser(1e-7,maximumpa);
+		h_pa[i]->GetYaxis()->SetRangeUser(1e-9,2.5e-3);
 		if (i==0){
 //			h_pa[i]->SetTitle("Particles Back to Capture Section (Graphite, 60cm)");
-			h_pa[i]->SetTitle("Particles at The end of Capture Section (Graphite, 60cm)");
+//			h_pa[i]->SetTitle("Particles at The end of Capture Section (Graphite, 60cm)");
+			h_pa[i]->SetTitle("Particles at The end of 90 degree (Graphite, 60cm)");
 			h_pa[i]->Draw();
 		}
 		else h_pa[i]->Draw("SAME");
@@ -205,7 +207,8 @@ int main(int argc, char** argv){
 		h_time[i]->GetYaxis()->SetRangeUser(1e-7,maximumtime);
 		if (i==0){
 //			h_time[i]->SetTitle("Particles Back to Capture Section (Graphite, 60cm)");
-			h_time[i]->SetTitle("Particles at The end of Capture Section (Graphite, 60cm)");
+//			h_time[i]->SetTitle("Particles at The end of Capture Section (Graphite, 60cm)");
+			h_time[i]->SetTitle("Particles at The end of 90 degree (Graphite, 60cm)");
 			h_time[i]->Draw();
 		}
 		else h_time[i]->Draw("SAME");
