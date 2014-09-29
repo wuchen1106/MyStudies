@@ -124,8 +124,8 @@ int main(int argc, char** argv){
 	int nEvents = t->GetEntries();
 	for (int iEvent = 0; iEvent<nEvents; iEvent++){
 		t->GetEntry(iEvent);
-		if (iEvent%1000==0) std::cout<<(double)iEvent/nEvents*100<<"% ..."<<std::endl;
-		if (iEvent%1000==0) std::cout<<"pid = "<<pid<<std::endl;
+		if (iEvent%100000==0) std::cout<<(double)iEvent/nEvents*100<<"% ..."<<std::endl;
+		if (iEvent%100000==0) std::cout<<"pid = "<<pid<<std::endl;
 		double pa = sqrt(px*px+py*py+pz*pz);
 		for (int ipid = 0; ipid<pids.size(); ipid++){
 			if (pids[ipid]==pid){
