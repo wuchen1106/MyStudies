@@ -75,16 +75,16 @@ int main(int argc, char *argv[]){
 	TString parName = "ALL";
 //	TString suffixName = "0508_100cm_1e7";
 //	TString suffixName = "0508_100cm_1e9";
-	TString suffixName = "";
+	TString suffixName = "140905.old";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
-//	FileNames.push_back(MyWork+"/Simulate/comet/output/CDC.ALL.root");
+	FileNames.push_back(MyWork+"/Simulate/comet/output/CDCneutral."+suffixName+".root");
 //	FileNames.push_back(runName+".root");
-	DirName.push_back(MyData+"/CDC."+parName+".140625M01"+".g496p02QBH");
-	nRuns.push_back(150);
+//	DirName.push_back(MyData+"/CDC."+parName+".140625M01"+".g496p02QBH");
+//	nRuns.push_back(150);
 //	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
 //	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
@@ -697,6 +697,10 @@ int main(int argc, char *argv[]){
 				else if ((*M_volName)[iHit]=="TriSciD"){
 					triType = 1;
 					triPos = -1;
+				}
+				else {
+					triType = -1;
+					triPos = 0;
 				}
 				O_triType->push_back(triType);
 				O_triPos->push_back(triPos);
