@@ -25,8 +25,8 @@ cellNoIntegral[count]=cellNoIntegral[count-1]+300;cellNo[count]=300;count++;
 void getRate(){
 
 	// About this run
-	TString parName = "ALL";
-	TString suffixName = "new";
+	TString parName = "All";
+	TString suffixName = "140905M02";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
@@ -44,7 +44,7 @@ void getRate(){
 //	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
 //	nRuns.push_back(50);
-	double nProtons = 1e9;
+	double nProtons = 1e8;
 	if (parName == "pim" || parName == "pimWC")
 		nProtons *= 10;
 //	nProtons*=19./20;
@@ -282,6 +282,8 @@ void getRate(){
 	std::vector<double> *C_py;
 	std::vector<double> *C_pz;
 	int type = 0;
+	int topo = 0;
+	int cpid = 0;
 	double weight;
 	c->SetBranchAddress("O_layerID",&C_layerID);
 	c->SetBranchAddress("O_edep",&C_edep);
@@ -292,6 +294,8 @@ void getRate(){
 	c->SetBranchAddress("O_py",&C_py);
 	c->SetBranchAddress("O_pz",&C_pz);
 	c->SetBranchAddress("type",&type);
+	c->SetBranchAddress("topo",&topo);
+	c->SetBranchAddress("cpid",&cpid);
 	c->SetBranchAddress("weight",&weight);
 	double edep = -1;
 	double time = -1;
@@ -306,6 +310,12 @@ void getRate(){
 		c->GetEntry(iEvent);
 		if (type != 0) continue;
 //		if (iEvent>=11094) weight*=100./31;
+		// FIXME
+		if (cpid==2212) continue;
+		if (topo==1000&&cpid==2212) weight *= 1./2.85;
+		else if (topo==1000&&cpid==1000010020) weight *= 1./4;
+		else if (topo==1001) weight *= 0.67;
+		else if (topo==1005) weight *= 1.6;
 		int nHits = C_edep->size();
 		int hitcount[18] = {0};
 		bool foundhit = false;
@@ -336,6 +346,7 @@ void getRate(){
 			double newtime = time+hCurve->GetRandom();
 			newtime -= ((int)(newtime/PulseInterval))*PulseInterval;
 			if (newtime<0) newtime += PulseInterval;
+			int nSample = 1;
 			for (int iSample = 0; iSample < nSample; iSample++){
 				double tarrival = newtime + tmin;
 				double tstop = newtime + tmax;

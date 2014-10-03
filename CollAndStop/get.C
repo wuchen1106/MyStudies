@@ -27,7 +27,7 @@
 	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
 	double NperP = 802367./1e8;
 	TString parName = "mu";
-	TString opt = "140625.0";
+	TString opt = "140905M02";
 	RunName = MySim+"/output/Coll."+opt+".root";
 	TString DirName = "";
 	int nProcs = 0;
@@ -302,57 +302,61 @@
 		}
 
 		// stop
-		if ( (*McTruth_pid)[0] != PID ) continue;
-		stopped=false;
 		x = (*McTruth_x)[0]*10;
 		y = (*McTruth_y)[0]*10;
 		z = (*McTruth_z)[0]*10;
 		px = (*McTruth_px)[0]*1000;
 		py = (*McTruth_py)[0]*1000;
 		pz = (*McTruth_pz)[0]*1000;
-		time = (*McTruth_time)[0];
+		time = fmod((*McTruth_time)[0],PulseInterval);
 		double pa = sqrt(px*px+py*py+pz*pz);
 		double r = -1;
-		if (T_nHits>0){
+		if ( (*McTruth_pid)[0] == PID ){
+			h01->Fill(pa,y,weight);
+			h1_1->Fill(pa,weight);
+			h2_1->Fill(y,weight);
+			h20->Fill(time,weight);
+			if (passed){
+				nPassed+=weight;
+				if (pa>75) nPassedH+=weight;
+				h02->Fill(pa,y,weight);
+				h1_2->Fill(pa,weight);
+				h2_2->Fill(y,weight);
+				h30->Fill(time,weight);
+			}
+		}
+		for (int iHit = 0; iHit< T_nHits; iHit++){
+			stopped = false;
 			if (withStopPosition){
-				st_pid = (*T_pid)[0];
+				st_pid = (*T_pid)[iHit];
 				if (st_pid==PID) stopped=true;
-				Ox = (*T_Ox)[0]*10;
-				Oy = (*T_Oy)[0]*10;
-				Oz = (*T_Oz)[0]*10;
-				Ot = (*T_Ot)[0];
+				Ox = (*T_Ox)[iHit]*10;
+				Oy = (*T_Oy)[iHit]*10;
+				Oz = (*T_Oz)[iHit]*10;
+				Ot = (*T_Ot)[iHit];
+				Ot = fmod(Ot+hCurve->GetRandom(),PulseInterval);
 				r = sqrt(Ox*Ox+Oy*Oy);
 			}
 			else{
 				stopped=true;
 			}
-		}
-		h01->Fill(pa,y,weight);
-		h1_1->Fill(pa,weight);
-		h2_1->Fill(y,weight);
-		h20->Fill(time,weight);
-		if (passed){
-			nPassed+=weight;
-			if (pa>75) nPassedH+=weight;
-			h02->Fill(pa,y,weight);
-			h1_2->Fill(pa,weight);
-			h2_2->Fill(y,weight);
-			h30->Fill(time,weight);
-		}
-		if (stopped){
-			nStopped+=weight;
-			h03->Fill(pa,y,weight);
-			h1_3->Fill(pa,weight);
-			h2_3->Fill(y,weight);
-			h40->Fill(time,weight);
-			if (withStopPosition){
-				h04->Fill(r,weight);
-				h05->Fill(Oz,weight);
-				t->Fill();
-			}
-			h10->Fill((*T_Ot)[0],weight);
-			for (int i_window = 0; i_window <5; i_window++){
-				h11->Fill(Ot+hCurve->GetRandom()+(i_window-2)*PulseInterval,weight);
+			if (stopped){
+				nStopped+=weight;
+				if ( (*McTruth_pid)[0] == PID ){
+					h03->Fill(pa,y,weight);
+					h1_3->Fill(pa,weight);
+					h2_3->Fill(y,weight);
+					h40->Fill(time,weight);
+					if (withStopPosition){
+						h04->Fill(r,weight);
+						h05->Fill(Oz,weight);
+					}
+					h10->Fill(fmod((*T_Ot)[0],PulseInterval),weight);
+					h11->Fill(Ot,weight);
+				}
+				if (withStopPosition){
+					t->Fill();
+				}
 			}
 		}
 	}
@@ -434,7 +438,7 @@
 		t2->Write();
 	}
 
-	TPaveText *info = new TPaveText(0.3,0.7,0.9,0.9,"brNDC");
+	TPaveText *info = new TPaveText(0.2,0.5,0.8,0.7,"brNDC");
 	info->SetName("Info");
 	buff.str("");
 	buff.clear();
