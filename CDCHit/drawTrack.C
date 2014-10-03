@@ -3,7 +3,7 @@
 	double twindow_left = 700; // ns
 //	TFile * ifile = new TFile("signal.004.root");
 //	TFile * ifile = new TFile("signal.geantino.root");
-	TFile * ifile = new TFile("signal.005.noise.new.root");
+	TFile * ifile = new TFile("signal.140905M02.noise.root");
 	TTree * it = (TTree*) ifile->Get("tree");
 	TFile * of = new TFile("output.root","RECREATE");
 
@@ -59,7 +59,7 @@
 	TEllipse * ewire = 0;
 	double wx,wy,wz,dd,ddt;
 	std::stringstream buf;
-	TCanvas * c = new TCanvas("c");
+	TCanvas * c = new TCanvas("c","c",896,768);
 	int nhit_total = 0;
 	int nhit_edepcut = 0;
 	int nhitnoise_total = 0;
@@ -112,6 +112,8 @@
 //		if (i!=10) continue; // 0
 		buf.str("");
 		buf.clear();
+		//FIXME
+//		buf<<"CdcCell_edep<"<<edep_cut<<"&&";
 		buf<<"Entry$=="<<i;
 		it->Draw("CdcCell_y:CdcCell_x>>h",buf.str().c_str(),"");
 		buf<<"&&CdcCell_hittype==0";
@@ -163,6 +165,8 @@
 					ewiret->SetLineColor(kBlue);
 			}
 			else{
+				//FIXME
+//				continue;
 				if ((*CdcCell_hittype)[j]==0)
 					ewiret->SetLineColor(kOrange);
 				else
@@ -170,7 +174,12 @@
 			}
 			ewiret->Draw("SAME");
 		}
-		c->WaitPrimitive();
+		buf.str("");
+		buf.clear();
+		buf<<i<<"_before.png";
+		c->SaveAs(buf.str().c_str());
+		//FIXME
+//		c->WaitPrimitive();
 	}
 	of->Close();
 }

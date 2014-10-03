@@ -2,6 +2,8 @@
 	TFile *f = 0;
 	TLegend * legend;
 	TString MyData = getenv("MYDATA");
+	TString MySim = getenv("MYWORKAREA");
+	MySim += "/Simulate/comet";
 
 	double time_right = 1140;
 	double time_left = 700;
@@ -10,7 +12,7 @@
 	TChain *c = new TChain("tree");
 
 	bool withStopPosition = true;
-	bool withCollPosition = true;
+	bool withCollPosition = false;
 	double PulseInterval = 1170;
 
 	f = new TFile("result/Curves.s100.root");
@@ -19,6 +21,18 @@
 //=======================User Setting============================	
 
 	TString RunName = "none";
+
+	int PID = 13;
+	double minimum = 1e-11;
+	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+	double NperP = 802367./1e8;
+	TString parName = "mu";
+	TString opt = "140905M02";
+	RunName = MySim+"/output/Coll."+opt+".root";
+	TString DirName = "";
+	int nProcs = 0;
+	int nJobs = 0;
+
 //	int PID = 13;
 //	double minimum = 1e-11;
 //	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
@@ -28,15 +42,15 @@
 //	int nProcs = 10;
 //	int nJobs = 1;
 
-	int PID = 13;
-	double minimum = 1e-11;
-	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-	double NperP = 860498./1e8;
-	TString parName = "mu";
-	TString opt = "a2_3t5_40";
-	TString DirName = MyData+"/raw/g4sim/Coll.mum.g60cm10mm.005T."+opt+".g4s.QBH";
-	int nProcs = 8;
-	int nJobs = 1;
+//	int PID = 13;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 860498./1e8;
+//	TString parName = "mu";
+//	TString opt = "a2_3t5_40";
+//	TString DirName = MyData+"/raw/g4sim/Coll.mum.g60cm10mm.005T."+opt+".g4s.QBH";
+//	int nProcs = 8;
+//	int nJobs = 1;
 
 //	int PID = -211;
 //	double minimum = 1e-21;
@@ -108,7 +122,9 @@
 	h04->GetYaxis()->SetTitle("count/p^{+}");
 	h04->GetYaxis()->SetTitleOffset(1.5);
 //	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,-750,250);
-	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,-1000,0);
+//	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,-1000,0);
+	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,5500,6500);
+//	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,5900,6900);
 	h05->GetXaxis()->SetTitle("z position (mm)");
 	h05->GetYaxis()->SetTitle("count/p^{+}");
 	h05->GetYaxis()->SetTitleOffset(1.5);
@@ -150,7 +166,6 @@
 	TH1D *h2_3 = new TH1D("h2_3","y Position Before Collimator",150,-200,200);
 
 	std::vector<int> *T_tid;
-	std::vector<std::string> *T_volName;
 	std::vector<double> *McTruth_time;
 	std::vector<int> *McTruth_pid;
 	std::vector<double> *McTruth_x;
@@ -166,6 +181,7 @@
 	std::vector<double> *V_px;
 	std::vector<double> *V_py;
 	std::vector<double> *V_pz;
+	std::vector<std::string> *V_volName;
 	std::vector<int> *V_pid;
 	std::vector<int> *T_pid;
 	std::vector<double> *T_Ox;
@@ -201,6 +217,7 @@
 	c->SetBranchAddress("V_x",&V_x);
 	c->SetBranchAddress("V_y",&V_y);
 	c->SetBranchAddress("V_z",&V_z);
+	c->SetBranchAddress("V_volName",&V_volName);
 //	TChain * chain2 = new TChain("t");
 //	chain2->Add("/home/chen/MyWorkArea/g4sim/data/MT1.pim.g60cm10mm.005T.g4s.QBH.root");
 //	chain2->SetBranchAddress("weight",&weight);
@@ -258,14 +275,18 @@
 	std::cout<<nEvents<<" events!!!"<<std::endl;
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
 		c->GetEntry(iEvent);
+		nTotal += weight;
 //		chain2->GetEntry(iEvent);
 		if (iEvent%1000==0){
 			std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		}
 		// coll
-		if (withCollPosition){
-			for (int iHit = 0; iHit < V_pid->size(); iHit++){
-				v_pid = (*V_pid)[iHit];
+		passed=false;
+		for (int iHit = 0; iHit < V_pid->size(); iHit++){
+			v_pid = (*V_pid)[iHit];
+			if ((*V_volName)[iHit]!="DS"||v_pid!=PID) continue;
+			passed = true;
+			if (withCollPosition){
 				v_x = (*V_x)[iHit]*10;
 				v_y = (*V_y)[iHit]*10;
 				v_z = (*V_z)[iHit]*10;
@@ -275,68 +296,73 @@
 				v_t = (*V_t)[iHit];
 				t2->Fill();
 			}
+			else{
+				break;
+			}
 		}
 
 		// stop
-		if ( (*McTruth_pid)[0] != PID ) continue;
-		nTotal += weight;
-		stopped=false;
-		passed=false;
 		x = (*McTruth_x)[0]*10;
 		y = (*McTruth_y)[0]*10;
 		z = (*McTruth_z)[0]*10;
 		px = (*McTruth_px)[0]*1000;
 		py = (*McTruth_py)[0]*1000;
 		pz = (*McTruth_pz)[0]*1000;
-		time = (*McTruth_time)[0];
+		time = fmod((*McTruth_time)[0],PulseInterval);
 		double pa = sqrt(px*px+py*py+pz*pz);
 		double r = -1;
-		if (V_nHits>0) passed=true;
-		if (T_nHits>0){
+		if ( (*McTruth_pid)[0] == PID ){
+			h01->Fill(pa,y,weight);
+			h1_1->Fill(pa,weight);
+			h2_1->Fill(y,weight);
+			h20->Fill(time,weight);
+			if (passed){
+				nPassed+=weight;
+				if (pa>75) nPassedH+=weight;
+				h02->Fill(pa,y,weight);
+				h1_2->Fill(pa,weight);
+				h2_2->Fill(y,weight);
+				h30->Fill(time,weight);
+			}
+		}
+		for (int iHit = 0; iHit< T_nHits; iHit++){
+			stopped = false;
 			if (withStopPosition){
-				st_pid = (*T_pid)[0];
+				st_pid = (*T_pid)[iHit];
 				if (st_pid==PID) stopped=true;
-				Ox = (*T_Ox)[0]*10;
-				Oy = (*T_Oy)[0]*10;
-				Oz = (*T_Oz)[0]*10;
-				Ot = (*T_Ot)[0];
+				Ox = (*T_Ox)[iHit]*10;
+				Oy = (*T_Oy)[iHit]*10;
+				Oz = (*T_Oz)[iHit]*10;
+				Ot = (*T_Ot)[iHit];
+				Ot = fmod(Ot+hCurve->GetRandom(),PulseInterval);
 				r = sqrt(Ox*Ox+Oy*Oy);
 			}
 			else{
 				stopped=true;
 			}
-		}
-		h01->Fill(pa,y,weight);
-		h1_1->Fill(pa,weight);
-		h2_1->Fill(y,weight);
-		h20->Fill(time,weight);
-		if (passed){
-			nPassed+=weight;
-			if (pa>75) nPassedH+=weight;
-			h02->Fill(pa,y,weight);
-			h1_2->Fill(pa,weight);
-			h2_2->Fill(y,weight);
-			h30->Fill(time,weight);
-		}
-		if (stopped){
-			nStopped+=weight;
-			h03->Fill(pa,y,weight);
-			h1_3->Fill(pa,weight);
-			h2_3->Fill(y,weight);
-			h40->Fill(time,weight);
-			if (withStopPosition){
-				h04->Fill(r,weight);
-				h05->Fill(Oz,weight);
-				t->Fill();
-			}
-			h10->Fill((*T_Ot)[0],weight);
-			for (int i_window = 0; i_window <5; i_window++){
-				h11->Fill(Ot+hCurve->GetRandom()+(i_window-2)*PulseInterval,weight);
+			if (stopped){
+				nStopped+=weight;
+				if ( (*McTruth_pid)[0] == PID ){
+					h03->Fill(pa,y,weight);
+					h1_3->Fill(pa,weight);
+					h2_3->Fill(y,weight);
+					h40->Fill(time,weight);
+					if (withStopPosition){
+						h04->Fill(r,weight);
+						h05->Fill(Oz,weight);
+					}
+					h10->Fill(fmod((*T_Ot)[0],PulseInterval),weight);
+					h11->Fill(Ot,weight);
+				}
+				if (withStopPosition){
+					t->Fill();
+				}
 			}
 		}
 	}
 	double nProton = nTotal/NperP;
 	std::cout<<"nProton = "<<nProton<<std::endl;
+	std::cout<<"nStopped = "<<nStopped<<std::endl;
 	nPassedH/=nProton;
 	nPassed/=nProton;
 	nStopped/=nProton;
@@ -412,7 +438,7 @@
 		t2->Write();
 	}
 
-	TPaveText *info = new TPaveText(0.3,0.7,0.9,0.9,"brNDC");
+	TPaveText *info = new TPaveText(0.2,0.5,0.8,0.7,"brNDC");
 	info->SetName("Info");
 	buff.str("");
 	buff.clear();

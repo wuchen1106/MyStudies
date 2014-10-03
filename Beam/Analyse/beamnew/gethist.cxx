@@ -96,7 +96,7 @@ int main(int argc, char** argv){
 		buf.clear();
 		buf<<"h_"<<i<<"_pa";
 //		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",150,0,250);
-		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",150,0,170);
+		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",150,0,200);
 		h->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 		h->GetYaxis()->SetTitle("count / initial proton");
 		if (pcharges[i] == 0) h->SetLineStyle(9);
@@ -112,7 +112,7 @@ int main(int argc, char** argv){
 		buf.clear();
 		buf<<"h_"<<i<<"_time";
 		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_t",150,0,tsep);
-		h->GetXaxis()->SetTitle("Time Distribution (MeV/c)");
+		h->GetXaxis()->SetTitle("Time (ns)");
 		h->GetYaxis()->SetTitle("count / initial proton");
 		if (pcharges[i] == 0) h->SetLineStyle(9);
 		else if (pcharges[i] < 0) h->SetLineStyle(1);
@@ -168,19 +168,20 @@ int main(int argc, char** argv){
 
 	TLegend *legend1 = new TLegend(0.8,0.1,1,0.9);
 	TCanvas * c1 = new TCanvas("c1","c1");
-	TPad *apad = new TPad("p","p",0,0,1,1);
-	apad->Draw();
-	apad->cd();
+	c1->SetRightMargin(0.2);
+//	TPad *apad = new TPad("p","p",0,0,1,1);
+//	apad->Draw();
+//	apad->cd();
 	gPad->SetLogy(1);
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	for (int i = 0; i<pids.size(); i++){
 		std::cout<<"Setting for "<<pnames[i]<<": SetRangeUser(1e-9,"<<maximumpa<<")"<<std::endl;
-		h_pa[i]->GetYaxis()->SetRangeUser(1e-9,2.5e-3);
+		h_pa[i]->GetYaxis()->SetRangeUser(1e-9,1e-2);
 		if (i==0){
 //			h_pa[i]->SetTitle("Particles Back to Capture Section (Graphite, 60cm)");
 //			h_pa[i]->SetTitle("Particles at The end of Capture Section (Graphite, 60cm)");
-			h_pa[i]->SetTitle("Particles at The end of 90 degree (Graphite, 60cm)");
+			h_pa[i]->SetTitle("Particles at The End of 90 Degree");
 			h_pa[i]->Draw();
 		}
 		else h_pa[i]->Draw("SAME");
@@ -196,19 +197,20 @@ int main(int argc, char** argv){
 
 	TLegend *legend2 = new TLegend(0.8,0.1,1,0.9);
 	TCanvas * c2 = new TCanvas("c2","c2");
-	TPad *apad2 = new TPad("p2","p2",0,0,1,1);
-	apad2->Draw();
-	apad2->cd();
+	c2->SetRightMargin(0.2);
+//	TPad *apad2 = new TPad("p2","p2",0,0,1,1);
+//	apad2->Draw();
+//	apad2->cd();
 	gPad->SetLogy(1);
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	for (int i = 0; i<pids.size(); i++){
 		std::cout<<"Setting for "<<pnames[i]<<": SetRangeUser(1e-9,"<<maximumtime<<")"<<std::endl;
-		h_time[i]->GetYaxis()->SetRangeUser(1e-7,maximumtime);
+		h_time[i]->GetYaxis()->SetRangeUser(1e-7,1e-2);
 		if (i==0){
 //			h_time[i]->SetTitle("Particles Back to Capture Section (Graphite, 60cm)");
 //			h_time[i]->SetTitle("Particles at The end of Capture Section (Graphite, 60cm)");
-			h_time[i]->SetTitle("Particles at The end of 90 degree (Graphite, 60cm)");
+			h_time[i]->SetTitle("Particles at The end of 90 degree");
 			h_time[i]->Draw();
 		}
 		else h_time[i]->Draw("SAME");
@@ -222,5 +224,9 @@ int main(int argc, char** argv){
 	}
 	legend2->Draw("SAME");
 	c1->SaveAs("pa.png");
+	c1->SaveAs("pa.pdf");
+	c1->SaveAs("pa.eps");
 	c2->SaveAs("time.png");
+	c2->SaveAs("time.pdf");
+	c2->SaveAs("time.eps");
 }

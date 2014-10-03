@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
-//	FileNames.push_back(MyWork+"/Simulate/comet/output/CDC.ALL.root");
+	FileNames.push_back(MyWork+"/Simulate/comet/output/CDCneutral."+suffixName+".root");
 //	FileNames.push_back(runName+".root");
 	DirName.push_back(MyData+"/CDC."+parName+"."+suffixName+".g496p02QBH");
 	nRuns.push_back(150);
@@ -707,6 +707,10 @@ int main(int argc, char *argv[]){
 				else if ((*M_volName)[iHit]=="TriSciD"){
 					triType = 1;
 					triPos = -1;
+				}
+				else {
+					triType = -1;
+					triPos = 0;
 				}
 				O_triType->push_back(triType);
 				O_triPos->push_back(triPos);
