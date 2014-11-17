@@ -291,6 +291,7 @@ int main(int argc, char *argv[]){
 	std::vector<std::string> *particle = 0;
 	std::vector<int> *pid = 0;
 	std::vector<int> *ppid = 0;
+	double t0;
 
 	tree->Branch("evt_num",&evt_num);
 	tree->Branch("run_num",&run_num);
@@ -299,6 +300,7 @@ int main(int argc, char *argv[]){
 	tree->Branch("topo",&topo);
 	tree->Branch("cpid",&cpid);
 	tree->Branch("weight",&weight);
+	tree->Branch("t0",&t0);
 
 	// about cdc
 	tree->Branch("O_cellID",&O_cellID);
@@ -352,6 +354,8 @@ int main(int argc, char *argv[]){
 	for (Long64_t iEvent = 0; iEvent < nEvents; iEvent++ ){
 		if (iEvent%printModulo==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
+		t0 = (*McTruth_time)[0];
+		if (iEvent%printModulo==0) std::cout<<"# evt_num = "<<iEvent<<", C_nHits = "<<C_nHits<<", M_nHits = "<<M_nHits<<std::endl;
 		if (C_nHits>0){
 			nHits = 0;
 			type = 0; 
@@ -393,6 +397,7 @@ int main(int argc, char *argv[]){
 			if(o_x) delete o_x; o_x  = new std::vector<double>;
 			if(o_y) delete o_y; o_y  = new std::vector<double>;
 			if(o_z) delete o_z; o_z  = new std::vector<double>;
+			if(o_dep) delete o_dep; o_dep  = new std::vector<int>;
 			if(process) delete process; process  = new std::vector<std::string>;
 			if(volume) delete volume; volume  = new std::vector<std::string>;
 			if(particle) delete particle; particle  = new std::vector<std::string>;
@@ -403,7 +408,8 @@ int main(int argc, char *argv[]){
 			if (iEvent%printModulo==0) std::cout<<"==> Start looping in CDC hits, nHits = "<<C_nHits<<std::endl;
 			for ( int iHit = 0; iHit<C_nHits;iHit++){
 				if (iEvent%printModulo2==0) std::cout<<"	# "<<iHit
-					                                <<","<<(*C_px)[iHit]*1e3
+					                                <<","<<sqrt((*C_px)[iHit]*(*C_px)[iHit]+(*C_py)[iHit]*(*C_py)[iHit]+(*C_pz)[iHit]*(*C_pz)[iHit])*1e3
+					                                <<","<<(*C_tid)[iHit]
 					                                <<std::endl;
 				int ttid = (*C_tid)[iHit];
 				// new track?
@@ -455,6 +461,7 @@ int main(int argc, char *argv[]){
 					if(o_x) delete o_x; o_x  = new std::vector<double>;
 					if(o_y) delete o_y; o_y  = new std::vector<double>;
 					if(o_z) delete o_z; o_z  = new std::vector<double>;
+					if(o_dep) delete o_dep; o_dep  = new std::vector<int>;
 					if(process) delete process; process  = new std::vector<std::string>;
 					if(volume) delete volume; volume  = new std::vector<std::string>;
 					if(particle) delete particle; particle  = new std::vector<std::string>;
@@ -562,6 +569,7 @@ int main(int argc, char *argv[]){
 			if(O_edep) delete O_edep; O_edep  = new std::vector<double>;
 			if(O_stepL) delete O_stepL; O_stepL  = new std::vector<double>;
 			if(O_t) delete O_t; O_t  = new std::vector<double>;
+					if(o_z) delete o_z; o_z  = new std::vector<double>;
 			if(O_px) delete O_px; O_px  = new std::vector<double>;
 			if(O_py) delete O_py; O_py  = new std::vector<double>;
 			if(O_pz) delete O_pz; O_pz  = new std::vector<double>;
