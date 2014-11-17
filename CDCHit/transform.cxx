@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iostream>
 #include <math.h>
+#include <malloc.h>
 
 #include "TRandom.h"
 #include "TChain.h"
@@ -10,20 +11,125 @@
 #include "TH1D.h"
 
 int main(int argc, char** argv){
-	int dict[18][350];
-	int dict2[200];
 
+	// for general
 	double tsep = 1170;
 
-	TH1D * h_xt = (TH1D*)(new TFile("/home/chen/MyWorkArea/Simulate/comet/data/xt.root"))->Get("xt");
+	// for bkg
+	std::vector<std::string> v_filename;
+	std::vector<double> v_effi;
+	std::vector<int> v_nBKG;
+	std::vector<int> v_nBKGneed;
+	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/proton.mum.140905M02.root");
+	v_effi.push_back(1/2.85);
+//	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/proton.pim.140905M02.root");
+//	v_effi.push_back(1);
+	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/noise.OT.140905M02.root");
+	v_effi.push_back(1);
+	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/noise.mumneutron.140905M02.root");
+	v_effi.push_back(1.6);
+	int index = 0;
 
-	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.140905M02.root");
-//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
-	TTree * it = (TTree*) ifile->Get("tree");
-	TFile * of = new TFile("output.root","RECREATE");
-	TTree * ot = new TTree("tree","tree");
+	int NMN_nHits_Max = 100;
+	int * NMN_nHits = (int*)malloc(sizeof(int)*3*1300);
+	double * NMN_t = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_driftD = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_driftDtrue = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_tstart = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_tstop = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_edep = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	int * NMN_cellID = (int*)malloc(sizeof(int)*3*1300*NMN_nHits_Max);
+	int * NMN_layerID = (int*)malloc(sizeof(int)*3*1300*NMN_nHits_Max);
+	int * NMN_posflag = (int*)malloc(sizeof(int)*3*1300*NMN_nHits_Max);
+	double * NMN_wx = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_wy = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_wz = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_x = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_y = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_z = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_px = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_py = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	double * NMN_pz = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+
+	int BKG_nHits = 0;
+	std::vector<double> * BKG_t = 0;
+	std::vector<double> * BKG_driftD = 0;
+	std::vector<double> * BKG_driftDtrue = 0;
+	std::vector<double> * BKG_tstart = 0;
+	std::vector<double> * BKG_tstop = 0;
+	std::vector<double> * BKG_edep = 0;
+	std::vector<int> * BKG_cellID = 0;
+	std::vector<int> * BKG_layerID = 0;
+	std::vector<int> * BKG_posflag = 0;
+	std::vector<double> * BKG_wx = 0;
+	std::vector<double> * BKG_wy = 0;
+	std::vector<double> * BKG_wz = 0;
+	std::vector<double> * BKG_x = 0;
+	std::vector<double> * BKG_y = 0;
+	std::vector<double> * BKG_z = 0;
+	std::vector<double> * BKG_px = 0;
+	std::vector<double> * BKG_py = 0;
+	std::vector<double> * BKG_pz = 0;
+	double scalefactor = 1/1.e8*2.5e12*tsep*1e-9*2.4;
+	for (int i = 0;i<v_filename.size(); i++){
+		TChain * c_BKG = new TChain("tree");
+		c_BKG->Add(v_filename[i].c_str());
+		v_nBKG.push_back(c_BKG->GetEntries());
+		v_nBKGneed.push_back(c_BKG->GetEntries()*v_effi[i]*scalefactor+1);
+		std::cout<<"BKG["<<i<<"]: "<<c_BKG->GetEntries()*v_effi[i]*scalefactor+1<<" tracks"<<std::endl;
+		c_BKG->SetBranchAddress("nHits",&BKG_nHits);
+		c_BKG->SetBranchAddress("O_t",&BKG_t);
+		c_BKG->SetBranchAddress("O_driftD",&BKG_driftD);
+		c_BKG->SetBranchAddress("O_driftDtrue",&BKG_driftDtrue);
+		c_BKG->SetBranchAddress("O_tstart",&BKG_tstart);
+		c_BKG->SetBranchAddress("O_tstop",&BKG_tstop);
+		c_BKG->SetBranchAddress("O_edep",&BKG_edep);
+		c_BKG->SetBranchAddress("O_cellID",&BKG_cellID);
+		c_BKG->SetBranchAddress("O_layerID",&BKG_layerID);
+		c_BKG->SetBranchAddress("O_posflag",&BKG_posflag);
+		c_BKG->SetBranchAddress("O_wx",&BKG_wx);
+		c_BKG->SetBranchAddress("O_wy",&BKG_wy);
+		c_BKG->SetBranchAddress("O_wz",&BKG_wz);
+		c_BKG->SetBranchAddress("O_x",&BKG_x);
+		c_BKG->SetBranchAddress("O_y",&BKG_y);
+		c_BKG->SetBranchAddress("O_z",&BKG_z);
+		c_BKG->SetBranchAddress("O_px",&BKG_px);
+		c_BKG->SetBranchAddress("O_py",&BKG_py);
+		c_BKG->SetBranchAddress("O_pz",&BKG_pz);
+		for ( int j = 0; j<c_BKG->GetEntries(); j++){
+			c_BKG->GetEntry(j);
+			NMN_nHits[i*1300+j] = BKG_nHits;
+			for (int k = 0; k<BKG_nHits; k++){
+				NMN_t[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_t)[k];
+				NMN_driftD[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_driftD)[k];
+				NMN_driftDtrue[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_driftDtrue)[k];
+				NMN_tstart[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_tstart)[k];
+				NMN_tstop[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_tstop)[k];
+				NMN_edep[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_edep)[k];
+				NMN_cellID[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_cellID)[k];
+				NMN_layerID[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_layerID)[k];
+				NMN_posflag[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_posflag)[k];
+				NMN_wx[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_wx)[k];
+				NMN_wy[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_wy)[k];
+				NMN_wz[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_wz)[k];
+				NMN_x[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_x)[k];
+				NMN_y[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_y)[k];
+				NMN_z[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_z)[k];
+				NMN_px[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_px)[k];
+				NMN_py[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_py)[k];
+				NMN_pz[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_pz)[k];
+			}
+		}
+	}
 
 	// for input
+	TH1D * h_xt = (TH1D*)(new TFile("/home/chen/MyWorkArea/Simulate/comet/data/xt.root"))->Get("xt");
+
+//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.140905M02.root");
+//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
+	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.vac.new1.root");
+	TTree * it = (TTree*) ifile->Get("tree");
+
 	int CdcCell_nHits = 0;
 	std::vector<double> * CdcCell_t = 0;
 	std::vector<double> * CdcCell_wx = 0;
@@ -51,34 +157,6 @@ int main(int argc, char** argv){
 	std::vector<double> * M_y = 0;
 	std::vector<double> * M_z = 0;
 	std::vector<double> * M_t = 0;
-
-	// for output
-	double O_mx = 0;
-	double O_my = 0;
-	double O_mz = 0;
-	double O_mt = 0;
-	int O_nHits = 0;
-	std::vector<int> * O_hittype = 0;
-	std::vector<double> * O_t = 0;
-	std::vector<double> * O_tof = 0;
-	std::vector<double> * O_wx = 0;
-	std::vector<double> * O_wy = 0;
-	std::vector<double> * O_wz = 0;
-	std::vector<double> * O_x = 0;
-	std::vector<double> * O_y = 0;
-	std::vector<double> * O_z = 0;
-	std::vector<double> * O_px = 0;
-	std::vector<double> * O_py = 0;
-	std::vector<double> * O_pz = 0;
-	std::vector<double> * O_driftD = 0;
-	std::vector<double> * O_driftDtrue = 0;
-	std::vector<double> * O_tstop = 0;
-	std::vector<double> * O_tstart = 0;
-	std::vector<int> * O_cellID = 0;
-	std::vector<int> * O_layerID = 0;
-	std::vector<double> * O_edep = 0;
-	std::vector<int> * O_tid = 0;
-	std::vector<int> * O_posflag = 0;
 
 	it->SetBranchAddress("CdcCell_nHits",&CdcCell_nHits);
 	it->SetBranchAddress("CdcCell_t",&CdcCell_t);
@@ -108,6 +186,37 @@ int main(int argc, char** argv){
 	it->SetBranchAddress("M_z",&M_z);
 	it->SetBranchAddress("M_t",&M_t);
 
+	// for output
+	double O_mx = 0;
+	double O_my = 0;
+	double O_mz = 0;
+	double O_mt = 0;
+	int O_nHits = 0;
+	std::vector<int> * O_hittype = 0;
+	std::vector<double> * O_t = 0;
+	std::vector<double> * O_tof = 0;
+	std::vector<double> * O_wx = 0;
+	std::vector<double> * O_wy = 0;
+	std::vector<double> * O_wz = 0;
+	std::vector<double> * O_x = 0;
+	std::vector<double> * O_y = 0;
+	std::vector<double> * O_z = 0;
+	std::vector<double> * O_px = 0;
+	std::vector<double> * O_py = 0;
+	std::vector<double> * O_pz = 0;
+	std::vector<double> * O_driftD = 0;
+	std::vector<double> * O_driftDtrue = 0;
+	std::vector<double> * O_tstop = 0;
+	std::vector<double> * O_tstart = 0;
+	std::vector<int> * O_cellID = 0;
+	std::vector<int> * O_layerID = 0;
+	std::vector<double> * O_edep = 0;
+	std::vector<int> * O_tid = 0;
+	std::vector<int> * O_posflag = 0;
+
+	TFile * of = new TFile("output.root","RECREATE");
+	TTree * ot = new TTree("tree","tree");
+
 	ot->Branch("CdcCell_nHits",&O_nHits);
 	ot->Branch("CdcCell_t",&O_t);
 	ot->Branch("CdcCell_wx",&O_wx);
@@ -135,79 +244,13 @@ int main(int argc, char** argv){
 	ot->Branch("CdcCell_mz",&O_mz);
 	ot->Branch("CdcCell_mt",&O_mt);
 
-	// for bkg
-	std::vector<TChain*> v_c;
-	std::vector<std::string> v_filename;
-	std::vector<double> v_effi;
-	std::vector<int> v_nBKG;
-	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/proton.mum.140905M02.root");
-	v_effi.push_back(1/2.85);
-	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/proton.pim.140905M02.root");
-	v_effi.push_back(1);
-	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/noise.OT.140905M02.root");
-	v_effi.push_back(1);
-	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/noise.mumneutron.140905M02.root");
-	v_effi.push_back(1.6);
-	int index = 0;
-	int BKG_nHits = 0;
-	int type = 0;
-	int topo = 0;
-	int cpid = 0;
-	std::vector<double> * BKG_t = 0;
-	std::vector<double> * BKG_driftD = 0;
-	std::vector<double> * BKG_driftDtrue = 0;
-	std::vector<double> * BKG_tstart = 0;
-	std::vector<double> * BKG_tstop = 0;
-	std::vector<double> * BKG_edep = 0;
-	std::vector<int> * BKG_cellID = 0;
-	std::vector<int> * BKG_layerID = 0;
-	std::vector<int> * BKG_posflag = 0;
-	std::vector<double> * BKG_wx = 0;
-	std::vector<double> * BKG_wy = 0;
-	std::vector<double> * BKG_wz = 0;
-	std::vector<double> * BKG_x = 0;
-	std::vector<double> * BKG_y = 0;
-	std::vector<double> * BKG_z = 0;
-	std::vector<double> * BKG_px = 0;
-	std::vector<double> * BKG_py = 0;
-	std::vector<double> * BKG_pz = 0;
-	double scalefactor = 1/1.e8*2.5e12*tsep*1e-9*2.4;
-	for (int i = 0;i<v_filename.size(); i++){
-		TChain * c_BKG = new TChain("tree");
-		c_BKG->Add(v_filename[i].c_str());
-		v_c.push_back(c_BKG);
-		v_nBKG.push_back(c_BKG->GetEntries()*v_effi[i]*scalefactor+1);
-		std::cout<<"BKG["<<i<<"]: "<<c_BKG->GetEntries()*v_effi[i]*scalefactor+1<<" tracks"<<std::endl;
-		c_BKG->SetBranchAddress("type",&type);
-		c_BKG->SetBranchAddress("nHits",&BKG_nHits);
-		c_BKG->SetBranchAddress("topo",&topo);
-		c_BKG->SetBranchAddress("cpid",&cpid);
-		c_BKG->SetBranchAddress("O_t",&BKG_t);
-		c_BKG->SetBranchAddress("O_driftD",&BKG_driftD);
-		c_BKG->SetBranchAddress("O_driftDtrue",&BKG_driftDtrue);
-		c_BKG->SetBranchAddress("O_tstart",&BKG_tstart);
-		c_BKG->SetBranchAddress("O_tstop",&BKG_tstop);
-		c_BKG->SetBranchAddress("O_edep",&BKG_edep);
-		c_BKG->SetBranchAddress("O_cellID",&BKG_cellID);
-		c_BKG->SetBranchAddress("O_layerID",&BKG_layerID);
-		c_BKG->SetBranchAddress("O_posflag",&BKG_posflag);
-		c_BKG->SetBranchAddress("O_wx",&BKG_wx);
-		c_BKG->SetBranchAddress("O_wy",&BKG_wy);
-		c_BKG->SetBranchAddress("O_wz",&BKG_wz);
-		c_BKG->SetBranchAddress("O_x",&BKG_x);
-		c_BKG->SetBranchAddress("O_y",&BKG_y);
-		c_BKG->SetBranchAddress("O_z",&BKG_z);
-		c_BKG->SetBranchAddress("O_px",&BKG_px);
-		c_BKG->SetBranchAddress("O_py",&BKG_py);
-		c_BKG->SetBranchAddress("O_pz",&BKG_pz);
-	}
+	int dict[18][350];
+	int dict2[200];
 
 	bool triggerd = false;
 	double firsthittime = 0;
 	int nGoodHit = 0;
-	//FIXME
-//	for ( int i = 0; i<it->GetEntries(); i++){
-	for ( int i = 0; i<80; i++){
+	for ( int i = 0; i<it->GetEntries(); i++){
 		for(int j = 0; j<18; j++){
 			for (int k = 0; k<350; k++){
 				dict[j][k]=-1;
@@ -287,6 +330,13 @@ int main(int argc, char** argv){
 			hittime = (*CdcCell_t)[j] + shifttime;
 			tof = (*CdcCell_t)[j];
 			if (dict[(*CdcCell_layerID)[j]][(*CdcCell_cellID)[j]]==-1){
+				//FIXME
+				double px = (*CdcCell_px)[j];
+				double py = (*CdcCell_py)[j];
+				double pz = (*CdcCell_pz)[j];
+				double pa = sqrt(px*px+py*py+pz*pz);
+				if (tof>7||pa<0.103||hittype!=0) continue; // only first turn
+
 				dict[(*CdcCell_layerID)[j]][(*CdcCell_cellID)[j]]=O_nHits;
 				O_nHits++;
 				O_t->push_back(hittime);
@@ -314,12 +364,16 @@ int main(int argc, char** argv){
 				std::cout<<"WTF?"<<std::endl;
 			}
 		}
+		//FIXME
+		if (O_nHits<=0) continue;
 
 		// mixture bkg
 		int total_count = 0;
-		for(int ibkg = 0; ibkg < v_nBKG.size(); ibkg++){
-			int nbkg = v_nBKG[ibkg];
-			int nBKG = v_c[ibkg]->GetEntries();
+		//FIXME
+//		for(int ibkg = 0; ibkg < v_nBKGneed.size(); ibkg++){
+		for(int ibkg = 0; ibkg < 0; ibkg++){
+			int nbkg = v_nBKGneed[ibkg];
+			int nBKG = v_nBKG[ibkg];
 			std::cout<<"  =>Now mix in "<<nbkg<<" noise tracks from \""<<v_filename[ibkg]<<"\""<<std::endl;
 			int count_bkg = 0;
 			for (int idict = 0; idict<200; idict++){
@@ -336,25 +390,25 @@ int main(int argc, char** argv){
 						break;
 					}
 				}
-				v_c[ibkg]->GetEntry(index);
 				count_bkg++;
 				int this_count = 0;
-				std::cout<<"     + "<<count_bkg<<": Got "<<BKG_nHits<<" hits @ "<<index<<std::endl;
+				int evt_index = ibkg*1300+index;
+				std::cout<<"     + "<<count_bkg<<": Got "<<NMN_nHits[evt_index]<<" hits @ "<<index<<std::endl;
 				//			index = index+ibkg;
 				//			int nindex = index%nBKG;
-				//			v_c[ibkg]->GetEntry(nindex);
-				for (int ibkghit = 0; ibkghit<BKG_nHits; ibkghit++){
+				for (int ibkghit = 0; ibkghit<NMN_nHits[evt_index]; ibkghit++){
 					// get time
-					int ihit = dict[((*BKG_layerID)[ibkghit])][((*BKG_cellID)[ibkghit])];
-					double dt = fmod((*BKG_tstart)[ibkghit]-O_mt,tsep);
+					int hit_index = (ibkg*1300+index)*NMN_nHits_Max+ibkghit;
+					int ihit = dict[(NMN_layerID[hit_index])][(NMN_cellID[hit_index])];
+					double dt = fmod(NMN_tstart[hit_index]-O_mt,tsep);
 					if (dt<0) dt+=tsep;
 					starttime = O_mt+dt;
-					hittime = dt+O_mt+(*BKG_t)[ibkghit]-(*BKG_tstart)[ibkghit];
-					stoptime = dt+O_mt+(*BKG_tstop)[ibkghit]-(*BKG_tstart)[ibkghit];
+					hittime = dt+O_mt+NMN_t[hit_index]-NMN_tstart[hit_index];
+					stoptime = dt+O_mt+NMN_tstop[hit_index]-NMN_tstart[hit_index];
 					// FIXME don't know how to consider coming-earlier case...
 					//if (ihit!=-1&&stoptime>(*O_tstart)[ihit]-200){
 					//	if ((*O_hittype)[ihit]==0) (*O_hittype)[ihit] = -1; // if this overlapped hit is from signal, then mark as -1
-					//	(*O_edep)[ihit] = (*O_edep)[ihit]+(*BKG_edep)[ibkghit];
+					//	(*O_edep)[ihit] = (*O_edep)[ihit]+NMN_edep[hit_index];
 					//	(*O_driftD)[ihit] = 0;
 					//}
 					// now dt > 0
@@ -374,24 +428,26 @@ int main(int argc, char** argv){
 						O_nHits++;
 						total_count++;
 						this_count++;
-						dict[((*BKG_layerID)[ibkghit])][((*BKG_cellID)[ibkghit])]=O_nHits;
+						dict[(NMN_layerID[hit_index])][(NMN_cellID[hit_index])]=O_nHits;
 						O_t->push_back(hittime);
+						O_tstart->push_back(starttime);
+						O_tstop->push_back(stoptime);
 						O_tof->push_back(O_mt-hittime);
-						O_wx->push_back((*BKG_wx)[ibkghit]/10);
-						O_wy->push_back((*BKG_wy)[ibkghit]/10);
-						O_wz->push_back((*BKG_wz)[ibkghit]/10);
-						O_x->push_back((*BKG_x)[ibkghit]/10);
-						O_y->push_back((*BKG_y)[ibkghit]/10);
-						O_z->push_back((*BKG_z)[ibkghit]/10);
-						O_px->push_back((*BKG_px)[ibkghit]/1000);
-						O_py->push_back((*BKG_py)[ibkghit]/1000);
-						O_pz->push_back((*BKG_pz)[ibkghit]/1000);
+						O_wx->push_back(NMN_wx[hit_index]/10);
+						O_wy->push_back(NMN_wy[hit_index]/10);
+						O_wz->push_back(NMN_wz[hit_index]/10);
+						O_x->push_back(NMN_x[hit_index]/10);
+						O_y->push_back(NMN_y[hit_index]/10);
+						O_z->push_back(NMN_z[hit_index]/10);
+						O_px->push_back(NMN_px[hit_index]/1000);
+						O_py->push_back(NMN_py[hit_index]/1000);
+						O_pz->push_back(NMN_pz[hit_index]/1000);
 						O_driftD->push_back(dd);
-						O_driftDtrue->push_back((*BKG_driftDtrue)[ibkghit]);
-						O_cellID->push_back((*BKG_cellID)[ibkghit]);
-						O_layerID->push_back((*BKG_layerID)[ibkghit]);
-						O_edep->push_back((*BKG_edep)[ibkghit]);
-						O_posflag->push_back((*BKG_posflag)[ibkghit]);
+						O_driftDtrue->push_back(NMN_driftDtrue[hit_index]);
+						O_cellID->push_back(NMN_cellID[hit_index]);
+						O_layerID->push_back(NMN_layerID[hit_index]);
+						O_edep->push_back(NMN_edep[hit_index]);
+						O_posflag->push_back(NMN_posflag[hit_index]);
 						O_hittype->push_back(2); // pure noise
 						continue;
 					}
@@ -402,16 +458,18 @@ int main(int argc, char** argv){
 							(*O_t)[ihit] = hittime;
 							(*O_tof)[ihit] = O_mt-hittime;
 							(*O_driftD)[ihit] = dd;
-							(*O_edep)[ihit] = (*O_edep)[ihit] + (*BKG_edep)[ibkghit];
+							(*O_edep)[ihit] = (*O_edep)[ihit] + NMN_edep[hit_index];
 							(*O_hittype)[ihit] = 3;
 						}
 					}
-				}// end of events loop in bkg
+				}// end of hits in bkg event
 				std::cout<<"        Finished! Actually got "<<this_count<<" hits; Totallly we have "<<total_count<<" noise hits mixed inside"<<std::endl;
-			}// end of bkg loop
-		}// end of event loop
+			}// end of events loop in bkg
+		}// end of bkg loop
+		std::cout<<"Filling ot @"<<(void*)ot<<"..."<<std::endl;
 		ot->Fill();
-	}
+		std::cout<<"Filled! ot->GetEntries() = "<<ot->GetEntries()<<std::endl;
+	}// end of event loop
 	ot->Write();
 	of->Close();
 	return 0;
