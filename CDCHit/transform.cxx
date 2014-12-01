@@ -127,7 +127,7 @@ int main(int argc, char** argv){
 
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.140905M02.root");
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
-	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.vac.new1.root");
+	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.root");
 	TTree * it = (TTree*) ifile->Get("tree");
 
 	int CdcCell_nHits = 0;
@@ -307,7 +307,7 @@ int main(int argc, char** argv){
 			}
 		}
 		//FIXME
-		if (!triggerd) continue;
+//		if (!triggerd) continue;
 
 		double shifttime = 0;
 		shifttime = fmod(O_mt,tsep)-O_mt;
