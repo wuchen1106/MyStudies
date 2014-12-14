@@ -28,33 +28,33 @@
 //		}
 //	}
 
-	// 111216
-	TChain * c = new TChain("t","t");
-	c->Add("/home/chen/MyWorkArea/MyStudies/MagneticField/result/UK_111216/defaultFieldMap-0.0000T-0.0000T-0.17T.dat.root");
-	double bx,by,bz,x,y,z;
-	c->SetBranchAddress("bx",&bx);
-	c->SetBranchAddress("by",&by);
-	c->SetBranchAddress("bz",&bz);
-	c->SetBranchAddress("x",&x);
-	c->SetBranchAddress("y",&y);
-	c->SetBranchAddress("z",&z);
-	c->Draw("y:x>>h","z==0&&x<2000&&y>=0");
-	h->SetTitle("Magnetic Field Lines on the Virticle Plane at the Centre of the Production Target");
-	h->GetXaxis()->SetTitle("Horizental Position [mm] (Pointing to the Detector Side)");
-	h->GetYaxis()->SetTitle("Verticle Position [mm] (Pointing Up)");
-	gStyle->SetOptStat(0);
-	for(int i = 0; i<=h->GetNbinsX(); i++){
-		for(int j = 0; j<=h->GetNbinsX(); j++){
-			h->SetBinContent(i,j,0);
-		}
-	}
-	h->Draw();
-	for (int i = 0; i<c->GetEntries(); i++){
-		c->GetEntry(i);
-		if (z==0&&x<2000&&y>=0){
-			TArrow * a = new TArrow(); a->SetLineColor(kRed); a->SetFillColor(kRed);a->DrawArrow(x,y,x+5*bx/0.01,y+5*by/0.01,0.0018,"|>");
-		}
-	}
+//	// 111216
+//	TChain * c = new TChain("t","t");
+//	c->Add("/home/chen/MyWorkArea/MyStudies/MagneticField/result/UK_111216/defaultFieldMap-0.0000T-0.0000T-0.17T.dat.root");
+//	double bx,by,bz,x,y,z;
+//	c->SetBranchAddress("bx",&bx);
+//	c->SetBranchAddress("by",&by);
+//	c->SetBranchAddress("bz",&bz);
+//	c->SetBranchAddress("x",&x);
+//	c->SetBranchAddress("y",&y);
+//	c->SetBranchAddress("z",&z);
+//	c->Draw("y:x>>h","z==0&&x<2000&&y>=0");
+//	h->SetTitle("Magnetic Field Lines on the Virticle Plane at the Centre of the Production Target");
+//	h->GetXaxis()->SetTitle("Horizental Position [mm] (Pointing to the Detector Side)");
+//	h->GetYaxis()->SetTitle("Verticle Position [mm] (Pointing Up)");
+//	gStyle->SetOptStat(0);
+//	for(int i = 0; i<=h->GetNbinsX(); i++){
+//		for(int j = 0; j<=h->GetNbinsX(); j++){
+//			h->SetBinContent(i,j,0);
+//		}
+//	}
+//	h->Draw();
+//	for (int i = 0; i<c->GetEntries(); i++){
+//		c->GetEntry(i);
+//		if (z==0&&x<2000&&y>=0){
+//			TArrow * a = new TArrow(); a->SetLineColor(kRed); a->SetFillColor(kRed);a->DrawArrow(x,y,x+5*bx/0.01,y+5*by/0.01,0.0018,"|>");
+//		}
+//	}
 
 //	// 111026
 //	TChain * c = new TChain("t","t");
@@ -262,4 +262,32 @@
 ////			TArrow * a = new TArrow(); a->DrawArrow(x,z,x+5*bx/3,z+5*bz/3,0.001,">");
 ////		}
 //	}
+
+	// TS3_IHEP141022_chen
+	TChain * c = new TChain("data","data");
+	c->Add("/home/chen/MyWorkArea/Simulate/comet/fieldMaps/IHEP_A9_141022_TS3.root");
+	float br,bz,r,z;
+	c->SetBranchAddress("Br",&br);
+	c->SetBranchAddress("Bz",&bz);
+	c->SetBranchAddress("R",&r);
+	c->SetBranchAddress("Z",&z);
+	TCanvas * c1 = new TCanvas("c1","c1");
+	c->Draw("Y:X>>h","Z==3500");
+	h->SetTitle("Magnetic Field Lines on the Virticle Plane at the Centre of the Production Target");
+	h->GetXaxis()->SetTitle("Horizental Position [mm] (Pointing to the Detector Side)");
+	h->GetYaxis()->SetTitle("Verticle Position [mm] (Pointing Up)");
+	gStyle->SetOptStat(0);
+	for(int i = 0; i<=h->GetNbinsX(); i++){
+		for(int j = 0; j<=h->GetNbinsX(); j++){
+			h->SetBinContent(i,j,0);
+		}
+	}
+	h->Draw();
+	for (int i = 0; i<c->GetEntries(); i++){
+		c->GetEntry(i);
+		if (z==3500){
+			TArrow * a = new TArrow(); a->SetLineColor(kRed); a->SetFillColor(kRed);a->DrawArrow(x,y,x+5*bx/0.01,y+5*by/0.01,0.0018,"|>");
+		}
+	}
+
 }

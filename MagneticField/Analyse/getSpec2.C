@@ -29,10 +29,10 @@
 	TLegend *l2 = new TLegend(0.7,0.7,0.9,0.9);
 
 	for (int iopt = 0; iopt<opt.size(); iopt++){
-		for ( int i = 0; i<5; i++)	{
-			c[iopt] = new TChain("tree","tree");
+		c[iopt] = new TChain("tree","tree");
+		for ( int i = 0; i<10; i++)	{
 			buf.str("");buf.clear();
-			buf<<"/home/chen/MyWorkArea/Data/PT."<<runName<<"."<<opt[iopt]<<".g496p02QBH/"<<i<<"_job0.raw";
+			buf<<"/home/chen/MyWorkArea/Data/PT."<<runName<<"."<<opt[iopt]<<".flip.g496p02QBH/"<<i<<"_job0.raw";
 			c[iopt]->Add(buf.str().c_str());
 		}
 		buf.str("");buf.clear();
@@ -84,10 +84,10 @@
 			hpi[iopt]->Draw("LPSAME");
 		}
 		buf.str("");buf.clear();
-		buf<<"d = "<<opt[iopt]<<": "<<hmu[iopt]->Integral();
+		buf<<"d = "<<opt[iopt]<<": "<<hmu[iopt]->Integral()/0.9;
 		l1->AddEntry(hmu[iopt],buf.str().c_str());
 		buf.str("");buf.clear();
-		buf<<"d = "<<opt[iopt]<<": "<<hpi[iopt]->Integral();
+		buf<<"d = "<<opt[iopt]<<": "<<hpi[iopt]->Integral()/0.9;
 		l2->AddEntry(hpi[iopt],buf.str().c_str());
 		if (iopt==opt.size()-1){
 			c1->cd(); l1->Draw("SAME");
