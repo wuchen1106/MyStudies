@@ -4,7 +4,8 @@
 //	TFile * ifile = new TFile("signal.004.root");
 //	TFile * ifile = new TFile("signal.geantino.root");
 //	TFile * ifile = new TFile("signal.140905M02.noise.root");
-	TFile * ifile = new TFile("signal.electron.1T.new.root");
+	//TFile * ifile = new TFile("signal.electron.1T.new.root");
+	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire.AllDisks.ExtraInfo.WithNoise.root");
 //	TFile * ifile = new TFile("signal.geantino.new4.root");
 //	TFile * ifile = new TFile("signal.geantino.single.new3.root");
 	TTree * it = (TTree*) ifile->Get("tree");
@@ -170,7 +171,7 @@
 			}
 			else{
 				//FIXME
-				continue;
+				//continue;
 				if ((*CdcCell_hittype)[j]==0)
 					ewiret->SetLineColor(kOrange);
 				else
@@ -181,8 +182,8 @@
 		buf.str("");
 		buf.clear();
 		//FIXME
-//		buf<<i<<"_before.pdf";
-		buf<<i<<"_after.pdf";
+		buf<<i<<"_before.pdf";
+//		buf<<i<<"_after.pdf";
 //		c->SaveAs(buf.str().c_str());
 		c->WaitPrimitive();
 	//	c->Update();

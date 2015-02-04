@@ -130,7 +130,7 @@ int main(int argc, char** argv){
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.140905M02.root");
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.150um.G41001.withwire.AllDisks.root");
-	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.wirehits.root");
+	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.wirehits.130927.root");
 	TTree * it = (TTree*) ifile->Get("tree");
 
 	int CdcCell_nHits = 0;
@@ -160,7 +160,11 @@ int main(int argc, char** argv){
 	std::vector<double> * M_y = 0;
 	std::vector<double> * M_z = 0;
 	std::vector<double> * M_t = 0;
+	int evt_num;
+	int run_num;
 
+	it->SetBranchAddress("evt_num",&evt_num);
+	it->SetBranchAddress("run_num",&run_num);
 	it->SetBranchAddress("CdcCell_nHits",&CdcCell_nHits);
 	it->SetBranchAddress("CdcCell_t",&CdcCell_t);
 	it->SetBranchAddress("CdcCell_wx",&CdcCell_wx);
@@ -227,6 +231,8 @@ int main(int argc, char** argv){
 	TFile * of = new TFile("output.root","RECREATE");
 	TTree * ot = new TTree("tree","tree");
 
+	ot->Branch("evt_num",&evt_num);
+	ot->Branch("run_num",&run_num);
 	ot->Branch("CdcCell_nHits",&O_nHits);
 	ot->Branch("CdcCell_t",&O_t);
 	ot->Branch("CdcCell_wx",&O_wx);
@@ -268,6 +274,7 @@ int main(int argc, char** argv){
 	double firsthittime = 0;
 	int nGoodHit = 0;
 	for ( int i = 0; i<it->GetEntries(); i++){
+//	for ( int i = 0; i<2e4; i++){
 		for(int j = 0; j<18; j++){
 			for (int k = 0; k<350; k++){
 				dict[j][k]=-1;
