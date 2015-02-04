@@ -80,19 +80,49 @@ griddatatitle="X/F Y/F Z/F Bx/F By/F Bz/F"
 #gawk '{x=($1+3)*1000;y=(-$2+3)*1000;if ($1!="x"&&$1!="#"&&x>=0) print (x)" "(y)" "(-$4)" "($5);}' $input >> $output
 #txt2root $output $output.root
 
-# 141022
-input="IHEP_141022_TS3.dat"
-output="IHEP_A9_141022_TS3"
+## 141022
+#input="IHEP_141022_TS3.dat"
+#output="IHEP_A9_141022_TS3"
+#echo "TTREE param" > $output
+#echo $cylparamtitle >> $output
+#echo "128 1 1 1 1 cylinder 74 166 10 10 0 3000" >> $output
+#echo "TTREE data" >> $output
+#echo $cyldatatitle >> $output
+#gawk '{x=($1+3)*1000;y=(-$2+3)*1000;if ($1!="X"&&$1!="#"&&x>=0) print (x)" "(y)" "(-$4)" "($5);}' $input >> $output
+#txt2root $output $output.root
+#
+#input="IHEP_141022_BSDS.dat"
+#output="IHEP_A9_141022_BSDS"
+#echo "TTREE param" > $output
+#echo $cylparamtitle >> $output
+#echo "128 1 1 1 1 cylinder 147 472 10 10 0 4660" >> $output
+#echo "TTREE data" >> $output
+#echo $cyldatatitle >> $output
+#gawk '{x=($1+3)*1000;y=(-$2+3)*1000;if ($1!="X"&&$1!="#"&&x>=0) print (x)" "(y)" "(-$4)" "($5);}' $input >> $output
+#txt2root $output $output.root
+
+# 141228
+input="IHEP_141228_TS1.txt"
+output="IHEP_141228_TS1inner"
 echo "TTREE param" > $output
 echo $cylparamtitle >> $output
-echo "128 1 1 1 1 cylinder 74 166 10 10 0 3000" >> $output
+echo "128 1 1 1 1 cylinder 147 472 10 10 0 4660" >> $output
+echo "TTREE data" >> $output
+echo $cyldatatitle >> $output
+gawk '{x=($1+3)*1000;y=(-$2+3)*1000;if ($1!="X"&&$1!="#"&&x>=0) print (x)" "(y)" "(-$4)" "($5);}' $input >> $output
+txt2root $output $output.root
+output="IHEP_141228_TS1outer"
+echo "TTREE param" > $output
+echo $cylparamtitle >> $output
+echo "128 1 1 1 1 cylinder 147 472 10 10 0 4660" >> $output
 echo "TTREE data" >> $output
 echo $cyldatatitle >> $output
 gawk '{x=($1+3)*1000;y=(-$2+3)*1000;if ($1!="X"&&$1!="#"&&x>=0) print (x)" "(y)" "(-$4)" "($5);}' $input >> $output
 txt2root $output $output.root
 
-input="IHEP_141022_BSDS.dat"
-output="IHEP_A9_141022_BSDS"
+# 141228
+input="IHEP_141228_CS.txt"
+output="IHEP_141228_CS"
 echo "TTREE param" > $output
 echo $cylparamtitle >> $output
 echo "128 1 1 1 1 cylinder 147 472 10 10 0 4660" >> $output

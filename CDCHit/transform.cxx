@@ -10,6 +10,8 @@
 #include "TFile.h"
 #include "TH1D.h"
 
+#define use_extra
+
 int main(int argc, char** argv){
 
 	// for general
@@ -127,7 +129,8 @@ int main(int argc, char** argv){
 
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.140905M02.root");
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
-	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.root");
+//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.150um.G41001.withwire.AllDisks.root");
+	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.wirehits.root");
 	TTree * it = (TTree*) ifile->Get("tree");
 
 	int CdcCell_nHits = 0;
@@ -185,6 +188,13 @@ int main(int argc, char** argv){
 	it->SetBranchAddress("M_y",&M_y);
 	it->SetBranchAddress("M_z",&M_z);
 	it->SetBranchAddress("M_t",&M_t);
+
+	# ifdef use_extra
+	int wire_nHits = 0;
+	int T_nHits = 0;
+	it->SetBranchAddress("T_nHits",&T_nHits);
+	it->SetBranchAddress("wire_nHits",&wire_nHits);
+	# endif
 
 	// for output
 	double O_mx = 0;
@@ -244,6 +254,13 @@ int main(int argc, char** argv){
 	ot->Branch("CdcCell_mz",&O_mz);
 	ot->Branch("CdcCell_mt",&O_mt);
 
+	# ifdef use_extra
+	int O_T_nHits = 0;
+	int O_wire_nHits = 0;
+	ot->Branch("T_nHits",&O_T_nHits);
+	ot->Branch("wire_nHits",&O_wire_nHits);
+	# endif
+
 	int dict[18][350];
 	int dict2[200];
 
@@ -258,6 +275,10 @@ int main(int argc, char** argv){
 		}
 		if (i%1==0) printf("%lf%...\n",(double)i/it->GetEntries()*100);
 		it->GetEntry(i);
+		# ifdef use_extra
+		O_T_nHits = T_nHits-1;
+		O_wire_nHits = wire_nHits;
+		# endif
 		if (CdcCell_nHits==0) continue;
 		O_nHits = 0;
 		O_hittype = new std::vector<int>;
@@ -307,11 +328,28 @@ int main(int argc, char** argv){
 			}
 		}
 		//FIXME
-//		if (!triggerd) continue;
+		if (!triggerd) continue;
 
 		double shifttime = 0;
 		shifttime = fmod(O_mt,tsep)-O_mt;
 		O_mt += shifttime;
+
+		// sort according to tof
+		std::vector<int> hitindice;
+		hitindice.resize(CdcCell_nHits);
+		for (int j = 0; j<CdcCell_nHits; j++){
+			hitindice[j] = j;
+		}
+		int temp;
+		for (int j = 0; j<CdcCell_nHits; j++){
+			for (int k = j+1; k<CdcCell_nHits; k++){
+				if ((*CdcCell_t)[hitindice[j]]>(*CdcCell_t)[hitindice[k]]){
+					temp = hitindice[j];
+					hitindice[j] = hitindice[k];
+					hitindice[k]=temp;
+				}
+			}
+		}
 
 		double hittime;
 		double tof;
@@ -319,49 +357,51 @@ int main(int argc, char** argv){
 		double stoptime;
 		int hittype;
 		for (int j = 0; j<CdcCell_nHits; j++){
-			if ((*CdcCell_tid)[j]==1){
+			if ((*CdcCell_tid)[hitindice[j]]==1){
 				hittype = 0;
 			}
 			else{
 				hittype = 1;
 			}
-			starttime = (*CdcCell_tstart)[j] + shifttime;
-			stoptime = (*CdcCell_tstop)[j] + shifttime;
-			hittime = (*CdcCell_t)[j] + shifttime;
-			tof = (*CdcCell_t)[j];
-			if (dict[(*CdcCell_layerID)[j]][(*CdcCell_cellID)[j]]==-1){
+			starttime = (*CdcCell_tstart)[hitindice[j]] + shifttime;
+			stoptime = (*CdcCell_tstop)[hitindice[j]] + shifttime;
+			hittime = (*CdcCell_t)[hitindice[j]] + shifttime;
+			tof = (*CdcCell_t)[hitindice[j]];
+			if (dict[(*CdcCell_layerID)[hitindice[j]]][(*CdcCell_cellID)[hitindice[j]]]==-1){
 				//FIXME
-				double px = (*CdcCell_px)[j];
-				double py = (*CdcCell_py)[j];
-				double pz = (*CdcCell_pz)[j];
+				double px = (*CdcCell_px)[hitindice[j]];
+				double py = (*CdcCell_py)[hitindice[j]];
+				double pz = (*CdcCell_pz)[hitindice[j]];
 				double pa = sqrt(px*px+py*py+pz*pz);
-				if (tof>7||pa<0.103||hittype!=0) continue; // only first turn
+				//if (tof>7||pa<0.103||hittype!=0) continue; // only first turn
+				if (hittype!=0) continue; // only hits from the signal track
 
-				dict[(*CdcCell_layerID)[j]][(*CdcCell_cellID)[j]]=O_nHits;
+				dict[(*CdcCell_layerID)[hitindice[j]]][(*CdcCell_cellID)[hitindice[j]]]=O_nHits;
 				O_nHits++;
 				O_t->push_back(hittime);
 				O_tof->push_back(tof);
 				O_tstart->push_back(starttime);
 				O_tstop->push_back(stoptime);
-				O_wx->push_back((*CdcCell_wx)[j]);
-				O_wy->push_back((*CdcCell_wy)[j]);
-				O_wz->push_back((*CdcCell_wz)[j]);
-				O_x->push_back((*CdcCell_x)[j]);
-				O_y->push_back((*CdcCell_y)[j]);
-				O_z->push_back((*CdcCell_z)[j]);
-				O_px->push_back((*CdcCell_px)[j]);
-				O_py->push_back((*CdcCell_py)[j]);
-				O_pz->push_back((*CdcCell_pz)[j]);
-				O_driftD->push_back((*CdcCell_driftD)[j]); // no need to monify, by now...
-				O_driftDtrue->push_back((*CdcCell_driftDtrue)[j]);
-				O_cellID->push_back((*CdcCell_cellID)[j]);
-				O_layerID->push_back((*CdcCell_layerID)[j]);
-				O_edep->push_back((*CdcCell_edep)[j]);
-				O_posflag->push_back((*CdcCell_posflag)[j]);
+				O_wx->push_back((*CdcCell_wx)[hitindice[j]]);
+				O_wy->push_back((*CdcCell_wy)[hitindice[j]]);
+				O_wz->push_back((*CdcCell_wz)[hitindice[j]]);
+				O_x->push_back((*CdcCell_x)[hitindice[j]]);
+				O_y->push_back((*CdcCell_y)[hitindice[j]]);
+				O_z->push_back((*CdcCell_z)[hitindice[j]]);
+				O_px->push_back((*CdcCell_px)[hitindice[j]]);
+				O_py->push_back((*CdcCell_py)[hitindice[j]]);
+				O_pz->push_back((*CdcCell_pz)[hitindice[j]]);
+				// FIXME: we can add smear
+				O_driftD->push_back((*CdcCell_driftD)[hitindice[j]]+gRandom->Gaus(0,0.02)); // no need to monify, by now...
+				O_driftDtrue->push_back((*CdcCell_driftDtrue)[hitindice[j]]);
+				O_cellID->push_back((*CdcCell_cellID)[hitindice[j]]);
+				O_layerID->push_back((*CdcCell_layerID)[hitindice[j]]);
+				O_edep->push_back((*CdcCell_edep)[hitindice[j]]);
+				O_posflag->push_back((*CdcCell_posflag)[hitindice[j]]);
 				O_hittype->push_back(hittype);
 			}
 			else{
-				std::cout<<"WTF?"<<std::endl;
+				std::cout<<"WTH?"<<std::endl;
 			}
 		}
 		//FIXME
