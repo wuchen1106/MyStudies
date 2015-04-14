@@ -3,15 +3,18 @@
 	double twindow_left = 700; // ns
 //	TFile * ifile = new TFile("signal.004.root");
 //	TFile * ifile = new TFile("signal.geantino.root");
-	TFile * ifile = new TFile("signal.140905M02.noise.root");
+//	TFile * ifile = new TFile("signal.140905M02.noise.root");
+	TFile * ifile = new TFile("signal.electron.1T.new.root");
+//	TFile * ifile = new TFile("signal.geantino.new4.root");
+//	TFile * ifile = new TFile("signal.geantino.single.new3.root");
 	TTree * it = (TTree*) ifile->Get("tree");
 	TFile * of = new TFile("output.root","RECREATE");
 
 	int CdcCell_nHits = 0;
 	std::vector<double> * CdcCell_t = 0;
-	std::vector<double> * CdcCell_ox = 0;
-	std::vector<double> * CdcCell_oy = 0;
-	std::vector<double> * CdcCell_oz = 0;
+//	std::vector<double> * CdcCell_ox = 0;
+//	std::vector<double> * CdcCell_oy = 0;
+//	std::vector<double> * CdcCell_oz = 0;
 	std::vector<double> * CdcCell_wx = 0;
 	std::vector<double> * CdcCell_wy = 0;
 	std::vector<double> * CdcCell_wz = 0;
@@ -33,9 +36,9 @@
 
 	it->SetBranchAddress("CdcCell_nHits",&CdcCell_nHits);
 	it->SetBranchAddress("CdcCell_t",&CdcCell_t);
-	it->SetBranchAddress("CdcCell_ox",&CdcCell_ox);
-	it->SetBranchAddress("CdcCell_oy",&CdcCell_oy);
-	it->SetBranchAddress("CdcCell_oz",&CdcCell_oz);
+//	it->SetBranchAddress("CdcCell_ox",&CdcCell_ox);
+//	it->SetBranchAddress("CdcCell_oy",&CdcCell_oy);
+//	it->SetBranchAddress("CdcCell_oz",&CdcCell_oz);
 	it->SetBranchAddress("CdcCell_wx",&CdcCell_wx);
 	it->SetBranchAddress("CdcCell_wy",&CdcCell_wy);
 	it->SetBranchAddress("CdcCell_wz",&CdcCell_wz);
@@ -59,7 +62,7 @@
 	TEllipse * ewire = 0;
 	double wx,wy,wz,dd,ddt;
 	std::stringstream buf;
-	TCanvas * c = new TCanvas("c","c",896,768);
+	TCanvas * c = new TCanvas("c","c",896,896);
 	int nhit_total = 0;
 	int nhit_edepcut = 0;
 	int nhitnoise_total = 0;
@@ -107,13 +110,15 @@
 	std::cout<<"Total noise hits: "<<nhitnoise_total<<std::endl;
 	std::cout<<"Noise hits with edep<"<<edep_cut*1e6<<"keV: "<<nhitnoise_edepcut<<std::endl;
 
-	for ( int i = 0; i<it->GetEntries(); i++){
+	TH2D * h0 = new TH2D("h2","h2",128,-85,85,128,-85,85);
+	gStyle->SetOptStat(0);
+	for ( int i = 0 ; i<it->GetEntries(); i++){
 		if (i%100==0) printf("%lf%...\n",(double)i/it->GetEntries()*100);
 //		if (i!=10) continue; // 0
 		buf.str("");
 		buf.clear();
 		//FIXME
-//		buf<<"CdcCell_edep<"<<edep_cut<<"&&";
+		buf<<"CdcCell_edep<"<<edep_cut<<"&&";
 		buf<<"Entry$=="<<i;
 		it->Draw("CdcCell_y:CdcCell_x>>h",buf.str().c_str(),"");
 		buf<<"&&CdcCell_hittype==0";
@@ -121,28 +126,27 @@
 		buf.str("");
 		buf.clear();
 		buf<<"#"<<i<<": Triggered @ "<<CdcCell_mt<<" ns, Ngood = "<<h2->GetEntries()<<", Nnoise = "<<h->GetEntries()-h2->GetEntries();
-		h->SetTitle(buf.str().c_str());
-		h->GetYaxis()->SetRange(-85,85);
-		h->GetXaxis()->SetRange(-85,85);
-		h->Draw();
+		h0->SetTitle(buf.str().c_str());
+		h0->Draw();
 		buf.str("");
 		buf.clear();
 		buf<<"Entry$=="<<i<<"&&CdcCell_edep<"<<edep_cut<<"&&CdcCell_hittype==0";
-		it->Draw("CdcCell_y:CdcCell_x",buf.str().c_str(),"SAMELINE");
-		it->SetMarkerStyle(7);
-		it->Draw("CdcCell_y:CdcCell_x",buf.str().c_str(),"SAME");
+		it->Draw("CdcCell_y:CdcCell_x",buf.str().c_str(),"SAMELINE"); // draw the track
+//		it->SetMarkerStyle(7);
+		it->SetMarkerColor(kBlack);
+		it->Draw("CdcCell_y:CdcCell_x",buf.str().c_str(),"SAME"); // draw the hit point of the track
 		it->SetMarkerColor(kRed);
-		it->Draw("CdcCell_wy:CdcCell_wx",buf.str().c_str(),"SAME");
+		it->Draw("CdcCell_wy:CdcCell_wx",buf.str().c_str(),"SAME"); // draw the wire position of the hits of the track
 		buf.str("");
 		buf.clear();
 		ewiret = new TEllipse(0,0,82,82);
 		ewiret->SetFillStyle(0);
 		ewiret->SetLineColor(kBlack);
-		ewiret->Draw("SAME");
+		ewiret->Draw("SAME"); // draw outer wall
 		ewiret = new TEllipse(0,0,50,50);
 		ewiret->SetFillStyle(0);
 		ewiret->SetLineColor(kBlack);
-		ewiret->Draw("SAME");
+		ewiret->Draw("SAME"); // draw inner wall
 		it->GetEntry(i);
 		for (int j = 0; j<CdcCell_nHits; j++){
 			wx = (*CdcCell_wx)[j];
@@ -166,20 +170,23 @@
 			}
 			else{
 				//FIXME
-//				continue;
+				continue;
 				if ((*CdcCell_hittype)[j]==0)
 					ewiret->SetLineColor(kOrange);
 				else
 					ewiret->SetLineColor(kGreen);
 			}
-			ewiret->Draw("SAME");
+			ewiret->Draw("SAME"); // Draw hits.
 		}
 		buf.str("");
 		buf.clear();
-		buf<<i<<"_before.png";
-		c->SaveAs(buf.str().c_str());
 		//FIXME
-//		c->WaitPrimitive();
+//		buf<<i<<"_before.pdf";
+		buf<<i<<"_after.pdf";
+//		c->SaveAs(buf.str().c_str());
+		c->WaitPrimitive();
+	//	c->Update();
+//		while(1){}
 	}
 	of->Close();
 }

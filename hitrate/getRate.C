@@ -311,7 +311,7 @@ void getRate(){
 		if (type != 0) continue;
 //		if (iEvent>=11094) weight*=100./31;
 		// FIXME
-		if (cpid==2212) continue;
+		if (topo==-2||topo==-1||topo==1000||topo==1002) continue;
 		if (topo==1000&&cpid==2212) weight *= 1./2.85;
 		else if (topo==1000&&cpid==1000010020) weight *= 1./4;
 		else if (topo==1001) weight *= 0.67;

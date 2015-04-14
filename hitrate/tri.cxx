@@ -73,6 +73,8 @@ int main(int argc, char *argv[]){
 //	TString parName = "n0PHITS140822";
 //	TString parName = "OTWC";
 	TString parName = "All";
+//	TString parName = "DIO";
+//	TString parName = "MCproton";
 //	TString suffixName = "0508_100cm_1e7";
 //	TString suffixName = "0508_100cm_1e9";
 //	TString suffixName = "140905M02";

@@ -3,6 +3,7 @@
 	TLegend * legend;
 	TString MyData = getenv("MYDATA");
 	TString MySim = getenv("MYWORKAREA");
+	TString RunName = "none";
 	MySim += "/Simulate/comet";
 
 	double time_right = 1140;
@@ -43,6 +44,39 @@
 	TString DirName = MyData+"/Coll.pim.140905M02.g496p02QBH";
 	int nProcs = 10;
 	int nJobs = 1;
+
+//	int PID = 13;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 172257./1e7;
+//	TString parName = "mu";
+//	TString opt = "141022nc";
+//	RunName = MySim+"/output/Coll."+opt+".root";
+//	TString DirName = MyData+"/Coll.141022Vac";
+//	int nProcs = 8;
+//	int nJobs = 1;
+
+//	int PID = 13;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 802367./1e8;
+//	TString parName = "mu";
+//	TString opt = "141022Vac";
+////	RunName = MySim+"/output/Coll."+opt+".root";
+////	TString DirName = MyData+"/Coll.141022Vac";
+//	int nProcs = 8;
+//	int nJobs = 1;
+
+//	int PID = 13;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 802367./1e8;
+//	TString parName = "mu";
+//	TString opt = "140905M02";
+//	RunName = MySim+"/output/Coll."+opt+".root";
+//	TString DirName = "";
+//	int nProcs = 0;
+//	int nJobs = 0;
 
 //	int PID = 13;
 //	double minimum = 1e-11;
@@ -134,8 +168,9 @@
 	h04->GetYaxis()->SetTitleOffset(1.5);
 //	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,-750,250);
 //	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,-1000,0);
-	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,5500,6500);
+//	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,5500,6500);
 //	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,5900,6900);
+	TH1D * h05 = new TH1D("h05",par+" Longitudinal Distribution",200,6000,7000);
 	h05->GetXaxis()->SetTitle("z position (mm)");
 	h05->GetYaxis()->SetTitle("count/p^{+}");
 	h05->GetYaxis()->SetTitleOffset(1.5);
