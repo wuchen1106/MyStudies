@@ -30,9 +30,9 @@
 
 	for (int iopt = 0; iopt<opt.size(); iopt++){
 		c[iopt] = new TChain("tree","tree");
-		for ( int i = 0; i<100; i++)	{
+		for ( int i = 0; i<10; i++)	{
 			buf.str("");buf.clear();
-			buf<<"/scratchfs/bes/wuc/MyWorkArea/Data/TS1.g60cm20mm.d50mm.g496p02QBH/"<<i<<"_job0.raw";
+			buf<<"/home/chen/MyWorkArea/Data/PT."<<runName<<"."<<opt[iopt]<<".flip.g496p02QBH/"<<i<<"_job0.raw";
 			c[iopt]->Add(buf.str().c_str());
 		}
 		std::cout<<"c["<<iopt<<"]->GetEntries()="<<c[iopt]->GetEntries()<<std::endl;
@@ -68,33 +68,31 @@
 				}
 			}
 		}
-//		if (iopt==0){
-//			c1->cd();
-//			hmu[iopt]->SetTitle("#mu^{-} Spectrum @ The Beginning of The 90^{o} Bending Solenoid");
-//			hmu[iopt]->GetXaxis()->SetTitle("p_{tot} [MeV/c]");
-//			hmu[iopt]->Draw("LP");
-//			c2->cd();
-//			hpi[iopt]->SetTitle("#pi^{-} Spectrum @ The Beginning of The 90^{o} Bending Solenoid");
-//			hpi[iopt]->GetXaxis()->SetTitle("p_{tot} [MeV/c]");
-//			hpi[iopt]->Draw("LP");
-//		}
-//		else{
-//			c1->cd();
-//			hmu[iopt]->Draw("LPSAME");
-//			c2->cd();
-//			hpi[iopt]->Draw("LPSAME");
-//		}
-//		buf.str("");buf.clear();
-//		buf<<"d = "<<opt[iopt]<<": "<<hmu[iopt]->Integral();
-//		l1->AddEntry(hmu[iopt],buf.str().c_str());
-//		buf.str("");buf.clear();
-//		buf<<"d = "<<opt[iopt]<<": "<<hpi[iopt]->Integral();
-//		l2->AddEntry(hpi[iopt],buf.str().c_str());
-//		if (iopt==opt.size()-1){
-//			c1->cd(); l1->Draw("SAME");
-//			c2->cd(); l2->Draw("SAME");
-//		}
-		std::cout<<"Nmu:"<<hmu[iopt]->Integral()<<std::endl;
-		std::cout<<"Npi:"<<hpi[iopt]->Integral()<<std::endl;
+		if (iopt==0){
+			c1->cd();
+			hmu[iopt]->SetTitle("#mu^{-} Spectrum @ The Beginning of The 90^{o} Bending Solenoid");
+			hmu[iopt]->GetXaxis()->SetTitle("p_{tot} [MeV/c]");
+			hmu[iopt]->Draw("LP");
+			c2->cd();
+			hpi[iopt]->SetTitle("#pi^{-} Spectrum @ The Beginning of The 90^{o} Bending Solenoid");
+			hpi[iopt]->GetXaxis()->SetTitle("p_{tot} [MeV/c]");
+			hpi[iopt]->Draw("LP");
+		}
+		else{
+			c1->cd();
+			hmu[iopt]->Draw("LPSAME");
+			c2->cd();
+			hpi[iopt]->Draw("LPSAME");
+		}
+		buf.str("");buf.clear();
+		buf<<"d = "<<opt[iopt]<<": "<<hmu[iopt]->Integral()/0.9;
+		l1->AddEntry(hmu[iopt],buf.str().c_str());
+		buf.str("");buf.clear();
+		buf<<"d = "<<opt[iopt]<<": "<<hpi[iopt]->Integral()/0.9;
+		l2->AddEntry(hpi[iopt],buf.str().c_str());
+		if (iopt==opt.size()-1){
+			c1->cd(); l1->Draw("SAME");
+			c2->cd(); l2->Draw("SAME");
+		}
 	}
 }

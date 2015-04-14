@@ -36,14 +36,22 @@
 
 	int PID = -211;
 	double minimum = 1e-11;
-	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-	double NperP = 51180473./1e10;
-	TString parName = "pim";
-	TString opt = "140905M02";
-//	RunName = MySim+"/output/Coll."+opt+".root";
-	TString DirName = MyData+"/Coll.pim.140905M02.g496p02QBH";
-	int nProcs = 10;
-	int nJobs = 1;
+	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+	double NperP = 172257./1e7;
+	TString parName = "mu";
+	TString opt = "ori.nocoli";
+	RunName = MySim+"/output/Coll."+opt+".root";
+
+//	int PID = 13;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 172257./1e7;
+//	TString parName = "mu";
+//	TString opt = "141109";
+////	RunName = MySim+"/output/Coll."+opt+".root";
+//	TString DirName = MyData+"/Coll.141109.g496p02QBH";
+//	int nProcs = 10;
+//	int nJobs = 1;
 
 //	int PID = 13;
 //	double minimum = 1e-11;
@@ -430,6 +438,8 @@
 		}
 	}
 	double nProton = nTotal/NperP;
+	// FIXME
+	nProton = 1e6;
 	std::cout<<"nProton = "<<nProton<<std::endl;
 	std::cout<<"nStopped = "<<nStopped<<std::endl;
 	nPassedH/=nProton;
