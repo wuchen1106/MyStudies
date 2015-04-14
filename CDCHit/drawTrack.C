@@ -5,7 +5,8 @@
 //	TFile * ifile = new TFile("signal.geantino.root");
 //	TFile * ifile = new TFile("signal.140905M02.noise.root");
 	//TFile * ifile = new TFile("signal.electron.1T.new.root");
-	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire.AllDisks.ExtraInfo.WithNoise.root");
+//	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire.AllDisks.ExtraInfo.WithNoise.root");
+	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire80um.AllDisks.map140905.root");
 //	TFile * ifile = new TFile("signal.geantino.new4.root");
 //	TFile * ifile = new TFile("signal.geantino.single.new3.root");
 	TTree * it = (TTree*) ifile->Get("tree");
@@ -111,7 +112,7 @@
 	std::cout<<"Total noise hits: "<<nhitnoise_total<<std::endl;
 	std::cout<<"Noise hits with edep<"<<edep_cut*1e6<<"keV: "<<nhitnoise_edepcut<<std::endl;
 
-	TH2D * h0 = new TH2D("h2","h2",128,-85,85,128,-85,85);
+	TH2D * h0 = new TH2D("h0","h0",128,-85,85,128,-85,85);
 	gStyle->SetOptStat(0);
 	for ( int i = 0 ; i<it->GetEntries(); i++){
 		if (i%100==0) printf("%lf%...\n",(double)i/it->GetEntries()*100);
@@ -133,7 +134,7 @@
 		buf.clear();
 		buf<<"Entry$=="<<i<<"&&CdcCell_edep<"<<edep_cut<<"&&CdcCell_hittype==0";
 		it->Draw("CdcCell_y:CdcCell_x",buf.str().c_str(),"SAMELINE"); // draw the track
-//		it->SetMarkerStyle(7);
+		it->SetMarkerStyle(7);
 		it->SetMarkerColor(kBlack);
 		it->Draw("CdcCell_y:CdcCell_x",buf.str().c_str(),"SAME"); // draw the hit point of the track
 		it->SetMarkerColor(kRed);

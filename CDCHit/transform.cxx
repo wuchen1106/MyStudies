@@ -130,7 +130,9 @@ int main(int argc, char** argv){
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.140905M02.root");
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.150um.G41001.withwire.AllDisks.root");
-	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.wirehits.130927.root");
+//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.80um.0p95T.root");
+	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.80um.field.root");
+//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.wirehits.130927.root");
 	TTree * it = (TTree*) ifile->Get("tree");
 
 	int CdcCell_nHits = 0;
@@ -160,6 +162,8 @@ int main(int argc, char** argv){
 	std::vector<double> * M_y = 0;
 	std::vector<double> * M_z = 0;
 	std::vector<double> * M_t = 0;
+	std::vector<int> * M_id = 0;
+	std::vector<std::string> * M_name = 0;
 	int evt_num;
 	int run_num;
 
@@ -187,6 +191,8 @@ int main(int argc, char** argv){
 	it->SetBranchAddress("CdcCell_posflag",&CdcCell_posflag);
 
 	it->SetBranchAddress("M_nHits",&M_nHits);
+	it->SetBranchAddress("M_volName",&M_name);
+	it->SetBranchAddress("M_volID",&M_id);
 	it->SetBranchAddress("M_tid",&M_tid);
 	it->SetBranchAddress("M_x",&M_x);
 	it->SetBranchAddress("M_y",&M_y);
@@ -260,6 +266,15 @@ int main(int argc, char** argv){
 	ot->Branch("CdcCell_mz",&O_mz);
 	ot->Branch("CdcCell_mt",&O_mt);
 
+	ot->Branch("M_nHits",&M_nHits);
+	ot->Branch("M_volName",&M_name);
+	ot->Branch("M_volID",&M_id);
+	ot->Branch("M_tid",&M_tid);
+	ot->Branch("M_x",&M_x);
+	ot->Branch("M_y",&M_y);
+	ot->Branch("M_z",&M_z);
+	ot->Branch("M_t",&M_t);
+
 	# ifdef use_extra
 	int O_T_nHits = 0;
 	int O_wire_nHits = 0;
@@ -273,14 +288,15 @@ int main(int argc, char** argv){
 	bool triggerd = false;
 	double firsthittime = 0;
 	int nGoodHit = 0;
-	for ( int i = 0; i<it->GetEntries(); i++){
-//	for ( int i = 0; i<2e4; i++){
+	// FIXME
+//	for ( int i = 0; i<it->GetEntries(); i++){
+	for ( int i = 0; i<1e3; i++){
 		for(int j = 0; j<18; j++){
 			for (int k = 0; k<350; k++){
 				dict[j][k]=-1;
 			}
 		}
-		if (i%1==0) printf("%lf%...\n",(double)i/it->GetEntries()*100);
+		if (i%1000==0) printf("%lf%...\n",(double)i/it->GetEntries()*100);
 		it->GetEntry(i);
 		# ifdef use_extra
 		O_T_nHits = T_nHits-1;
@@ -288,27 +304,27 @@ int main(int argc, char** argv){
 		# endif
 		if (CdcCell_nHits==0) continue;
 		O_nHits = 0;
-		O_hittype = new std::vector<int>;
-		O_t = new std::vector<double>;
-		O_tof = new std::vector<double>;
-		O_wx = new std::vector<double>;
-		O_wy = new std::vector<double>;
-		O_wz = new std::vector<double>;
-		O_x = new std::vector<double>;
-		O_y = new std::vector<double>;
-		O_z = new std::vector<double>;
-		O_px = new std::vector<double>;
-		O_py = new std::vector<double>;
-		O_pz = new std::vector<double>;
-		O_driftD = new std::vector<double>;
-		O_driftDtrue = new std::vector<double>;
-		O_tstart = new std::vector<double>;
-		O_tstop = new std::vector<double>;
-		O_cellID = new std::vector<int>;
-		O_layerID = new std::vector<int>;
-		O_edep = new std::vector<double>;
-		O_tid = new std::vector<int>;
-		O_posflag = new std::vector<int>;
+		if(O_hittype) delete O_hittype; O_hittype = new std::vector<int>;
+		if(O_t) delete O_t; O_t = new std::vector<double>;
+		if(O_tof) delete O_tof; O_tof = new std::vector<double>;
+		if(O_wx) delete O_wx; O_wx = new std::vector<double>;
+		if(O_wy) delete O_wy; O_wy = new std::vector<double>;
+		if(O_wz) delete O_wz; O_wz = new std::vector<double>;
+		if(O_x) delete O_x; O_x = new std::vector<double>;
+		if(O_y) delete O_y; O_y = new std::vector<double>;
+		if(O_z) delete O_z; O_z = new std::vector<double>;
+		if(O_px) delete O_px; O_px = new std::vector<double>;
+		if(O_py) delete O_py; O_py = new std::vector<double>;
+		if(O_pz) delete O_pz; O_pz = new std::vector<double>;
+		if(O_driftD) delete O_driftD; O_driftD = new std::vector<double>;
+		if(O_driftDtrue) delete O_driftDtrue; O_driftDtrue = new std::vector<double>;
+		if(O_tstart) delete O_tstart; O_tstart = new std::vector<double>;
+		if(O_tstop) delete O_tstop; O_tstop = new std::vector<double>;
+		if(O_cellID) delete O_cellID; O_cellID = new std::vector<int>;
+		if(O_layerID) delete O_layerID; O_layerID = new std::vector<int>;
+		if(O_edep) delete O_edep; O_edep = new std::vector<double>;
+		if(O_tid) delete O_tid; O_tid = new std::vector<int>;
+		if(O_posflag) delete O_posflag; O_posflag = new std::vector<int>;
 
 		triggerd = false;
 		firsthittime = 0;
@@ -375,13 +391,13 @@ int main(int argc, char** argv){
 			hittime = (*CdcCell_t)[hitindice[j]] + shifttime;
 			tof = (*CdcCell_t)[hitindice[j]];
 			if (dict[(*CdcCell_layerID)[hitindice[j]]][(*CdcCell_cellID)[hitindice[j]]]==-1){
-				//FIXME
 				double px = (*CdcCell_px)[hitindice[j]];
 				double py = (*CdcCell_py)[hitindice[j]];
 				double pz = (*CdcCell_pz)[hitindice[j]];
 				double pa = sqrt(px*px+py*py+pz*pz);
+				//FIXME
 				//if (tof>7||pa<0.103||hittype!=0) continue; // only first turn
-				if (hittype!=0) continue; // only hits from the signal track
+				//if (hittype!=0) continue; // only hits from the signal track
 
 				dict[(*CdcCell_layerID)[hitindice[j]]][(*CdcCell_cellID)[hitindice[j]]]=O_nHits;
 				O_nHits++;
@@ -417,11 +433,11 @@ int main(int argc, char** argv){
 		// mixture bkg
 		int total_count = 0;
 		//FIXME
-//		for(int ibkg = 0; ibkg < v_nBKGneed.size(); ibkg++){
-		for(int ibkg = 0; ibkg < 0; ibkg++){
+		for(int ibkg = 0; ibkg < v_nBKGneed.size(); ibkg++){
+//		for(int ibkg = 0; ibkg < 0; ibkg++){
 			int nbkg = v_nBKGneed[ibkg];
 			int nBKG = v_nBKG[ibkg];
-			std::cout<<"  =>Now mix in "<<nbkg<<" noise tracks from \""<<v_filename[ibkg]<<"\""<<std::endl;
+			//std::cout<<"  =>Now mix in "<<nbkg<<" noise tracks from \""<<v_filename[ibkg]<<"\""<<std::endl;
 			int count_bkg = 0;
 			for (int idict = 0; idict<200; idict++){
 				dict2[idict] = -1;
@@ -430,17 +446,17 @@ int main(int argc, char** argv){
 				int index = 0;
 				while(1){
 					index = (int)(gRandom->Uniform()*nBKG)%nBKG;
-					std::cout<<"          # dict2["<<index<<"] = "<<dict2[index]<<std::endl;
+					//std::cout<<"          # dict2["<<index<<"] = "<<dict2[index]<<std::endl;
 					if (dict2[index]==-1){
 						dict2[index] = 1;
-						std::cout<<"          Yes! "<<std::endl;
+						//std::cout<<"          Yes! "<<std::endl;
 						break;
 					}
 				}
 				count_bkg++;
 				int this_count = 0;
 				int evt_index = ibkg*1300+index;
-				std::cout<<"     + "<<count_bkg<<": Got "<<NMN_nHits[evt_index]<<" hits @ "<<index<<std::endl;
+				//std::cout<<"     + "<<count_bkg<<": Got "<<NMN_nHits[evt_index]<<" hits @ "<<index<<std::endl;
 				//			index = index+ibkg;
 				//			int nindex = index%nBKG;
 				for (int ibkghit = 0; ibkghit<NMN_nHits[evt_index]; ibkghit++){
@@ -510,12 +526,12 @@ int main(int argc, char** argv){
 						}
 					}
 				}// end of hits in bkg event
-				std::cout<<"        Finished! Actually got "<<this_count<<" hits; Totallly we have "<<total_count<<" noise hits mixed inside"<<std::endl;
+				//std::cout<<"        Finished! Actually got "<<this_count<<" hits; Totallly we have "<<total_count<<" noise hits mixed inside"<<std::endl;
 			}// end of events loop in bkg
 		}// end of bkg loop
-		std::cout<<"Filling ot @"<<(void*)ot<<"..."<<std::endl;
+		//std::cout<<"Filling ot @"<<(void*)ot<<"..."<<std::endl;
 		ot->Fill();
-		std::cout<<"Filled! ot->GetEntries() = "<<ot->GetEntries()<<std::endl;
+		//std::cout<<"Filled! ot->GetEntries() = "<<ot->GetEntries()<<std::endl;
 	}// end of event loop
 	ot->Write();
 	of->Close();

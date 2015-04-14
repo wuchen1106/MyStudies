@@ -11,8 +11,8 @@
 
 	TChain * c = new TChain("tree");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/testCapture.Yuki.withtarget.root");
-	c->Add("/home/chen/MyWorkArea/Simulate/comet/output/testCapture.Ye.root");
-	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
+	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/testCapture.Ye.root");
+	c->Add("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
 	int evt_num;
 	std::vector<int> *vpid = 0;
 	std::vector<int> *vtid = 0;
