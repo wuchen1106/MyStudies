@@ -289,8 +289,8 @@ int main(int argc, char** argv){
 	double firsthittime = 0;
 	int nGoodHit = 0;
 	// FIXME
-//	for ( int i = 0; i<it->GetEntries(); i++){
-	for ( int i = 0; i<1e3; i++){
+	for ( int i = 0; i<it->GetEntries(); i++){
+//	for ( int i = 0; i<1e3; i++){
 		for(int j = 0; j<18; j++){
 			for (int k = 0; k<350; k++){
 				dict[j][k]=-1;
