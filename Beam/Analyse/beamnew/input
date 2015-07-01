@@ -7,12 +7,19 @@
 	TreeName | tree
 
 #	TYPE    | Directory                                                                   | runname | #CPU | #job
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/COMET.gaussian.Ti500.g41001QBH           |         | 200  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/COMET.turtle1402.Ti600.Ti100.g496p02     |         | 200  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS1.g60cm20mm182gGaussian.d50mm.a.g496p02QBH  |         | 300  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS1.g60cm20mm182gGaussian.d50mm.b.g496p02QBH  |         | 20  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS1.g60cm20mm182g.d50mm.g496p02QBH       |         | 320  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS1.g60cm20mm.d50mm.g496p02QBH           |         | 100  | 1
 #	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS2.g60cm20mm.005T.g496QBH2              |         | 300  | 1
-	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/B9.g60cm20mm.005T.g496QBH                |         | 300  | 1
-	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/B9.g60cm20mm.005T.g496QBH2               |         | 20  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS2.g60cm20mm182g.d50mm.g496p02QBH       |         | 200  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/B9.g60cm20mm.005T.g496QBH                |         | 300  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/B9.g60cm20mm.005T.g496QBH2               |         | 20  | 1
 
 #	TYPE    | Path
-#	oFILE   | /home/chen/MyWorkArea/g4sim/output/raw_g4sim.root
+	oFILE   | /home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root
 
 #	TYPE    | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2

@@ -24,6 +24,15 @@
 int main(int argc, char** argv){
 	double tsep = 1170; // ns
 
+	double hmin = 1e-7;
+	double hmax = 1e-2;
+
+	TString runName = "";
+	runName = "Particles Back to Capture Section (Graphite, 60cm)";
+	runName = "Particles at The end of Capture Section (Graphite, 60cm)";
+	runName = "Particles at The end of 90 degree";
+	runName = "Particles at The beginning of 90 degree";
+
 	std::vector<int> pids;
 	pids.push_back(-211); // pi-
 	pids.push_back(13);   // mu-
@@ -69,9 +78,18 @@ int main(int argc, char** argv){
 	pcolors.push_back(1); // gamma
 
 	TFile *f = 0;
-	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/CS.root");
-	f = new TFile("/home/chen/MyWorkArea/Simulate/comet/data/TS2.ALL.g60cm20mm.005T.g496QBH.root");
-	double nProtons = 1E8*316./320;
+	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/Simulate/comet/data/TS1.EP.ori.182g.root");
+	//f = new TFile("result/CS.EP.ori.182g.root");
+	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/CS.COMET.gaussian.Ti500.g41001QBH.root");
+	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/TS1.COMET.gaussian.Ti500.g41001QBH.root");
+	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/CS.COMET.turtle1402.Ti600.Ti100.g496p02.root");
+	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/TS1.COMET.turtle1402.Ti600.Ti100.g496p02.root");
+	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/TS2.g60cm20mm182g.d50mm.g496p02QBH.root");
+	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/Simulate/comet/data/TS2.ALL.g60cm20mm.005T.g496QBH.root");
+	f = new TFile("/home/chen/MyWorkArea/Simulate/comet/data/TS1.ALL.140625ori.gaussian.g41001QBH.root");
+	//double nProtons = 1E8*316./320;
+	double nProtons = 1E7;
+	//double nProtons = 10000*200;
 	TTree *t = (TTree*)f->Get("t");
 	double weight = 1;
 	double px;
@@ -95,8 +113,10 @@ int main(int argc, char** argv){
 		buf.str("");
 		buf.clear();
 		buf<<"h_"<<i<<"_pa";
-//		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",150,0,250);
-		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",150,0,200);
+//		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",125,0,400);
+//		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",125,0,300);
+		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",125,0,250);
+//		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",125,0,200);
 		h->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 		h->GetYaxis()->SetTitle("count / initial proton");
 		if (pcharges[i] == 0) h->SetLineStyle(9);
@@ -111,7 +131,7 @@ int main(int argc, char** argv){
 		buf.str("");
 		buf.clear();
 		buf<<"h_"<<i<<"_time";
-		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_t",150,0,tsep);
+		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_t",125,0,tsep);
 		h->GetXaxis()->SetTitle("Time (ns)");
 		h->GetYaxis()->SetTitle("count / initial proton");
 		if (pcharges[i] == 0) h->SetLineStyle(9);
@@ -176,16 +196,13 @@ int main(int argc, char** argv){
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	for (int i = 0; i<pids.size(); i++){
-		std::cout<<"Setting for "<<pnames[i]<<": SetRangeUser(1e-9,"<<maximumpa<<")"<<std::endl;
-		h_pa[i]->GetYaxis()->SetRangeUser(1e-9,1e-2);
+		h_pa[i]->GetYaxis()->SetRangeUser(hmin,hmax);
 		if (i==0){
-//			h_pa[i]->SetTitle("Particles Back to Capture Section (Graphite, 60cm)");
-//			h_pa[i]->SetTitle("Particles at The end of Capture Section (Graphite, 60cm)");
-			h_pa[i]->SetTitle("Particles at The End of 90 Degree");
+			h_pa[i]->SetTitle(runName);
 			h_pa[i]->Draw();
 		}
 		else h_pa[i]->Draw("SAME");
-		double num = h_pa[i]->Integral();
+		double num = h_pa[i]->Integral(0,126);
 		buf.str("");
 		buf.clear();
 		buf<<std::scientific;
@@ -205,16 +222,13 @@ int main(int argc, char** argv){
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	for (int i = 0; i<pids.size(); i++){
-		std::cout<<"Setting for "<<pnames[i]<<": SetRangeUser(1e-9,"<<maximumtime<<")"<<std::endl;
-		h_time[i]->GetYaxis()->SetRangeUser(1e-7,1e-2);
+		h_time[i]->GetYaxis()->SetRangeUser(hmin,hmax);
 		if (i==0){
-//			h_time[i]->SetTitle("Particles Back to Capture Section (Graphite, 60cm)");
-//			h_time[i]->SetTitle("Particles at The end of Capture Section (Graphite, 60cm)");
-			h_time[i]->SetTitle("Particles at The end of 90 degree");
+			h_time[i]->SetTitle(runName);
 			h_time[i]->Draw();
 		}
 		else h_time[i]->Draw("SAME");
-		double num = h_time[i]->Integral();
+		double num = h_time[i]->Integral(0,126);
 		buf.str("");
 		buf.clear();
 		buf<<std::scientific;

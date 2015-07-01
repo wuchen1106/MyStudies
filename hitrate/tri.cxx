@@ -77,23 +77,29 @@ int main(int argc, char *argv[]){
 //	TString parName = "MCproton";
 //	TString suffixName = "0508_100cm_1e7";
 //	TString suffixName = "0508_100cm_1e9";
-//	TString suffixName = "140905.old";
 //	TString suffixName = "140905M02";
-	TString suffixName = "141109";
+//	TString suffixName = "141022";
+//	TString suffixName = "141109.005T.50Steel640Ro";
+	TString suffixName = "test";
+//	TString runName = parName+"."+suffixName+".cdc";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
-//	FileNames.push_back(MyWork+"/Simulate/comet/output/CDC."+runName+".root");
+//	FileNames.push_back(MyWork+"/Simulate/comet/output/CDCneutral."+suffixName+".root");
+	FileNames.push_back(MyWork+"/Simulate/comet/output/raw_g4sim.root");
 //	FileNames.push_back(runName+".root");
-	DirName.push_back(MyData+"/CDC."+parName+"."+suffixName+".g496p02QBH");
-	nRuns.push_back(10);
+//	DirName.push_back(MyData+"/CDC."+parName+"."+suffixName+".g496p02QBH");
+//	nRuns.push_back(20);
 //	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
 //	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
 //	nRuns.push_back(50);
-	double nProtons=1e7;
+	double nProtons = 1e8*19/20.;
+//	else if (parName == "n0")
+//		nProtons *= 0.9;
+//	nProtons*=318./320;
 	 // ########Should Modify#########
 
 	// input

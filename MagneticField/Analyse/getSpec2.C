@@ -4,12 +4,12 @@
 	std::vector<int> color;
 
 	opt.push_back(0); color.push_back(kBlack);
-	opt.push_back(50); color.push_back(kRed);
-	opt.push_back(100); color.push_back(kBlue);
-	opt.push_back(150); color.push_back(kOrange);
-	opt.push_back(200); color.push_back(kMagenta);
-	opt.push_back(250); color.push_back(kGreen);
-	opt.push_back(300); color.push_back(kCyan);
+//	opt.push_back(50); color.push_back(kRed);
+//	opt.push_back(100); color.push_back(kBlue);
+//	opt.push_back(150); color.push_back(kOrange);
+//	opt.push_back(200); color.push_back(kMagenta);
+//	opt.push_back(250); color.push_back(kGreen);
+//	opt.push_back(300); color.push_back(kCyan);
 
 	TString runName = "7650";
 	std::stringstream buf;
@@ -23,8 +23,8 @@
 	std::vector<int> * vtid; 
 	std::vector<int> * vpid; 
 	std::vector<std::string> * vname; 
-	TCanvas * c1 = new TCanvas("c1","c1");
-	TCanvas * c2 = new TCanvas("c2","c2");
+//	TCanvas * c1 = new TCanvas("c1","c1");
+//	TCanvas * c2 = new TCanvas("c2","c2");
 	TLegend *l1 = new TLegend(0.7,0.7,0.9,0.9);
 	TLegend *l2 = new TLegend(0.7,0.7,0.9,0.9);
 
@@ -35,6 +35,7 @@
 			buf<<"/home/chen/MyWorkArea/Data/PT."<<runName<<"."<<opt[iopt]<<".flip.g496p02QBH/"<<i<<"_job0.raw";
 			c[iopt]->Add(buf.str().c_str());
 		}
+		std::cout<<"c["<<iopt<<"]->GetEntries()="<<c[iopt]->GetEntries()<<std::endl;
 		buf.str("");buf.clear();
 		buf<<"hmu"<<opt[iopt];
 		hmu[iopt]=new TH1D(buf.str().c_str(),buf.str().c_str(),32,0,300);

@@ -22,36 +22,37 @@ int main(int argc, char** argv){
 	std::vector<double> v_effi;
 	std::vector<int> v_nBKG;
 	std::vector<int> v_nBKGneed;
-	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/proton.mum.140905M02.root");
+	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/proton.mum.141109.140625ori.gaussian.root");
 	v_effi.push_back(1/2.85);
-//	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/proton.pim.140905M02.root");
+//	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/proton.pim.141109.140625ori.gaussian.root");
 //	v_effi.push_back(1);
-	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/noise.OT.140905M02.root");
+	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/noise.OT.141109.140625ori.gaussian.root");
 	v_effi.push_back(1);
-	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/noise.mumneutron.140905M02.root");
+	v_filename.push_back("/home/chen/MyWorkArea/MyStudies/hitrate/result/noise.mumneutron.141109.140625ori.gaussian.root");
 	v_effi.push_back(1.6);
 	int index = 0;
 
+	int NMN_nEvents_Max = 6500;
 	int NMN_nHits_Max = 100;
-	int * NMN_nHits = (int*)malloc(sizeof(int)*3*1300);
-	double * NMN_t = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_driftD = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_driftDtrue = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_tstart = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_tstop = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_edep = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	int * NMN_cellID = (int*)malloc(sizeof(int)*3*1300*NMN_nHits_Max);
-	int * NMN_layerID = (int*)malloc(sizeof(int)*3*1300*NMN_nHits_Max);
-	int * NMN_posflag = (int*)malloc(sizeof(int)*3*1300*NMN_nHits_Max);
-	double * NMN_wx = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_wy = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_wz = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_x = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_y = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_z = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_px = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_py = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
-	double * NMN_pz = (double*)malloc(sizeof(double)*3*1300*NMN_nHits_Max);
+	int * NMN_nHits = (int*)malloc(sizeof(int)*3*NMN_nEvents_Max);
+	double * NMN_t = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_driftD = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_driftDtrue = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_tstart = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_tstop = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_edep = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	int * NMN_cellID = (int*)malloc(sizeof(int)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	int * NMN_layerID = (int*)malloc(sizeof(int)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	int * NMN_posflag = (int*)malloc(sizeof(int)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_wx = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_wy = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_wz = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_x = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_y = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_z = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_px = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_py = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
+	double * NMN_pz = (double*)malloc(sizeof(double)*3*NMN_nEvents_Max*NMN_nHits_Max);
 
 	int BKG_nHits = 0;
 	std::vector<double> * BKG_t = 0;
@@ -100,26 +101,26 @@ int main(int argc, char** argv){
 		c_BKG->SetBranchAddress("O_pz",&BKG_pz);
 		for ( int j = 0; j<c_BKG->GetEntries(); j++){
 			c_BKG->GetEntry(j);
-			NMN_nHits[i*1300+j] = BKG_nHits;
+			NMN_nHits[i*NMN_nEvents_Max+j] = BKG_nHits;
 			for (int k = 0; k<BKG_nHits; k++){
-				NMN_t[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_t)[k];
-				NMN_driftD[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_driftD)[k];
-				NMN_driftDtrue[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_driftDtrue)[k];
-				NMN_tstart[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_tstart)[k];
-				NMN_tstop[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_tstop)[k];
-				NMN_edep[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_edep)[k];
-				NMN_cellID[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_cellID)[k];
-				NMN_layerID[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_layerID)[k];
-				NMN_posflag[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_posflag)[k];
-				NMN_wx[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_wx)[k];
-				NMN_wy[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_wy)[k];
-				NMN_wz[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_wz)[k];
-				NMN_x[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_x)[k];
-				NMN_y[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_y)[k];
-				NMN_z[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_z)[k];
-				NMN_px[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_px)[k];
-				NMN_py[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_py)[k];
-				NMN_pz[i*1300*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_pz)[k];
+				NMN_t[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_t)[k];
+				NMN_driftD[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_driftD)[k];
+				NMN_driftDtrue[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_driftDtrue)[k];
+				NMN_tstart[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_tstart)[k];
+				NMN_tstop[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_tstop)[k];
+				NMN_edep[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_edep)[k];
+				NMN_cellID[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_cellID)[k];
+				NMN_layerID[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_layerID)[k];
+				NMN_posflag[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_posflag)[k];
+				NMN_wx[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_wx)[k];
+				NMN_wy[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_wy)[k];
+				NMN_wz[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_wz)[k];
+				NMN_x[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_x)[k];
+				NMN_y[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_y)[k];
+				NMN_z[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_z)[k];
+				NMN_px[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_px)[k];
+				NMN_py[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_py)[k];
+				NMN_pz[i*NMN_nEvents_Max*NMN_nHits_Max+j*NMN_nHits_Max+k] = (*BKG_pz)[k];
 			}
 		}
 	}
@@ -129,8 +130,10 @@ int main(int argc, char** argv){
 
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.140905M02.root");
 //	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
-//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.150um.G41001.withwire.AllDisks.root");
-	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.wirehits.root");
+	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.150um.G41001.withwire.AllDisks.140905_1cm.newrl.root");
+//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.80um.0p95T.root");
+//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.126um.140905.5cmgrid.root");
+//	TFile * ifile = new TFile("/home/chen/MyWorkArea/Simulate/comet/output/signal.electron.wirehits.130927.root");
 	TTree * it = (TTree*) ifile->Get("tree");
 
 	int CdcCell_nHits = 0;
@@ -160,7 +163,13 @@ int main(int argc, char** argv){
 	std::vector<double> * M_y = 0;
 	std::vector<double> * M_z = 0;
 	std::vector<double> * M_t = 0;
+	std::vector<int> * M_id = 0;
+	std::vector<std::string> * M_name = 0;
+	int evt_num;
+	int run_num;
 
+	it->SetBranchAddress("evt_num",&evt_num);
+	it->SetBranchAddress("run_num",&run_num);
 	it->SetBranchAddress("CdcCell_nHits",&CdcCell_nHits);
 	it->SetBranchAddress("CdcCell_t",&CdcCell_t);
 	it->SetBranchAddress("CdcCell_wx",&CdcCell_wx);
@@ -183,6 +192,8 @@ int main(int argc, char** argv){
 	it->SetBranchAddress("CdcCell_posflag",&CdcCell_posflag);
 
 	it->SetBranchAddress("M_nHits",&M_nHits);
+	it->SetBranchAddress("M_volName",&M_name);
+	it->SetBranchAddress("M_volID",&M_id);
 	it->SetBranchAddress("M_tid",&M_tid);
 	it->SetBranchAddress("M_x",&M_x);
 	it->SetBranchAddress("M_y",&M_y);
@@ -227,6 +238,8 @@ int main(int argc, char** argv){
 	TFile * of = new TFile("output.root","RECREATE");
 	TTree * ot = new TTree("tree","tree");
 
+	ot->Branch("evt_num",&evt_num);
+	ot->Branch("run_num",&run_num);
 	ot->Branch("CdcCell_nHits",&O_nHits);
 	ot->Branch("CdcCell_t",&O_t);
 	ot->Branch("CdcCell_wx",&O_wx);
@@ -254,6 +267,15 @@ int main(int argc, char** argv){
 	ot->Branch("CdcCell_mz",&O_mz);
 	ot->Branch("CdcCell_mt",&O_mt);
 
+	ot->Branch("M_nHits",&M_nHits);
+	ot->Branch("M_volName",&M_name);
+	ot->Branch("M_volID",&M_id);
+	ot->Branch("M_tid",&M_tid);
+	ot->Branch("M_x",&M_x);
+	ot->Branch("M_y",&M_y);
+	ot->Branch("M_z",&M_z);
+	ot->Branch("M_t",&M_t);
+
 	# ifdef use_extra
 	int O_T_nHits = 0;
 	int O_wire_nHits = 0;
@@ -267,13 +289,15 @@ int main(int argc, char** argv){
 	bool triggerd = false;
 	double firsthittime = 0;
 	int nGoodHit = 0;
+	// FIXME
 	for ( int i = 0; i<it->GetEntries(); i++){
+	//for ( int i = 0; i<1e3; i++){
 		for(int j = 0; j<18; j++){
 			for (int k = 0; k<350; k++){
 				dict[j][k]=-1;
 			}
 		}
-		if (i%1==0) printf("%lf%...\n",(double)i/it->GetEntries()*100);
+		if (i%1000==0) printf("%lf%...\n",(double)i/it->GetEntries()*100);
 		it->GetEntry(i);
 		# ifdef use_extra
 		O_T_nHits = T_nHits-1;
@@ -281,27 +305,27 @@ int main(int argc, char** argv){
 		# endif
 		if (CdcCell_nHits==0) continue;
 		O_nHits = 0;
-		O_hittype = new std::vector<int>;
-		O_t = new std::vector<double>;
-		O_tof = new std::vector<double>;
-		O_wx = new std::vector<double>;
-		O_wy = new std::vector<double>;
-		O_wz = new std::vector<double>;
-		O_x = new std::vector<double>;
-		O_y = new std::vector<double>;
-		O_z = new std::vector<double>;
-		O_px = new std::vector<double>;
-		O_py = new std::vector<double>;
-		O_pz = new std::vector<double>;
-		O_driftD = new std::vector<double>;
-		O_driftDtrue = new std::vector<double>;
-		O_tstart = new std::vector<double>;
-		O_tstop = new std::vector<double>;
-		O_cellID = new std::vector<int>;
-		O_layerID = new std::vector<int>;
-		O_edep = new std::vector<double>;
-		O_tid = new std::vector<int>;
-		O_posflag = new std::vector<int>;
+		if(O_hittype) delete O_hittype; O_hittype = new std::vector<int>;
+		if(O_t) delete O_t; O_t = new std::vector<double>;
+		if(O_tof) delete O_tof; O_tof = new std::vector<double>;
+		if(O_wx) delete O_wx; O_wx = new std::vector<double>;
+		if(O_wy) delete O_wy; O_wy = new std::vector<double>;
+		if(O_wz) delete O_wz; O_wz = new std::vector<double>;
+		if(O_x) delete O_x; O_x = new std::vector<double>;
+		if(O_y) delete O_y; O_y = new std::vector<double>;
+		if(O_z) delete O_z; O_z = new std::vector<double>;
+		if(O_px) delete O_px; O_px = new std::vector<double>;
+		if(O_py) delete O_py; O_py = new std::vector<double>;
+		if(O_pz) delete O_pz; O_pz = new std::vector<double>;
+		if(O_driftD) delete O_driftD; O_driftD = new std::vector<double>;
+		if(O_driftDtrue) delete O_driftDtrue; O_driftDtrue = new std::vector<double>;
+		if(O_tstart) delete O_tstart; O_tstart = new std::vector<double>;
+		if(O_tstop) delete O_tstop; O_tstop = new std::vector<double>;
+		if(O_cellID) delete O_cellID; O_cellID = new std::vector<int>;
+		if(O_layerID) delete O_layerID; O_layerID = new std::vector<int>;
+		if(O_edep) delete O_edep; O_edep = new std::vector<double>;
+		if(O_tid) delete O_tid; O_tid = new std::vector<int>;
+		if(O_posflag) delete O_posflag; O_posflag = new std::vector<int>;
 
 		triggerd = false;
 		firsthittime = 0;
@@ -315,6 +339,8 @@ int main(int argc, char** argv){
 			}
 		}
 		if (nGoodHit<1) continue;
+		// FIXME
+		//M_nHits = 0;
 		for (int j = 0; j<M_nHits; j++){
 			if ((*M_tid)[j]==1){
 				if ((*M_t)[j]>firsthittime){
@@ -356,7 +382,9 @@ int main(int argc, char** argv){
 		double starttime;
 		double stoptime;
 		int hittype;
+		// FIXME
 		for (int j = 0; j<CdcCell_nHits; j++){
+		//for (int j = 0; j<0; j++){
 			if ((*CdcCell_tid)[hitindice[j]]==1){
 				hittype = 0;
 			}
@@ -368,13 +396,13 @@ int main(int argc, char** argv){
 			hittime = (*CdcCell_t)[hitindice[j]] + shifttime;
 			tof = (*CdcCell_t)[hitindice[j]];
 			if (dict[(*CdcCell_layerID)[hitindice[j]]][(*CdcCell_cellID)[hitindice[j]]]==-1){
-				//FIXME
 				double px = (*CdcCell_px)[hitindice[j]];
 				double py = (*CdcCell_py)[hitindice[j]];
 				double pz = (*CdcCell_pz)[hitindice[j]];
 				double pa = sqrt(px*px+py*py+pz*pz);
+				//FIXME
 				//if (tof>7||pa<0.103||hittype!=0) continue; // only first turn
-				if (hittype!=0) continue; // only hits from the signal track
+				//if (hittype!=0) continue; // only hits from the signal track
 
 				dict[(*CdcCell_layerID)[hitindice[j]]][(*CdcCell_cellID)[hitindice[j]]]=O_nHits;
 				O_nHits++;
@@ -414,7 +442,7 @@ int main(int argc, char** argv){
 		for(int ibkg = 0; ibkg < 0; ibkg++){
 			int nbkg = v_nBKGneed[ibkg];
 			int nBKG = v_nBKG[ibkg];
-			std::cout<<"  =>Now mix in "<<nbkg<<" noise tracks from \""<<v_filename[ibkg]<<"\""<<std::endl;
+			//std::cout<<"  =>Now mix in "<<nbkg<<" noise tracks from \""<<v_filename[ibkg]<<"\""<<std::endl;
 			int count_bkg = 0;
 			for (int idict = 0; idict<200; idict++){
 				dict2[idict] = -1;
@@ -423,22 +451,22 @@ int main(int argc, char** argv){
 				int index = 0;
 				while(1){
 					index = (int)(gRandom->Uniform()*nBKG)%nBKG;
-					std::cout<<"          # dict2["<<index<<"] = "<<dict2[index]<<std::endl;
+					//std::cout<<"          # dict2["<<index<<"] = "<<dict2[index]<<std::endl;
 					if (dict2[index]==-1){
 						dict2[index] = 1;
-						std::cout<<"          Yes! "<<std::endl;
+						//std::cout<<"          Yes! "<<std::endl;
 						break;
 					}
 				}
 				count_bkg++;
 				int this_count = 0;
-				int evt_index = ibkg*1300+index;
-				std::cout<<"     + "<<count_bkg<<": Got "<<NMN_nHits[evt_index]<<" hits @ "<<index<<std::endl;
+				int evt_index = ibkg*NMN_nEvents_Max+index;
+				//std::cout<<"     + "<<count_bkg<<": Got "<<NMN_nHits[evt_index]<<" hits @ "<<index<<std::endl;
 				//			index = index+ibkg;
 				//			int nindex = index%nBKG;
 				for (int ibkghit = 0; ibkghit<NMN_nHits[evt_index]; ibkghit++){
 					// get time
-					int hit_index = (ibkg*1300+index)*NMN_nHits_Max+ibkghit;
+					int hit_index = (ibkg*NMN_nEvents_Max+index)*NMN_nHits_Max+ibkghit;
 					int ihit = dict[(NMN_layerID[hit_index])][(NMN_cellID[hit_index])];
 					double dt = fmod(NMN_tstart[hit_index]-O_mt,tsep);
 					if (dt<0) dt+=tsep;
@@ -503,12 +531,12 @@ int main(int argc, char** argv){
 						}
 					}
 				}// end of hits in bkg event
-				std::cout<<"        Finished! Actually got "<<this_count<<" hits; Totallly we have "<<total_count<<" noise hits mixed inside"<<std::endl;
+				//std::cout<<"        Finished! Actually got "<<this_count<<" hits; Totallly we have "<<total_count<<" noise hits mixed inside"<<std::endl;
 			}// end of events loop in bkg
 		}// end of bkg loop
-		std::cout<<"Filling ot @"<<(void*)ot<<"..."<<std::endl;
+		//std::cout<<"Filling ot @"<<(void*)ot<<"..."<<std::endl;
 		ot->Fill();
-		std::cout<<"Filled! ot->GetEntries() = "<<ot->GetEntries()<<std::endl;
+		//std::cout<<"Filled! ot->GetEntries() = "<<ot->GetEntries()<<std::endl;
 	}// end of event loop
 	ot->Write();
 	of->Close();
