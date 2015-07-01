@@ -20,9 +20,13 @@ CXXFLAGS = -g -O2 -W -Wall
 INCDIR += -I$(MYCOMMONTOOLSROOT)/MyRootInterface
 
 # Take root as an example. ( Root is a widely used package developed by CERN for analysing. )
-INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
-LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
+INCDIR += -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
+LIBDIR += -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
+INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir)
+LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs)
+LIBDIR += -lMinuit
 LIBS += -pthread -lm -ldl -rdynamic
+
 LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
 LIBS += -lMyRootInterface
 
@@ -30,28 +34,25 @@ LIBS += -lMyRootInterface
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-PROJECT = beam
+
+PROJECT1 = beam
+PROJECT2 = gethist
+
+.PHONY: all
+all: $(PROJECT1) $(PROJECT2)
 
 # Object list for user defined packages
-OBJ = 
+OBJ =
 
-$(PROJECT): $(OBJ) $(PROJECT).cxx
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT).cxx $(OBJ) -o $(PROJECT)
+$(PROJECT1): $(OBJ) $(PROJECT1).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT1).cxx $(OBJ) -o $(PROJECT1)
 
-#--------------------------PART 3: about your own packages and the main program-------------------------------------------
-# Names of user defined packages
-
-# Change this name to your program which contains the main function
-PROJECT = gethist
-$(PROJECT): $(OBJ) $(PROJECT).cxx
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT).cxx $(OBJ) -o $(PROJECT)
+$(PROJECT2): $(OBJ) $(PROJECT2).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT2).cxx $(OBJ) -o $(PROJECT2)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
 # Here is an example showing how to make clean and make a specified user defined package
 .PHONY: clean
 clean:
-	$(RM) $(PROJECT)
-
-.PHONY: all
-all: $(PROJECT)
+	$(RM) $(PROJECT1) $(PROJECT2)

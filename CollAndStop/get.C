@@ -26,6 +26,25 @@
 //	int PID = 13;
 //	double minimum = 1e-11;
 //	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 45058./1e7;
+//	TString parName = "mu";
+//	TString opt = "140625ori";
+//	RunName = MySim+"/output/Coll."+opt+".root";
+//	TString DirName = "";
+//	int nProcs = 0;
+//	int nJobs = 0;
+
+	int PID = -211;
+	double minimum = 1e-11;
+	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+	double NperP = 334776./1e7;
+	TString parName = "pim";
+	TString opt = parName;
+	RunName = MySim+"/output/Coll."+opt+".root";
+
+//	int PID = 13;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
 //	double NperP = 802367./1e8;
 //	TString parName = "mu";
 //	TString opt = "140905M02";
@@ -34,13 +53,13 @@
 //	int nProcs = 0;
 //	int nJobs = 0;
 
-	int PID = -211;
-	double minimum = 1e-11;
-	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-	double NperP = 172257./1e7;
-	TString parName = "mu";
-	TString opt = "ori.nocoli";
-	RunName = MySim+"/output/Coll."+opt+".root";
+//	int PID = -211;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 172257./1e7;
+//	TString parName = "mu";
+//	TString opt = "ori.nocoli";
+//	RunName = MySim+"/output/Coll."+opt+".root";
 
 //	int PID = 13;
 //	double minimum = 1e-11;
@@ -157,11 +176,11 @@
 		c->Add(RunName);
 	}
 
-	TH2D * h01 = new TH2D("h01",par+" Before Collimator",50,0,180,50,-200,200);
+	TH2D * h01 = new TH2D("h01",par+" Before Vacuum Window",50,0,180,50,-200,200);
 	h01->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h01->GetYaxis()->SetTitle("y position (mm)");
 	h01->GetYaxis()->SetTitleOffset(1.5);
-	TH2D * h02 = new TH2D("h02",par+" After Collimator",50,0,180,50,-200,200);
+	TH2D * h02 = new TH2D("h02",par+" After Vacuum Window",50,0,180,50,-200,200);
 	h02->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h02->GetYaxis()->SetTitle("y position (mm)");
 	h02->GetYaxis()->SetTitleOffset(1.5);
@@ -192,32 +211,32 @@
 	h11->GetYaxis()->SetTitle(par+" Stopped / P^{+} / 5.849 ns");
 	h11->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D *h20 = new TH1D("h20","Arrival Time Before Collimator",200,0,PulseInterval);
+	TH1D *h20 = new TH1D("h20","Arrival Time Before Vacuum Window",200,0,PulseInterval);
 	h20->GetXaxis()->SetTitle("Time (ns)");
 	h20->GetYaxis()->SetTitle("count/p^{+}");
 	h20->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h30 = new TH1D("h30","Arrival Time Before Collimator",200,0,PulseInterval);
+	TH1D *h30 = new TH1D("h30","Arrival Time Before Vacuum Window",200,0,PulseInterval);
 	h30->GetXaxis()->SetTitle("Time (ns)");
 	h30->GetYaxis()->SetTitle("count/p^{+}");
 	h30->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h40 = new TH1D("h40","Arrival Time Before Collimator",200,0,PulseInterval);
+	TH1D *h40 = new TH1D("h40","Arrival Time Before Vacuum Window",200,0,PulseInterval);
 	h40->GetXaxis()->SetTitle("Time (ns)");
 	h40->GetYaxis()->SetTitle("count/p^{+}");
 	h40->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D *h1_1 = new TH1D("h1_1","Momentum Before Collimator",150,0,150);
+	TH1D *h1_1 = new TH1D("h1_1","Momentum Before Vacuum Window",150,0,150);
 	h1_1->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h1_1->GetYaxis()->SetTitle("count/p^{+}");
 	h1_1->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h1_2 = new TH1D("h1_2","Momentum Before Collimator",150,0,150);
-	TH1D *h1_3 = new TH1D("h1_3","Momentum Before Collimator",150,0,150);
+	TH1D *h1_2 = new TH1D("h1_2","Momentum Before Vacuum Window",150,0,150);
+	TH1D *h1_3 = new TH1D("h1_3","Momentum Before Vacuum Window",150,0,150);
 
-	TH1D *h2_1 = new TH1D("h2_1","y Position Before Collimator",150,-200,200);
+	TH1D *h2_1 = new TH1D("h2_1","y Position Before Vacuum Window",150,-200,200);
 	h2_1->GetXaxis()->SetTitle("y position (mm)");
 	h2_1->GetYaxis()->SetTitle("count/p^{+}");
 	h2_1->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h2_2 = new TH1D("h2_2","y Position Before Collimator",150,-200,200);
-	TH1D *h2_3 = new TH1D("h2_3","y Position Before Collimator",150,-200,200);
+	TH1D *h2_2 = new TH1D("h2_2","y Position Before Vacuum Window",150,-200,200);
+	TH1D *h2_3 = new TH1D("h2_3","y Position Before Vacuum Window",150,-200,200);
 
 	std::vector<int> *T_tid;
 	std::vector<double> *McTruth_time;
@@ -329,6 +348,7 @@
 	}
 	double pion_life = 26;
 	double m2 = 139.570*139.570;
+
 	int nEvents = c->GetEntries();
 	std::cout<<nEvents<<" events!!!"<<std::endl;
 	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
@@ -352,7 +372,9 @@
 		double gamma = 1/sqrt(1-beta2);
 
 		deltaT_initial += time;
-		weight_initial *= exp(-deltaT_initial/pion_life/gamma);
+		if (fabs(PID)==211){
+			weight_initial *= exp(-deltaT_initial/pion_life/gamma);
+		}
 
 		nTotal += weight;
 //		chain2->GetEntry(iEvent);
@@ -366,7 +388,9 @@
 			if ((*V_volName)[iHit]!="DS"||v_pid!=PID) continue;
 			passed = true;
 			deltaT_passed += (*V_t)[iHit];
-			weight_passed *= exp(-deltaT_passed/pion_life/gamma);
+			if (fabs(PID)==211){
+				weight_passed *= exp(-deltaT_passed/pion_life/gamma);
+			}
 			if (withCollPosition){
 				v_x = (*V_x)[iHit]*10;
 				v_y = (*V_y)[iHit]*10;
@@ -409,7 +433,9 @@
 				Oz = (*T_Oz)[iHit]*10;
 				Ot = (*T_Ot)[iHit];
 				deltaT_stopped += Ot;
-				weight_stopped *= exp(-deltaT_stopped/pion_life/gamma);
+				if (fabs(PID)==211){
+					weight_stopped *= exp(-deltaT_stopped/pion_life/gamma);
+				}
 				Ot = fmod(Ot+hCurve->GetRandom(),PulseInterval);
 				r = sqrt(Ox*Ox+Oy*Oy);
 			}
@@ -438,8 +464,6 @@
 		}
 	}
 	double nProton = nTotal/NperP;
-	// FIXME
-	nProton = 1e6;
 	std::cout<<"nProton = "<<nProton<<std::endl;
 	std::cout<<"nStopped = "<<nStopped<<std::endl;
 	nPassedH/=nProton;
@@ -640,8 +664,9 @@
 	h40->SetLineColor(632);
 	h40->Draw("SAME");
 	legend = new TLegend(0.5,0.6,0.9,0.75);
-	legend->AddEntry(h20,par+" Reached Collimator");
-	legend->AddEntry(h30,par+" Passed Collimator");
+	legend->SetTextSize(0.03);
+	legend->AddEntry(h20,par+" Before Vacuum Window");
+	legend->AddEntry(h30,par+" After Vacuum Window");
 	legend->AddEntry(h40,par+" Stopped in Target");
 	legend->Draw("SAME");
 	sum->Draw();

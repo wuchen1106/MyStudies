@@ -5,8 +5,11 @@
 //	TFile * ifile = new TFile("signal.geantino.root");
 //	TFile * ifile = new TFile("signal.140905M02.noise.root");
 	//TFile * ifile = new TFile("signal.electron.1T.new.root");
-//	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire.AllDisks.ExtraInfo.WithNoise.root");
-	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire80um.AllDisks.map140905.root");
+//	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire.AllDisks.ExtraInfo.WithNoise.new.root");
+//	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire126um.AllDisks.map140905.purenoise.root");
+	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire126um.AllDisks.map140905_1cm.newrl.root");
+//	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire80um.AllDisks.map140905.root");
+//	TFile * ifile = new TFile("CDC.140905M02.63um.sig.g41001QBH.9.root");
 //	TFile * ifile = new TFile("signal.geantino.new4.root");
 //	TFile * ifile = new TFile("signal.geantino.single.new3.root");
 	TTree * it = (TTree*) ifile->Get("tree");
@@ -150,7 +153,9 @@
 		ewiret->SetLineColor(kBlack);
 		ewiret->Draw("SAME"); // draw inner wall
 		it->GetEntry(i);
-		for (int j = 0; j<CdcCell_nHits; j++){
+		//for (int j = 0; j<CdcCell_nHits; j++){
+		// FIXME
+		for (int j = 117; j<CdcCell_nHits; j++){
 			wx = (*CdcCell_wx)[j];
 			wy = (*CdcCell_wy)[j];
 			dd = (*CdcCell_driftD)[j];
@@ -160,6 +165,8 @@
 //			ewire->Draw("SAME");
 			ewiret = new TEllipse(wx,wy,ddt,ddt);
 			ewiret->SetFillStyle(0);
+			//FIXME
+			if ((*CdcCell_t)[j]>7) continue;
 			if ((*CdcCell_edep)[j]<edep_cut){
 				if ((*CdcCell_hittype)[j]==0)
 					ewiret->SetLineColor(kRed);
@@ -172,7 +179,7 @@
 			}
 			else{
 				//FIXME
-				//continue;
+				continue;
 				if ((*CdcCell_hittype)[j]==0)
 					ewiret->SetLineColor(kOrange);
 				else

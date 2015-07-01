@@ -79,7 +79,8 @@ int main(int argc, char *argv[]){
 //	TString suffixName = "0508_100cm_1e9";
 //	TString suffixName = "140905M02";
 //	TString suffixName = "141022";
-	TString suffixName = "141109.005T.50Steel640Ro";
+//	TString suffixName = "141109.005T.50Steel640Ro";
+	TString suffixName = "test";
 //	TString runName = parName+"."+suffixName+".cdc";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
@@ -87,9 +88,10 @@ int main(int argc, char *argv[]){
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
 //	FileNames.push_back(MyWork+"/Simulate/comet/output/CDCneutral."+suffixName+".root");
+	FileNames.push_back(MyWork+"/Simulate/comet/output/raw_g4sim.root");
 //	FileNames.push_back(runName+".root");
-	DirName.push_back(MyData+"/CDC."+parName+"."+suffixName+".g496p02QBH");
-	nRuns.push_back(20);
+//	DirName.push_back(MyData+"/CDC."+parName+"."+suffixName+".g496p02QBH");
+//	nRuns.push_back(20);
 //	DirName.push_back(MyData+"/CDCHit."+parName+".g60cm10mm.005T."+suffixName+".g4s.QBH");
 //	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
