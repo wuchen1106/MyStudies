@@ -4,7 +4,7 @@
 //	TFile * ifile = new TFile("signal.004.root");
 //	TFile * ifile = new TFile("signal.geantino.root");
 //	TFile * ifile = new TFile("signal.140905M02.noise.root");
-	TFile * ifile = new TFile("signal.electron.1T.new.root");
+	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire126um.AllDisks.map140905_5cm.root");
 //	TFile * ifile = new TFile("signal.geantino.new4.root");
 //	TFile * ifile = new TFile("signal.geantino.single.new3.root");
 	TTree * it = (TTree*) ifile->Get("tree");

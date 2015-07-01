@@ -26,13 +26,13 @@ void getRate(){
 
 	// About this run
 	TString parName = "All";
-	TString suffixName = "140905M02";
+	TString suffixName = "141109.140625ori.gaussian";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
-	FileNames.push_back("result/"+runName+".root");
+	FileNames.push_back(runName+".root");
 //	FileNames.push_back(runName+".root");
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
 	//nRuns.push_back(100);
@@ -44,7 +44,7 @@ void getRate(){
 //	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
 //	nRuns.push_back(50);
-	double nProtons = 1e8;
+	double nProtons = 1e9*0.845;
 	if (parName == "pim" || parName == "pimWC")
 		nProtons *= 10;
 //	nProtons*=19./20;
@@ -54,8 +54,8 @@ void getRate(){
 	double PulseInterval = 1170; // ns
 	double dutyFactor = 1./2.4;
 	double proton_rate = 2.5e12; // Hz
-	double left_end = 700; // ns
-	double duration = 400*2; // ns
+	double left_end = 0; // ns
+	double duration = PulseInterval; // ns
 	TFile * f = new TFile("result/Curves.s100.root");
 
 	 // ########Should Modify#########
@@ -164,12 +164,19 @@ void getRate(){
     h1[3]->SetMarkerStyle(Style_4);
     h1[3]->SetMarkerColor(Color_4);
     h1[3]->SetLineColor(Color_4);
-	TString title3 = "Momentum of Noise Tracks in CDC";
-    TH1D *h5 = new TH1D("h5",title3,200,-9,4);
-	h5->GetYaxis()->SetTitle("Count");
-	h5->GetXaxis()->SetTickLength(0);
-	h5->GetXaxis()->SetTitleOffset(3);
-	h5->GetXaxis()->SetLabelOffset(3);
+	TString title3 = "Momentum noise Tracks in CDC";
+    TH1D *h5[4];
+    for (int i  =0; i<4; i++){
+		h5[i] = new TH1D("h5",title3,200,-10,2);
+		h5[i]->GetYaxis()->SetTitle("Count");
+		h5[i]->GetXaxis()->SetTickLength(0);
+		h5[i]->GetXaxis()->SetTitleOffset(3);
+		h5[i]->GetXaxis()->SetLabelOffset(3);
+    	if (i==0) h5[i]->SetLineColor(kBlue);
+		else if (i==1) h5[i]->SetLineColor(kRed);
+		else if (i==2) h5[i]->SetLineColor(kBlack);
+		else if (i==3) h5[i]->SetLineColor(kGreen);
+    }
 //    h5->SetMarkerStyle(Style_4);
 //    h5->SetMarkerColor(Color_4);
 //    h5->SetLineColor(Color_4);
@@ -309,11 +316,12 @@ void getRate(){
 		if (iEvent%1000==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
 		if (type != 0) continue;
-//		if (iEvent>=11094) weight*=100./31;
 		// FIXME
-		if (topo==-2||topo==-1||topo==1000||topo==1002) continue;
+		//if (topo==-2||topo==-1||topo==1000||topo==1002) continue;
+		if (topo==-2) continue;
 		if (topo==1000&&cpid==2212) weight *= 1./2.85;
 		else if (topo==1000&&cpid==1000010020) weight *= 1./4;
+		else if (topo==1000&&cpid>1e6) weight *= 0; // no others
 		else if (topo==1001) weight *= 0.67;
 		else if (topo==1005) weight *= 1.6;
 		int nHits = C_edep->size();
@@ -337,6 +345,8 @@ void getRate(){
 //			if (iEvent%1==0){
 //				std::cout<<volID<<std::endl;
 //			}
+			// FIXME
+			//if (edep>5000) continue;
 			vHitrate[layerID]+=weight*hit2rate/cellNo[layerID];
 			vCharge[layerID]+=edep*edep2charge/cellNo[layerID];
 			hitcount[layerID]++;
@@ -348,28 +358,35 @@ void getRate(){
 			if (newtime<0) newtime += PulseInterval;
 			int nSample = 1;
 			for (int iSample = 0; iSample < nSample; iSample++){
-				double tarrival = newtime + tmin;
-				double tstop = newtime + tmax;
-				tarrival -= ((int)(tarrival/PulseInterval))*PulseInterval;
-				tstop -= ((int)(tstop/PulseInterval))*PulseInterval;
-				h[layerID]->Fill(tarrival,weight/nSample);
+				double tarrival = newtime + tmin-time;
+				double tstop = newtime + tmax-time;
+				//tarrival -= ((int)(tarrival/PulseInterval))*PulseInterval;
+				//tstop -= ((int)(tstop/PulseInterval))*PulseInterval;
+				h[layerID]->Fill(fmod(tarrival,PulseInterval),weight/nSample);
 				bool gotthishit = false;
-				if (left_end+duration>PulseInterval){
-					if (tarrival>left_end) gotthishit = true;
-					else if (tarrival<left_end+duration-PulseInterval) gotthishit = true;
-					else if ((tstop>tarrival&&tstop>left_end)||(tstop<tarrival)) gotthishit = true;
-				}
-				if (gotthishit) vHitCount[layerID]+=weight/nSample;
+				if (tarrival>left_end) gotthishit = true;
+				else if (tarrival<left_end+duration-PulseInterval) gotthishit = true;
+				else if ((tstop>tarrival&&tstop>left_end)||(tstop<tarrival)) gotthishit = true;
+				//if (gotthishit) vHitCount[layerID]+=weight/nSample;
+				if (1) vHitCount[layerID]+=weight/nSample;
 			}
 			h1[layerID]->Fill(newtime,weight);
 		}
 		if (nHits>0){
-			double px = (*C_px)[0]*1000;
-			double py = (*C_py)[0]*1000;
-			double pz = (*C_pz)[0]*1000;
+			double px = (*C_px)[0];
+			double py = (*C_py)[0];
+			double pz = (*C_pz)[0];
 			double pa = sqrt(px*px+py*py+pz*pz);
 //			if (pa>10)
-				h5->Fill(log(pa),weight);
+			int index = 0;
+			if (cpid==-11)
+				index = 1;
+			else if (cpid==2212)
+				index = 2;
+			else if (cpid>1e6)
+				index = 3;
+			//h5[index]->Fill(log(pa),weight);
+			h5[index]->Fill(log(edep/1e6),weight);
 		}
 //		if (foundhit){
 		if (0){
@@ -422,7 +439,8 @@ void getRate(){
 	TGraphErrors * g1 = new TGraphErrors(vLayerID.size(),&(vLayerID[0]),&(vHitCount[0]),&(vEx[0]),&(vEyHitCount[0]));
 	buff.str("");
 	buff.clear();
-	buff<<"nHits per Bunch in Each Layer in Measure Window ("<<left_end<<","<<left_end+duration<<")ns";
+	//buff<<"nHits per Bunch in Each Layer in Measure Window ("<<left_end<<","<<left_end+duration<<")ns";
+	buff<<"nHits per Bunch in Each Layer";
 	g1->SetTitle(buff.str().c_str());
 	g1->GetHistogram()->GetXaxis()->SetTitle("Layer ID (1-18)");
 	g1->GetHistogram()->GetYaxis()->SetTitle("nHits/Bunch");
@@ -536,9 +554,19 @@ void getRate(){
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gStyle->SetOptStat(1);
-	h5->Draw();
-	TGaxis * axis = new TGaxis(-9,0,4,0,exp(-9),exp(4),50510,"G");
-	axis->SetTitle("Momentum [MeV/c]");
+	h5[2]->Draw();
+	h5[1]->Draw("SAME");
+	h5[0]->Draw("SAME");
+	h5[3]->Draw("SAME");
+    TLegend *legend2 = new TLegend(0.8,0.6,1,0.9);
+    legend2->AddEntry(h5[0],"electron");
+    legend2->AddEntry(h5[1],"positron");
+    legend2->AddEntry(h5[2],"proton");
+    legend2->AddEntry(h5[3],"ion");
+    legend2->Draw("SAME");
+	TGaxis * axis = new TGaxis(-10,0,2,0,exp(-10),exp(2),50510,"G");
+	//axis->SetTitle("Momentum [MeV/c]");
+	axis->SetTitle("Energy Deposit [MeV]");
 	axis->Draw();
 
 	c3->SaveAs(runName+"_mom.png");
@@ -551,6 +579,8 @@ void getRate(){
 		h[i]->Write();
 		h1[i]->Write();
 	}
-	h5->Write();
+	for ( int i = 0; i< 4; i++){
+		h5[i]->Write();
+	}
 	t->Write();
 }
