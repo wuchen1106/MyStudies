@@ -79,7 +79,7 @@ int main(int argc, char *argv[]){
 //	TString suffixName = "0508_100cm_1e9";
 //	TString suffixName = "140905M02";
 //	TString suffixName = "141022";
-	TString suffixName = "150901.W100um.OptD2.notail.DD35.TH10mm";
+	TString suffixName = "150901.W100um.OptD.DD28.TH200um";
 //	TString runName = parName+"."+suffixName+".cdc";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
