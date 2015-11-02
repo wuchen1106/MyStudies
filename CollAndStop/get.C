@@ -48,6 +48,35 @@
 //	int PID = 13;
 //	double minimum = 1e-11;
 //	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 45058./1e7;
+//	TString parName = "mu";
+//	TString opt = "140625ori";
+//	RunName = MySim+"/output/Coll."+opt+".root";
+//	TString DirName = "";
+//	int nProcs = 0;
+//	int nJobs = 0;
+
+<<<<<<< HEAD
+//	int PID = -211;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 172257./1e7;
+//	TString parName = "mu";
+//	TString opt = "ori.nocoli";
+//	RunName = MySim+"/output/Coll."+opt+".root";
+=======
+	int PID = -211;
+	double minimum = 1e-11;
+	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+	double NperP = 334776./1e7;
+	TString parName = "pim";
+	TString opt = parName;
+	RunName = MySim+"/output/Coll."+opt+".root";
+>>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
+
+//	int PID = 13;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
 //	double NperP = 802367./1e8;
 //	TString parName = "mu";
 //	TString opt = "140905M02";
@@ -180,11 +209,19 @@
 		c->Add(RunName);
 	}
 
+<<<<<<< HEAD
 	TH2D * h01 = new TH2D("h01",par+" Before 90^{o}",50,0,180,50,-200,200);
 	h01->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h01->GetYaxis()->SetTitle("y position (mm)");
 	h01->GetYaxis()->SetTitleOffset(1.5);
 	TH2D * h02 = new TH2D("h02",par+" After 90^{o}",50,0,180,50,-200,200);
+=======
+	TH2D * h01 = new TH2D("h01",par+" Before Vacuum Window",50,0,180,50,-200,200);
+	h01->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
+	h01->GetYaxis()->SetTitle("y position (mm)");
+	h01->GetYaxis()->SetTitleOffset(1.5);
+	TH2D * h02 = new TH2D("h02",par+" After Vacuum Window",50,0,180,50,-200,200);
+>>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
 	h02->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h02->GetYaxis()->SetTitle("y position (mm)");
 	h02->GetYaxis()->SetTitleOffset(1.5);
@@ -215,6 +252,7 @@
 	h11->GetYaxis()->SetTitle(par+" Stopped / P^{+} / 5.849 ns");
 	h11->GetYaxis()->SetTitleOffset(1.5);
 
+<<<<<<< HEAD
 	TH1D *h20 = new TH1D("h20","Arrival Time Before 90^{o}",200,0,PulseInterval);
 	h20->GetXaxis()->SetTitle("Time (ns)");
 	h20->GetYaxis()->SetTitle("count/p^{+}");
@@ -224,10 +262,22 @@
 	h30->GetYaxis()->SetTitle("count/p^{+}");
 	h30->GetYaxis()->SetTitleOffset(1.5);
 	TH1D *h40 = new TH1D("h40","Arrival Time Before 90^{o}",200,0,PulseInterval);
+=======
+	TH1D *h20 = new TH1D("h20","Arrival Time Before Vacuum Window",200,0,PulseInterval);
+	h20->GetXaxis()->SetTitle("Time (ns)");
+	h20->GetYaxis()->SetTitle("count/p^{+}");
+	h20->GetYaxis()->SetTitleOffset(1.5);
+	TH1D *h30 = new TH1D("h30","Arrival Time Before Vacuum Window",200,0,PulseInterval);
+	h30->GetXaxis()->SetTitle("Time (ns)");
+	h30->GetYaxis()->SetTitle("count/p^{+}");
+	h30->GetYaxis()->SetTitleOffset(1.5);
+	TH1D *h40 = new TH1D("h40","Arrival Time Before Vacuum Window",200,0,PulseInterval);
+>>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
 	h40->GetXaxis()->SetTitle("Time (ns)");
 	h40->GetYaxis()->SetTitle("count/p^{+}");
 	h40->GetYaxis()->SetTitleOffset(1.5);
 
+<<<<<<< HEAD
 	TH1D *h1_1 = new TH1D("h1_1","Momentum Before 90^{o}",150,0,150);
 	h1_1->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h1_1->GetYaxis()->SetTitle("count/p^{+}");
@@ -241,6 +291,21 @@
 	h2_1->GetYaxis()->SetTitleOffset(1.5);
 	TH1D *h2_2 = new TH1D("h2_2","y Position Before 90^{o}",150,-200,200);
 	TH1D *h2_3 = new TH1D("h2_3","y Position Before 90^{o}",150,-200,200);
+=======
+	TH1D *h1_1 = new TH1D("h1_1","Momentum Before Vacuum Window",150,0,150);
+	h1_1->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
+	h1_1->GetYaxis()->SetTitle("count/p^{+}");
+	h1_1->GetYaxis()->SetTitleOffset(1.5);
+	TH1D *h1_2 = new TH1D("h1_2","Momentum Before Vacuum Window",150,0,150);
+	TH1D *h1_3 = new TH1D("h1_3","Momentum Before Vacuum Window",150,0,150);
+
+	TH1D *h2_1 = new TH1D("h2_1","y Position Before Vacuum Window",150,-200,200);
+	h2_1->GetXaxis()->SetTitle("y position (mm)");
+	h2_1->GetYaxis()->SetTitle("count/p^{+}");
+	h2_1->GetYaxis()->SetTitleOffset(1.5);
+	TH1D *h2_2 = new TH1D("h2_2","y Position Before Vacuum Window",150,-200,200);
+	TH1D *h2_3 = new TH1D("h2_3","y Position Before Vacuum Window",150,-200,200);
+>>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
 
 	std::vector<int> *T_tid;
 	std::vector<double> *McTruth_time;
@@ -669,8 +734,13 @@
 //	h40->Draw("SAME");
 	legend = new TLegend(0.5,0.6,0.9,0.75);
 	legend->SetTextSize(0.03);
+<<<<<<< HEAD
 	legend->AddEntry(h20,par+" Before 90^{o}");
 	legend->AddEntry(h30,par+" After 90^{o}");
+=======
+	legend->AddEntry(h20,par+" Before Vacuum Window");
+	legend->AddEntry(h30,par+" After Vacuum Window");
+>>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
 	legend->AddEntry(h40,par+" Stopped in Target");
 //	legend->Draw("SAME");
 //	sum->Draw();

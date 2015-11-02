@@ -60,11 +60,13 @@ int main(int argc, char** argv){
 
 	//=>About Signal window
 	double sig_up = 106;
-	double sig_low = 103.8;
+	double sig_low = 103.5;
 
 	//=>Get resolution
-	std::string FN_res = "config/mix2_400um_2.root";
-	std::string HN_res = "hsig_res_sum";
+	//std::string FN_res = "config/mix2_400um_2.root";
+	//std::string HN_res = "hsig_res_sum";
+	std::string FN_res = "config/hists_2156.root";
+	std::string HN_res = "hres";
 	TFile* fp_res = new TFile(FN_res.c_str());
 	if (fp_res==NULL) {
 		std::cout<<"ERROR: Can not find file: "<<FN_res<<"!!!"<<std::endl;
@@ -81,14 +83,19 @@ int main(int argc, char** argv){
 	double res_max = h_res->GetBinLowEdge(nbin_res)+binw_res;
 	//std::cout<<"res_max = "<<res_max<<std::endl;
 	double res_min = h_res->GetBinLowEdge(0);
-	//std::cout<<"res_min = "<<res_min<<std::endl;
+	std::cout<<"res_min = "<<res_min<<std::endl;
+	//for ( int ibin = 1; ibin<=h_res->GetNbinsX(); ibin++){
+	//	if (h_res->GetBinCenter(ibin)<-3) h_res->SetBinContent(ibin,0);
+	//}
 	h_res->Scale(1./h_res->Integral());
 
 	//=>Get RMC spectrum
-	std::string FN_RMC = "config/RMCE_Al.root";
+	std::string FN_RMC = "config/RMC_Al_bind.root";
+	//std::string FN_RMC = "config/RMCE_Al.root";
 	//std::string FN_RMC = "config/RMCE_Si.root";
 	//std::string FN_RMC = "RMCE_Si.root";
-	std::string HN_RMC = "RMC_hist";
+	//std::string HN_RMC = "RMC_hist";
+	std::string HN_RMC = "RMC";
 	TFile* fp_RMC = new TFile(FN_RMC.c_str());
 	if (fp_RMC==NULL) {
 		std::cout<<"ERROR: Can not find file: "<<FN_RMC<<"!!!"<<std::endl;
@@ -153,8 +160,8 @@ int main(int argc, char** argv){
 	nameForH1D.push_back("TotalContribution");
 	titleForH1D.push_back("Total Contribution VS reslution limit");
 	bin1ForH1D.push_back(10);
-	left1ForH1D.push_back(-3);
-	right1ForH1D.push_back(0);
+	left1ForH1D.push_back(-5);
+	right1ForH1D.push_back(5);
 
 	for ( int i = 0; i < nameForH2D.size(); i++ ){
 		vecH2D.push_back(new TH2D(nameForH2D[i],titleForH2D[i],bin1ForH2D[i],left1ForH2D[i],right1ForH2D[i],bin2ForH2D[i],left2ForH2D[i],right2ForH2D[i]) );

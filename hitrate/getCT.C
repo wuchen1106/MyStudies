@@ -1,8 +1,8 @@
 {
-	double twindow = 2;
+	double twindow = 10;
 	double me = 0.511e-3; // GeV
 	TChain * c = new TChain("tree");
-	c->Add("ALL.150901.W100um.OptD2.DD28.TH10mm.root");
+	c->Add("ALL.150901.W100um.OptD2.DD35.TH200um.root");
 	std::vector<double> * in_x = 0;
 	std::vector<double> * in_y = 0;
 	std::vector<double> * in_z = 0;
@@ -14,6 +14,7 @@
 	std::vector<std::string> * in_process = 0;
 	std::vector<std::string> * in_volume = 0;
 	int in_type;
+	int in_topo;
 	int in_nHits;
 	int in_cpid;
 	std::vector<int> * in_triType = 0;
@@ -36,6 +37,7 @@
 	c->SetBranchAddress("volume",&in_volume);
 	c->SetBranchAddress("pid",&in_pid);
 	c->SetBranchAddress("type",&in_type);
+	c->SetBranchAddress("topo",&in_topo);
 	c->SetBranchAddress("nHits",&in_nHits);
 	c->SetBranchAddress("cpid",&in_cpid);
 	c->SetBranchAddress("O_t",&in_trit);
@@ -70,10 +72,15 @@
 	double sci_time[128];
 	double che_time[128];
 	int totalfound = 0;
+	int nHitsSU = 0;
+	int nHitsCU = 0;
+	int nHitsSD = 0;
+	int nHitsCD = 0;
 	Long64_t nEntries = c->GetEntries();
 	for (Long64_t iEntry = 0; iEntry<nEntries; iEntry++){
 		if (iEntry%1000==0) std::cout<<(double)iEntry/nEntries*100<<"%..."<<std::endl;
 		c->GetEntry(iEntry);
+		if (in_topo==-1) continue;
 		if (fabs(in_cpid)!=11) continue;
 		if (in_type!=1) continue;
 		//if (in_nHits<2) continue;
@@ -89,14 +96,17 @@
 			double pz = (*in_tripz)[ihit];
 			double pa = sqrt(px*px+py*py+pz*pz);
 			double beta = pa/sqrt(pa*pa+me*me);
-			if ((*in_tripos)[ihit]<0) continue;
 			if ((*in_triType)[ihit]==0){
 				if (beta>0.5){
 					che_time[(*in_triID)[ihit]+((*in_tripos)[ihit]+1)*32] = (*in_trit)[ihit];
+					if ((*in_tripos)[ihit]>0) nHitsCD++;
+					else nHitsCU++;
 				}
 			}
 			else if ((*in_triType)[ihit]==1&&(*in_triedep)[ihit]>630e-6){
 				sci_time[(*in_triID)[ihit]+((*in_tripos)[ihit]+1)*32] = (*in_trit)[ihit];
+				if ((*in_tripos)[ihit]>0) nHitsSD++;
+				else nHitsSU++;
 			}
 			//else if ((*in_triType)[ihit]==-1&&beta>0.5){
 			//	sci_time[(*in_triID)[ihit]+((*in_triz)[ihit]<6500)*64] = (*in_trit)[ihit];
@@ -131,7 +141,11 @@
 			otree->Fill();
 		}
 	}
-	std::cout<<"totalfound = "<<totalfound<<std::endl;
+	std::cout<<"totalfound = "<<totalfound<<", "<<(double)totalfound/1e9*2.5e12*2.6/1e3<<std::endl;
+	std::cout<<"nHitsSU = "<<nHitsSU<<", "<<(double)nHitsSU/1e9*2.5e12*2.6/1e3/64<<" kHz"<<std::endl;
+	std::cout<<"nHitsSD = "<<nHitsSD<<", "<<(double)nHitsSD/1e9*2.5e12*2.6/1e3/64<<" kHz"<<std::endl;
+	std::cout<<"nHitsCU = "<<nHitsCU<<", "<<(double)nHitsCU/1e9*2.5e12*2.6/1e3/64<<" kHz"<<std::endl;
+	std::cout<<"nHitsCD = "<<nHitsCD<<", "<<(double)nHitsCD/1e9*2.5e12*2.6/1e3/64<<" kHz"<<std::endl;
 	otree->Write();
 	ofile->Close();
 }

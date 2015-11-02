@@ -23,7 +23,7 @@
 #	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/B9.g60cm20mm.005T.g496QBH2               |         | 20  | 1
 
 #	TYPE    | Path
-#	oFILE   | /home/chen/MyWorkArea/g4sim/output/raw_g4sim.root
+	oFILE   | /home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root
 
 #	TYPE    | Name                         | Type      | Vector?
 #	                                0:double;1:int;string:2
