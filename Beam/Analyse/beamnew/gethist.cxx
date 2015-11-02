@@ -25,13 +25,13 @@ int main(int argc, char** argv){
 	double tsep = 1170; // ns
 
 	double hmin = 1e-7;
-	double hmax = 1e-2;
+	double hmax = 1;
 
 	TString runName = "";
-	runName = "Particles Back to Capture Section (Graphite, 60cm)";
-	runName = "Particles at The end of Capture Section (Graphite, 60cm)";
-	runName = "Particles at The end of 90 degree";
-	runName = "Particles at The beginning of 90 degree";
+//	runName = "Particles Back to Capture Section (Graphite, 60cm)";
+	runName = "Particles at The end of Capture Section (75 cm from Target Center)";
+//	runName = "Particles at The end of 90 degree";
+//	runName = "Particles at The beginning of 90 degree";
 
 	std::vector<int> pids;
 	pids.push_back(-211); // pi-
@@ -86,7 +86,7 @@ int main(int argc, char** argv){
 	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/TS1.COMET.turtle1402.Ti600.Ti100.g496p02.root");
 	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/MyStudies/Beam/Analyse/beamnew/result/TS2.g60cm20mm182g.d50mm.g496p02QBH.root");
 	//f = new TFile("/scratchfs/bes/wuc/MyWorkArea/Simulate/comet/data/TS2.ALL.g60cm20mm.005T.g496QBH.root");
-	f = new TFile("/home/chen/MyWorkArea/Simulate/comet/data/TS1.ALL.140625ori.gaussian.g41001QBH.root");
+	f = new TFile("/home/chen/MyWorkArea/Simulate/comet/data/CS.ALL.150901.gaussian.g496p02QBH.root");
 	//double nProtons = 1E8*316./320;
 	double nProtons = 1E7;
 	//double nProtons = 10000*200;
@@ -239,8 +239,6 @@ int main(int argc, char** argv){
 	legend2->Draw("SAME");
 	c1->SaveAs("pa.png");
 	c1->SaveAs("pa.pdf");
-	c1->SaveAs("pa.eps");
 	c2->SaveAs("time.png");
 	c2->SaveAs("time.pdf");
-	c2->SaveAs("time.eps");
 }

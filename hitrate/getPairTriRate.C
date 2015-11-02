@@ -7,14 +7,19 @@
 //	int nsci = 41;
 //	int nche = 252;
 
-	// 141109D
+	// 150901D
 	double scaleF = 2.5e12*2.4*1170e-9/1e9;
-	//int nsci = (3628+4848)*scaleF;
-	//int nche = (17388)*scaleF;
-	int nsci = (3774+1421)*scaleF;
-	int nche = (9054)*scaleF;
-	//int nsci = (3774+1421+3628+4848)*scaleF;
-	//int nche = (9054+17388)*scaleF;
+//	int nsci = (7675)*scaleF;
+//	int nche = (73378)*scaleF;
+//	int nsci = (7637)*scaleF;
+//	int nche = (37448)*scaleF;
+
+	// 150919D2
+	double scaleF = 2.5e12*2.4*1170e-9/1e9;
+	int nsci = (6044)*scaleF;
+	int nche = (28220)*scaleF;
+//	int nsci = (6002)*scaleF;
+//	int nche = (17777)*scaleF;
 
 	double t1[128];
 	double t2[128];
