@@ -386,7 +386,7 @@ int main(int argc, char* argv[]){
 		fMyRootInterface->get_value("evt_num",evt_num);
 		fMyRootInterface->get_value("run_num",run_num);
 		McTruth_nTracks = 0; // in case there's no McTruth info
-		if (m_MonitorPlane=="McTruth"||m_MonitorPlane=="CDC"){
+		if (m_MonitorPlane=="McTruth"||m_MonitorPlane=="CDC"||(UseWeight&&m_OriginalFile=="NONE")){
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"Getting info for McTruth"<<std::endl;
 			fMyRootInterface->get_value("McTruth_nTracks",McTruth_nTracks);
 			fMyRootInterface->get_value("McTruth_time",McTruth_time,ns);
@@ -404,6 +404,16 @@ int main(int argc, char* argv[]){
 			fMyRootInterface->get_value("McTruth_px",McTruth_px,GeV);
 			fMyRootInterface->get_value("McTruth_py",McTruth_py,GeV);
 			fMyRootInterface->get_value("McTruth_pz",McTruth_pz,GeV);
+		}
+
+		if (UseWeight&&m_OriginalFile=="NONE"){
+			ini_t=McTruth_tid[0]*ns;
+			ini_x=McTruth_x[0]*cm;
+			ini_y=McTruth_y[0]*cm;
+			ini_z=McTruth_z[0]*cm;
+			ini_px=McTruth_px[0]*GeV;
+			ini_py=McTruth_py[0]*GeV;
+			ini_pz=McTruth_py[0]*GeV;
 		}
 
 		// find particles
@@ -584,7 +594,7 @@ int main(int argc, char* argv[]){
 								 <<",  previ_MP = "<<previ_MP
 								 <<",  prevtid = "<<prevtid
 								 <<std::endl;
-					if (Monitor_volName[i_mon]!=m_MonitorPlane){
+					if (Monitor_volName[i_mon]!=m_MonitorPlane&&Monitor_volName[i_mon]!=m_MonitorPlane+"D"&&Monitor_volName[i_mon]!=m_MonitorPlane+"U"){
 						continue;
 					}
 					if (!PDGEncoding // all particles

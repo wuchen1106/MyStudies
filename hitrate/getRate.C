@@ -25,8 +25,8 @@ cellNoIntegral[count]=cellNoIntegral[count-1]+300;cellNo[count]=300;count++;
 void getRate(){
 
 	// About this run
-	TString parName = "All";
-	TString suffixName = "141109.140625ori.gaussian";
+	TString parName = "ALL";
+	TString suffixName = "150901.W100um.OptD2.DD35.TH200um";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
@@ -44,7 +44,7 @@ void getRate(){
 //	nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.pim.g60cm10mm.005T.0508.g4s.QBH");
 //	nRuns.push_back(50);
-	double nProtons = 1e9*0.845;
+	double nProtons = 1e9;
 	if (parName == "pim" || parName == "pimWC")
 		nProtons *= 10;
 //	nProtons*=19./20;
@@ -165,9 +165,11 @@ void getRate(){
     h1[3]->SetMarkerColor(Color_4);
     h1[3]->SetLineColor(Color_4);
 	TString title3 = "Momentum noise Tracks in CDC";
+	//TString title3 = "Energy Deposit of Noise Hits in CDC";
     TH1D *h5[4];
     for (int i  =0; i<4; i++){
-		h5[i] = new TH1D("h5",title3,200,-10,2);
+		//h5[i] = new TH1D(Form("h5.%d",i),title3,200,-10,2);
+		h5[i] = new TH1D(Form("h5.%d",i),title3,200,-8,4);
 		h5[i]->GetYaxis()->SetTitle("Count");
 		h5[i]->GetXaxis()->SetTickLength(0);
 		h5[i]->GetXaxis()->SetTitleOffset(3);
@@ -346,7 +348,7 @@ void getRate(){
 //				std::cout<<volID<<std::endl;
 //			}
 			// FIXME
-			//if (edep>5000) continue;
+			if (edep>5000) continue;
 			vHitrate[layerID]+=weight*hit2rate/cellNo[layerID];
 			vCharge[layerID]+=edep*edep2charge/cellNo[layerID];
 			hitcount[layerID]++;
@@ -385,8 +387,8 @@ void getRate(){
 				index = 2;
 			else if (cpid>1e6)
 				index = 3;
-			//h5[index]->Fill(log(pa),weight);
-			h5[index]->Fill(log(edep/1e6),weight);
+			h5[index]->Fill(log(pa),weight);
+			//h5[index]->Fill(log(edep/1e6),weight);
 		}
 //		if (foundhit){
 		if (0){
@@ -554,9 +556,9 @@ void getRate(){
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gStyle->SetOptStat(1);
-	h5[2]->Draw();
+	h5[0]->Draw();
 	h5[1]->Draw("SAME");
-	h5[0]->Draw("SAME");
+	h5[2]->Draw("SAME");
 	h5[3]->Draw("SAME");
     TLegend *legend2 = new TLegend(0.8,0.6,1,0.9);
     legend2->AddEntry(h5[0],"electron");
@@ -564,9 +566,10 @@ void getRate(){
     legend2->AddEntry(h5[2],"proton");
     legend2->AddEntry(h5[3],"ion");
     legend2->Draw("SAME");
-	TGaxis * axis = new TGaxis(-10,0,2,0,exp(-10),exp(2),50510,"G");
-	//axis->SetTitle("Momentum [MeV/c]");
-	axis->SetTitle("Energy Deposit [MeV]");
+	//TGaxis * axis = new TGaxis(-10,0,2,0,exp(-10),exp(2),50510,"G");
+	TGaxis * axis = new TGaxis(-8,0,4,0,exp(-8),exp(4),50510,"G");
+	axis->SetTitle("Momentum [MeV/c]");
+	//axis->SetTitle("Energy Deposit [MeV]");
 	axis->Draw();
 
 	c3->SaveAs(runName+"_mom.png");

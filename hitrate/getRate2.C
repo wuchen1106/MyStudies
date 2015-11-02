@@ -36,7 +36,7 @@ void getRate2(){
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
-	TString runName = "All.141109.140625ori.gaussian";
+	TString runName = "ALL.150901.W100um.OptD2.DD28.TH10mm";
 //	FileNames.push_back("result/OT.root");
 	FileNames.push_back(runName+".root");
 	//DirName.push_back("/scratchfs/bes/wuc/MyWorkArea/Data/raw/g4sim/BLTCDC.em.g60cm10mm.005T.1p5_0927_11_p5.g4s.QBH");
@@ -47,7 +47,7 @@ void getRate2(){
 	//nRuns.push_back(100);
 //	DirName.push_back(MyData+"/raw/g4sim/CDCHit.OT.g60cm10mm.005T.140331.g4s.QBH");
 //	nRuns.push_back(100);
-	double nProtons = 1e9*0.845;
+	double nProtons = 1e9;
 	 // ########Should Modify#########
 
 	// Beam Structure

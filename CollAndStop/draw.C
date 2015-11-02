@@ -7,7 +7,7 @@
 	double minimum = 1e-21;
 
 	TString par = "#"+parName+"^{-}";
-	f = new TFile("result/"+parName+"on.11.p5.output.root");
+	f = new TFile("result/ST.pion.150901.W100um.OptD2.DD35.TH200um.output.root");
 
 	TH2D * h01  = (TH2D*) f->Get("h01");
 	TH2D * h02  = (TH2D*) f->Get("h02");

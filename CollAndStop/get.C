@@ -23,6 +23,28 @@
 
 	TString RunName = "none";
 
+	int PID = -211;
+	double minimum = 1e-11;
+	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+	double NperP = 3788463./521650.*376493./1e9;
+	TString parName = "pi";
+	TString opt = "150901.W100um.OptD2.DD35.TH200um";
+	//RunName = "";
+	TString DirName = MyData+"/A9.pim.150901.W100um.OptD2.DD35.TH10mm";
+	int nProcs = 100;
+	int nJobs = 1;
+
+//	int PID = 13;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 2668142./1e8;
+//	TString parName = "mu";
+//	TString opt = "150901.W100um.OptD2.DD35.TH200um";
+//	//RunName = MySim+"/output/Coll."+opt+".root";
+//	TString DirName = MyData+"/A9.ALL.150901.W100um.OptD2.DD35.TH200um";
+//	int nProcs = 100;
+//	int nJobs = 1;
+
 //	int PID = 13;
 //	double minimum = 1e-11;
 //	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
@@ -34,6 +56,15 @@
 //	int nProcs = 0;
 //	int nJobs = 0;
 
+<<<<<<< HEAD
+//	int PID = -211;
+//	double minimum = 1e-11;
+//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+//	double NperP = 172257./1e7;
+//	TString parName = "mu";
+//	TString opt = "ori.nocoli";
+//	RunName = MySim+"/output/Coll."+opt+".root";
+=======
 	int PID = -211;
 	double minimum = 1e-11;
 	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
@@ -41,6 +72,7 @@
 	TString parName = "pim";
 	TString opt = parName;
 	RunName = MySim+"/output/Coll."+opt+".root";
+>>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
 
 //	int PID = 13;
 //	double minimum = 1e-11;
@@ -162,12 +194,13 @@
 //=======================User Setting============================	
 
 	std::stringstream buff;
-	if (RunName == "none"){
+	if (RunName == "none" || RunName == ""){
 		for (int i = 0; i<nProcs; i++){
 			for (int j = 0; j<nJobs; j++){
 				buff.str("");
 				buff.clear();
 				buff<<DirName<<"/"<<i<<"_job"<<j<<".raw";
+				std::cout<<"Adding "<<buff.str()<<std::endl;
 				c->Add( buff.str().c_str());
 			}
 		}
@@ -176,11 +209,19 @@
 		c->Add(RunName);
 	}
 
+<<<<<<< HEAD
+	TH2D * h01 = new TH2D("h01",par+" Before 90^{o}",50,0,180,50,-200,200);
+	h01->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
+	h01->GetYaxis()->SetTitle("y position (mm)");
+	h01->GetYaxis()->SetTitleOffset(1.5);
+	TH2D * h02 = new TH2D("h02",par+" After 90^{o}",50,0,180,50,-200,200);
+=======
 	TH2D * h01 = new TH2D("h01",par+" Before Vacuum Window",50,0,180,50,-200,200);
 	h01->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h01->GetYaxis()->SetTitle("y position (mm)");
 	h01->GetYaxis()->SetTitleOffset(1.5);
 	TH2D * h02 = new TH2D("h02",par+" After Vacuum Window",50,0,180,50,-200,200);
+>>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
 	h02->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h02->GetYaxis()->SetTitle("y position (mm)");
 	h02->GetYaxis()->SetTitleOffset(1.5);
@@ -211,6 +252,17 @@
 	h11->GetYaxis()->SetTitle(par+" Stopped / P^{+} / 5.849 ns");
 	h11->GetYaxis()->SetTitleOffset(1.5);
 
+<<<<<<< HEAD
+	TH1D *h20 = new TH1D("h20","Arrival Time Before 90^{o}",200,0,PulseInterval);
+	h20->GetXaxis()->SetTitle("Time (ns)");
+	h20->GetYaxis()->SetTitle("count/p^{+}");
+	h20->GetYaxis()->SetTitleOffset(1.5);
+	TH1D *h30 = new TH1D("h30","Arrival Time Before 90^{o}",200,0,PulseInterval);
+	h30->GetXaxis()->SetTitle("Time (ns)");
+	h30->GetYaxis()->SetTitle("count/p^{+}");
+	h30->GetYaxis()->SetTitleOffset(1.5);
+	TH1D *h40 = new TH1D("h40","Arrival Time Before 90^{o}",200,0,PulseInterval);
+=======
 	TH1D *h20 = new TH1D("h20","Arrival Time Before Vacuum Window",200,0,PulseInterval);
 	h20->GetXaxis()->SetTitle("Time (ns)");
 	h20->GetYaxis()->SetTitle("count/p^{+}");
@@ -220,10 +272,26 @@
 	h30->GetYaxis()->SetTitle("count/p^{+}");
 	h30->GetYaxis()->SetTitleOffset(1.5);
 	TH1D *h40 = new TH1D("h40","Arrival Time Before Vacuum Window",200,0,PulseInterval);
+>>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
 	h40->GetXaxis()->SetTitle("Time (ns)");
 	h40->GetYaxis()->SetTitle("count/p^{+}");
 	h40->GetYaxis()->SetTitleOffset(1.5);
 
+<<<<<<< HEAD
+	TH1D *h1_1 = new TH1D("h1_1","Momentum Before 90^{o}",150,0,150);
+	h1_1->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
+	h1_1->GetYaxis()->SetTitle("count/p^{+}");
+	h1_1->GetYaxis()->SetTitleOffset(1.5);
+	TH1D *h1_2 = new TH1D("h1_2","Momentum Before 90^{o}",150,0,150);
+	TH1D *h1_3 = new TH1D("h1_3","Momentum Before 90^{o}",150,0,150);
+
+	TH1D *h2_1 = new TH1D("h2_1","y Position Before 90^{o}",150,-200,200);
+	h2_1->GetXaxis()->SetTitle("y position (mm)");
+	h2_1->GetYaxis()->SetTitle("count/p^{+}");
+	h2_1->GetYaxis()->SetTitleOffset(1.5);
+	TH1D *h2_2 = new TH1D("h2_2","y Position Before 90^{o}",150,-200,200);
+	TH1D *h2_3 = new TH1D("h2_3","y Position Before 90^{o}",150,-200,200);
+=======
 	TH1D *h1_1 = new TH1D("h1_1","Momentum Before Vacuum Window",150,0,150);
 	h1_1->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h1_1->GetYaxis()->SetTitle("count/p^{+}");
@@ -237,6 +305,7 @@
 	h2_1->GetYaxis()->SetTitleOffset(1.5);
 	TH1D *h2_2 = new TH1D("h2_2","y Position Before Vacuum Window",150,-200,200);
 	TH1D *h2_3 = new TH1D("h2_3","y Position Before Vacuum Window",150,-200,200);
+>>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
 
 	std::vector<int> *T_tid;
 	std::vector<double> *McTruth_time;
@@ -351,7 +420,7 @@
 
 	int nEvents = c->GetEntries();
 	std::cout<<nEvents<<" events!!!"<<std::endl;
-	for (int iEvent = 0; iEvent < nEvents; iEvent++ ){
+	for (Long64_t iEvent = 0; iEvent < nEvents; iEvent++ ){
 		c->GetEntry(iEvent);
 		double weight_initial = weight;
 		double weight_passed = weight;
@@ -378,7 +447,7 @@
 
 		nTotal += weight;
 //		chain2->GetEntry(iEvent);
-		if (iEvent%1000==0){
+		if (iEvent%10000==0){
 			std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		}
 		// coll
@@ -571,25 +640,25 @@
 	TPad * p1 = new TPad("p1","p1",0,0,1./3,1);
 	TPad * p2 = new TPad("p2","p2",1./3,0,2./3,1);
 	TPad * p3 = new TPad("p3","p3",2./3,0,3./3,1);
-	p1->Draw();
-	p2->Draw();
-	p3->Draw();
+//	p1->Draw();
+//	p2->Draw();
+//	p3->Draw();
 	h01->SetContour(50);
 	h02->SetContour(50);
 	h03->SetContour(50);
 	p1->cd();
 	p1->SetGridx(1);
 	p1->SetGridy(1);
-	h01->Draw("CONT0 COLZ");
+//	h01->Draw("CONT0 COLZ");
 	p2->cd();
 	p2->SetGridx(1);
 	p2->SetGridy(1);
-	h02->Draw("CONT0 COLZ");
+//	h02->Draw("CONT0 COLZ");
 	p3->cd();
 	p3->SetGridx(1);
 	p3->SetGridy(1);
-	h03->Draw("CONT0 COLZ");
-	sum->Draw();
+//	h03->Draw("CONT0 COLZ");
+//	sum->Draw();
 	c1->SaveAs(runName+".paVSy.pdf");
 	c1->SaveAs(runName+".paVSy.png");
 
@@ -598,16 +667,16 @@
 		TCanvas *c2 = new TCanvas("c2","c2",1024,768);
 		TPad * p4 = new TPad("p4","p4",0,0,1./2,1);
 		TPad * p5 = new TPad("p5","p5",1./2,0,2./2,1);
-		p4->Draw();
-		p5->Draw();
+//		p4->Draw();
+//		p5->Draw();
 		p4->cd();
 		p4->SetGridx(1);
 		p4->SetGridy(1);
-		h04->Draw();
+//		h04->Draw();
 		p5->cd();
 		p5->SetGridx(1);
 		p5->SetGridy(1);
-		h05->Draw();
+//		h05->Draw();
 		c2->SaveAs(runName+".SP.pdf");
 		c2->SaveAs(runName+".SP.png");
 	}
@@ -617,36 +686,36 @@
 	TPad *apad = new TPad("pa","pa",0,0,1./3,1);
 	TPad *bpad = new TPad("pb","pb",1./3,0,2../3,1);
 	TPad *cpad = new TPad("pc","pc",2./3,0,1,1);
-	apad->Draw();
-	bpad->Draw();
-	cpad->Draw();
+//	apad->Draw();
+//	bpad->Draw();
+//	cpad->Draw();
 
 	apad->cd();
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	h1_1->SetMarkerColor(1);
 	h1_1->SetLineColor(1);
-	h1_1->Draw();
+//	h1_1->Draw();
 	h1_1->Print();
 	h1_2->SetMarkerColor(600);
 	h1_2->SetLineColor(600);
-	h1_2->Draw("SAME");
+//	h1_2->Draw("SAME");
 	h1_3->SetMarkerColor(632);
 	h1_3->SetLineColor(632);
-	h1_3->Draw("SAME");
+//	h1_3->Draw("SAME");
 
 	bpad->cd();
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	h2_1->SetMarkerColor(1);
 	h2_1->SetLineColor(1);
-	h2_1->Draw();
+//	h2_1->Draw();
 	h2_2->SetMarkerColor(600);
 	h2_2->SetLineColor(600);
-	h2_2->Draw("SAME");
+//	h2_2->Draw("SAME");
 	h2_3->SetMarkerColor(632);
 	h2_3->SetLineColor(632);
-	h2_3->Draw("SAME");
+//n	h2_3->Draw("SAME");
 	c3->SaveAs(runName+".pa_y.pdf");
 	c3->SaveAs(runName+".pa_y.png");
 
@@ -656,20 +725,25 @@
 	gPad->SetLogy(1);
 	h20->SetMarkerColor(1);
 	h20->SetLineColor(1);
-	h20->Draw();
+//	h20->Draw();
 	h30->SetMarkerColor(600);
 	h30->SetLineColor(600);
-	h30->Draw("SAME");
+//	h30->Draw("SAME");
 	h40->SetMarkerColor(632);
 	h40->SetLineColor(632);
-	h40->Draw("SAME");
+//	h40->Draw("SAME");
 	legend = new TLegend(0.5,0.6,0.9,0.75);
 	legend->SetTextSize(0.03);
+<<<<<<< HEAD
+	legend->AddEntry(h20,par+" Before 90^{o}");
+	legend->AddEntry(h30,par+" After 90^{o}");
+=======
 	legend->AddEntry(h20,par+" Before Vacuum Window");
 	legend->AddEntry(h30,par+" After Vacuum Window");
+>>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
 	legend->AddEntry(h40,par+" Stopped in Target");
-	legend->Draw("SAME");
-	sum->Draw();
+//	legend->Draw("SAME");
+//	sum->Draw();
 	c3->SaveAs(runName+".pa_y.pdf");
 	c3->SaveAs(runName+".pa_y.png");
 
@@ -678,34 +752,34 @@
 	apad = new TPad("pa2","pa2",0,0,1./3,1);
 	bpad = new TPad("pb2","pb2",1./3,0,2../3,1);
 	cpad = new TPad("pc2","pc2",2./3,0,1,1);
-	apad->Draw();
-	bpad->Draw();
-	cpad->Draw();
-	apad->Draw();
-	bpad->Draw();
-	cpad->Draw();
+//	apad->Draw();
+//	bpad->Draw();
+//	cpad->Draw();
+//	apad->Draw();
+//	bpad->Draw();
+//	cpad->Draw();
 
 	apad->cd();
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gPad->SetLogy(1);
 	h10->GetYaxis()->SetRangeUser(minimum,h10->GetMaximum()*2);
-	h10->Draw();
+//	h10->Draw();
 
 	bpad->cd();
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gPad->SetLogy(1);
 	h11->GetYaxis()->SetRangeUser(minimum,h11->GetMaximum()*2);
-	h11->Draw();
-	info->Draw();
+//	h11->Draw();
+//	info->Draw();
 
 	cpad->cd();
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gPad->SetLogy(1);
 	h12->GetYaxis()->SetRangeUser(minimum,h12->GetMaximum()*2);
-	h12->Draw();
+//	h12->Draw();
 	c4->SaveAs(runName+".time.pdf");
 	c4->SaveAs(runName+".time.png");
 
