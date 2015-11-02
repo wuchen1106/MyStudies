@@ -291,7 +291,7 @@ int main(int argc, char** argv){
 	int nGoodHit = 0;
 	// FIXME
 	for ( int i = 0; i<it->GetEntries(); i++){
-	//for ( int i = 0; i<1e3; i++){
+	//for ( int i = 0; i<1e2; i++){
 		for(int j = 0; j<18; j++){
 			for (int k = 0; k<350; k++){
 				dict[j][k]=-1;
@@ -438,8 +438,8 @@ int main(int argc, char** argv){
 		// mixture bkg
 		int total_count = 0;
 		//FIXME
-//		for(int ibkg = 0; ibkg < v_nBKGneed.size(); ibkg++){
-		for(int ibkg = 0; ibkg < 0; ibkg++){
+		for(int ibkg = 0; ibkg < v_nBKGneed.size(); ibkg++){
+//		for(int ibkg = 0; ibkg < 0; ibkg++){
 			int nbkg = v_nBKGneed[ibkg];
 			int nBKG = v_nBKG[ibkg];
 			//std::cout<<"  =>Now mix in "<<nbkg<<" noise tracks from \""<<v_filename[ibkg]<<"\""<<std::endl;

@@ -1,6 +1,6 @@
 {
-//	TFile * f = new TFile("result/ALL.140625M01.root");
-	TFile * f = new TFile("result/OTWC.0508_100cm_1e9.root");
+	TFile * f = new TFile("All.141109.140625ori.gaussian.root");
+//	TFile * f = new TFile("result/OTWC.0508_100cm_1e9.root");
 	TTree * t = (TTree*) f->Get("tree");
 
 	int evt_num = 0;
@@ -76,12 +76,12 @@
 
 		// get charged track
 //		if (type!=0||evt_num!=33864||run_num!=3576) continue;
-		if (type!=0||topo!=0) continue;
+		if (type!=1) continue;
 		time = (*O_t)[0];
 		x = (*O_x)[0];
 		y = (*O_y)[0];
-//		z = (*O_z)[0]+5952.5; // for after 110625
-		z = (*O_z)[0]+120.5+5952.5; // for BL
+		z = (*O_z)[0]+5952.5; // for after 110625
+//		z = (*O_z)[0]+120.5+5952.5; // for BL
 		px = (*O_px)[0];
 		py = (*O_py)[0];
 		pz = (*O_pz)[0];

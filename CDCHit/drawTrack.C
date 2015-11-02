@@ -1,13 +1,13 @@
 {
 	double edep_cut = 5e-6; // GeV
 	double twindow_left = 700; // ns
-//	TFile * ifile = new TFile("signal.004.root");
+	TFile * ifile = new TFile("input.root");
 //	TFile * ifile = new TFile("signal.geantino.root");
 //	TFile * ifile = new TFile("signal.140905M02.noise.root");
 	//TFile * ifile = new TFile("signal.electron.1T.new.root");
 //	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire.AllDisks.ExtraInfo.WithNoise.new.root");
 //	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire126um.AllDisks.map140905.purenoise.root");
-	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire126um.AllDisks.map140905_1cm.newrl.root");
+//	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire126um.AllDisks.map140905_1cm.newrl.root");
 //	TFile * ifile = new TFile("signal.electron.150um.G41001.smeared.withwire80um.AllDisks.map140905.root");
 //	TFile * ifile = new TFile("CDC.140905M02.63um.sig.g41001QBH.9.root");
 //	TFile * ifile = new TFile("signal.geantino.new4.root");
