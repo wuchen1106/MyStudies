@@ -1,0 +1,245 @@
+#include <vector>
+#include <string>
+#include <iostream>
+#include <math.h>
+#include "TChain.h"
+#include "TFile.h"
+#include "TTree.h"
+
+int rotate(int n0, int dn){
+	int n1 = n0+dn;
+	if (n0<64&&n1>=64) n1-=64;
+	if (n0>=64&&n1<64) n1+=64;
+	if (n1>=128) n1-=64;
+	if (n1<0) n1+=64;
+	return n1;
+}
+int main(int argc, char** argv){
+	double twindow = 1000;
+	double me = 0.511e-3; // GeV
+	TChain * c = new TChain("tree");
+	c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.2.root");
+	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.new.root");
+	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.root");
+	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.mrot.root");
+	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.ep.mrot.root");
+	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.rev.root");
+	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.ep.root");
+	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
+	std::vector<int> * in_triID = 0;
+	std::vector<double> * in_trit = 0;
+	std::vector<double> * in_triedep = 0;
+	std::vector<double> * in_tripx = 0;
+	std::vector<double> * in_tripy = 0;
+	std::vector<double> * in_tripz = 0;
+	std::vector<double> * in_triZ = 0;
+	std::vector<std::string> * in_triName= 0;
+	std::vector<int> * in_cdclid = 0;
+	std::vector<double> * in_cdct = 0;
+	std::vector<double> * in_mctime = 0;
+	std::vector<double> * in_mcpx = 0;
+	std::vector<double> * in_mcpy = 0;
+	std::vector<double> * in_mcpz = 0;
+	c->SetBranchAddress("CdcCell_layerID",&in_cdclid);
+	c->SetBranchAddress("CdcCell_t",&in_cdct);
+	c->SetBranchAddress("McTruth_time",&in_mctime);
+	c->SetBranchAddress("McTruth_px",&in_mcpx);
+	c->SetBranchAddress("McTruth_py",&in_mcpy);
+	c->SetBranchAddress("McTruth_pz",&in_mcpz);
+	c->SetBranchAddress("M_t",&in_trit);
+	c->SetBranchAddress("M_edep",&in_triedep);
+	c->SetBranchAddress("M_px",&in_tripx);
+	c->SetBranchAddress("M_py",&in_tripy);
+	c->SetBranchAddress("M_pz",&in_tripz);
+	c->SetBranchAddress("M_z",&in_triZ);
+	c->SetBranchAddress("M_volID",&in_triID);
+	c->SetBranchAddress("M_volName",&in_triName);
+	TFile * ofile = new TFile("output.root","RECREATE");
+	TTree * otree = new TTree("t","t");
+	int tri_nHits;
+	int tri_pos;
+	int type;
+	int maxlid = 0;
+	int maxcontinuedIn = 0;
+	int maxcontinuedOut = 0;
+	int cdc_nHits = 0;
+	int cdc_nHitsT = 0;
+	int nturn = 0;
+	double theta = 0;
+	double zc = 0;
+	double zcl = 0;
+	double zs = 0;
+	otree->Branch("tn",&tri_nHits);
+	otree->Branch("tp",&tri_pos);
+	otree->Branch("type",&type);
+	otree->Branch("cn",&cdc_nHits);
+	otree->Branch("ctn",&cdc_nHitsT);
+	otree->Branch("ccni",&maxcontinuedIn);
+	otree->Branch("ccno",&maxcontinuedOut);
+	otree->Branch("cml",&maxlid);
+	otree->Branch("nt",&nturn);
+	otree->Branch("theta",&theta);
+	otree->Branch("zc",&zc);
+	otree->Branch("zcl",&zcl);
+	otree->Branch("zs",&zs);
+	double sci_time[128];
+	double che_time[128];
+	Long64_t nEntries = c->GetEntries();
+	std::vector<int> vtype;
+	std::vector<int> vpos;
+	std::vector<double> vtime;
+	for (Long64_t iEntry = 0; iEntry<nEntries; iEntry++){
+		if (iEntry%1000==0) std::cout<<(double)iEntry/nEntries*100<<"%..."<<std::endl;
+		c->GetEntry(iEntry);
+
+		theta = acos((*in_mcpz)[0]/sqrt((*in_mcpx)[0]*(*in_mcpx)[0]+(*in_mcpy)[0]*(*in_mcpy)[0]));
+		zc = 0;
+		zcl = 0;
+		zs = 0;
+
+		cdc_nHitsT = in_cdclid->size();
+		maxlid = 0;
+		maxcontinuedIn = 0;
+		maxcontinuedOut = 0;
+		cdc_nHits = 0;
+		nturn = 0;
+
+		int currentlayersIn = 0;
+		int currentlayersOut = 0;
+		int prelid = 0;
+		for ( int ihit = 0; ihit<in_cdclid->size(); ihit++){
+			if (((*in_cdct)[ihit]-(*in_mctime)[0])/7+1>nturn) nturn = ((*in_cdct)[ihit]-(*in_mctime)[0])/7+1;
+			if ((*in_cdct)[ihit]-(*in_mctime)[0]>7) continue;
+			if (maxlid<(*in_cdclid)[ihit]) maxlid=(*in_cdclid)[ihit];
+			if ((*in_cdclid)[ihit]-prelid==1) currentlayersIn++;
+			else if ((*in_cdclid)[ihit]-prelid==-1) currentlayersOut++;
+			else if ((*in_cdclid)[ihit]!=prelid) {currentlayersIn=0;currentlayersOut=0;}
+			if (maxcontinuedOut<currentlayersOut) maxcontinuedOut=currentlayersOut;
+			if (maxcontinuedIn<currentlayersIn) maxcontinuedIn=currentlayersIn;
+			prelid=(*in_cdclid)[ihit];
+			cdc_nHits++;
+		}
+		//std::cout<<maxlid<<","<<cdc_nHits<<","<<maxcontinuedOut<<","<<maxcontinuedU<<std::endl;
+
+		for (int itri = 0; itri<128; itri++){
+			che_time[itri] = -1;
+			sci_time[itri] = -1;
+		}
+		tri_nHits = 0;
+		for ( int ihit = 0; ihit<in_trit->size(); ihit++){
+			if ((*in_triName)[ihit]=="TriChePD"
+			  ||(*in_triName)[ihit]=="TriChePU"
+			  ||(*in_triName)[ihit]=="TriSciPD"
+			  ||(*in_triName)[ihit]=="TriSciPU"
+			  ||(*in_triName)[ihit]=="TriSciLD"
+			  ||(*in_triName)[ihit]=="TriSciLU"
+					) continue;
+			tri_nHits++;
+			double px = (*in_tripx)[ihit];
+			double py = (*in_tripy)[ihit];
+			double pz = (*in_tripz)[ihit];
+			double pa = sqrt(px*px+py*py+pz*pz);
+			double beta = pa/sqrt(pa*pa+me*me);
+			if ((*in_triName)[ihit]=="TriCheD"
+				||(*in_triName)[ihit]=="TriCheLD"
+					){ // Cherenkov
+//				if (beta>0.5){
+				if (1){
+					che_time[(*in_triID)[ihit]+64] = (*in_trit)[ihit];
+					if ((*in_triName)[ihit]=="TriCheD"){
+						if (!zc) zc = (*in_triZ)[ihit];
+					}
+					else{
+						if (!zcl) zcl = (*in_triZ)[ihit];
+					}
+				}
+			}
+			else  if ((*in_triName)[ihit]=="TriCheU"
+				||(*in_triName)[ihit]=="TriCheLU"
+					){ // Cherenkov
+//				if (beta>0.5){
+				if (1){
+					che_time[(*in_triID)[ihit]] = (*in_trit)[ihit];
+					if ((*in_triName)[ihit]=="TriCheU"){
+						if (!zc) zc = (*in_triZ)[ihit];
+					}
+					else{
+						if (!zcl) zcl = (*in_triZ)[ihit];
+					}
+				}
+			}
+			else if ((*in_triName)[ihit]=="TriSciD"
+//					||(*in_triName)[ihit]=="TriSciLD"
+					){ // Scintillator
+//				if((*in_triedep)[ihit]>630e-6){
+				if(1){
+					sci_time[(*in_triID)[ihit]+64] = (*in_trit)[ihit];
+					if (!zs) zs = (*in_triZ)[ihit];
+				}
+			}
+			else if ((*in_triName)[ihit]=="TriSciU"
+//					||(*in_triName)[ihit]=="TriSciLU"
+					){ // Scintillator
+//				if((*in_triedep)[ihit]>630e-6){
+				if(1){
+					sci_time[(*in_triID)[ihit]] = (*in_trit)[ihit];
+					if (!zs) zs = (*in_triZ)[ihit];
+				}
+			}
+		}
+		if (tri_nHits){
+			if (!cdc_nHitsT) tri_nHits*=-1;
+			else if ((*in_cdct)[0]>(*in_trit)[0]) tri_nHits*=-1;
+		}
+
+		// option D
+		vtype.clear();
+		vtime.clear();
+		vpos.clear();
+		for (int itri = 0; itri<128; itri++){
+			int time = sci_time[itri];
+			int nsci = 0;
+			if (time!=-1){
+				// how many hit in sci in row? (starting from this counter)
+				for (int delta = 1; delta<=2; delta++){
+					int jtri = rotate(itri,delta);
+					if (sci_time[jtri]!=-1&&fabs(sci_time[jtri]-time)<10) nsci++;
+					else break;
+				}
+			}
+//			std::cout<<itri<<"-"<<nsci<<"->"<<rotate(itri,nsci)<<std::endl;
+			for (int delta = -2; delta<=2; delta++){
+				int jtri = rotate(itri,delta);
+				if (che_time[jtri]==-1||fabs(che_time[jtri]-time)>=10) continue;
+				int nche = 1;
+				for (int delta = 1; delta<=2; delta++){
+					int ktri = rotate(jtri,delta);
+					if (che_time[ktri]!=1&&fabs(che_time[ktri]-time)<10) nche++;
+					else break;
+				}
+//				std::cout<<"  "<<jtri<<"-"<<nche<<"->"<<rotate(jtri,nche)<<std::endl;
+//				std::cout<<"  "<<nsci*100+nche*10+delta<<std::endl;
+				vtype.push_back(nsci*100+nche*10+delta);
+				vtime.push_back(time);
+				vpos.push_back(itri>=64?1:-1);
+			}
+		}
+		int nhitmax = -1;
+		for (int it = 0; it<vtype.size(); it++){
+			if (nhitmax<vtype[it]/10) nhitmax = vtype[it]/10;
+		}
+		int ndeltamin = 10;
+		for (int it = 0; it<vtype.size(); it++){
+			if (nhitmax!=vtype[it]/10) continue;
+			if (fabs(ndeltamin)>fabs(vtype[it]%10)){
+				ndeltamin = vtype[it]%10;
+				tri_pos = vpos[it];
+			}
+		}
+		type = nhitmax*10+ndeltamin;
+		otree->Fill();
+	}
+	otree->Write();
+	ofile->Close();
+	return 0;
+}
