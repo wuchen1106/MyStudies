@@ -22,166 +22,33 @@
 //=======================User Setting============================	
 
 	TString RunName = "none";
+	std::string theVolume = "A9Container";
+//	std::string theVolume = "Target";
+	double nProton;
 
-	int PID = -211;
-	double minimum = 1e-11;
-	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-	double NperP = 3788463./521650.*376493./1e9;
-	TString parName = "pi";
-	TString opt = "150901.W100um.OptD2.DD35.TH200um";
-	//RunName = "";
-	TString DirName = MyData+"/A9.pim.150901.W100um.OptD2.DD35.TH10mm";
-	int nProcs = 100;
-	int nJobs = 1;
-
-//	int PID = 13;
+//	int PID = -211;
 //	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 2668142./1e8;
-//	TString parName = "mu";
+//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
+//	double NperP = 3788463./521650.*376493./1e9;
+//	nProton = 1e8;
+//	TString parName = "pi";
 //	TString opt = "150901.W100um.OptD2.DD35.TH200um";
-//	//RunName = MySim+"/output/Coll."+opt+".root";
-//	TString DirName = MyData+"/A9.ALL.150901.W100um.OptD2.DD35.TH200um";
+//	//RunName = "";
+//	TString DirName = MyData+"/A9.mum.150919.W500um.OptD2.1mmCFRP.DD35.1cmLead";
 //	int nProcs = 100;
 //	int nJobs = 1;
 
-//	int PID = 13;
-//	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 45058./1e7;
-//	TString parName = "mu";
-//	TString opt = "140625ori";
-//	RunName = MySim+"/output/Coll."+opt+".root";
-//	TString DirName = "";
-//	int nProcs = 0;
-//	int nJobs = 0;
-
-<<<<<<< HEAD
-//	int PID = -211;
-//	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 172257./1e7;
-//	TString parName = "mu";
-//	TString opt = "ori.nocoli";
-//	RunName = MySim+"/output/Coll."+opt+".root";
-=======
-	int PID = -211;
+	int PID = 13;
 	double minimum = 1e-11;
-	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-	double NperP = 334776./1e7;
-	TString parName = "pim";
-	TString opt = parName;
-	RunName = MySim+"/output/Coll."+opt+".root";
->>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
-
-//	int PID = 13;
-//	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 802367./1e8;
-//	TString parName = "mu";
-//	TString opt = "140905M02";
-//	RunName = MySim+"/output/Coll."+opt+".root";
-//	TString DirName = "";
-//	int nProcs = 0;
-//	int nJobs = 0;
-
-//	int PID = -211;
-//	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 172257./1e7;
-//	TString parName = "mu";
-//	TString opt = "ori.nocoli";
-//	RunName = MySim+"/output/Coll."+opt+".root";
-
-//	int PID = 13;
-//	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 172257./1e7;
-//	TString parName = "mu";
-//	TString opt = "141109";
-////	RunName = MySim+"/output/Coll."+opt+".root";
-//	TString DirName = MyData+"/Coll.141109.g496p02QBH";
-//	int nProcs = 10;
-//	int nJobs = 1;
-
-//	int PID = 13;
-//	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 172257./1e7;
-//	TString parName = "mu";
-//	TString opt = "141022nc";
-//	RunName = MySim+"/output/Coll."+opt+".root";
-//	TString DirName = MyData+"/Coll.141022Vac";
-//	int nProcs = 8;
-//	int nJobs = 1;
-
-//	int PID = 13;
-//	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 802367./1e8;
-//	TString parName = "mu";
-//	TString opt = "141022Vac";
-////	RunName = MySim+"/output/Coll."+opt+".root";
-////	TString DirName = MyData+"/Coll.141022Vac";
-//	int nProcs = 8;
-//	int nJobs = 1;
-
-//	int PID = 13;
-//	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 802367./1e8;
-//	TString parName = "mu";
-//	TString opt = "140905M02";
-//	RunName = MySim+"/output/Coll."+opt+".root";
-//	TString DirName = "";
-//	int nProcs = 0;
-//	int nJobs = 0;
-
-//	int PID = 13;
-//	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 860498./1e8;
-//	TString parName = "mu";
-//	TString DirName = MyData+"/raw/g4sim/Coll.OT.g60cm10mm.005T.BL.g4s.QBH";
-//	int nProcs = 10;
-//	int nJobs = 1;
-
-//	int PID = 13;
-//	double minimum = 1e-11;
-//	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
-//	double NperP = 860498./1e8;
-//	TString parName = "mu";
-//	TString opt = "a2_3t5_40";
-//	TString DirName = MyData+"/raw/g4sim/Coll.mum.g60cm10mm.005T."+opt+".g4s.QBH";
-//	int nProcs = 8;
-//	int nJobs = 1;
-
-//	int PID = -211;
-//	double minimum = 1e-21;
-//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-//	double NperP = 706288./1e9;
-//	TString parName = "pi";
-//	TString DirName = MyData+"/raw/g4sim/Coll.pim.g60cm10mm.005T.BL.g4s.QBH";
-//	int nProcs = 4;
-//	int nJobs = 10;
-
-//	int PID = -211;
-//	double minimum = 1e-21;
-//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-//	double NperP = 706288./1e9; // Number of initial particles (i.e. mu/pi at MT1) per proton
-//	TString parName = "pi";
-//	TString RunName = "/home/chen/MyWorkArea/g4sim/output/test.root";
-//	int nProcs = 4;
-//	int nJobs = 10;
-
-//	int PID = -211;
-//	double minimum = 1e-21;
-//	TH1D *hCurve = (TH1D*) f->Get("ProtonPuls");
-//	double NperP = 706288./1e9; // Number of initial particles (i.e. mu/pi at MT1) per proton
-//	TString parName = "pi";
-//	TString DirName = MyData+"/raw/g4sim/Coll.pim.g60cm10mm.005T.b_5.g4s.QBH";
-//	int nProcs = 35;
-//	int nJobs = 1;
+	TH1D *hCurve = (TH1D*) f->Get("Convoluted");
+	double NperP = 2668142./1e8;
+	nProton = 1e8;
+	TString parName = "mu";
+	TString opt = "150919.W500um.OptD2.1mmCFRP.DD35.1cmLead";
+	//RunName = MySim+"/output/Coll."+opt+".root";
+	TString DirName = MyData+"/A9.mum."+opt;
+	int nProcs = 5;
+	int nJobs = 1;
 
 	hCurve->RebinX(20);
 	TString par = "#"+parName+"^{-}";
@@ -209,19 +76,11 @@
 		c->Add(RunName);
 	}
 
-<<<<<<< HEAD
-	TH2D * h01 = new TH2D("h01",par+" Before 90^{o}",50,0,180,50,-200,200);
+	TH2D * h01 = new TH2D("h01",par+" Before BS Coil",50,0,180,50,-200,200);
 	h01->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h01->GetYaxis()->SetTitle("y position (mm)");
 	h01->GetYaxis()->SetTitleOffset(1.5);
-	TH2D * h02 = new TH2D("h02",par+" After 90^{o}",50,0,180,50,-200,200);
-=======
-	TH2D * h01 = new TH2D("h01",par+" Before Vacuum Window",50,0,180,50,-200,200);
-	h01->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
-	h01->GetYaxis()->SetTitle("y position (mm)");
-	h01->GetYaxis()->SetTitleOffset(1.5);
-	TH2D * h02 = new TH2D("h02",par+" After Vacuum Window",50,0,180,50,-200,200);
->>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
+	TH2D * h02 = new TH2D("h02",par+" After BS Coil",50,0,180,50,-200,200);
 	h02->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h02->GetYaxis()->SetTitle("y position (mm)");
 	h02->GetYaxis()->SetTitleOffset(1.5);
@@ -252,60 +111,32 @@
 	h11->GetYaxis()->SetTitle(par+" Stopped / P^{+} / 5.849 ns");
 	h11->GetYaxis()->SetTitleOffset(1.5);
 
-<<<<<<< HEAD
-	TH1D *h20 = new TH1D("h20","Arrival Time Before 90^{o}",200,0,PulseInterval);
+	TH1D *h20 = new TH1D("h20","Arrival Time Before BS Coil",200,0,PulseInterval);
 	h20->GetXaxis()->SetTitle("Time (ns)");
 	h20->GetYaxis()->SetTitle("count/p^{+}");
 	h20->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h30 = new TH1D("h30","Arrival Time Before 90^{o}",200,0,PulseInterval);
+	TH1D *h30 = new TH1D("h30","Arrival Time Before BS Coil",200,0,PulseInterval);
 	h30->GetXaxis()->SetTitle("Time (ns)");
 	h30->GetYaxis()->SetTitle("count/p^{+}");
 	h30->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h40 = new TH1D("h40","Arrival Time Before 90^{o}",200,0,PulseInterval);
-=======
-	TH1D *h20 = new TH1D("h20","Arrival Time Before Vacuum Window",200,0,PulseInterval);
-	h20->GetXaxis()->SetTitle("Time (ns)");
-	h20->GetYaxis()->SetTitle("count/p^{+}");
-	h20->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h30 = new TH1D("h30","Arrival Time Before Vacuum Window",200,0,PulseInterval);
-	h30->GetXaxis()->SetTitle("Time (ns)");
-	h30->GetYaxis()->SetTitle("count/p^{+}");
-	h30->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h40 = new TH1D("h40","Arrival Time Before Vacuum Window",200,0,PulseInterval);
->>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
+	TH1D *h40 = new TH1D("h40","Arrival Time Before BS Coil",200,0,PulseInterval);
 	h40->GetXaxis()->SetTitle("Time (ns)");
 	h40->GetYaxis()->SetTitle("count/p^{+}");
 	h40->GetYaxis()->SetTitleOffset(1.5);
 
-<<<<<<< HEAD
-	TH1D *h1_1 = new TH1D("h1_1","Momentum Before 90^{o}",150,0,150);
+	TH1D *h1_1 = new TH1D("h1_1","Momentum Before BS Coil",150,0,150);
 	h1_1->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 	h1_1->GetYaxis()->SetTitle("count/p^{+}");
 	h1_1->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h1_2 = new TH1D("h1_2","Momentum Before 90^{o}",150,0,150);
-	TH1D *h1_3 = new TH1D("h1_3","Momentum Before 90^{o}",150,0,150);
+	TH1D *h1_2 = new TH1D("h1_2","Momentum Before BS Coil",150,0,150);
+	TH1D *h1_3 = new TH1D("h1_3","Momentum Before BS Coil",150,0,150);
 
-	TH1D *h2_1 = new TH1D("h2_1","y Position Before 90^{o}",150,-200,200);
+	TH1D *h2_1 = new TH1D("h2_1","y Position Before BS Coil",150,-200,200);
 	h2_1->GetXaxis()->SetTitle("y position (mm)");
 	h2_1->GetYaxis()->SetTitle("count/p^{+}");
 	h2_1->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h2_2 = new TH1D("h2_2","y Position Before 90^{o}",150,-200,200);
-	TH1D *h2_3 = new TH1D("h2_3","y Position Before 90^{o}",150,-200,200);
-=======
-	TH1D *h1_1 = new TH1D("h1_1","Momentum Before Vacuum Window",150,0,150);
-	h1_1->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
-	h1_1->GetYaxis()->SetTitle("count/p^{+}");
-	h1_1->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h1_2 = new TH1D("h1_2","Momentum Before Vacuum Window",150,0,150);
-	TH1D *h1_3 = new TH1D("h1_3","Momentum Before Vacuum Window",150,0,150);
-
-	TH1D *h2_1 = new TH1D("h2_1","y Position Before Vacuum Window",150,-200,200);
-	h2_1->GetXaxis()->SetTitle("y position (mm)");
-	h2_1->GetYaxis()->SetTitle("count/p^{+}");
-	h2_1->GetYaxis()->SetTitleOffset(1.5);
-	TH1D *h2_2 = new TH1D("h2_2","y Position Before Vacuum Window",150,-200,200);
-	TH1D *h2_3 = new TH1D("h2_3","y Position Before Vacuum Window",150,-200,200);
->>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
+	TH1D *h2_2 = new TH1D("h2_2","y Position Before BS Coil",150,-200,200);
+	TH1D *h2_3 = new TH1D("h2_3","y Position Before BS Coil",150,-200,200);
 
 	std::vector<int> *T_tid;
 	std::vector<double> *McTruth_time;
@@ -330,6 +161,7 @@
 	std::vector<double> *T_Oy;
 	std::vector<double> *T_Oz;
 	std::vector<double> *T_Ot;
+	std::vector<std::string> *T_volName;
 	int V_nHits;
 	int T_nHits;
 	double ipx = 0;
@@ -341,6 +173,7 @@
 		c->SetBranchAddress("T_Oy",&T_Oy);
 		c->SetBranchAddress("T_Oz",&T_Oz);
 		c->SetBranchAddress("T_Ot",&T_Ot);
+		c->SetBranchAddress("T_volName",&T_volName);
 	}
 	c->SetBranchAddress("T_nHits",&T_nHits);
 	c->SetBranchAddress("V_nHits",&V_nHits);
@@ -495,6 +328,7 @@
 		for (int iHit = 0; iHit< T_nHits; iHit++){
 			stopped = false;
 			if (withStopPosition){
+				if ((*T_volName)[iHit]!=theVolume) continue;
 				st_pid = (*T_pid)[iHit];
 				if (st_pid==PID) stopped=true;
 				Ox = (*T_Ox)[iHit]*10;
@@ -532,7 +366,8 @@
 			}
 		}
 	}
-	double nProton = nTotal/NperP;
+	// FIXME
+//	nProton = nTotal/NperP;
 	std::cout<<"nProton = "<<nProton<<std::endl;
 	std::cout<<"nStopped = "<<nStopped<<std::endl;
 	nPassedH/=nProton;
@@ -734,13 +569,8 @@
 //	h40->Draw("SAME");
 	legend = new TLegend(0.5,0.6,0.9,0.75);
 	legend->SetTextSize(0.03);
-<<<<<<< HEAD
-	legend->AddEntry(h20,par+" Before 90^{o}");
-	legend->AddEntry(h30,par+" After 90^{o}");
-=======
-	legend->AddEntry(h20,par+" Before Vacuum Window");
-	legend->AddEntry(h30,par+" After Vacuum Window");
->>>>>>> 719986399cda7058b0fb6148ace582b9afff0731
+	legend->AddEntry(h20,par+" Before BS Coil");
+	legend->AddEntry(h30,par+" After BS Coil");
 	legend->AddEntry(h40,par+" Stopped in Target");
 //	legend->Draw("SAME");
 //	sum->Draw();
