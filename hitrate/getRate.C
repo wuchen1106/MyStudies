@@ -26,7 +26,7 @@ void getRate(){
 
 	// About this run
 	TString parName = "ALL";
-	TString suffixName = "150901.W100um.OptD2.DD35.TH200um";
+	TString suffixName = "150919.W500um.OptD2.1mmCFRP.DD35.1cmLead";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
@@ -321,11 +321,12 @@ void getRate(){
 		// FIXME
 		//if (topo==-2||topo==-1||topo==1000||topo==1002) continue;
 		if (topo==-2) continue;
-		if (topo==1000&&cpid==2212) weight *= 1./2.85;
-		else if (topo==1000&&cpid==1000010020) weight *= 1./4;
-		else if (topo==1000&&cpid>1e6) weight *= 0; // no others
-		else if (topo==1001) weight *= 0.67;
-		else if (topo==1005) weight *= 1.6;
+		//FIXME for 4.10.01.p02
+		//if (topo==1000&&cpid==2212) weight *= 1./2.85;
+		//else if (topo==1000&&cpid==1000010020) weight *= 1./4;
+		//else if (topo==1000&&cpid>1e6) weight *= 0; // no others
+		//else if (topo==1001) weight *= 0.67;
+		//else if (topo==1005) weight *= 1.6;
 		int nHits = C_edep->size();
 		int hitcount[18] = {0};
 		bool foundhit = false;
@@ -348,7 +349,7 @@ void getRate(){
 //				std::cout<<volID<<std::endl;
 //			}
 			// FIXME
-			if (edep>5000) continue;
+//			if (edep>5000) continue;
 			vHitrate[layerID]+=weight*hit2rate/cellNo[layerID];
 			vCharge[layerID]+=edep*edep2charge/cellNo[layerID];
 			hitcount[layerID]++;
