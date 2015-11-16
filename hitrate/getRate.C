@@ -26,7 +26,7 @@ void getRate(){
 
 	// About this run
 	TString parName = "ALL";
-	TString suffixName = "150901.W100um.OptD2.DD35.TH200um";
+	TString suffixName = "150901.W500um.OptD2.1mmCFRP.DD35.1cmLead";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
@@ -168,8 +168,8 @@ void getRate(){
 	//TString title3 = "Energy Deposit of Noise Hits in CDC";
     TH1D *h5[4];
     for (int i  =0; i<4; i++){
-		//h5[i] = new TH1D(Form("h5.%d",i),title3,200,-10,2);
-		h5[i] = new TH1D(Form("h5.%d",i),title3,200,-8,4);
+		h5[i] = new TH1D(Form("h5.%d",i),title3,200,-10,2);
+		//h5[i] = new TH1D(Form("h5.%d",i),title3,200,-8,4);
 		h5[i]->GetYaxis()->SetTitle("Count");
 		h5[i]->GetXaxis()->SetTickLength(0);
 		h5[i]->GetXaxis()->SetTitleOffset(3);
@@ -309,7 +309,7 @@ void getRate(){
 	double edep = -1;
 	double time = -1;
 	int layerID = -1;
-	f = new TFile(runName+".output.root","RECREATE");
+	f = new TFile(runName+".cdc.root","RECREATE");
 	TTree *t  = new TTree("t","t");
 	int nEvents = c->GetEntries();
 	std::cout<<"nEvents = "<<nEvents<<std::endl;
@@ -387,8 +387,8 @@ void getRate(){
 				index = 2;
 			else if (cpid>1e6)
 				index = 3;
-			h5[index]->Fill(log(pa),weight);
-			//h5[index]->Fill(log(edep/1e6),weight);
+			//h5[index]->Fill(log(pa),weight);
+			h5[index]->Fill(log(edep/1e6),weight);
 		}
 //		if (foundhit){
 		if (0){
@@ -566,14 +566,19 @@ void getRate(){
     legend2->AddEntry(h5[2],"proton");
     legend2->AddEntry(h5[3],"ion");
     legend2->Draw("SAME");
-	//TGaxis * axis = new TGaxis(-10,0,2,0,exp(-10),exp(2),50510,"G");
-	TGaxis * axis = new TGaxis(-8,0,4,0,exp(-8),exp(4),50510,"G");
-	axis->SetTitle("Momentum [MeV/c]");
-	//axis->SetTitle("Energy Deposit [MeV]");
-	axis->Draw();
 
-	c3->SaveAs(runName+"_mom.png");
-	c3->SaveAs(runName+"_mom.pdf");
+	TLine * l = new TLine(log(5e-3),0,log(5e-3),h5[0]->GetMaximum());
+	l->Draw("SAME");
+	TGaxis * axis = new TGaxis(-10,0,2,0,exp(-10),exp(2),50510,"G");
+	axis->SetTitle("Energy Deposit [MeV]");
+	axis->Draw();
+	c3->SaveAs(runName+"_edep.png");
+	c3->SaveAs(runName+"_edep.pdf");
+	//TGaxis * axis = new TGaxis(-8,0,4,0,exp(-8),exp(4),50510,"G");
+	//axis->SetTitle("Momentum [MeV/c]");
+	//axis->Draw();
+	//c3->SaveAs(runName+"_mom.png");
+	//c3->SaveAs(runName+"_mom.pdf");
 
 	g1->Write();
 	g2->Write();
