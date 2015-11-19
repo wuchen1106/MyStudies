@@ -8,6 +8,8 @@
 #include <algorithm>
 
 #include "globals.hh"
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
 
 #include "TH1D.h"
@@ -713,13 +715,13 @@ int main(int argc, char* argv[]){
 								}
 							}
 						}
-//						if (Monitor_tid[i_mon]==prevtid&&i_MP==previ_MP&&(st_error||!Monitor_stopped[i_mon])){
-//							if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
-//								std::cout<<prefix_ParticleInfoStart
-//										 <<"  Occurred once!"
-//										 <<std::endl;
-//							continue;
-//						}
+						if (Monitor_tid[i_mon]==prevtid&&i_MP==previ_MP&&(st_error||!Monitor_stopped[i_mon])){
+							if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
+								std::cout<<prefix_ParticleInfoStart
+										 <<"  Occurred once!"
+										 <<std::endl;
+							continue;
+						}
 						if (verbose >= Verbose_ParticleInfo || iEvent%printModule == 0)
 							std::cout<<prefix_ParticleInfoStart
 									 <<"  First hit!"
