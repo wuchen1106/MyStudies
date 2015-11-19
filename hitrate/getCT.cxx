@@ -24,7 +24,7 @@ int main (int argc, char** argv){
 	//TString runName = "ALL.150901.W100um.OptD2.DD28.TH200um";
 	//TString runName = "ALL.150901.W100um.OptD2.DD28.TH10mm";
 	//TString runName = "ALL.150901.W100um.OptD2.DD28.TH10mm.Lead";
-	TString runName = "ALL.150901.W500um.OptD2.1mmCFRP.DD35.1cmLead";
+	TString runName = "ALL.150919.W500um.OptD2.1mmCFRP.DD35.1cmLead";
 	//TString runName = "ALL.150901.W100um.OptD2.1mmCFRP.1cmAl.DD35";
 	//TString runName = "ALL.150901.W100um.OptD2.5mmCFRP.1cmAl.DD35";
 	//TString runName = "ALL.150901.W100um.OptD2.2cmSUS.2cmAl.DD35";
@@ -105,6 +105,7 @@ int main (int argc, char** argv){
 	otree->Branch("t",&in_t);
 	otree->Branch("pid",&in_pid);
 	otree->Branch("type",&type);
+	otree->Branch("topo",&in_topo);
 	otree->Branch("process",&in_process);
 	otree->Branch("particle",&in_particle);
 	otree->Branch("volume",&in_volume);
@@ -146,7 +147,7 @@ int main (int argc, char** argv){
 	for (Long64_t iEntry = 0; iEntry<nEntries; iEntry++){
 		if (iEntry%1000==0) std::cout<<(double)iEntry/nEntries*100<<"%..."<<std::endl;
 		c->GetEntry(iEntry);
-		if (in_topo==-1) continue;
+		//if (in_topo==-2) continue;
 		if (in_type!=1) continue;
 		if (in_nHits<1) continue;
 
@@ -186,7 +187,7 @@ int main (int argc, char** argv){
 				double pz = (*in_tripz)[ihit];
 				double pa = sqrt(px*px+py*py+pz*pz);
 				double beta = pa/sqrt(pa*pa+me*me);
-				if (beta>0.5){
+				if (beta>1/1.5){
 //				if (1){
 					che_time[(*in_triID)[ihit]+((*in_tripos)[ihit]+1)*32] = time;
 					if ((*in_tripos)[ihit]>0){

@@ -25,7 +25,7 @@ cellNoIntegral[count]=cellNoIntegral[count-1]+300;cellNo[count]=300;count++;
 void getRate(){
 
 	// About this run
-	TString parName = "ALL";
+	TString parName = "pMC.tgt";
 	TString suffixName = "150919.W500um.OptD2.1mmCFRP.DD35.1cmLead";
 	TString runName = parName+"."+suffixName;
 	std::vector<TString> DirName;
@@ -349,7 +349,7 @@ void getRate(){
 //				std::cout<<volID<<std::endl;
 //			}
 			// FIXME
-//			if (edep>5000) continue;
+			if (edep>5000) continue;
 			vHitrate[layerID]+=weight*hit2rate/cellNo[layerID];
 			vCharge[layerID]+=edep*edep2charge/cellNo[layerID];
 			hitcount[layerID]++;

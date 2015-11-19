@@ -18,7 +18,7 @@ int main(int argc, char** argv){
 	double twindow = 1000;
 	double me = 0.511e-3; // GeV
 	TChain * c = new TChain("tree");
-	c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.2.root");
+	c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.13.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.new.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.mrot.root");
@@ -88,7 +88,9 @@ int main(int argc, char** argv){
 	std::vector<int> vtype;
 	std::vector<int> vpos;
 	std::vector<double> vtime;
+	std::cout<<nEntries<<" entries to check!"<<std::endl;
 	for (Long64_t iEntry = 0; iEntry<nEntries; iEntry++){
+//	for (Long64_t iEntry = 284; iEntry<=284; iEntry++){
 		if (iEntry%1000==0) std::cout<<(double)iEntry/nEntries*100<<"%..."<<std::endl;
 		c->GetEntry(iEntry);
 
@@ -143,9 +145,10 @@ int main(int argc, char** argv){
 			if ((*in_triName)[ihit]=="TriCheD"
 				||(*in_triName)[ihit]=="TriCheLD"
 					){ // Cherenkov
-//				if (beta>0.5){
-				if (1){
+				if (beta>1/1.5){
+//				if (1){
 					che_time[(*in_triID)[ihit]+64] = (*in_trit)[ihit];
+//					std::cout<<"@"<<ihit<<": che_time["<<(*in_triID)[ihit]+64<<"]="<<(*in_trit)[ihit]<<std::endl;
 					if ((*in_triName)[ihit]=="TriCheD"){
 						if (!zc) zc = (*in_triZ)[ihit];
 					}
@@ -157,9 +160,10 @@ int main(int argc, char** argv){
 			else  if ((*in_triName)[ihit]=="TriCheU"
 				||(*in_triName)[ihit]=="TriCheLU"
 					){ // Cherenkov
-//				if (beta>0.5){
-				if (1){
+				if (beta>1/1.5){
+//				if (1){
 					che_time[(*in_triID)[ihit]] = (*in_trit)[ihit];
+//					std::cout<<"@"<<ihit<<": che_time["<<(*in_triID)[ihit]+64<<"]="<<(*in_trit)[ihit]<<std::endl;
 					if ((*in_triName)[ihit]=="TriCheU"){
 						if (!zc) zc = (*in_triZ)[ihit];
 					}
@@ -198,26 +202,26 @@ int main(int argc, char** argv){
 		vpos.clear();
 		for (int itri = 0; itri<128; itri++){
 			int time = sci_time[itri];
-			int nsci = 0;
-			if (time!=-1){
-				// how many hit in sci in row? (starting from this counter)
-				for (int delta = 1; delta<=2; delta++){
-					int jtri = rotate(itri,delta);
-					if (sci_time[jtri]!=-1&&fabs(sci_time[jtri]-time)<10) nsci++;
-					else break;
-				}
+			if (time==-1)
+			continue;
+			int nsci = 1;
+			// how many hit in sci in row? (starting from this counter)
+			for (int delta = 1; delta<=2; delta++){
+				int jtri = rotate(itri,delta);
+				if (sci_time[jtri]!=-1&&fabs(sci_time[jtri]-time)<10) nsci++;
+				else break;
 			}
-//			std::cout<<itri<<"-"<<nsci<<"->"<<rotate(itri,nsci)<<std::endl;
+//			std::cout<<itri<<"-"<<nsci<<"->"<<rotate(itri,nsci-1)<<std::endl;
 			for (int delta = -2; delta<=2; delta++){
 				int jtri = rotate(itri,delta);
 				if (che_time[jtri]==-1||fabs(che_time[jtri]-time)>=10) continue;
 				int nche = 1;
 				for (int delta = 1; delta<=2; delta++){
 					int ktri = rotate(jtri,delta);
-					if (che_time[ktri]!=1&&fabs(che_time[ktri]-time)<10) nche++;
+					if (che_time[ktri]!=-1&&fabs(che_time[ktri]-time)<10) nche++;
 					else break;
 				}
-//				std::cout<<"  "<<jtri<<"-"<<nche<<"->"<<rotate(jtri,nche)<<std::endl;
+//				std::cout<<"  "<<jtri<<"-"<<nche<<"->"<<rotate(jtri,nche-1)<<std::endl;
 //				std::cout<<"  "<<nsci*100+nche*10+delta<<std::endl;
 				vtype.push_back(nsci*100+nche*10+delta);
 				vtime.push_back(time);
@@ -237,6 +241,7 @@ int main(int argc, char** argv){
 			}
 		}
 		type = nhitmax*10+ndeltamin;
+//		std::cout<<"type = "<<type<<std::endl;
 		otree->Fill();
 	}
 	otree->Write();
