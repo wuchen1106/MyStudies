@@ -15,10 +15,11 @@ int rotate(int n0, int dn){
 	return n1;
 }
 int main(int argc, char** argv){
+	TString runName = argv[1];
 	double twindow = 1000;
 	double me = 0.511e-3; // GeV
 	TChain * c = new TChain("tree");
-	c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.13.root");
+	c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em."+runName+".root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.new.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.mrot.root");
@@ -27,6 +28,7 @@ int main(int argc, char** argv){
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.ep.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
 	std::vector<int> * in_triID = 0;
+	std::vector<int> * in_tritid= 0;
 	std::vector<double> * in_trit = 0;
 	std::vector<double> * in_triedep = 0;
 	std::vector<double> * in_tripx = 0;
@@ -52,9 +54,10 @@ int main(int argc, char** argv){
 	c->SetBranchAddress("M_py",&in_tripy);
 	c->SetBranchAddress("M_pz",&in_tripz);
 	c->SetBranchAddress("M_z",&in_triZ);
+	c->SetBranchAddress("M_tid",&in_tritid);
 	c->SetBranchAddress("M_volID",&in_triID);
 	c->SetBranchAddress("M_volName",&in_triName);
-	TFile * ofile = new TFile("output.root","RECREATE");
+	TFile * ofile = new TFile("CyDet."+runName+".root","RECREATE");
 	TTree * otree = new TTree("t","t");
 	int tri_nHits;
 	int tri_pos;
@@ -69,6 +72,7 @@ int main(int argc, char** argv){
 	double zc = 0;
 	double zcl = 0;
 	double zs = 0;
+	int dir = 0;
 	otree->Branch("tn",&tri_nHits);
 	otree->Branch("tp",&tri_pos);
 	otree->Branch("type",&type);
@@ -82,6 +86,7 @@ int main(int argc, char** argv){
 	otree->Branch("zc",&zc);
 	otree->Branch("zcl",&zcl);
 	otree->Branch("zs",&zs);
+	otree->Branch("dir",&dir);
 	double sci_time[128];
 	double che_time[128];
 	Long64_t nEntries = c->GetEntries();
@@ -94,7 +99,7 @@ int main(int argc, char** argv){
 		if (iEntry%1000==0) std::cout<<(double)iEntry/nEntries*100<<"%..."<<std::endl;
 		c->GetEntry(iEntry);
 
-		theta = acos((*in_mcpz)[0]/sqrt((*in_mcpx)[0]*(*in_mcpx)[0]+(*in_mcpy)[0]*(*in_mcpy)[0]));
+		theta = acos((*in_mcpz)[0]/sqrt((*in_mcpx)[0]*(*in_mcpx)[0]+(*in_mcpy)[0]*(*in_mcpy)[0]+(*in_mcpz)[0]*(*in_mcpz)[0]));
 		zc = 0;
 		zcl = 0;
 		zs = 0;
@@ -128,7 +133,22 @@ int main(int argc, char** argv){
 			sci_time[itri] = -1;
 		}
 		tri_nHits = 0;
+		if (in_triName->size()){
+			if ((*in_triName)[0]=="TriCheLU"
+					||(*in_triName)[0]=="TriCheLD"
+					||(*in_triName)[0]=="TriCheU"
+					||(*in_triName)[0]=="TriCheD"
+			   ){
+				dir = 1;
+			}
+			else if ((*in_triName)[0]=="TriSciU"
+					||(*in_triName)[0]=="TriSciD"
+					){
+				dir = -1;
+			}
+		}
 		for ( int ihit = 0; ihit<in_trit->size(); ihit++){
+//			if ((*in_tritid)[ihit]!=1) continue;
 			if ((*in_triName)[ihit]=="TriChePD"
 			  ||(*in_triName)[ihit]=="TriChePU"
 			  ||(*in_triName)[ihit]=="TriSciPD"
@@ -175,8 +195,8 @@ int main(int argc, char** argv){
 			else if ((*in_triName)[ihit]=="TriSciD"
 //					||(*in_triName)[ihit]=="TriSciLD"
 					){ // Scintillator
-//				if((*in_triedep)[ihit]>630e-6){
-				if(1){
+				if((*in_triedep)[ihit]>630e-6){
+//				if(1){
 					sci_time[(*in_triID)[ihit]+64] = (*in_trit)[ihit];
 					if (!zs) zs = (*in_triZ)[ihit];
 				}
@@ -184,8 +204,8 @@ int main(int argc, char** argv){
 			else if ((*in_triName)[ihit]=="TriSciU"
 //					||(*in_triName)[ihit]=="TriSciLU"
 					){ // Scintillator
-//				if((*in_triedep)[ihit]>630e-6){
-				if(1){
+				if((*in_triedep)[ihit]>630e-6){
+//				if(1){
 					sci_time[(*in_triID)[ihit]] = (*in_trit)[ihit];
 					if (!zs) zs = (*in_triZ)[ihit];
 				}

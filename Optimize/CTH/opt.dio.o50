@@ -1,0 +1,20 @@
+##geometry preset
+#detector_configure
+#
+##magnet field (uniform file)
+#magField_configure
+#
+##generator
+#gen_configure
+#
+#macro
+macro_configure_setCut
+opt.dio.o50.macro
+#
+##output
+#output_configure
+
+#run
+run_configure
+1
+577660

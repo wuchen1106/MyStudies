@@ -34,6 +34,11 @@ LIBS += -lMyRootInterface
 PROJECT1 = tri
 PROJECT2 = getCT
 PROJECT3 = getTriggered
+PROJECT4 = get.trigger.track
+PROJECT5 = get.single.gam
+PROJECT6 = checkTri
+PROJECT7 = drawopt
+PROJECT8 = checkCTH
 
 .PHONY: all
 all: $(PROJECT5) $(PROJECT4) $(PROJECT3) $(PROJECT2) $(PROJECT1) $(PROJECT6) $(PROJECT7) $(PROJECT8) $(PROJECT9) $(PROJECT10)
