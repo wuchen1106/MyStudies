@@ -18,7 +18,7 @@ int rotate(int n0, int dn){
 
 int main (int argc, char** argv){
 	double twindow = 10;
-	double me = 0.511e-3; // GeV
+	double me = 0.511; // MeV
 	TChain * c = new TChain("tree");
 	//TString runName = "ALL.150901.W100um.OptD2.DD35.TH200um";
 	//TString runName = "ALL.150901.W100um.OptD2.DD28.TH200um";
@@ -39,6 +39,7 @@ int main (int argc, char** argv){
 	std::vector<double> * in_pz = 0;
 	std::vector<double> * in_t = 0;
 	std::vector<int> * in_pid = 0;
+	std::vector<int> * in_dep = 0;
 	std::vector<std::string> * in_process = 0;
 	std::vector<std::string> * in_particle = 0;
 	std::vector<std::string> * in_volume = 0;
@@ -46,6 +47,8 @@ int main (int argc, char** argv){
 	int in_topo;
 	int in_nHits;
 	int in_cpid;
+	int evt_num;
+	int run_num;
 	std::vector<int> * in_triType = 0;
 	std::vector<int> * in_triID = 0;
 	std::vector<int> * in_tripos = 0;
@@ -55,6 +58,8 @@ int main (int argc, char** argv){
 	std::vector<double> * in_tripx = 0;
 	std::vector<double> * in_tripy = 0;
 	std::vector<double> * in_tripz = 0;
+	c->SetBranchAddress("evt_num",&evt_num);
+	c->SetBranchAddress("run_num",&run_num);
 	c->SetBranchAddress("x",&in_x);
 	c->SetBranchAddress("y",&in_y);
 	c->SetBranchAddress("z",&in_z);
@@ -62,6 +67,7 @@ int main (int argc, char** argv){
 	c->SetBranchAddress("py",&in_py);
 	c->SetBranchAddress("pz",&in_pz);
 	c->SetBranchAddress("t",&in_t);
+	c->SetBranchAddress("dep",&in_dep);
 	c->SetBranchAddress("process",&in_process);
 	c->SetBranchAddress("particle",&in_particle);
 	c->SetBranchAddress("volume",&in_volume);
@@ -93,6 +99,9 @@ int main (int argc, char** argv){
 	int tritype = 0;
 	int tripos = 0;
 	double trit = 0;
+	int cu,cd,su,sd;
+	otree->Branch("evt_num",&evt_num);
+	otree->Branch("run_num",&run_num);
 	otree->Branch("tritype",&tritype);
 	otree->Branch("tripos",&tripos);
 	otree->Branch("trit",&trit);
@@ -106,9 +115,14 @@ int main (int argc, char** argv){
 	otree->Branch("pid",&in_pid);
 	otree->Branch("type",&type);
 	otree->Branch("topo",&in_topo);
+	otree->Branch("dep",&in_dep);
 	otree->Branch("process",&in_process);
 	otree->Branch("particle",&in_particle);
 	otree->Branch("volume",&in_volume);
+	otree->Branch("cu",&cu);
+	otree->Branch("cd",&cd);
+	otree->Branch("su",&su);
+	otree->Branch("sd",&sd);
 	double sci_time[128];
 	double che_time[128];
 	int totalfound[9] = {0};
@@ -145,7 +159,7 @@ int main (int argc, char** argv){
 	std::vector<double> vtime;
 	Long64_t nEntries = c->GetEntries();
 	for (Long64_t iEntry = 0; iEntry<nEntries; iEntry++){
-		if (iEntry%1000==0) std::cout<<(double)iEntry/nEntries*100<<"%..."<<std::endl;
+		if (iEntry%100000==0) std::cout<<(double)iEntry/nEntries*100<<"%..."<<std::endl;
 		c->GetEntry(iEntry);
 		//if (in_topo==-2) continue;
 		if (in_type!=1) continue;
@@ -175,6 +189,7 @@ int main (int argc, char** argv){
 		else if (foundgamtail) type=0;
 		else if (foundmuontgt) type=4;
 
+		cu = 0; cd = 0; su = 0; sd = 0;
 		for (int itri = 0; itri<128; itri++){
 			che_time[itri] = -1;
 			sci_time[itri] = -1;
@@ -188,10 +203,10 @@ int main (int argc, char** argv){
 				double pa = sqrt(px*px+py*py+pz*pz);
 				double beta = pa/sqrt(pa*pa+me*me);
 				if (beta>1/1.5){
-//				if (1){
 					che_time[(*in_triID)[ihit]+((*in_tripos)[ihit]+1)*32] = time;
 					if ((*in_tripos)[ihit]>0){
 						nHitsCD[type]++;
+						cd=1;
 						edepCD[type]+=(*in_triedep)[ihit];
 						if (time>200){
 							nHitsCDl[type]++;
@@ -201,6 +216,7 @@ int main (int argc, char** argv){
 					}
 					else {
 						nHitsCU[type]++;
+						cu=1;
 						edepCU[type]+=(*in_triedep)[ihit];
 						if (time>200){
 							nHitsCUl[type]++;
@@ -214,6 +230,7 @@ int main (int argc, char** argv){
 //			else if ((*in_triType)[ihit]==1){
 				sci_time[(*in_triID)[ihit]+((*in_tripos)[ihit]+1)*32] = time;
 				if ((*in_tripos)[ihit]>0){
+					sd = 1;
 					nHitsSD[type]++;
 					edepSD[type]+=(*in_triedep)[ihit];
 					if (time>200){
@@ -223,6 +240,7 @@ int main (int argc, char** argv){
 					hSD[type]->Fill(time);
 				}
 				else{
+					su = 1;
 					nHitsSU[type]++;
 					edepSU[type]+=(*in_triedep)[ihit];
 					if (time>200){

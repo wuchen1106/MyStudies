@@ -15,10 +15,11 @@ int rotate(int n0, int dn){
 	return n1;
 }
 int main(int argc, char** argv){
+	TString runName = argv[1];
 	double twindow = 1000;
 	double me = 0.511e-3; // GeV
 	TChain * c = new TChain("tree");
-	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.13.root");
+	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em."+runName+".root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.new.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.mrot.root");
@@ -30,6 +31,7 @@ int main(int argc, char** argv){
 		c->Add(Form("/scratchfs/bes/wuc/MyWorkArea/Data/A9.rmc.150919.W500um.OptD2.1mmCFRP.DD35.1cmLead/%d_job0.raw",i));
 	}
 	std::vector<int> * in_triID = 0;
+	std::vector<int> * in_tritid= 0;
 	std::vector<double> * in_trit = 0;
 	std::vector<double> * in_triedep = 0;
 	std::vector<double> * in_tripx = 0;
@@ -64,10 +66,11 @@ int main(int argc, char** argv){
 	c->SetBranchAddress("M_py",&in_tripy);
 	c->SetBranchAddress("M_pz",&in_tripz);
 	c->SetBranchAddress("M_z",&in_triZ);
+	c->SetBranchAddress("M_tid",&in_tritid);
 	c->SetBranchAddress("M_volID",&in_triID);
 	c->SetBranchAddress("M_volName",&in_triName);
 	c->SetBranchAddress("M_tid",&in_tritid);
-	TFile * ofile = new TFile("output.root","RECREATE");
+	TFile * ofile = new TFile("CyDet."+runName+".root","RECREATE");
 	TTree * otree = new TTree("t","t");
 	int tri_nHits = 0;
 	int tri_pos = 0;
@@ -163,6 +166,20 @@ int main(int argc, char** argv){
 			sci_time[itri] = -1;
 		}
 		tri_nHits = 0;
+		if (in_triName->size()){
+			if ((*in_triName)[0]=="TriCheLU"
+					||(*in_triName)[0]=="TriCheLD"
+					||(*in_triName)[0]=="TriCheU"
+					||(*in_triName)[0]=="TriCheD"
+			   ){
+				dir = 1;
+			}
+			else if ((*in_triName)[0]=="TriSciU"
+					||(*in_triName)[0]=="TriSciD"
+					){
+				dir = -1;
+			}
+		}
 		for ( int ihit = 0; ihit<in_trit->size(); ihit++){
 			if ((*in_tritid)[ihit]!=thetid) continue;
 			if ((*in_triName)[ihit]=="TriChePD"
@@ -211,8 +228,8 @@ int main(int argc, char** argv){
 			else if ((*in_triName)[ihit]=="TriSciD"
 //					||(*in_triName)[ihit]=="TriSciLD"
 					){ // Scintillator
-//				if((*in_triedep)[ihit]>630e-6){
-				if(1){
+				if((*in_triedep)[ihit]>630e-6){
+//				if(1){
 					sci_time[(*in_triID)[ihit]+64] = (*in_trit)[ihit];
 					if (!zs) zs = (*in_triZ)[ihit];
 				}
@@ -220,8 +237,8 @@ int main(int argc, char** argv){
 			else if ((*in_triName)[ihit]=="TriSciU"
 //					||(*in_triName)[ihit]=="TriSciLU"
 					){ // Scintillator
-//				if((*in_triedep)[ihit]>630e-6){
-				if(1){
+				if((*in_triedep)[ihit]>630e-6){
+//				if(1){
 					sci_time[(*in_triID)[ihit]] = (*in_trit)[ihit];
 					if (!zs) zs = (*in_triZ)[ihit];
 				}

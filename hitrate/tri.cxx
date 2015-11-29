@@ -81,15 +81,16 @@ int main(int argc, char *argv[]){
 //	TString suffixName = "0508_100cm_1e9";
 //	TString suffixName = "140905M02";
 //	TString suffixName = "141022";
-	TString suffixName = "150919.W500um.OptD2.1mmCFRP.DD35.151117";
-//	TString runName = parName+"."+suffixName+".cdc";
-	TString runName = parName+"."+suffixName;
+	TString suffixName = "150919.W500um.OptD2.1mmCFRP.DD35.1cmLead";
+	TString runName;
+//	runName = parName+"."+suffixName;
+	if (argc>1) runName = argv[1];
 	std::vector<TString> DirName;
 	std::vector<int> nRuns;
 	std::vector<TString> FileNames;
 	 // ########Should Modify#########
 //	FileNames.push_back(MyWork+"/Simulate/comet/output/CDCneutral."+suffixName+".root");
-//	FileNames.push_back(MyWork+"/Simulate/comet/output/A9."+runName+".root");
+	FileNames.push_back(MyWork+"/Simulate/comet/output/"+runName+".root");
 //	FileNames.push_back(runName+".root");
 	DirName.push_back(MyData+"/A9."+runName);
 	nRuns.push_back(100);
