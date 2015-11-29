@@ -10,9 +10,10 @@
 #	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/CDC.pim.141109.140625ori.gaussian.g41001QBH     |      | 100  | 1
 #	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS2.pim.150916.g41001p02QGH              |    | 100  | 1
 #	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS1.ALL.150919.6mmx8.gaussian.g41001p02QBH |    | 100  | 1
-#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS1.ALL.150919.gaussian.g41001p02QBH     |      | 100  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS1.ALL.150919.g41001p02QBH     |      | 100  | 1
+	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS2.pim.150919.g41001p02QGH     |      | 100  | 1
 #	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/PT.150919.gaussian.g41001p02QBH          |      | 100  | 1
-	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/PT.TargetSurfaceMonitor.150916.g41001p02QGH  |      | 200  | 1
+#	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/PT.TargetSurfaceMonitor.150916.g41001p02QGH  |      | 200  | 1
 #	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS2.141109.140625ori.gaussian.g41001QBH  |      | 100  | 1
 #	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/COMET.turtle1402.Ti600.Ti100.g496p02     |         | 200  | 1
 #	FILE    | /scratchfs/bes/wuc/MyWorkArea/Data/TS1.g60cm20mm182gGaussian.d50mm.a.g496p02QBH  |         | 300  | 1
@@ -50,6 +51,7 @@
 	TBranch | V_opx                        | 0         | 1
 	TBranch | V_opy                        | 0         | 1
 	TBranch | V_opz                        | 0         | 1
+	TBranch | V_ot                         | 0         | 1
 	TBranch | V_ppid                       | 1         | 1
 	TBranch | V_oprocess                   | 2         | 1
 	TBranch | V_ovolName                   | 2         | 1

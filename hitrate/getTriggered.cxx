@@ -18,7 +18,7 @@ int main(int argc, char** argv){
 	double twindow = 1000;
 	double me = 0.511e-3; // GeV
 	TChain * c = new TChain("tree");
-	c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.13.root");
+	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.13.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.new.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.mrot.root");
@@ -26,6 +26,9 @@ int main(int argc, char** argv){
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.rev.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.ep.root");
 	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
+	for (int i = 0; i < 100; i++){
+		c->Add(Form("/scratchfs/bes/wuc/MyWorkArea/Data/A9.rmc.150919.W500um.OptD2.1mmCFRP.DD35.1cmLead/%d_job0.raw",i));
+	}
 	std::vector<int> * in_triID = 0;
 	std::vector<double> * in_trit = 0;
 	std::vector<double> * in_triedep = 0;
@@ -34,14 +37,23 @@ int main(int argc, char** argv){
 	std::vector<double> * in_tripz = 0;
 	std::vector<double> * in_triZ = 0;
 	std::vector<std::string> * in_triName= 0;
+	std::vector<int> * in_tritid = 0;
 	std::vector<int> * in_cdclid = 0;
+	std::vector<int> * in_cdctid = 0;
 	std::vector<double> * in_cdct = 0;
+	std::vector<int> * in_mcpid = 0;
+	std::vector<int> * in_mctid = 0;
 	std::vector<double> * in_mctime = 0;
 	std::vector<double> * in_mcpx = 0;
 	std::vector<double> * in_mcpy = 0;
 	std::vector<double> * in_mcpz = 0;
+	int evt_num = 0;
+	c->SetBranchAddress("evt_num",&evt_num);
 	c->SetBranchAddress("CdcCell_layerID",&in_cdclid);
+	c->SetBranchAddress("CdcCell_tid",&in_cdctid);
 	c->SetBranchAddress("CdcCell_t",&in_cdct);
+	c->SetBranchAddress("McTruth_pid",&in_mcpid);
+	c->SetBranchAddress("McTruth_tid",&in_mctid);
 	c->SetBranchAddress("McTruth_time",&in_mctime);
 	c->SetBranchAddress("McTruth_px",&in_mcpx);
 	c->SetBranchAddress("McTruth_py",&in_mcpy);
@@ -54,11 +66,12 @@ int main(int argc, char** argv){
 	c->SetBranchAddress("M_z",&in_triZ);
 	c->SetBranchAddress("M_volID",&in_triID);
 	c->SetBranchAddress("M_volName",&in_triName);
+	c->SetBranchAddress("M_tid",&in_tritid);
 	TFile * ofile = new TFile("output.root","RECREATE");
 	TTree * otree = new TTree("t","t");
-	int tri_nHits;
-	int tri_pos;
-	int type;
+	int tri_nHits = 0;
+	int tri_pos = 0;
+	int type = 0;
 	int maxlid = 0;
 	int maxcontinuedIn = 0;
 	int maxcontinuedOut = 0;
@@ -69,6 +82,7 @@ int main(int argc, char** argv){
 	double zc = 0;
 	double zcl = 0;
 	double zs = 0;
+	double px,py,pz;
 	otree->Branch("tn",&tri_nHits);
 	otree->Branch("tp",&tri_pos);
 	otree->Branch("type",&type);
@@ -82,6 +96,10 @@ int main(int argc, char** argv){
 	otree->Branch("zc",&zc);
 	otree->Branch("zcl",&zcl);
 	otree->Branch("zs",&zs);
+	otree->Branch("px",&px);
+	otree->Branch("py",&py);
+	otree->Branch("pz",&pz);
+	otree->Branch("evt_num",&evt_num);
 	double sci_time[128];
 	double che_time[128];
 	Long64_t nEntries = c->GetEntries();
@@ -94,7 +112,23 @@ int main(int argc, char** argv){
 		if (iEntry%1000==0) std::cout<<(double)iEntry/nEntries*100<<"%..."<<std::endl;
 		c->GetEntry(iEntry);
 
-		theta = acos((*in_mcpz)[0]/sqrt((*in_mcpx)[0]*(*in_mcpx)[0]+(*in_mcpy)[0]*(*in_mcpy)[0]));
+		int thimc = -1;
+		int thetid = -1;
+		for (int imc = 0; imc<in_mcpz->size(); imc++){
+			if ((*in_mcpid)[imc]==11){
+				px = (*in_mcpx)[imc]*1000;
+				py = (*in_mcpy)[imc]*1000;
+				pz = (*in_mcpz)[imc]*1000;
+				if (sqrt(px*px+py*py+pz*pz)>100){
+					thimc = imc;
+					thetid = (*in_mctid)[imc];
+					break;
+				}
+			}
+		}
+		if (thimc<0) continue;
+
+		theta = acos((*in_mcpz)[thimc]/sqrt((*in_mcpx)[thimc]*(*in_mcpx)[thimc]+(*in_mcpy)[thimc]*(*in_mcpy)[thimc]));
 		zc = 0;
 		zcl = 0;
 		zs = 0;
@@ -110,8 +144,9 @@ int main(int argc, char** argv){
 		int currentlayersOut = 0;
 		int prelid = 0;
 		for ( int ihit = 0; ihit<in_cdclid->size(); ihit++){
-			if (((*in_cdct)[ihit]-(*in_mctime)[0])/7+1>nturn) nturn = ((*in_cdct)[ihit]-(*in_mctime)[0])/7+1;
-			if ((*in_cdct)[ihit]-(*in_mctime)[0]>7) continue;
+			if ((*in_cdctid)[ihit]!=thetid) continue;
+			if (((*in_cdct)[ihit]-(*in_mctime)[thimc])/7+1>nturn) nturn = ((*in_cdct)[ihit]-(*in_mctime)[thimc])/7+1;
+			if ((*in_cdct)[ihit]-(*in_mctime)[thimc]>7) continue;
 			if (maxlid<(*in_cdclid)[ihit]) maxlid=(*in_cdclid)[ihit];
 			if ((*in_cdclid)[ihit]-prelid==1) currentlayersIn++;
 			else if ((*in_cdclid)[ihit]-prelid==-1) currentlayersOut++;
@@ -129,6 +164,7 @@ int main(int argc, char** argv){
 		}
 		tri_nHits = 0;
 		for ( int ihit = 0; ihit<in_trit->size(); ihit++){
+			if ((*in_tritid)[ihit]!=thetid) continue;
 			if ((*in_triName)[ihit]=="TriChePD"
 			  ||(*in_triName)[ihit]=="TriChePU"
 			  ||(*in_triName)[ihit]=="TriSciPD"
@@ -137,16 +173,16 @@ int main(int argc, char** argv){
 			  ||(*in_triName)[ihit]=="TriSciLU"
 					) continue;
 			tri_nHits++;
-			double px = (*in_tripx)[ihit];
-			double py = (*in_tripy)[ihit];
-			double pz = (*in_tripz)[ihit];
-			double pa = sqrt(px*px+py*py+pz*pz);
-			double beta = pa/sqrt(pa*pa+me*me);
+//			double px = (*in_tripx)[ihit];
+//			double py = (*in_tripy)[ihit];
+//			double pz = (*in_tripz)[ihit];
+//			double pa = sqrt(px*px+py*py+pz*pz);
+//			double beta = pa/sqrt(pa*pa+me*me);
 			if ((*in_triName)[ihit]=="TriCheD"
 				||(*in_triName)[ihit]=="TriCheLD"
 					){ // Cherenkov
-				if (beta>1/1.5){
-//				if (1){
+//				if (beta>1/1.5){
+				if (1){
 					che_time[(*in_triID)[ihit]+64] = (*in_trit)[ihit];
 //					std::cout<<"@"<<ihit<<": che_time["<<(*in_triID)[ihit]+64<<"]="<<(*in_trit)[ihit]<<std::endl;
 					if ((*in_triName)[ihit]=="TriCheD"){
@@ -160,8 +196,8 @@ int main(int argc, char** argv){
 			else  if ((*in_triName)[ihit]=="TriCheU"
 				||(*in_triName)[ihit]=="TriCheLU"
 					){ // Cherenkov
-				if (beta>1/1.5){
-//				if (1){
+//				if (beta>1/1.5){
+				if (1){
 					che_time[(*in_triID)[ihit]] = (*in_trit)[ihit];
 //					std::cout<<"@"<<ihit<<": che_time["<<(*in_triID)[ihit]+64<<"]="<<(*in_trit)[ihit]<<std::endl;
 					if ((*in_triName)[ihit]=="TriCheU"){

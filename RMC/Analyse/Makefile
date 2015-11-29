@@ -16,64 +16,58 @@ CXXFLAGS = -g -O2 -W -Wall
   # LIBDIR shows directories which contain library files coresponding to those headers. 
   # LIBS is the list of shared library files you would use.They can be found in LIBDIR. ( Names changing rule: libXXX.so to -lXXX )
 
-# Special packages:
-INCDIR += -I$(MYCOMMONTOOLSROOT)/MyRootInterface
-LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
-LIBS += -lMyRootInterface
-
-INCDIR += -I$(MYG4SIMROOT)/include
-LIBDIR += -L$(MYG4SIMROOT)/libs
-LIBS += -lMyRootInterface
-
 # Take root as an example. ( Root is a widely used package developed by CERN for analysing. )
-INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
-LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
+INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir)
+LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs)
+LIBDIR += -lMinuit
 LIBS += -pthread -lm -ldl -rdynamic
+LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-RMCE = RMCE
-PH2E = ph2e
-BM = bm
-FIT = fit
-HIT = hit
-COMPARE = Compare
+PROJECT1 = getTracks
+
+.PHONY: all
+all: $(PROJECT5) $(PROJECT4) $(PROJECT3) $(PROJECT2) $(PROJECT1) $(PROJECT6) $(PROJECT7) $(PROJECT8) $(PROJECT9) $(PROJECT10)
 
 # Object list for user defined packages
 OBJ = 
 
-.PHONY: all
-all: $(RMCE) $(PH2E) $(BM) $(FIT) $(HIT) $(COMPARE)
+$(PROJECT1): $(OBJ) $(PROJECT1).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT1).cxx $(OBJ) -o $(PROJECT1)
 
-$(RMCE): $(OBJ) $(RMCE).cxx
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(RMCE).cxx $(OBJ) -o $(RMCE)
+$(PROJECT2): $(OBJ) $(PROJECT2).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT2).cxx $(OBJ) -o $(PROJECT2)
 
-$(PH2E): $(OBJ) $(PH2E).cxx
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PH2E).cxx $(OBJ) -o $(PH2E)
+$(PROJECT3): $(OBJ) $(PROJECT3).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT3).cxx $(OBJ) -o $(PROJECT3)
 
-$(BM): $(OBJ) $(BM).cxx
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(BM).cxx $(OBJ) -o $(BM)
+$(PROJECT4): $(OBJ) $(PROJECT4).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT4).cxx $(OBJ) -o $(PROJECT4)
 
-$(FIT): $(OBJ) $(FIT).cxx
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(FIT).cxx $(OBJ) -o $(FIT)
+$(PROJECT5): $(OBJ) $(PROJECT5).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT5).cxx $(OBJ) -o $(PROJECT5)
 
-$(HIT): $(OBJ) $(HIT).cxx
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(HIT).cxx $(OBJ) -o $(HIT)
+$(PROJECT6): $(OBJ) $(PROJECT6).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT6).cxx $(OBJ) -o $(PROJECT6)
 
-$(COMPARE): $(OBJ) $(COMPARE).cxx
-	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(COMPARE).cxx $(OBJ) -o $(COMPARE)
+$(PROJECT7): $(OBJ) $(PROJECT7).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT7).cxx $(OBJ) -o $(PROJECT7)
+
+$(PROJECT8): $(OBJ) $(PROJECT8).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT8).cxx $(OBJ) -o $(PROJECT8)
+
+$(PROJECT9): $(OBJ) $(PROJECT9).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT9).cxx $(OBJ) -o $(PROJECT9)
+
+$(PROJECT10): $(OBJ) $(PROJECT10).cpp
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT10).cpp $(OBJ) -o $(PROJECT10)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions
 # Here is an example showing how to make clean and make a specified user defined package
 .PHONY: clean
 clean:
-	$(RM) $(OBJ)
-	$(RM) $(RMCE)
-	$(RM) $(PH2E)
-	$(RM) $(BM)
-	$(RM) $(FIT)
-	$(RM) $(HIT)
-	$(RM) $(COMPARE)
+	$(RM) $(PROJECT1) $(PROJECT2) $(PROJECT3) $(PROJECT4) $(PROJECT5) $(PROJECT6) $(PROJECT7) $(PROJECT8) $(PROJECT9) $(PROJECT10)
