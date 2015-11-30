@@ -1,8 +1,9 @@
-#!/bin/python2
-
 import commands
+import os
+import sys
 
 f = open('list', 'r')
+os.chdir("comet")
 for line in f:
 	options = line.split()
 	if (options[0]=='G1' or options[0]=='#'):
@@ -28,14 +29,15 @@ for line in f:
 		runname = ""
 		for word in options:
 			runname += "."+word
-		output = commands.getoutput('echo SRA_gen_sim -t -f sim -b 0 -e 0 -q besq opt.sig CyDet.signal'+runname)
+		output = commands.getoutput('SRA_gen_sim -f -t sim -b 0 -e 0 -q besq opt.sig CyDet.signal'+runname)
+		print output                                  
+		output = commands.getoutput('SRA_gen_sim -f -t sim -b 0 -e 0 -q besq opt.beam.all CyDet.beam.all'+runname)
+		print output                                  
+		output = commands.getoutput('SRA_gen_sim -f -t sim -b 0 -e 0 -q besq opt.beam.o10 CyDet.beam.o10'+runname)
+		print output                                  
+		output = commands.getoutput('SRA_gen_sim -f -t sim -b 0 -e 0 -q besq opt.dio.o50 CyDet.dio.o50'+runname)
+		print output                                  
+		output = commands.getoutput('SRA_gen_sim -f -t sim -b 0 -e 0 -q besq opt.pmc CyDet.pmc'+runname)
 		print output
-		output = commands.getoutput('echo SRA_gen_sim -t -f sim -b 0 -e 0 -q besq opt.beam.all CyDet.beam.all'+runname)
-		print output
-		output = commands.getoutput('echo SRA_gen_sim -t -f sim -b 0 -e 0 -q besq opt.beam.o10 CyDet.beam.o10'+runname)
-		print output
-		output = commands.getoutput('echo SRA_gen_sim -t -f sim -b 0 -e 0 -q besq opt.dio.o50 CyDet.dio.o50'+runname)
-		print output
-		output = commands.getoutput('echo SRA_gen_sim -t -f sim -b 0 -e 0 -q besq opt.pmc CyDet.pmc'+runname)
-		print output
+		sys.stdout.flush()
 
