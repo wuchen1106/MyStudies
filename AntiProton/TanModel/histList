@@ -1,0 +1,32 @@
+#	kWhite =0,   kBlack =1,   kGray=920,
+#	kRed   =632, kGreen =416, kBlue=600, kYellow=400, kMagenta=616, kCyan=432,
+#	kOrange=800, kSpring=820, kTeal=840, kAzure =860, kViolet =880, kPink=900
+#	TYPE NAME                      | TITLE                         | xAxisName          | yAxisName     | COL | COM | minX | maxX |minY | LOGX | LOGY | Marker | DrawOption
+#	TGraph rate_vs_pa              | PassingRate                   | p_{a}(MeV/c)       | rate          | 1   | 1   | 94   | 99   | 1   | 0    | 1    | 3      | LP
+#	TYPE | NAME          | TITLE                                                | xAxisName         | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
+#	TH2D | costheta_VS_r | anti-proton (incident proton @12.5GeV/c on Graphite) | cos#theta         | r(cm)         | 120 | -1    | 1     | 120 | 0    | 0.6
+
+###########################################################################################################################
+#	TYPE | px                    | py | pz (GeV/c)
+	BEAM | 8.75384730949462764  | 0  | 1.54353946566119649
+
+#	TYPE   NAME                | TITLE                                            | xAxisName      | yAxisName     | BIN | LEFT  | RIGHT | minX | minY |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
+	TH1D | Tan_pt              | Tan & Ng Model for anti-p from 12.5GeV/c p (LS)  | p_{t}(GeV/c)   | probability   | 120 | 0     | 8     | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | Tan_pt_log          | Tan & Ng Model for anti-p from 12.5GeV/c p (LS)  | p_{t}(GeV/c)   | probability   | 120 | 0     | 8     | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | Tan_pz              | Tan & Ng Model for anti-p from 12.5GeV/c p (LS)  | p_{z}(GeV/c)   | probability   | 120 | 0     | 100   | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | Tan_pz_log          | Tan & Ng Model for anti-p from 12.5GeV/c p (LS)  | p_{z}(GeV/c)   | probability   | 120 | 0     | 100   | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | Tan_pa              | Tan & Ng Model for anti-p from 12.5GeV/c p (LS)  | p_{a}(GeV/c)   | probability   | 120 | 0     | 100   | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | Tan_pa_log          | Tan & Ng Model for anti-p from 12.5GeV/c p (LS)  | p_{a}(GeV/c)   | probability   | 120 | 0     | 100   | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | Tan_theta           | Tan & Ng Model for anti-p from 12.5GeV/c p (LS)  | #theta(rad)    | probability   | 120 | 0     | 1     | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | Tan_theta_log       | Tan & Ng Model for anti-p from 12.5GeV/c p (LS)  | #theta(rad)    | probability   | 120 | 0     | 1     | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | Tan_vz              | Tan & Ng Model for anti-p from 12.5GeV/c p (LS)  | v_{z}(c)       | probability   | 120 | -1    | 1     | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | Tan_vz_log          | Tan & Ng Model for anti-p from 12.5GeV/c p (LS)  | v_{z}(c)       | probability   | 120 | -1    | 1     | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | Tan_ptCMS           | Tan & Ng Model for anti-p from 12.5GeV/c p (CMS) | p_{t}(GeV/c)   | probability   | 120 | 0     | 8     | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | Tan_ptCMS_log       | Tan & Ng Model for anti-p from 12.5GeV/c p (CMS) | p_{t}(GeV/c)   | probability   | 120 | 0     | 8     | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | Tan_paCMS           | Tan & Ng Model for anti-p from 12.5GeV/c p (CMS) | p_{a}(GeV/c)   | probability   | 120 | 0     | 8     | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | Tan_paCMS_log       | Tan & Ng Model for anti-p from 12.5GeV/c p (CMS) | p_{a}(GeV/c)   | probability   | 120 | 0     | 8     | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | Tan_ECMS            | Tan & Ng Model for anti-p from 12.5GeV/c p (CMS) | E(GeV)         | probability   | 120 | 0.8   | 8     | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | Tan_ECMS_log        | Tan & Ng Model for anti-p from 12.5GeV/c p (CMS) | E(GeV)         | probability   | 120 | 0.8   | 8     | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | Tan_Mx              | Tan & Ng Model for anti-p from 12.5GeV/c p       | M_{X}(GeV)     | probability   | 120 | 2.7   | 18    | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | Tan_Mx_log          | Tan & Ng Model for anti-p from 12.5GeV/c p       | M_{X}(GeV)     | probability   | 120 | 2.7   | 18    | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | Tan_costhetaCMS     | Tan & Ng Model for anti-p from 12.5GeV/c p (CMS) | cos#theta      | probability   | 120 | -1    | 1     | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 

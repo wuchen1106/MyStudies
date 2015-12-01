@@ -1,0 +1,27 @@
+#	kWhite =0,   kBlack =1,   kGray=920,
+#	kRed   =632, kGreen =416, kBlue=600, kYellow=400, kMagenta=616, kCyan=432,
+#	kOrange=800, kSpring=820, kTeal=840, kAzure =860, kViolet =880, kPink=900
+#	TYPE NAME                      | TITLE                         | xAxisName          | yAxisName     | COL | COM | minX | maxX |minY | LOGX | LOGY | Marker | DrawOption
+#	TGraph rate_vs_pa              | PassingRate                   | p_{a}(MeV/c)       | rate          | 1   | 1   | 94   | 99   | 1   | 0    | 1    | 3      | LP
+#	TYPE | NAME          | TITLE                                                | xAxisName         | yAxisName     | BIN | LEFT  | RIGHT | BIN | LEFT | RIGHT
+#	TH2D | costheta_VS_r | anti-proton (incident proton @12.5GeV/c on Graphite) | cos#theta         | r(cm)         | 120 | -1    | 1     | 120 | 0    | 0.6
+
+###########################################################################################################################
+#	TYPE | pz (GeV/c)          | theta (deg) | spread (mm)
+	BEAM | 7.94478729048504562 | 10.         | 2
+
+#	TYPE    |  Directory                                                                              | histoName
+	refTH1D | /home/chen/MyWorkArea/MyStudies/AntiProton/result/ProductionTarget_C12p5GeV/output.root | C_z
+
+#	TYPE   NAME                | TITLE                                                 | xAxisName      | yAxisName     | BIN | LEFT  | RIGHT | minX | minY |COL|COM|LOGX|LOGY|Marker|Norm|DrawOption
+	TH1D | ap_r                | anti-p from 8GeV p on graphite target (r=6mm,l=60cm)  | r(mm)          | probability   | 120 | 0     | 2     | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | ap_z                | anti-p from 8GeV p on graphite target (r=6mm,l=60cm)  | z(mm)          | probability   | 120 | -35   | 35    | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | C_z                 | anti-p from 8GeV p on graphite target (r=6mm,l=60cm)  | z(mm)          | probability   | 120 | -35   | 35    | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | ap_pt               | anti-p from 8GeV p on graphite target (r=6mm,l=60cm)  | p_{t}(GeV/c)   | probability   | 120 | 0     | 1.6   | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | ap_pt_log           | anti-p from 8GeV p on graphite target (r=6mm,l=60cm)  | p_{t}(GeV/c)   | probability   | 120 | 0     | 1.6   | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | ap_pz               | anti-p from 8GeV p on graphite target (r=6mm,l=60cm)  | p_{z}(GeV/c)   | probability   | 120 | 0     | 5     | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | ap_pz_log           | anti-p from 8GeV p on graphite target (r=6mm,l=60cm)  | p_{z}(GeV/c)   | probability   | 120 | 0     | 5     | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | ap_pa               | anti-p from 8GeV p on graphite target (r=6mm,l=60cm)  | p_{a}(GeV/c)   | probability   | 120 | 0     | 5     | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | ap_pa_log           | anti-p from 8GeV p on graphite target (r=6mm,l=60cm)  | p_{a}(GeV/c)   | probability   | 120 | 0     | 5     | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
+	TH1D | ap_theta            | anti-p from 8GeV p on graphite target (r=6mm,l=60cm)  | #theta(rad)    | probability   | 120 | 0     | 1     | 0    | 0    | 1 | 0 | 0  | 0  | 20   | 0  | 
+	TH1D | ap_theta_log        | anti-p from 8GeV p on graphite target (r=6mm,l=60cm)  | #theta(rad)    | probability   | 120 | 0     | 1     | 0    | 1e-6 | 1 | 0 | 0  | 1  | 20   | 0  | 
