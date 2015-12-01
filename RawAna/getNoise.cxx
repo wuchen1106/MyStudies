@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
 	//______________________________________________________________________________________________________
 	// About this run
 	if (argc <= 3) {
-		std::cout<<"Should provide runname, dir/file, input files"<<std::endl;
+//		std::cerr<<"Should provide runname, dir/file, input files"<<std::endl;
 		return -1;
 	}
 	TString runName = argv[1];
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]){
 	if (opt=="dir"){
 		int ndirs = (argc-3);
 		if (ndirs%4!=0){
-			std::cout<<"Should provide dir name, n jobs, weight, type"<<std::endl;
+//			std::cerr<<"Should provide dir name, n jobs, weight, type"<<std::endl;
 			return -1;
 		}
 		ndirs/=4;
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
 	else {
 		int nfiles = argc-3;
 		if (nfiles%3!=0){
-			std::cout<<"Should provide file name, weight"<<std::endl;
+//			std::cerr<<"Should provide file name, weight"<<std::endl;
 			return -1;
 		}
 		nfiles/=3;
@@ -97,6 +97,7 @@ int main(int argc, char *argv[]){
 	std::vector<int>     *M_volID = 0;
 	std::vector<std::string>  *M_volName = 0;
 	std::vector<int>     *M_tid = 0;
+	std::vector<int>     *M_pid = 0;
 	std::vector<double>  *M_edep = 0;
 	std::vector<double>  *M_stepL = 0;
 	std::vector<double>  *M_t = 0;
@@ -123,17 +124,17 @@ int main(int argc, char *argv[]){
 	std::vector<std::string>  *McTruth_particleName = 0;
 
 	TChain *c = new TChain("tree");
-	std::cout<<"FileNames.size() = "<<(FileNames.size())<<std::endl;
+//	std::cerr<<"FileNames.size() = "<<(FileNames.size())<<std::endl;
 	for (int i = 0; i<FileNames.size(); i++){
-		std::cout<<"FileNames["<<i<<"] = \""<<FileNames[i]<<"\", "<<RelSizes[i]<<std::endl;
+//		std::cerr<<"FileNames["<<i<<"] = \""<<FileNames[i]<<"\", "<<RelSizes[i]<<std::endl;
 		c->Add(FileNames[i]);
 		RunSeparators.push_back(c->GetEntries());
 	}
-	std::cout<<"nRuns = "<<nRuns.size()<<std::endl;
+//	std::cerr<<"nRuns = "<<nRuns.size()<<std::endl;
 	for (int iRun = 0; iRun < nRuns.size(); iRun++ ){
-		std::cout<<"DirName["<<iRun<<"] = \""<<DirName[iRun]<<"\", "<<nRuns[iRun]<<", "<<RelSizes[iRun]<<std::endl;
+//		std::cerr<<"DirName["<<iRun<<"] = \""<<DirName[iRun]<<"\", "<<nRuns[iRun]<<", "<<RelSizes[iRun]<<std::endl;
 		for (int i = 0; i<nRuns[iRun]; i++){
-			c->Add(Form(DirName[iRun]+"/%d_job0.raw",i));
+			c->Add(Form(MyData+"/"+DirName[iRun]+"/%d_job0.raw",i));
 		}
 		RunSeparators.push_back(c->GetEntries());
 	}
@@ -168,6 +169,7 @@ int main(int argc, char *argv[]){
 	c->SetBranchAddress("M_volName",&M_volName);
 	c->SetBranchAddress("M_volID",&M_volID);
 	c->SetBranchAddress("M_tid",&M_tid);
+	c->SetBranchAddress("M_pid",&M_pid);
 	c->SetBranchAddress("M_edep",&M_edep);
 	c->SetBranchAddress("M_stepL",&M_stepL);
 	c->SetBranchAddress("M_t",&M_t);
@@ -304,15 +306,15 @@ int main(int argc, char *argv[]){
 	//______________________________________________________________________________________________________
 	// Loop in events
 	Long64_t nEvents = c->GetEntries();
-	std::cout<<"nEvents = "<<nEvents<<std::endl;
+//	std::cerr<<"nEvents = "<<nEvents<<std::endl;
 	int printModulo = 1e4;
 	int printModulo2 = printModulo;
 	int iRun = 0;
 	for (Long64_t iEvent = 0; iEvent < nEvents; iEvent++ ){
-		if (iEvent%printModulo==0) std::cout<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
+//		if (iEvent%printModulo==0) std::cerr<<(double)iEvent/nEvents*100<<" % ..."<<std::endl;
 		c->GetEntry(iEvent);
 		if (iEvent>RunSeparators[iRun]) iRun++;
-		weight=8.06e6/1e9/RelSizes[iRun];
+		weight=8.06e6/1e9/RelSizes[iRun]/1170e-6;
 		//=====================================================================
 		// Get CDC hit rate
 		// Get CDC track info
@@ -351,28 +353,28 @@ int main(int argc, char *argv[]){
 			}
 			double hittime = (*M_t)[iHit];
 			double hittimemod = fmod(hittime,1170);
-			if (tritype==0&&fabs(O_pid)==11){
-				double pa = sqrt(O_px*O_px+O_py*O_py+O_pz*O_pz);
+			if (tritype==0&&fabs((*M_pid)[iHit])==11){
+				double pa = sqrt((*M_px)[iHit]*(*M_px)[iHit]+(*M_py)[iHit]*(*M_py)[iHit]+(*M_pz)[iHit]*(*M_pz)[iHit])*1000;
 				double beta = pa/sqrt(pa*pa+me*me);
 				if (beta>1/1.5){
 					che_time[(*M_volID)[iHit]+(tripos+1)*32] = hittime;
 					che_ihit[(*M_volID)[iHit]+(tripos+1)*32] = iHit;
 					if (tripos>0){
-						nHitsCD++;
-						edepCD+=(*M_edep)[iHit];
+						nHitsCD+=weight;
+						edepCD+=(*M_edep)[iHit]*weight;
 						if (hittimemod>200){
-							nHitsCDl++;
-							edepCDl+=(*M_edep)[iHit];
+							nHitsCDl+=weight;
+							edepCDl+=(*M_edep)[iHit]*weight;
 						}
 						hCD->Fill(hittimemod,weight);
 						hCDedep->Fill((*M_edep)[iHit]*1e6,weight);
 					}
 					else {
-						nHitsCU++;
-						edepCU+=(*M_edep)[iHit];
+						nHitsCU+=weight;
+						edepCU+=(*M_edep)[iHit]*weight;
 						if (hittimemod>200){
-							nHitsCUl++;
-							edepCUl+=(*M_edep)[iHit];
+							nHitsCUl+=weight;
+							edepCUl+=(*M_edep)[iHit]*weight;
 						}
 						hCU->Fill(hittimemod,weight);
 						hCUedep->Fill((*M_edep)[iHit]*1e6,weight);
@@ -386,28 +388,28 @@ int main(int argc, char *argv[]){
 				}
 				if (tripos>0){
 					if ((*M_edep)[iHit]>63e-6){
-						nHitsSD++;
+						nHitsSD+=weight;
 					}
-					edepSD+=(*M_edep)[iHit];
+					edepSD+=(*M_edep)[iHit]*weight;
 					if (hittimemod>200){
 						if ((*M_edep)[iHit]>63e-6){
-							nHitsSDl++;
+							nHitsSDl+=weight;
 						}
-						edepSDl+=(*M_edep)[iHit];
+						edepSDl+=(*M_edep)[iHit]*weight;
 					}
 					hSD->Fill(hittimemod,weight*(*M_edep)[iHit]);
 					hSDedep->Fill((*M_edep)[iHit]*1e6,weight);
 				}
 				else{
 					if ((*M_edep)[iHit]>63e-6){
-						nHitsSU++;
+						nHitsSU+=weight;
 					}
-					edepSU+=(*M_edep)[iHit];
+					edepSU+=(*M_edep)[iHit]*weight;
 					if (hittimemod>200){
 						if ((*M_edep)[iHit]>63e-6){
-							nHitsSUl++;
+							nHitsSUl+=weight;
 						}
-						edepSUl+=(*M_edep)[iHit];
+						edepSUl+=(*M_edep)[iHit]*weight;
 					}
 					hSU->Fill(hittimemod,weight*(*M_edep)[iHit]);
 					hSUedep->Fill((*M_edep)[iHit]*1e6,weight);
@@ -417,6 +419,8 @@ int main(int argc, char *argv[]){
 		}
 		int thehit;
 		gettype(che_time,sci_time,che_ihit,sci_ihit,type,thehit);
+		hTYPE->Fill(type,weight);
+		if (thehit<0) continue;
 		int ttid = (*M_tid)[thehit];
 		// common
 		O_pid = 0;
@@ -427,70 +431,68 @@ int main(int argc, char *argv[]){
 		O_x=(*M_x)[thehit]*10;
 		O_y=(*M_y)[thehit]*10;
 		O_z=(*M_z)[thehit]*10;
-		hTYPE->Fill(type,weight);
 		if ((type>=53&&type<=56)||(type>=49&&type<=51)||(type>=73&&type<=77)||(type>=69&&type<=72)){
 			hTriRate->Fill(O_t,weight);
 			if (O_t>200)
 				triggerrate+=weight;
 			if (O_t>500)
 				triggerrate2+=weight;
-		}
-
-		// about topo
-		if(o_t) delete o_t; o_t  = new std::vector<double>;
-		if(o_px) delete o_px; o_px  = new std::vector<double>;
-		if(o_py) delete o_py; o_py  = new std::vector<double>;
-		if(o_pz) delete o_pz; o_pz  = new std::vector<double>;
-		if(o_x) delete o_x; o_x  = new std::vector<double>;
-		if(o_y) delete o_y; o_y  = new std::vector<double>;
-		if(o_z) delete o_z; o_z  = new std::vector<double>;
-		if(process) delete process; process  = new std::vector<std::string>;
-		if(o_dep) delete o_dep; o_dep  = new std::vector<int>;
-		if(volume) delete volume; volume  = new std::vector<std::string>;
-		if(particle) delete particle; particle  = new std::vector<std::string>;
-		if(pid) delete pid; pid  = new std::vector<int>;
-		if(ppid) delete ppid; ppid  = new std::vector<int>;
-		int idepth = 0;
-		if (RunTypes[iRun]==1||RunTypes[iRun]==2){// dio tail or pmc
-			ppid->push_back(-1);
-			pid->push_back(-13);
-			process->push_back("NULL");
-			particle->push_back("mu-");
-			volume->push_back("TS2");
-			o_t->push_back(0);
-			o_px->push_back(0);
-			o_py->push_back(0);
-			o_pz->push_back(0);
-			o_x->push_back(0);
-			o_y->push_back(0);
-			o_z->push_back(0);
-			o_dep->push_back(idepth);
-			idepth++;
-		}
-		for(int iMc = McTruth_pid->size()-1; iMc>=0; iMc--){
-			if(ttid==(*McTruth_tid)[iMc]){
-				if (O_pid==0) O_pid = (*McTruth_pid)[iMc];
-				ppid->push_back((*McTruth_ppid)[iMc]);
-				pid->push_back((*McTruth_pid)[iMc]);
-				process->push_back((*McTruth_process)[iMc]);
-				particle->push_back((*McTruth_particleName)[iMc]);
-				std::string name = (*McTruth_volume)[iMc];
-				setName(name);
-				volume->push_back(name);
-				o_t->push_back((*McTruth_time)[iMc]);
-				o_px->push_back((*McTruth_px)[iMc]*1000);
-				o_py->push_back((*McTruth_py)[iMc]*1000);
-				o_pz->push_back((*McTruth_pz)[iMc]*1000);
-				o_x->push_back((*McTruth_x)[iMc]*10);
-				o_y->push_back((*McTruth_y)[iMc]*10);
-				o_z->push_back((*McTruth_z)[iMc]*10);
+			// about topo
+			if(o_t) delete o_t; o_t  = new std::vector<double>;
+			if(o_px) delete o_px; o_px  = new std::vector<double>;
+			if(o_py) delete o_py; o_py  = new std::vector<double>;
+			if(o_pz) delete o_pz; o_pz  = new std::vector<double>;
+			if(o_x) delete o_x; o_x  = new std::vector<double>;
+			if(o_y) delete o_y; o_y  = new std::vector<double>;
+			if(o_z) delete o_z; o_z  = new std::vector<double>;
+			if(process) delete process; process  = new std::vector<std::string>;
+			if(o_dep) delete o_dep; o_dep  = new std::vector<int>;
+			if(volume) delete volume; volume  = new std::vector<std::string>;
+			if(particle) delete particle; particle  = new std::vector<std::string>;
+			if(pid) delete pid; pid  = new std::vector<int>;
+			if(ppid) delete ppid; ppid  = new std::vector<int>;
+			int idepth = 0;
+			if (RunTypes[iRun]==1||RunTypes[iRun]==2){// dio tail or pmc
+				ppid->push_back(-1);
+				pid->push_back(-13);
+				process->push_back("NULL");
+				particle->push_back("mu-");
+				volume->push_back("TS2");
+				o_t->push_back(0);
+				o_px->push_back(0);
+				o_py->push_back(0);
+				o_pz->push_back(0);
+				o_x->push_back(0);
+				o_y->push_back(0);
+				o_z->push_back(0);
 				o_dep->push_back(idepth);
 				idepth++;
-				ttid = (*McTruth_ptid)[iMc];
 			}
+			for(int iMc = McTruth_pid->size()-1; iMc>=0; iMc--){
+				if(ttid==(*McTruth_tid)[iMc]){
+					if (O_pid==0) O_pid = (*McTruth_pid)[iMc];
+					ppid->push_back((*McTruth_ppid)[iMc]);
+					pid->push_back((*McTruth_pid)[iMc]);
+					process->push_back((*McTruth_process)[iMc]);
+					particle->push_back((*McTruth_particleName)[iMc]);
+					std::string name = (*McTruth_volume)[iMc];
+					setName(name);
+					volume->push_back(name);
+					o_t->push_back((*McTruth_time)[iMc]);
+					o_px->push_back((*McTruth_px)[iMc]*1000);
+					o_py->push_back((*McTruth_py)[iMc]*1000);
+					o_pz->push_back((*McTruth_pz)[iMc]*1000);
+					o_x->push_back((*McTruth_x)[iMc]*10);
+					o_y->push_back((*McTruth_y)[iMc]*10);
+					o_z->push_back((*McTruth_z)[iMc]*10);
+					o_dep->push_back(idepth);
+					idepth++;
+					ttid = (*McTruth_ptid)[iMc];
+				}
+			}
+			gettopo(topo,process,pid,o_px,o_py,o_pz);
+			tree->Fill(); // stack the previous track
 		}
-		gettopo(topo,process,pid,o_px,o_py,o_pz);
-		tree->Fill(); // stack the previous track
 	}
 
 	hCU->Write();
@@ -505,6 +507,13 @@ int main(int argc, char *argv[]){
 	hTYPE->Write();
 	tree->Write();
 	f->Close();
+	std::cout<<(nHitsCU-nHitsCUl)/64.*1.17<<" "<<nHitsCUl/64.*1.17
+		<<" "<<(nHitsCD-nHitsCDl)/64.*1.17<<" "<<nHitsCDl/64.*1.17
+		<<" "<<(nHitsSU-nHitsSUl)/64.*1.17<<" "<<nHitsSUl/64.*1.17
+		<<" "<<(nHitsSD-nHitsSDl)/64.*1.17<<" "<<nHitsSDl/64.*1.17
+		<<" "<<(edepSU-edepSUl)/64.*1.17<<" "<<edepSUl/64.*1.17
+		<<" "<<(edepSD-edepSDl)/64.*1.17<<" "<<edepSDl/64.*1.17
+		<<" "<<triggerrate<<" "<<triggerrate2<<std::endl;
 	return 0;
 }
 
@@ -519,6 +528,8 @@ int rotate(int n0, int dn){
 
 int gettype(double che_time[128], double sci_time[128],int che_ihit[128], int sci_ihit[128],int &type, int &thehit){
 	// option D
+	type = 0;
+	thehit = -1;
 	std::vector<int> vtype;
 	std::vector<int> vihit;
 	for (int itri = 0; itri<128; itri++){

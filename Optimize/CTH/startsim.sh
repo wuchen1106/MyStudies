@@ -33,8 +33,8 @@ for line in f:
 		print output                                  
 		output = commands.getoutput('SRA_gen_sim -f -t sim -b 0 -e 0 -q besq opt.beam.all CyDet.beam.all'+runname)
 		print output                                  
-		output = commands.getoutput('SRA_gen_sim -f -t sim -b 0 -e 0 -q besq opt.beam.o10 CyDet.beam.o10'+runname)
-		print output                                  
+#		output = commands.getoutput('SRA_gen_sim -f -t sim -b 0 -e 0 -q besq opt.beam.o10 CyDet.beam.o10'+runname)
+#		print output                                  
 		output = commands.getoutput('SRA_gen_sim -f -t sim -b 0 -e 0 -q besq opt.dio.o50 CyDet.dio.o50'+runname)
 		print output                                  
 		output = commands.getoutput('SRA_gen_sim -f -t sim -b 0 -e 0 -q besq opt.pmc CyDet.pmc'+runname)
