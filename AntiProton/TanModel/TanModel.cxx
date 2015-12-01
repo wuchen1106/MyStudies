@@ -26,6 +26,7 @@
 char m_workMode[128];
 int verbose = 0;
 float nEvents = 0;
+float siEvents = 0;
 int printModule = 1;
 
 std::vector<std::string> oFileName;
@@ -117,7 +118,7 @@ int main(int argc, char* argv[]){
 	//}
 	init_args();
 	int result;
-	while((result=getopt(argc,argv,"hv:n:m:p:"))!=-1){
+	while((result=getopt(argc,argv,"hv:s:n:m:p:"))!=-1){
 		switch(result){
 			/* INPUTS */
 			case 'm':
@@ -127,6 +128,10 @@ int main(int argc, char* argv[]){
 			case 'v':
 				verbose = atoi(optarg);
 				printf("verbose level: %d\n",verbose);
+				break;
+			case 's':
+				siEvents = atof(optarg);
+				printf("siEvent: %f\n",siEvents);
 				break;
 			case 'n':
 				nEvents = atof(optarg);
@@ -369,6 +374,9 @@ int main(int argc, char* argv[]){
 		double x;
 		double y;
 		double z;
+		double t = 0;
+		double pFermi = 0;
+		int iteration = 0;
 		TFile * f_in = new TFile("../result/StepPosition.root");
 		TTree * t_in = (TTree*) f_in->Get("t");
 		t_in->SetBranchAddress("x",&x);
@@ -386,14 +394,24 @@ int main(int argc, char* argv[]){
 		t_out->Branch("x",&x);
 		t_out->Branch("y",&y);
 		t_out->Branch("z",&z);
+		t_out->Branch("t",&t);
+		t_out->Branch("f",&pFermi);
+		t_out->Branch("i",&iteration);
 		t_out->Branch("weight",&weight);
+
+		TLorentzVector *pDaughter1 = 0;
+		TLorentzVector *pDaughter2 = 0;
+		TLorentzVector *pDaughter3 = 0;
+		TLorentzVector *pDaughter4 = 0;
+		TLorentzVector X;
+		TLorentzVector pAllDaughters;
 		//loop in events
 		std::cout<<nEvents<<" events to be processed"<<std::endl;
-		for( Long64_t iEvent = 0; iEvent < nEvents; iEvent++ ){
+		for( Long64_t iEvent = siEvents; iEvent < siEvents+nEvents; iEvent++ ){
 			t_in->GetEntry(iEvent%N_in);
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"In Event "<<iEvent<<std::endl;
 			// Generate a nucleon
-			double pFermi = h_FM->GetRandom();
+			pFermi = h_FM->GetRandom();
 			G4double dir_x = 0., dir_y = 0., dir_z = 0.;
 			G4bool dir_OK = false;
 			while( !dir_OK ){
@@ -414,45 +432,50 @@ int main(int argc, char* argv[]){
 			target.SetVectM(dir_3Vec, 0.9382723);
 			TLorentzVector W = beam + target;
 			event.SetDecay(W, 4, masses);
-			weight = event.Generate();
-			TLorentzVector *pDaughter1 = event.GetDecay(0);
-			TLorentzVector *pDaughter2 = event.GetDecay(1);
-			TLorentzVector *pDaughter3 = event.GetDecay(2);
-			TLorentzVector *pDaughter4 = event.GetDecay(3);
-			TLorentzVector X = *pDaughter2 + *pDaughter3 + *pDaughter4;
-			TLorentzVector pAllDaughters = *pDaughter1 + *pDaughter2 + *pDaughter3 + *pDaughter4;
+			double pa = 1000;
+			iteration = 0;
+			while (pa>500){
+				if (iteration>5e3) break;
+				iteration++;
+				weight = event.Generate();
+				pDaughter1 = event.GetDecay(0);
+				pa = pDaughter1->P()*1000;
+				pDaughter2 = event.GetDecay(1);
+				pDaughter3 = event.GetDecay(2);
+				pDaughter4 = event.GetDecay(3);
+				X = *pDaughter2 + *pDaughter3 + *pDaughter4;
+				pAllDaughters = *pDaughter1 + *pDaughter2 + *pDaughter3 + *pDaughter4;
 
-			// Calculate weight given by Tan Model
-			double s = W.M2();
-			double Emax = (s - MX*MX + Mp*Mp)/2*sqrt(s);
-			double xR = pDaughter1->E()/Emax;
-			double pt = pDaughter1->Pt();
-			px = pDaughter1->Px()*1000;
-			py = pDaughter1->Py()*1000;
-			pz = pDaughter1->Pz()*1000;
-			if (isnan(px)
-			  ||isnan(py)
-			  ||isnan(pz))
-			continue;
-			double fr = 0;
-			if ( a3 < xR ){
-				fr = (sigmga00-a1)*pow(1-xR,a4);
-			}
-			else{
-				fr = a1*exp(-a2*xR)+(sigmga00-a1)*pow(1-xR,a4);
-			}
-			double A = a5*exp(-a6*xR)+a7*exp(a8*xR);
-			double B = a9*exp(-a10*(xR+a11))*pow(xR+a11,a12);
-			double weight2 = fr*exp(-A*pt+B*pt*pt);
+				// Calculate weight given by Tan Model
+				double s = W.M2();
+				double Emax = (s - MX*MX + Mp*Mp)/2*sqrt(s);
+				double xR = pDaughter1->E()/Emax;
+				double pt = pDaughter1->Pt();
+				px = pDaughter1->Px()*1000;
+				py = pDaughter1->Py()*1000;
+				pz = pDaughter1->Pz()*1000;
+				if (isnan(px)
+						||isnan(py)
+						||isnan(pz))
+					continue;
+				double fr = 0;
+				if ( a3 < xR ){
+					fr = (sigmga00-a1)*pow(1-xR,a4);
+				}
+				else{
+					fr = a1*exp(-a2*xR)+(sigmga00-a1)*pow(1-xR,a4);
+				}
+				double A = a5*exp(-a6*xR)+a7*exp(a8*xR);
+				double B = a9*exp(-a10*(xR+a11))*pow(xR+a11,a12);
+				double weight2 = fr*exp(-A*pt+B*pt*pt);
 
-			// Get the total weight
-			weight *=  weight2;
-			weight /= (double) nEvents;
-			N0+=weight;
-			double pa = pDaughter1->P()*1000;
-			//****************** Cut**************************
-//			if (pa > 500) continue;
-			//****************** Cut**************************
+				// Get the total weight
+				weight *=  weight2;
+				weight /= (double) nEvents;
+				N0+=weight;
+			}
+			if (iteration>5e3) continue;
+			if (isnan(weight)) continue;
 			N1+=weight;
 
 			if (verbose >= Verbose_EventInfo || iEvent%printModule == 0) std::cout<<prefix_EventInfoStart<<"  weight = "<<weight
