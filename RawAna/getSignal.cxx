@@ -14,68 +14,188 @@
 TString MyData = getenv("MYDATA");
 TString MyWork = getenv("MYWORKAREA");
 
-void gettopo(int &topo,std::vector<std::string> * process,std::vector<int> * pid,std::vector<double> *o_px,std::vector<double> *o_py,std::vector<double> *o_pz);
-void setName(std::string &name);
 int gettype(double che_time[128], double sci_time[128],int che_ihit[128], int sci_ihit[128],int &type, int &thehit);
 int rotate(int n0, int dn);
 
 int main(int argc, char *argv[]){
-	TString runName = argv[1];
-	double twindow = 1000;
 	double me = 0.511e-3; // GeV
-	TChain * c = new TChain("tree");
-	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em."+runName+".root");
-	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.new.root");
-	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.root");
-	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.mrot.root");
-	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.ep.mrot.root");
-	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.em.rev.root");
-	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/CyDet.Acc.ep.root");
-	//c->Add("/home/chen/MyWorkArea/Simulate/comet/output/raw_g4sim.root");
-	for (int i = 0; i < 100; i++){
-		c->Add(Form("/scratchfs/bes/wuc/MyWorkArea/Data/A9.rmc.150919.W500um.OptD2.1mmCFRP.DD35.1cmLead/%d_job0.raw",i));
+	std::vector<TString> DirName;
+	std::vector<int> nRuns;
+	std::vector<TString> FileNames;
+	std::vector<double> Sizes;
+	int Ntotal = 0;
+	int Nsingle = 0;
+	int Nmultiple = 0;
+	//______________________________________________________________________________________________________
+	// About this run
+	if (argc <= 3) {
+		std::cerr<<"Should provide runname, dir/file, input files"<<std::endl;
+		return -1;
 	}
-	std::vector<int> * in_triID = 0;
-	std::vector<int> * in_tritid= 0;
-	std::vector<double> * in_trit = 0;
-	std::vector<double> * in_triedep = 0;
-	std::vector<double> * in_tripx = 0;
-	std::vector<double> * in_tripy = 0;
-	std::vector<double> * in_tripz = 0;
-	std::vector<double> * in_triZ = 0;
-	std::vector<std::string> * in_triName= 0;
-	std::vector<int> * in_tritid = 0;
-	std::vector<int> * in_cdclid = 0;
-	std::vector<int> * in_cdctid = 0;
-	std::vector<double> * in_cdct = 0;
-	std::vector<int> * in_mcpid = 0;
-	std::vector<int> * in_mctid = 0;
-	std::vector<double> * in_mctime = 0;
-	std::vector<double> * in_mcpx = 0;
-	std::vector<double> * in_mcpy = 0;
-	std::vector<double> * in_mcpz = 0;
-	int evt_num = 0;
+	TString runName = argv[1];
+	TString opt = argv[2];
+	if (opt=="dir"){
+		int ndirs = (argc-3);
+		if (ndirs%3!=0){
+			std::cerr<<"Should provide dir name, n jobs, weight, type"<<std::endl;
+			return -1;
+		}
+		ndirs/=3;
+		for (int i = 0; i<ndirs; i++){
+			DirName.push_back(argv[3+i]);
+			nRuns.push_back((int)strtol(argv[3+i+ndirs],NULL,10));
+			Sizes.push_back((double)strtof(argv[3+i+ndirs*2],NULL));
+			Ntotal+=Sizes[i];
+		}
+	}
+	else {
+		int nfiles = argc-3;
+		if (nfiles%2!=0){
+			std::cerr<<"Should provide file name, weight"<<std::endl;
+			return -1;
+		}
+		nfiles/=2;
+		for (int i = 0; i<nfiles; i++){
+			FileNames.push_back(argv[3+i]);
+			Sizes.push_back((double)strtof(argv[3+i+nfiles],NULL));
+			Ntotal+=Sizes[i];
+		}
+	}
+
+	//______________________________________________________________________________________________________
+	// input
+	int  C_nHits = 0;
+	int  M_nHits = 0;
+
+	int  evt_num;
+	int  run_num;
+	double weight = 1;
+
+	std::vector<int>     *C_cellID = 0;
+	std::vector<int>     *C_layerID = 0;
+	std::vector<int>     *C_tid = 0;
+	std::vector<double>  *C_edep = 0;
+	std::vector<double>  *C_stepL = 0;
+	std::vector<double>  *C_driftD = 0;
+	std::vector<double>  *C_driftDtrue = 0;
+	std::vector<double>  *C_tstart = 0;
+	std::vector<double>  *C_tstop = 0;
+	std::vector<int>     *C_posflag = 0;
+	std::vector<int>     *C_nPair = 0;
+	std::vector<double>  *C_t = 0;
+	std::vector<double>  *C_px = 0;
+	std::vector<double>  *C_py = 0;
+	std::vector<double>  *C_pz = 0;
+	std::vector<double>  *C_x = 0;
+	std::vector<double>  *C_y = 0;
+	std::vector<double>  *C_z = 0;
+	std::vector<double>  *C_wx = 0;
+	std::vector<double>  *C_wy = 0;
+	std::vector<double>  *C_wz = 0;
+
+	std::vector<int>     *M_volID = 0;
+	std::vector<std::string>  *M_volName = 0;
+	std::vector<int>     *M_tid = 0;
+	std::vector<int>     *M_pid = 0;
+	std::vector<double>  *M_edep = 0;
+	std::vector<double>  *M_stepL = 0;
+	std::vector<double>  *M_t = 0;
+	std::vector<double>  *M_px = 0;
+	std::vector<double>  *M_py = 0;
+	std::vector<double>  *M_pz = 0;
+	std::vector<double>  *M_x = 0;
+	std::vector<double>  *M_y = 0;
+	std::vector<double>  *M_z = 0;
+
+	std::vector<int>     *McTruth_pid = 0;
+	std::vector<int>     *McTruth_ppid = 0;
+	std::vector<int>     *McTruth_ptid = 0;
+	std::vector<int>     *McTruth_tid = 0;
+	std::vector<double>  *McTruth_time = 0;
+	std::vector<double>  *McTruth_px = 0;
+	std::vector<double>  *McTruth_py = 0;
+	std::vector<double>  *McTruth_pz = 0;
+	std::vector<double>  *McTruth_x = 0;
+	std::vector<double>  *McTruth_y = 0;
+	std::vector<double>  *McTruth_z = 0;
+	std::vector<std::string>  *McTruth_volume = 0;
+	std::vector<std::string>  *McTruth_process = 0;
+	std::vector<std::string>  *McTruth_particleName = 0;
+
+	TChain *c = new TChain("tree");
+	std::cerr<<"FileNames.size() = "<<(FileNames.size())<<std::endl;
+	for (int i = 0; i<FileNames.size(); i++){
+		std::cerr<<"FileNames["<<i<<"] = \""<<FileNames[i]<<std::endl;
+		c->Add(FileNames[i]);
+	}
+	std::cerr<<"nRuns = "<<nRuns.size()<<std::endl;
+	for (int iRun = 0; iRun < nRuns.size(); iRun++ ){
+		std::cerr<<"DirName["<<iRun<<"] = \""<<DirName[iRun]<<"\", "<<nRuns[iRun]<<std::endl;
+		for (int i = 0; i<nRuns[iRun]; i++){
+			c->Add(Form(MyData+"/"+DirName[iRun]+"/%d_job0.raw",i));
+		}
+	}
+
 	c->SetBranchAddress("evt_num",&evt_num);
-	c->SetBranchAddress("CdcCell_layerID",&in_cdclid);
-	c->SetBranchAddress("CdcCell_tid",&in_cdctid);
-	c->SetBranchAddress("CdcCell_t",&in_cdct);
-	c->SetBranchAddress("McTruth_pid",&in_mcpid);
-	c->SetBranchAddress("McTruth_tid",&in_mctid);
-	c->SetBranchAddress("McTruth_time",&in_mctime);
-	c->SetBranchAddress("McTruth_px",&in_mcpx);
-	c->SetBranchAddress("McTruth_py",&in_mcpy);
-	c->SetBranchAddress("McTruth_pz",&in_mcpz);
-	c->SetBranchAddress("M_t",&in_trit);
-	c->SetBranchAddress("M_edep",&in_triedep);
-	c->SetBranchAddress("M_px",&in_tripx);
-	c->SetBranchAddress("M_py",&in_tripy);
-	c->SetBranchAddress("M_pz",&in_tripz);
-	c->SetBranchAddress("M_z",&in_triZ);
-	c->SetBranchAddress("M_tid",&in_tritid);
-	c->SetBranchAddress("M_volID",&in_triID);
-	c->SetBranchAddress("M_volName",&in_triName);
-	c->SetBranchAddress("M_tid",&in_tritid);
-	TFile * ofile = new TFile("CyDet."+runName+".root","RECREATE");
+	c->SetBranchAddress("run_num",&run_num);
+
+	c->SetBranchAddress("CdcCell_nHits",&C_nHits);
+	c->SetBranchAddress("CdcCell_layerID",&C_layerID);
+	c->SetBranchAddress("CdcCell_cellID",&C_cellID);
+	c->SetBranchAddress("CdcCell_tid",&C_tid);
+	c->SetBranchAddress("CdcCell_edep",&C_edep);
+	c->SetBranchAddress("CdcCell_stepL",&C_stepL);
+	c->SetBranchAddress("CdcCell_driftD",&C_driftD);
+	c->SetBranchAddress("CdcCell_driftDtrue",&C_driftDtrue);
+	c->SetBranchAddress("CdcCell_tstop",&C_tstop);
+	c->SetBranchAddress("CdcCell_tstart",&C_tstart);
+	c->SetBranchAddress("CdcCell_posflag",&C_posflag);
+	c->SetBranchAddress("CdcCell_nPair",&C_nPair);
+	c->SetBranchAddress("CdcCell_t",&C_t);
+	c->SetBranchAddress("CdcCell_px",&C_px);
+	c->SetBranchAddress("CdcCell_py",&C_py);
+	c->SetBranchAddress("CdcCell_pz",&C_pz);
+	c->SetBranchAddress("CdcCell_x",&C_x);
+	c->SetBranchAddress("CdcCell_y",&C_y);
+	c->SetBranchAddress("CdcCell_z",&C_z);
+	c->SetBranchAddress("CdcCell_wx",&C_wx);
+	c->SetBranchAddress("CdcCell_wy",&C_wy);
+	c->SetBranchAddress("CdcCell_wz",&C_wz);
+
+	c->SetBranchAddress("M_nHits",&M_nHits);
+	c->SetBranchAddress("M_volName",&M_volName);
+	c->SetBranchAddress("M_volID",&M_volID);
+	c->SetBranchAddress("M_tid",&M_tid);
+	c->SetBranchAddress("M_pid",&M_pid);
+	c->SetBranchAddress("M_edep",&M_edep);
+	c->SetBranchAddress("M_stepL",&M_stepL);
+	c->SetBranchAddress("M_t",&M_t);
+	c->SetBranchAddress("M_px",&M_px);
+	c->SetBranchAddress("M_py",&M_py);
+	c->SetBranchAddress("M_pz",&M_pz);
+	c->SetBranchAddress("M_x",&M_x);
+	c->SetBranchAddress("M_y",&M_y);
+	c->SetBranchAddress("M_z",&M_z);
+
+	c->SetBranchAddress("McTruth_pid",&McTruth_pid);
+	c->SetBranchAddress("McTruth_ppid",&McTruth_ppid);
+	c->SetBranchAddress("McTruth_ptid",&McTruth_ptid);
+	c->SetBranchAddress("McTruth_tid",&McTruth_tid);
+	c->SetBranchAddress("McTruth_time",&McTruth_time);
+	c->SetBranchAddress("McTruth_px",&McTruth_px);
+	c->SetBranchAddress("McTruth_py",&McTruth_py);
+	c->SetBranchAddress("McTruth_pz",&McTruth_pz);
+	c->SetBranchAddress("McTruth_x",&McTruth_x);
+	c->SetBranchAddress("McTruth_y",&McTruth_y);
+	c->SetBranchAddress("McTruth_z",&McTruth_z);
+	c->SetBranchAddress("McTruth_process",&McTruth_process);
+	c->SetBranchAddress("McTruth_volume",&McTruth_volume);
+	c->SetBranchAddress("McTruth_particleName",&McTruth_particleName);
+	c->SetBranchAddress("weight",&weight);
+
+	//______________________________________________________________________________________________________
+	// output
+	TFile * ofile = new TFile(runName+".root","RECREATE");
 	TTree * otree = new TTree("t","t");
 	int tri_nHits = 0;
 	int tri_pos = 0;
@@ -91,6 +211,7 @@ int main(int argc, char *argv[]){
 	double zcl = 0;
 	double zs = 0;
 	double px,py,pz;
+	int dir = 0;
 	otree->Branch("tn",&tri_nHits);
 	otree->Branch("tp",&tri_pos);
 	otree->Branch("type",&type);
@@ -107,41 +228,47 @@ int main(int argc, char *argv[]){
 	otree->Branch("px",&px);
 	otree->Branch("py",&py);
 	otree->Branch("pz",&pz);
+	otree->Branch("dir",&dir);
 	otree->Branch("evt_num",&evt_num);
+	// Statistics
 	double sci_time[128];
 	double che_time[128];
+	int che_ihit[128];
+	int sci_ihit[128];
+
+	//______________________________________________________________________________________________________
+	// Loop in events
 	Long64_t nEntries = c->GetEntries();
 	std::vector<int> vtype;
 	std::vector<int> vpos;
 	std::vector<double> vtime;
 	std::cout<<nEntries<<" entries to check!"<<std::endl;
 	for (Long64_t iEntry = 0; iEntry<nEntries; iEntry++){
-//	for (Long64_t iEntry = 284; iEntry<=284; iEntry++){
 		if (iEntry%1000==0) std::cout<<(double)iEntry/nEntries*100<<"%..."<<std::endl;
 		c->GetEntry(iEntry);
 
 		int thimc = -1;
 		int thetid = -1;
-		for (int imc = 0; imc<in_mcpz->size(); imc++){
-			if ((*in_mcpid)[imc]==11){
-				px = (*in_mcpx)[imc]*1000;
-				py = (*in_mcpy)[imc]*1000;
-				pz = (*in_mcpz)[imc]*1000;
+		for (int imc = 0; imc<McTruth_pz->size(); imc++){
+			if ((*McTruth_pid)[imc]==11){
+				px = (*McTruth_px)[imc]*1000;
+				py = (*McTruth_py)[imc]*1000;
+				pz = (*McTruth_pz)[imc]*1000;
 				if (sqrt(px*px+py*py+pz*pz)>100){
 					thimc = imc;
-					thetid = (*in_mctid)[imc];
+					thetid = (*McTruth_tid)[imc];
 					break;
 				}
 			}
 		}
 		if (thimc<0) continue;
 
-		theta = acos((*in_mcpz)[thimc]/sqrt((*in_mcpx)[thimc]*(*in_mcpx)[thimc]+(*in_mcpy)[thimc]*(*in_mcpy)[thimc]));
+		theta = acos((*McTruth_pz)[thimc]/sqrt((*McTruth_px)[thimc]*(*McTruth_px)[thimc]+(*McTruth_py)[thimc]*(*McTruth_py)[thimc]));
 		zc = 0;
 		zcl = 0;
 		zs = 0;
 
-		cdc_nHitsT = in_cdclid->size();
+		cdc_nHitsT = C_layerID->size();
 		maxlid = 0;
 		maxcontinuedIn = 0;
 		maxcontinuedOut = 0;
@@ -151,17 +278,17 @@ int main(int argc, char *argv[]){
 		int currentlayersIn = 0;
 		int currentlayersOut = 0;
 		int prelid = 0;
-		for ( int ihit = 0; ihit<in_cdclid->size(); ihit++){
-			if ((*in_cdctid)[ihit]!=thetid) continue;
-			if (((*in_cdct)[ihit]-(*in_mctime)[thimc])/7+1>nturn) nturn = ((*in_cdct)[ihit]-(*in_mctime)[thimc])/7+1;
-			if ((*in_cdct)[ihit]-(*in_mctime)[thimc]>7) continue;
-			if (maxlid<(*in_cdclid)[ihit]) maxlid=(*in_cdclid)[ihit];
-			if ((*in_cdclid)[ihit]-prelid==1) currentlayersIn++;
-			else if ((*in_cdclid)[ihit]-prelid==-1) currentlayersOut++;
-			else if ((*in_cdclid)[ihit]!=prelid) {currentlayersIn=0;currentlayersOut=0;}
+		for ( int ihit = 0; ihit<C_layerID->size(); ihit++){
+			if ((*C_tid)[ihit]!=thetid) continue;
+			if (((*C_t)[ihit]-(*McTruth_time)[thimc])/7+1>nturn) nturn = ((*C_t)[ihit]-(*McTruth_time)[thimc])/7+1;
+			if ((*C_t)[ihit]-(*McTruth_time)[thimc]>7) continue;
+			if (maxlid<(*C_layerID)[ihit]) maxlid=(*C_layerID)[ihit];
+			if ((*C_layerID)[ihit]-prelid==1) currentlayersIn++;
+			else if ((*C_layerID)[ihit]-prelid==-1) currentlayersOut++;
+			else if ((*C_layerID)[ihit]!=prelid) {currentlayersIn=0;currentlayersOut=0;}
 			if (maxcontinuedOut<currentlayersOut) maxcontinuedOut=currentlayersOut;
 			if (maxcontinuedIn<currentlayersIn) maxcontinuedIn=currentlayersIn;
-			prelid=(*in_cdclid)[ihit];
+			prelid=(*C_layerID)[ihit];
 			cdc_nHits++;
 		}
 		//std::cout<<maxlid<<","<<cdc_nHits<<","<<maxcontinuedOut<<","<<maxcontinuedU<<std::endl;
@@ -171,138 +298,151 @@ int main(int argc, char *argv[]){
 			sci_time[itri] = -1;
 		}
 		tri_nHits = 0;
-		if (in_triName->size()){
-			if ((*in_triName)[0]=="TriCheLU"
-					||(*in_triName)[0]=="TriCheLD"
-					||(*in_triName)[0]=="TriCheU"
-					||(*in_triName)[0]=="TriCheD"
+		if (M_volName->size()){
+			if ((*M_volName)[0]=="TriCheLU"
+					||(*M_volName)[0]=="TriCheLD"
+					||(*M_volName)[0]=="TriCheU"
+					||(*M_volName)[0]=="TriCheD"
 			   ){
 				dir = 1;
 			}
-			else if ((*in_triName)[0]=="TriSciU"
-					||(*in_triName)[0]=="TriSciD"
+			else if ((*M_volName)[0]=="TriSciU"
+					||(*M_volName)[0]=="TriSciD"
 					){
 				dir = -1;
 			}
 		}
-		for ( int ihit = 0; ihit<in_trit->size(); ihit++){
-			if ((*in_tritid)[ihit]!=thetid) continue;
-			if ((*in_triName)[ihit]=="TriChePD"
-			  ||(*in_triName)[ihit]=="TriChePU"
-			  ||(*in_triName)[ihit]=="TriSciPD"
-			  ||(*in_triName)[ihit]=="TriSciPU"
-			  ||(*in_triName)[ihit]=="TriSciLD"
-			  ||(*in_triName)[ihit]=="TriSciLU"
+		for ( int ihit = 0; ihit<M_t->size(); ihit++){
+			if ((*M_tid)[ihit]!=thetid) continue;
+			if ((*M_volName)[ihit]=="TriChePD"
+			  ||(*M_volName)[ihit]=="TriChePU"
+			  ||(*M_volName)[ihit]=="TriSciPD"
+			  ||(*M_volName)[ihit]=="TriSciPU"
+			  ||(*M_volName)[ihit]=="TriSciLD"
+			  ||(*M_volName)[ihit]=="TriSciLU"
 					) continue;
 			tri_nHits++;
-//			double px = (*in_tripx)[ihit];
-//			double py = (*in_tripy)[ihit];
-//			double pz = (*in_tripz)[ihit];
-//			double pa = sqrt(px*px+py*py+pz*pz);
-//			double beta = pa/sqrt(pa*pa+me*me);
-			if ((*in_triName)[ihit]=="TriCheD"
-				||(*in_triName)[ihit]=="TriCheLD"
+			double px = (*M_px)[ihit];
+			double py = (*M_py)[ihit];
+			double pz = (*M_pz)[ihit];
+			double pa = sqrt(px*px+py*py+pz*pz);
+			double beta = pa/sqrt(pa*pa+me*me);
+			if ((*M_volName)[ihit]=="TriCheD"
+				||(*M_volName)[ihit]=="TriCheLD"
 					){ // Cherenkov
-//				if (beta>1/1.5){
-				if (1){
-					che_time[(*in_triID)[ihit]+64] = (*in_trit)[ihit];
-//					std::cout<<"@"<<ihit<<": che_time["<<(*in_triID)[ihit]+64<<"]="<<(*in_trit)[ihit]<<std::endl;
-					if ((*in_triName)[ihit]=="TriCheD"){
-						if (!zc) zc = (*in_triZ)[ihit];
+				if (beta>1/1.5){
+					che_time[(*M_volID)[ihit]+64] = (*M_t)[ihit];
+					if ((*M_volName)[ihit]=="TriCheD"){
+						if (!zc) zc = (*M_z)[ihit];
 					}
 					else{
-						if (!zcl) zcl = (*in_triZ)[ihit];
+						if (!zcl) zcl = (*M_z)[ihit];
 					}
 				}
 			}
-			else  if ((*in_triName)[ihit]=="TriCheU"
-				||(*in_triName)[ihit]=="TriCheLU"
+			else  if ((*M_volName)[ihit]=="TriCheU"
+				||(*M_volName)[ihit]=="TriCheLU"
 					){ // Cherenkov
-//				if (beta>1/1.5){
-				if (1){
-					che_time[(*in_triID)[ihit]] = (*in_trit)[ihit];
-//					std::cout<<"@"<<ihit<<": che_time["<<(*in_triID)[ihit]+64<<"]="<<(*in_trit)[ihit]<<std::endl;
-					if ((*in_triName)[ihit]=="TriCheU"){
-						if (!zc) zc = (*in_triZ)[ihit];
+				if (beta>1/1.5){
+					che_time[(*M_volID)[ihit]] = (*M_t)[ihit];
+					if ((*M_volName)[ihit]=="TriCheU"){
+						if (!zc) zc = (*M_z)[ihit];
 					}
 					else{
-						if (!zcl) zcl = (*in_triZ)[ihit];
+						if (!zcl) zcl = (*M_z)[ihit];
 					}
 				}
 			}
-			else if ((*in_triName)[ihit]=="TriSciD"
-//					||(*in_triName)[ihit]=="TriSciLD"
+			else if ((*M_volName)[ihit]=="TriSciD"
+//					||(*M_volName)[ihit]=="TriSciLD"
 					){ // Scintillator
-				if((*in_triedep)[ihit]>630e-6){
-//				if(1){
-					sci_time[(*in_triID)[ihit]+64] = (*in_trit)[ihit];
-					if (!zs) zs = (*in_triZ)[ihit];
+				if((*M_edep)[ihit]>630e-6){
+					sci_time[(*M_volID)[ihit]+64] = (*M_t)[ihit];
+					if (!zs) zs = (*M_z)[ihit];
 				}
 			}
-			else if ((*in_triName)[ihit]=="TriSciU"
-//					||(*in_triName)[ihit]=="TriSciLU"
+			else if ((*M_volName)[ihit]=="TriSciU"
+//					||(*M_volName)[ihit]=="TriSciLU"
 					){ // Scintillator
-				if((*in_triedep)[ihit]>630e-6){
-//				if(1){
-					sci_time[(*in_triID)[ihit]] = (*in_trit)[ihit];
-					if (!zs) zs = (*in_triZ)[ihit];
+				if((*M_edep)[ihit]>630e-6){
+					sci_time[(*M_volID)[ihit]] = (*M_t)[ihit];
+					if (!zs) zs = (*M_z)[ihit];
 				}
 			}
 		}
 		if (tri_nHits){
 			if (!cdc_nHitsT) tri_nHits*=-1;
-			else if ((*in_cdct)[0]>(*in_trit)[0]) tri_nHits*=-1;
+			else if ((*C_t)[0]>(*M_t)[0]) tri_nHits*=-1;
 		}
 
 		// option D
-		vtype.clear();
-		vtime.clear();
-		vpos.clear();
-		for (int itri = 0; itri<128; itri++){
-			int time = sci_time[itri];
-			if (time==-1)
-			continue;
-			int nsci = 1;
-			// how many hit in sci in row? (starting from this counter)
-			for (int delta = 1; delta<=2; delta++){
-				int jtri = rotate(itri,delta);
-				if (sci_time[jtri]!=-1&&fabs(sci_time[jtri]-time)<10) nsci++;
-				else break;
-			}
-//			std::cout<<itri<<"-"<<nsci<<"->"<<rotate(itri,nsci-1)<<std::endl;
-			for (int delta = -2; delta<=2; delta++){
-				int jtri = rotate(itri,delta);
-				if (che_time[jtri]==-1||fabs(che_time[jtri]-time)>=10) continue;
-				int nche = 1;
-				for (int delta = 1; delta<=2; delta++){
-					int ktri = rotate(jtri,delta);
-					if (che_time[ktri]!=-1&&fabs(che_time[ktri]-time)<10) nche++;
-					else break;
-				}
-//				std::cout<<"  "<<jtri<<"-"<<nche<<"->"<<rotate(jtri,nche-1)<<std::endl;
-//				std::cout<<"  "<<nsci*100+nche*10+delta<<std::endl;
-				vtype.push_back(nsci*100+nche*10+delta);
-				vtime.push_back(time);
-				vpos.push_back(itri>=64?1:-1);
-			}
-		}
-		int nhitmax = -1;
-		for (int it = 0; it<vtype.size(); it++){
-			if (nhitmax<vtype[it]/10) nhitmax = vtype[it]/10;
-		}
-		int ndeltamin = 10;
-		for (int it = 0; it<vtype.size(); it++){
-			if (nhitmax!=vtype[it]/10) continue;
-			if (fabs(ndeltamin)>fabs(vtype[it]%10)){
-				ndeltamin = vtype[it]%10;
-				tri_pos = vpos[it];
-			}
-		}
-		type = nhitmax*10+ndeltamin;
+		int thehit = -1;
+		gettype(che_time,sci_time,che_ihit,sci_ihit,type,thehit);
 //		std::cout<<"type = "<<type<<std::endl;
 		otree->Fill();
+		if (nturn==1&&cdc_nHitsT>0&&tri_nHits>0&&maxlid>=4&&((type>=53&&type<=56)||(type>=49&&type<=51)||(type>=73&&type<=77)||(type>=69&&type<=72))) Nsingle++;
+		if (nturn>1&&cdc_nHitsT>0&&tri_nHits>0&&maxlid>=4&&((type>=53&&type<=56)||(type>=49&&type<=51)||(type>=73&&type<=77)||(type>=69&&type<=72))) Nmultiple++;
 	}
+	std::cout<<(double)Nsingle/Ntotal*100<<" "<<(double)Nmultiple/Ntotal*100<<std::endl;
 	otree->Write();
 	ofile->Close();
+	return 0;
+}
+
+int rotate(int n0, int dn){
+	int n1 = n0+dn;
+	if (n0<64&&n1>=64) n1-=64;
+	if (n0>=64&&n1<64) n1+=64;
+	if (n1>=128) n1-=64;
+	if (n1<0) n1+=64;
+	return n1;
+}
+
+int gettype(double che_time[128], double sci_time[128],int che_ihit[128], int sci_ihit[128],int &type, int &thehit){
+	// option D
+	type = 0;
+	thehit = -1;
+	std::vector<int> vtype;
+	std::vector<int> vihit;
+	for (int itri = 0; itri<128; itri++){
+		double time = sci_time[itri];
+		if (time==-1) continue;
+		// how many hit in sci in row? (starting from this counter)
+		int nsci = 1;
+		for (int delta = 1; delta<=2; delta++){
+			int jtri = rotate(itri,delta);
+			if (sci_time[jtri]!=-1&&fabs(sci_time[jtri]-time)<10) nsci++;
+			else break;
+		}
+		//			std::cout<<itri<<"-"<<nsci<<"->"<<rotate(itri,nsci)<<std::endl;
+		for (int delta = -2; delta<=2; delta++){
+			int jtri = rotate(itri,delta);
+			if (che_time[jtri]==-1||fabs(che_time[jtri]-time)>=10) continue;
+			int nche = 1;
+			for (int delta = 1; delta<=2; delta++){
+				int ktri = rotate(jtri,delta);
+				if (che_time[ktri]!=1&&fabs(che_time[ktri]-time)<10) nche++;
+				else break;
+			}
+			//				std::cout<<"  "<<jtri<<"-"<<nche<<"->"<<rotate(jtri,nche)<<std::endl;
+			//				std::cout<<"  "<<nsci*100+nche*10+delta<<std::endl;
+			vtype.push_back(nsci*20+nche*5+delta);
+			vihit.push_back(sci_ihit[itri]);
+		}
+	}
+	int nhitmax = -1;
+	for (int it = 0; it<vtype.size(); it++){
+		int nhit = (vtype[it]+2)/5+(vtype[it]+2)/20;
+		if (nhitmax<nhit) nhitmax = nhit;
+	}
+	int ndeltamin = 10;
+	for (int it = 0; it<vtype.size(); it++){
+		if (nhitmax!=(vtype[it]+2)/5+(vtype[it]+2)/20) continue;
+		if (fabs(ndeltamin)>fabs(vtype[it]%5)){
+			ndeltamin = vtype[it]%10;
+			thehit = vihit[it];
+			type = vtype[it];
+		}
+	}
 	return 0;
 }
