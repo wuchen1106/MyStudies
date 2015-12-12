@@ -386,7 +386,7 @@ int main(int argc, char* argv[]){
 		t_in->SetBranchAddress("py",&ipy);
 		t_in->SetBranchAddress("pz",&ipz);
 		int N_in = t_in->GetEntries();
-		TFile * f_out = new TFile("tree.root","RECREATE");
+		TFile * f_out = new TFile(Form("tree.%d.root",(int)(siEvents/10000)),"RECREATE");
 		TTree * t_out = new TTree("t","t");
 		t_out->Branch("px",&px);
 		t_out->Branch("py",&py);

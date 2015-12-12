@@ -17,17 +17,17 @@ CXXFLAGS = -g -O2 -W -Wall
   # LIBS is the list of shared library files you would use.They can be found in LIBDIR. ( Names changing rule: libXXX.so to -lXXX )
 
 # Take root as an example. ( Root is a widely used package developed by CERN for analysing. )
-INCDIR = -I$(shell $(ROOTSYS)/bin/root-config --incdir) -I$(MYGEANT4ROOT)/include/Geant4 -I$(MYCLHEPROOT)/include
-LIBDIR = $(shell $(ROOTSYS)/bin/root-config --glibs) -L$(MYGEANT4ROOT)/lib64 $(shell $(MYCLHEPROOT)/bin/clhep-config --libs)
-LIBS = -pthread -lm -ldl -rdynamic\
+INCDIR += -I$(shell $(ROOTSYS)/bin/root-config --incdir)
+LIBDIR += $(shell $(ROOTSYS)/bin/root-config --glibs)
+LIBDIR += -lMinuit
+LIBS += -pthread -lm -ldl -rdynamic
+LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
 
 #--------------------------PART 3: about your own packages and the main program-------------------------------------------
 # Names of user defined packages
 
 # Change this name to your program which contains the main function
-PROJECT1 = TanModel
-PROJECT2 = ana
-PROJECT3 = combine
+PROJECT1 = get
 
 .PHONY: all
 all: $(PROJECT5) $(PROJECT4) $(PROJECT3) $(PROJECT2) $(PROJECT1) $(PROJECT6) $(PROJECT7) $(PROJECT8) $(PROJECT9) $(PROJECT10)
