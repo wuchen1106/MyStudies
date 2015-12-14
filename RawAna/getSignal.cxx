@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
 	//______________________________________________________________________________________________________
 	// About this run
 	if (argc <= 3) {
-		std::cerr<<"Should provide runname, dir/file, input files"<<std::endl;
+//		std::cerr<<"Should provide runname, dir/file, input files"<<std::endl;
 		return -1;
 	}
 	TString runName = argv[1];
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]){
 	if (opt=="dir"){
 		int ndirs = (argc-3);
 		if (ndirs%3!=0){
-			std::cerr<<"Should provide dir name, n jobs, weight, type"<<std::endl;
+//			std::cerr<<"Should provide dir name, n jobs, weight, type"<<std::endl;
 			return -1;
 		}
 		ndirs/=3;
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
 	else {
 		int nfiles = argc-3;
 		if (nfiles%2!=0){
-			std::cerr<<"Should provide file name, weight"<<std::endl;
+//			std::cerr<<"Should provide file name, weight"<<std::endl;
 			return -1;
 		}
 		nfiles/=2;
@@ -123,14 +123,14 @@ int main(int argc, char *argv[]){
 	std::vector<std::string>  *McTruth_particleName = 0;
 
 	TChain *c = new TChain("tree");
-	std::cerr<<"FileNames.size() = "<<(FileNames.size())<<std::endl;
+//	std::cerr<<"FileNames.size() = "<<(FileNames.size())<<std::endl;
 	for (int i = 0; i<FileNames.size(); i++){
-		std::cerr<<"FileNames["<<i<<"] = \""<<FileNames[i]<<std::endl;
+//		std::cerr<<"FileNames["<<i<<"] = \""<<FileNames[i]<<std::endl;
 		c->Add(FileNames[i]);
 	}
-	std::cerr<<"nRuns = "<<nRuns.size()<<std::endl;
+//	std::cerr<<"nRuns = "<<nRuns.size()<<std::endl;
 	for (int iRun = 0; iRun < nRuns.size(); iRun++ ){
-		std::cerr<<"DirName["<<iRun<<"] = \""<<DirName[iRun]<<"\", "<<nRuns[iRun]<<std::endl;
+//		std::cerr<<"DirName["<<iRun<<"] = \""<<DirName[iRun]<<"\", "<<nRuns[iRun]<<std::endl;
 		for (int i = 0; i<nRuns[iRun]; i++){
 			c->Add(Form(MyData+"/"+DirName[iRun]+"/%d_job0.raw",i));
 		}
@@ -196,7 +196,7 @@ int main(int argc, char *argv[]){
 	//______________________________________________________________________________________________________
 	// output
 	TFile * ofile = new TFile(runName+".root","RECREATE");
-	TTree * otree = new TTree("t","t");
+	TTree * otree = new TTree("tree","tree");
 	int tri_nHits = 0;
 	int tri_pos = 0;
 	int type = 0;
@@ -230,6 +230,44 @@ int main(int argc, char *argv[]){
 	otree->Branch("pz",&pz);
 	otree->Branch("dir",&dir);
 	otree->Branch("evt_num",&evt_num);
+
+	otree->Branch("CdcCell_nHits",&C_nHits);
+	otree->Branch("CdcCell_layerID",&C_layerID);
+	otree->Branch("CdcCell_cellID",&C_cellID);
+	otree->Branch("CdcCell_tid",&C_tid);
+	otree->Branch("CdcCell_edep",&C_edep);
+	otree->Branch("CdcCell_stepL",&C_stepL);
+	otree->Branch("CdcCell_driftD",&C_driftD);
+	otree->Branch("CdcCell_driftDtrue",&C_driftDtrue);
+	otree->Branch("CdcCell_tstop",&C_tstop);
+	otree->Branch("CdcCell_tstart",&C_tstart);
+	otree->Branch("CdcCell_posflag",&C_posflag);
+	otree->Branch("CdcCell_nPair",&C_nPair);
+	otree->Branch("CdcCell_t",&C_t);
+	otree->Branch("CdcCell_px",&C_px);
+	otree->Branch("CdcCell_py",&C_py);
+	otree->Branch("CdcCell_pz",&C_pz);
+	otree->Branch("CdcCell_x",&C_x);
+	otree->Branch("CdcCell_y",&C_y);
+	otree->Branch("CdcCell_z",&C_z);
+	otree->Branch("CdcCell_wx",&C_wx);
+	otree->Branch("CdcCell_wy",&C_wy);
+	otree->Branch("CdcCell_wz",&C_wz);
+
+	otree->Branch("M_nHits",&M_nHits);
+	otree->Branch("M_volName",&M_volName);
+	otree->Branch("M_volID",&M_volID);
+	otree->Branch("M_tid",&M_tid);
+	otree->Branch("M_pid",&M_pid);
+	otree->Branch("M_edep",&M_edep);
+	otree->Branch("M_stepL",&M_stepL);
+	otree->Branch("M_t",&M_t);
+	otree->Branch("M_px",&M_px);
+	otree->Branch("M_py",&M_py);
+	otree->Branch("M_pz",&M_pz);
+	otree->Branch("M_x",&M_x);
+	otree->Branch("M_y",&M_y);
+	otree->Branch("M_z",&M_z);
 	// Statistics
 	double sci_time[128];
 	double che_time[128];
@@ -242,9 +280,9 @@ int main(int argc, char *argv[]){
 	std::vector<int> vtype;
 	std::vector<int> vpos;
 	std::vector<double> vtime;
-	std::cout<<nEntries<<" entries to check!"<<std::endl;
+//	std::cout<<nEntries<<" entries to check!"<<std::endl;
 	for (Long64_t iEntry = 0; iEntry<nEntries; iEntry++){
-		if (iEntry%1000==0) std::cout<<(double)iEntry/nEntries*100<<"%..."<<std::endl;
+//		if (iEntry%1000==0) std::cout<<(double)iEntry/nEntries*100<<"%..."<<std::endl;
 		c->GetEntry(iEntry);
 
 		int thimc = -1;
@@ -379,9 +417,12 @@ int main(int argc, char *argv[]){
 		int thehit = -1;
 		gettype(che_time,sci_time,che_ihit,sci_ihit,type,thehit);
 //		std::cout<<"type = "<<type<<std::endl;
+		// FIXME
 		otree->Fill();
 		if (nturn==1&&cdc_nHitsT>0&&tri_nHits>0&&maxlid>=4&&((type>=53&&type<=56)||(type>=49&&type<=51)||(type>=73&&type<=77)||(type>=69&&type<=72))) Nsingle++;
 		if (nturn>1&&cdc_nHitsT>0&&tri_nHits>0&&maxlid>=4&&((type>=53&&type<=56)||(type>=49&&type<=51)||(type>=73&&type<=77)||(type>=69&&type<=72))) Nmultiple++;
+//		if (cdc_nHitsT>0&&tri_nHits>0&&maxlid>=4&&((type>=53&&type<=56)||(type>=49&&type<=51)||(type>=73&&type<=77)||(type>=69&&type<=72)))
+//			otree->Fill();
 	}
 	std::cout<<(double)Nsingle/Ntotal*100<<" "<<(double)Nmultiple/Ntotal*100<<std::endl;
 	otree->Write();
