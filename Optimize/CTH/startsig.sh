@@ -13,6 +13,7 @@ for line in f:
 		for word in options:
 			runname += "."+word
 			name += word+" "
+#		runname += ".Ethane"
 		output = commands.getoutput('./RawAna/getSignal signal'+runname+' dir CyDet.signal'+runname+' 1 100000')
 		print name+output
 		sys.stdout.flush()

@@ -103,9 +103,9 @@ int main(int argc, char** argv){
 		buf.str("");
 		buf.clear();
 		buf<<"h_"<<i<<"_pa";
-//		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",125,0,400);
+		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",125,0,600);
 //		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",125,0,300);
-		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",125,0,250);
+//		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",125,0,250);
 //		TH1D *h = new TH1D(buf.str().c_str(),pnames[i]+"_pa",125,0,200);
 		h->GetXaxis()->SetTitle("Momentum Amplitude (MeV/c)");
 		h->GetYaxis()->SetTitle("count / initial proton");

@@ -195,7 +195,7 @@ int main(int argc, char *argv[]){
 
 	//______________________________________________________________________________________________________
 	// output
-	TFile * ofile = new TFile(runName+".root","RECREATE");
+	TFile * ofile = new TFile("result/"+runName+".root","RECREATE");
 	TTree * otree = new TTree("tree","tree");
 	int tri_nHits = 0;
 	int tri_pos = 0;
@@ -212,6 +212,7 @@ int main(int argc, char *argv[]){
 	double zs = 0;
 	double px,py,pz;
 	int dir = 0;
+	double O_t;
 	otree->Branch("tn",&tri_nHits);
 	otree->Branch("tp",&tri_pos);
 	otree->Branch("type",&type);
@@ -229,6 +230,7 @@ int main(int argc, char *argv[]){
 	otree->Branch("py",&py);
 	otree->Branch("pz",&pz);
 	otree->Branch("dir",&dir);
+	otree->Branch("mt",&O_t);
 	otree->Branch("evt_num",&evt_num);
 
 	otree->Branch("CdcCell_nHits",&C_nHits);
@@ -273,6 +275,15 @@ int main(int argc, char *argv[]){
 	double che_time[128];
 	int che_ihit[128];
 	int sci_ihit[128];
+
+	// histograms
+	TH1D* hTYPE = new TH1D("hTYPE","hTYPE",85,-5,80);
+	TH1D* hTriRate = new TH1D("hTriRate","hTriRate",117,0,1170);
+	TH1D *hCDCedep = new TH1D("hCDCedep","Energy Deposit of Signal Hits in CDC",200,-10,2);
+	hCDCedep->GetYaxis()->SetTitle("Count");
+	hCDCedep->GetXaxis()->SetTickLength(0);
+	hCDCedep->GetXaxis()->SetTitleOffset(3);
+	hCDCedep->GetXaxis()->SetLabelOffset(3);
 
 	//______________________________________________________________________________________________________
 	// Loop in events
@@ -328,6 +339,7 @@ int main(int argc, char *argv[]){
 			if (maxcontinuedIn<currentlayersIn) maxcontinuedIn=currentlayersIn;
 			prelid=(*C_layerID)[ihit];
 			cdc_nHits++;
+			hCDCedep->Fill(log((*C_edep)[ihit]/1e6));
 		}
 		//std::cout<<maxlid<<","<<cdc_nHits<<","<<maxcontinuedOut<<","<<maxcontinuedU<<std::endl;
 
@@ -336,29 +348,23 @@ int main(int argc, char *argv[]){
 			sci_time[itri] = -1;
 		}
 		tri_nHits = 0;
-		if (M_volName->size()){
-			if ((*M_volName)[0]=="TriCheLU"
-					||(*M_volName)[0]=="TriCheLD"
-					||(*M_volName)[0]=="TriCheU"
-					||(*M_volName)[0]=="TriCheD"
-			   ){
-				dir = 1;
-			}
-			else if ((*M_volName)[0]=="TriSciU"
-					||(*M_volName)[0]=="TriSciD"
-					){
-				dir = -1;
-			}
-		}
+		O_t = 0;
 		for ( int ihit = 0; ihit<M_t->size(); ihit++){
 			if ((*M_tid)[ihit]!=thetid) continue;
-			if ((*M_volName)[ihit]=="TriChePD"
-			  ||(*M_volName)[ihit]=="TriChePU"
-			  ||(*M_volName)[ihit]=="TriSciPD"
-			  ||(*M_volName)[ihit]=="TriSciPU"
-			  ||(*M_volName)[ihit]=="TriSciLD"
-			  ||(*M_volName)[ihit]=="TriSciLU"
-					) continue;
+			if ((*M_volName)[0]=="TriCheLU"
+					||(*M_volName)[0]=="TriCheU"
+					||(*M_volName)[0]=="TriSciU"
+			   ){
+				dir = -1;
+			}
+			else if ((*M_volName)[0]=="TriSciD"
+					||(*M_volName)[0]=="TriCheLD"
+					||(*M_volName)[0]=="TriCheD"
+					){
+				dir = 1;
+			}
+			else continue;
+			if (!O_t)O_t = fmod((*M_t)[ihit],1170);
 			tri_nHits++;
 			double px = (*M_px)[ihit];
 			double py = (*M_py)[ihit];
@@ -417,6 +423,10 @@ int main(int argc, char *argv[]){
 		int thehit = -1;
 		gettype(che_time,sci_time,che_ihit,sci_ihit,type,thehit);
 //		std::cout<<"type = "<<type<<std::endl;
+		hTYPE->Fill(type);
+		if ((type>=53&&type<=56)||(type>=49&&type<=51)||(type>=73&&type<=77)||(type>=69&&type<=72)){
+			hTriRate->Fill(O_t);
+		}
 		// FIXME
 		otree->Fill();
 		if (nturn==1&&cdc_nHitsT>0&&tri_nHits>0&&maxlid>=4&&((type>=53&&type<=56)||(type>=49&&type<=51)||(type>=73&&type<=77)||(type>=69&&type<=72))) Nsingle++;
@@ -426,6 +436,9 @@ int main(int argc, char *argv[]){
 	}
 	std::cout<<(double)Nsingle/Ntotal*100<<" "<<(double)Nmultiple/Ntotal*100<<std::endl;
 	otree->Write();
+	hCDCedep->Write();
+	hTYPE->Write();
+	hTriRate->Write();
 	ofile->Close();
 	return 0;
 }

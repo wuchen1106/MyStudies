@@ -453,10 +453,10 @@ double doCombine(int etype, double offset, int ibunch){
 			if ((*oM_volName)[jHit]==volName&&(*oM_volID)[jHit]==volID){// overlapping
 				if (fabs((*oM_t)[jHit]-t)>tresCTH) continue; // still can be separated
 				foundit = true;
+				(*oM_edep)[jHit] += (*M_edep)[iHit];
+				(*oM_stepL)[jHit] += (*M_stepL)[iHit];
 				if ((*oM_t)[jHit]>t){ // cover old one
 					(*oM_t)[jHit] = t;
-					(*oM_edep)[jHit] = (*M_edep)[iHit];
-					(*oM_stepL)[jHit] = (*M_stepL)[iHit];
 					(*oM_px)[jHit] = (*M_px)[iHit];
 					(*oM_py)[jHit] = (*M_py)[iHit];
 					(*oM_pz)[jHit] = (*M_pz)[iHit];

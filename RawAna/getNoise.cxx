@@ -304,7 +304,7 @@ int main(int argc, char *argv[]){
 
 	//______________________________________________________________________________________________________
 	// output
-	TFile * f = new TFile(runName+".root","RECREATE");
+	TFile * ofile = new TFile("result/"+runName+".root","RECREATE");
 	TTree *tree  = new TTree("t","t");
 
 	// about CTH hits
@@ -312,6 +312,7 @@ int main(int argc, char *argv[]){
 	int type; 
 	int tritype; 
 	int tripos; 
+	double O_t;
 
 	// about CDC hits
 	int cdcnHits;
@@ -340,9 +341,10 @@ int main(int argc, char *argv[]){
 	tree->Branch("type",&type);
 	tree->Branch("tritype",&tritype);
 	tree->Branch("tripos",&tripos);
-	tree->Branch("topo",&topo);
 	tree->Branch("weight",&weight);
+	tree->Branch("mt",&O_t);
 
+	tree->Branch("topo",&topo);
 	tree->Branch("t",&o_t);
 	tree->Branch("px",&o_px);
 	tree->Branch("py",&o_py);
@@ -671,9 +673,11 @@ int main(int argc, char *argv[]){
 		if (trihit<0){ // no trigger
 			if (M_nHits>0)trihit=0;
 		}
+		if (trihit>=0){
+			O_t = fmod((*M_t)[trihit],1170);
+		}
 		hTYPE->Fill(type,weight);
 		if ((type>=53&&type<=56)||(type>=49&&type<=51)||(type>=73&&type<=77)||(type>=69&&type<=72)){
-			double O_t = ((*M_t)[trihit]);
 			hTriRate->Fill(O_t,weight);
 			if (O_t>500)
 				triggerrate+=weight;
@@ -696,7 +700,7 @@ int main(int argc, char *argv[]){
 		if(pid) delete pid; pid  = new std::vector<int>;
 		if(ppid) delete ppid; ppid  = new std::vector<int>;
 		int tritid = -1; if(trihit>=0) tritid = (*M_tid)[trihit];
-		int cdctid = -1; if(cdchit>=0) cdctid = (*M_tid)[cdchit];
+		int cdctid = -1; if(cdchit>=0) cdctid = (*C_tid)[cdchit];
 		if (tritid==-1&&cdctid==-1) continue;
 		int ttid = -1;
 		int idepth = 0;
@@ -847,7 +851,7 @@ int main(int argc, char *argv[]){
 	g1->Write();
 	g2->Write();
 	tree->Write();
-	f->Close();
+	ofile->Close();
 	std::cout<<(nHitsCU-nHitsCUl)/64./(PulseInterval*1.e-6)<<" "<<nHitsCUl/64./(PulseInterval*1.e-6)
 		<<" "<<(nHitsCD-nHitsCDl)/64./(PulseInterval*1.e-6)<<" "<<nHitsCDl/64./(PulseInterval*1.e-6)
 		<<" "<<(nHitsSU-nHitsSUl)/64./(PulseInterval*1.e-6)<<" "<<nHitsSUl/64./(PulseInterval*1.e-6)
