@@ -38,9 +38,10 @@ LIBS += -lMyRootInterface
 PROJECT1 = beam
 PROJECT2 = gethist
 PROJECT3 = get
+PROJECT4 = draw
 
 .PHONY: all
-all: $(PROJECT1) $(PROJECT2)
+all: $(PROJECT1) $(PROJECT2) $(PROJECT3) $(PROJECT4)
 
 # Object list for user defined packages
 OBJ =
@@ -53,6 +54,9 @@ $(PROJECT2): $(OBJ) $(PROJECT2).cxx
 
 $(PROJECT3): $(OBJ) $(PROJECT3).cxx
 	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT3).cxx $(OBJ) -o $(PROJECT3)
+
+$(PROJECT4): $(OBJ) $(PROJECT4).cxx
+	$(CXX) $(CXXFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(PROJECT4).cxx $(OBJ) -o $(PROJECT4)
 
 #--------------------------PART 4: about make options-------------------------------------------
 # You can create new options to realise special functions

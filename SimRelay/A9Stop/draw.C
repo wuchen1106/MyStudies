@@ -1,13 +1,15 @@
 {
 	TFile *f = 0;
 	TLegend *legend = 0;
-	TString parName = "mu";
-	double minimum = 1e-11;
-//	TString parName = "pi";
-//	double minimum = 1e-21;
+//	TString parName = "mu";
+//	double minimum = 1e-11;
+	TString parName = "pi";
+	double minimum = 1e-21;
 
 	TString par = "#"+parName+"^{-}";
-	f = new TFile("result/ST.muon.tgt.150919.W500um.OptD2.1mmCFRP.DD35.1cmLead.root");
+	f = new TFile("/home/chen/MyWorkArea/Simulate/comet/data/ST.muon.a9.150919.W500um.OptD2.1mmCFRP.DD35.1cmLead.root");
+//	f = new TFile("/home/chen/MyWorkArea/Simulate/comet/data/ST.muon.tgt.150919.W500um.OptD2.1mmCFRP.DD35.1cmLead.root");
+//	f = new TFile("/home/chen/MyWorkArea/Simulate/comet/data/ST.pion.150919.W500um.OptD2.1mmCFRP.DD35.151117.root");
 
 	TH2D * h01  = (TH2D*) f->Get("h01");
 	TH2D * h02  = (TH2D*) f->Get("h02");
@@ -16,6 +18,7 @@
 	TH1D * h05  = (TH1D*) f->Get("h05");
 	TH1D * h10  = (TH1D*) f->Get("h10");
 	TH1D * h11  = (TH1D*) f->Get("h11");
+	TH1D * h12  = (TH1D*) f->Get("h12");
 	TH1D * h20  = (TH1D*) f->Get("h20");
 	TH1D * h30  = (TH1D*) f->Get("h30");
 	TH1D * h40  = (TH1D*) f->Get("h40");
@@ -187,6 +190,7 @@
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gPad->SetLogy(1);
+	h12->Scale(1./h12->GetBinContent(1));
 	h12->GetYaxis()->SetRangeUser(minimum,h12->GetMaximum()*2);
 	h12->Draw();
 }
