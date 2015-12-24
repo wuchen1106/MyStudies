@@ -26,12 +26,18 @@ int main(int argc, char** argv){
 	TString runName = argv[1];
 
 	TChain * c = new TChain("tree");
-	for (int i = 0; i<100; i++){
-		c->Add(Form(MyData+"/"+runName+"/%d_job0.raw",i));
-	}
-
-	int evt_num;
 	int run_num;
+	int evt_num;
+	c->SetBranchAddress("evt_num",&evt_num);
+	c->SetBranchAddress("run_num",&run_num);
+	Long64_t Nevents  =0;
+	for (int i = 0; i<33; i++){
+		c->Add(Form(MyData+"/"+runName+"/%d_job0.raw",i));
+		c->GetEntry(c->GetEntries()-1);
+		Nevents+=evt_num;
+	}
+	std::cout<<"Totally "<<Nevents<<" events!"<<std::endl;
+
 	std::vector<int> * in_triID = 0;
 	std::vector<int> * in_tritid= 0;
 	std::vector<double> * in_trit = 0;
@@ -70,8 +76,6 @@ int main(int argc, char** argv){
 	std::vector<int> * in_cdctid = 0;
 	std::vector<int> * in_cdcpf = 0;
 
-	c->SetBranchAddress("evt_num",&evt_num);
-	c->SetBranchAddress("run_num",&run_num);
 
 	c->SetBranchAddress("CdcCell_cellID",&in_cdccid);
 	c->SetBranchAddress("CdcCell_layerID",&in_cdclid);
@@ -112,7 +116,7 @@ int main(int argc, char** argv){
 	c->SetBranchAddress("McTruth_y",&in_mcy);
 	c->SetBranchAddress("McTruth_z",&in_mcz);
 
-	TFile * ofile = new TFile("CyDet."+runName+".root","RECREATE");
+	TFile * ofile = new TFile("CyDet."+runName+".1.root","RECREATE");
 	TTree * otree = new TTree("t","t");
 	int tri_nHits;
 	int tri_pos;
@@ -216,7 +220,7 @@ int main(int argc, char** argv){
 				o_py = (*in_cdcpy)[iCdc]*1000;
 				o_pz = (*in_cdcpz)[iCdc]*1000;
 				double pa = sqrt((*in_cdcpx)[iCdc]*(*in_cdcpx)[iCdc]+(*in_cdcpy)[iCdc]*(*in_cdcpy)[iCdc]+(*in_cdcpz)[iCdc]*(*in_cdcpz)[iCdc]);
-				if (pa>0.1){
+				if (pa>0.09){
 					o_x = (*in_cdcx)[iCdc]*10;
 					o_y = (*in_cdcy)[iCdc]*10;
 					o_z = (*in_cdcz)[iCdc]*10;
