@@ -1,0 +1,24 @@
+nohup: ignoring input
+2 2 90 90 13 20 5 5 0.1 0.1 8 8 1 35 Aluminium Aluminium Lead				12.884 8.44
+2 2 90 90 11 18 5 5 0.1 0.1 8 8 1 35 Aluminium Aluminium Lead				13.191 8.409
+0 0 90 90 10 16.5 5 5 0.1 0.1 8 8 1 35 Aluminium Aluminium Lead				13.142 8.538
+2 2 90 90 13 20 4 4 0.1 0.1 8 8 1 35 Aluminium Aluminium Lead				13.119 8.499
+2 2 90 90 13 20 6 6 0.1 0.1 8 8 1 35 Aluminium Aluminium Lead				13.215 8.375
+2 2 90 90 13 20 7 7 0.1 0.1 8 8 1 35 Aluminium Aluminium Lead				13.256 8.49
+2 2 90 90 13 20 5 5 0.1 0.1 2 8 1 35 Aluminium Aluminium Lead				13.164 8.911
+2 2 90 90 13 20 5 5 0.1 0.1 5 8 1 35 Aluminium Aluminium Lead				13.315 8.478
+2 2 90 90 13 20 5 5 0.1 0.1 11 8 1 35 Aluminium Aluminium Lead				13.092 8.265
+2 2 90 90 13 20 5 5 0.1 0.1 8 4 1 35 Aluminium Aluminium Lead				13.649 10.114
+2 2 90 90 13 20 5 5 0.1 0.1 8 6 1 35 Aluminium Aluminium Lead				13.205 8.92
+2 2 90 90 13 20 5 5 0.1 0.1 8 10 1 35 Aluminium Aluminium Lead				13.006 8.024
+2 2 90 90 13 20 5 5 0.1 0.1 8 8 0.1 35 Aluminium Aluminium Lead				13.163 8.404
+2 2 90 90 13 20 5 5 0.1 0.1 8 8 0.5 35 Aluminium Aluminium Lead				13.119 8.354
+2 2 90 90 13 20 5 5 0.1 0.1 8 8 2 35 Aluminium Aluminium Lead				13.097 8.488
+2 2 90 90 13 20 5 5 0.1 0.1 8 8 1 35 Steel Steel Lead						12.915 7.513
+2 2 90 90 13 20 5 5 0.1 0.1 8 8 1 35 Steel Steel Tungsten				12.657 7.374
+0 0 90 90 10 16.5 4 4 5 1 4 11 1 35 Aluminium Aluminium Lead			12.995 8.364
+0 0 90 90 10 16.5 4 4 5 1 6 8 1 35 Aluminium Aluminium Lead				13.151 8.508
+0 0 90 90 10 16.5 3 3 5 3 3 8 1 35 Aluminium Aluminium Lead				13.201 8.668
+0 0 90 90 10 16.5 2 2 5 2 2 8 1 35 Steel Steel Lead						12.799 7.878
+0 0 90 90 10 16.5 4 4 5 1 4 8 2 35 Aluminium Aluminium Lead				13.091 8.667
+0 0 90 90 10 16.5 5 5 5 1 4 8 1 35 Aluminium Aluminium Lead				13.218 8.61
