@@ -7,9 +7,11 @@
 
 int main(int argc,char ** argv){
 	TChain * chain = new TChain("tree","tree");
-	for (int i = 60; i<100; i++){
-		chain->Add(Form("/scratchfs/bes/wuc/MyWorkArea/Data/TS1.ap.150919.g41001p02QBH/%d_job0.raw",i));
+	for (int i = 0; i<3; i++){
+	//	chain->Add(Form("/scratchfs/bes/wuc/MyWorkArea/Data/TS1.ap.150919.g41001p02QBH/%d_job0.raw",i));
+		chain->Add(Form("/home/chen/MyWorkArea/Simulate/comet/output/TS2c.mum.%d.root",i));
 	}
+	//chain->Add("/home/chen/MyWorkArea/Simulate/comet/output/TS2c.mum.o120.root");
 	std::vector<int> * in_pid = 0;
 	std::vector<double> * in_t = 0;
 	std::vector<double> * in_x = 0;
@@ -33,7 +35,7 @@ int main(int argc,char ** argv){
 
 	double t,x,y,z,px,py,pz;
 	int pid;
-	TFile * ofile = new TFile("output.3.root","RECREATE");
+	TFile * ofile = new TFile("output.root","RECREATE");
 	TTree * otree = new TTree("t","t");
 	otree->Branch("x",&x);
 	otree->Branch("y",&y);
@@ -50,7 +52,7 @@ int main(int argc,char ** argv){
 	for (Long64_t i = 0; i<N;  i++){
 		chain->GetEntry(i);
 		for (int j = 0; j<in_x->size(); j++){
-			if ((*in_volName)[j]!="TS2") continue;
+			if ((*in_volName)[j]!="TS2c") continue;
 			pid = (*in_pid)[j];
 			if (pid>1e6) continue;
 			t = (*in_t)[j];

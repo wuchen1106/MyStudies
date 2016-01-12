@@ -488,7 +488,7 @@ int main(int argc, char *argv[]){
     TH1D *hCDCedep[4];
     TH1D *hCDCmom[4];
     for (int i  =0; i<4; i++){
-		hCDCedep[i] = new TH1D(Form("hCDCedep.%d",i),"Energy Deposit of Noise Hits in CDC",200,-10,2);
+		hCDCedep[i] = new TH1D(Form("hCDCedep_%d",i),"Energy Deposit of Noise Hits in CDC",200,-10,2);
 		hCDCedep[i]->GetYaxis()->SetTitle("Count");
 		hCDCedep[i]->GetXaxis()->SetTickLength(0);
 		hCDCedep[i]->GetXaxis()->SetTitleOffset(3);
@@ -497,7 +497,7 @@ int main(int argc, char *argv[]){
 		else if (i==1) hCDCedep[i]->SetLineColor(kRed);
 		else if (i==2) hCDCedep[i]->SetLineColor(kBlack);
 		else if (i==3) hCDCedep[i]->SetLineColor(kGreen);
-		hCDCmom[i] = new TH1D(Form("hCDCmom.%d",i),"Momentum noise Tracks in CDC",200,-8,4);
+		hCDCmom[i] = new TH1D(Form("hCDCmom_%d",i),"Momentum noise Tracks in CDC",200,-8,4);
 		hCDCmom[i]->GetYaxis()->SetTitle("Count");
 		hCDCmom[i]->GetXaxis()->SetTickLength(0);
 		hCDCmom[i]->GetXaxis()->SetTitleOffset(3);

@@ -1,6 +1,6 @@
 {
-//	TString thegas = "isobutane";
-	TString thegas = "ethane";
+	TString thegas = "isobutane";
+//	TString thegas = "ethane";
 	double ind,su1,sd1,cu1,cd1,sd2,su2,cu2,cd2,st,mt,t1,t2,ch,n1,n2;
 	char type[128];
 	char gas[128];
