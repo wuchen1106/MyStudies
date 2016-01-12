@@ -46,7 +46,7 @@ int main(int argc, char ** argv){
 //	TFile * infile4 = new TFile("../../DIO/mom_p_63um_102MeV.root");
 //	TH1D * hreso = (TH1D*)infile4->Get("hp_63um_102MeV");
 //	hreso->Scale(1./hreso->Integral());
-	TFile * infile4 = new TFile("../../DIO/hists_2221.root");
+	TFile * infile4 = new TFile("../../DIO/histall_2225.root");
 	TH1F * hreso = (TH1F*)infile4->Get("fit1_res_pa");
 	TH1F * hfit = (TH1F*)infile4->Get("fit1_fit_pa");
 	hreso->Scale(1./hreso->Integral());
