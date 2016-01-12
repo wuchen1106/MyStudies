@@ -28,6 +28,7 @@ LIBDIR += -L$(MYCOMMONTOOLSROOT)/libs
 
 # Change this name to your program which contains the main function
 PROJECT1 = getTracks
+PROJECT2 = draw
 
 .PHONY: all
 all: $(PROJECT5) $(PROJECT4) $(PROJECT3) $(PROJECT2) $(PROJECT1) $(PROJECT6) $(PROJECT7) $(PROJECT8) $(PROJECT9) $(PROJECT10)

@@ -212,10 +212,12 @@ int main(int argc, char *argv[]){
 	double zs = 0;
 	double px,py,pz;
 	int dir = 0;
+	int cth = 0;
 	double O_t;
 	otree->Branch("tn",&tri_nHits);
 	otree->Branch("tp",&tri_pos);
 	otree->Branch("type",&type);
+	otree->Branch("cth",&cth);
 	otree->Branch("cn",&cdc_nHits);
 	otree->Branch("ctn",&cdc_nHitsT);
 	otree->Branch("ccni",&maxcontinuedIn);
@@ -270,6 +272,7 @@ int main(int argc, char *argv[]){
 	otree->Branch("M_x",&M_x);
 	otree->Branch("M_y",&M_y);
 	otree->Branch("M_z",&M_z);
+	otree->Branch("McTruth_time",&McTruth_time);
 	// Statistics
 	double sci_time[128];
 	double che_time[128];
@@ -424,8 +427,10 @@ int main(int argc, char *argv[]){
 		gettype(che_time,sci_time,che_ihit,sci_ihit,type,thehit);
 //		std::cout<<"type = "<<type<<std::endl;
 		hTYPE->Fill(type);
+		cth = 0;
 		if ((type>=53&&type<=56)||(type>=49&&type<=51)||(type>=73&&type<=77)||(type>=69&&type<=72)){
 			hTriRate->Fill(O_t);
+			cth = 1;
 		}
 		// FIXME
 		otree->Fill();
