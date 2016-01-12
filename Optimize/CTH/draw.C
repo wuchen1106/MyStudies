@@ -1,6 +1,6 @@
 {
-//	TString thegas = "isobutane";
-	TString thegas = "ethane";
+	TString thegas = "isobutane";
+//	TString thegas = "ethane";
 	double ind,su1,sd1,cu1,cd1,sd2,su2,cu2,cd2,st,mt,t1,t2,ch,n1,n2;
 	char type[128];
 	char gas[128];
@@ -54,8 +54,8 @@
 	for (int i = 0; i<chain->GetEntries(); i++){
 		chain->GetEntry(i);
 		if (gas!=thegas) continue;
-		t1/=2.48*0.9;
-		t2/=2.48*0.9;
+		t1/=2.48/0.8;
+		t2/=2.48/0.8;
 		n1/=44.82;
 		n2/=44.82;
 		su1*=1.17;
@@ -188,7 +188,7 @@
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gct->Draw("LAP");
-	axis = new TGaxis(mxind,0,mxind,1.1*mxct,0,1.1*mxt1,510,"+L");
+	axis = new TGaxis(mxind,0,mxind,1.1*mxct,0,1.1/0.9*mxt1,510,"+L");
 	axis->SetTitleSize(0.035);
 	axis->SetTitleFont(42);
 	axis->SetLabelSize(0.035);
@@ -225,7 +225,7 @@
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gct->Draw("LAP");
-	axis = new TGaxis(mxind,0,mxind,1.1*mxct,0,1.1*mxsu2,510,"+L");
+	axis = new TGaxis(mxind,0,mxind,1.1*mxct,0,1.1/0.9*mxsu2,510,"+L");
 	axis->SetTitleSize(0.035);
 	axis->SetTitleFont(42);
 	axis->SetLabelSize(0.035);
@@ -234,8 +234,8 @@
 	axis->SetLineColor(kRed);
 	axis->SetLabelColor(kRed);
 	axis->Draw();
-	gst->Draw("LPSAME");
-	gmt->Draw("LPSAME");
+//	gst->Draw("LPSAME");
+//	gmt->Draw("LPSAME");
 	gsu2->Draw("LPSAME");
 	gsd2->Draw("LPSAME");
 	gcu2->Draw("LPSAME");
@@ -264,7 +264,7 @@
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gct->Draw("LAP");
-	axis = new TGaxis(mxind,0,mxind,1.1*mxct,0,1.1*mxcd1,510,"+L");
+	axis = new TGaxis(mxind,0,mxind,1.1*mxct,0,1.1/0.9*mxcd1,510,"+L");
 	axis->SetTitleSize(0.035);
 	axis->SetTitleFont(42);
 	axis->SetLabelSize(0.035);
@@ -273,8 +273,8 @@
 	axis->SetLineColor(kRed);
 	axis->SetLabelColor(kRed);
 	axis->Draw();
-	gst->Draw("LPSAME");
-	gmt->Draw("LPSAME");
+//	gst->Draw("LPSAME");
+//	gmt->Draw("LPSAME");
 	gsu1->Draw("LPSAME");
 	gsd1->Draw("LPSAME");
 	gcu1->Draw("LPSAME");
@@ -303,7 +303,7 @@
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gct->Draw("LAP");
-	axis = new TGaxis(mxind,0,mxind,1.1*mxct,0,1.1*mxch,510,"+L");
+	axis = new TGaxis(mxind,0,mxind,1.1*mxct,0,1.1/0.9*mxch,510,"+L");
 	axis->SetTitleSize(0.035);
 	axis->SetTitleFont(42);
 	axis->SetLabelSize(0.035);
@@ -312,8 +312,8 @@
 	axis->SetLineColor(kRed);
 	axis->SetLabelColor(kRed);
 	axis->Draw();
-	gst->Draw("LPSAME");
-	gmt->Draw("LPSAME");
+//	gst->Draw("LPSAME");
+//	gmt->Draw("LPSAME");
 	gch->Draw("LPSAME");
 
 	std::string pretype = vtype[0];
@@ -339,7 +339,7 @@
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	gct->Draw("LAP");
-	axis = new TGaxis(mxind,0,mxind,1.1*mxct,0,1.1*mxn1,510,"+L");
+	axis = new TGaxis(mxind,0,mxind,1.1*mxct,0,1.1/0.9*mxn1,510,"+L");
 	axis->SetTitleSize(0.035);
 	axis->SetTitleFont(42);
 	axis->SetLabelSize(0.035);
@@ -348,8 +348,8 @@
 	axis->SetLineColor(kRed);
 	axis->SetLabelColor(kRed);
 	axis->Draw();
-	gst->Draw("LPSAME");
-	gmt->Draw("LPSAME");
+//	gst->Draw("LPSAME");
+//	gmt->Draw("LPSAME");
 	gn1->Draw("LPSAME");
 	gn2->Draw("LPSAME");
 
