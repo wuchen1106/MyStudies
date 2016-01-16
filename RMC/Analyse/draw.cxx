@@ -53,7 +53,7 @@ int main(int argc, char ** argv){
 	// Get Spectrum
 	TFile * ifile = new TFile("DIO.root");
 	TF1 * fDIO = (TF1*)ifile->Get("f1"); // Whole Range Scaled to 105.6584
-	TF1 * fDIO_inRun = new TF1("fDIO_inRun",Form("f1/105.6584/10*%d",nMuonStop*(1-c_Capture)*c_AccGeom*c_TrackQuality),0,c_DIOpmax); // Whole Range Scaled to 1/10 (per 100 keV/c)
+	TF1 * fDIO_inRun = new TF1("fDIO_inRun",Form("f1/105.6584/10*%lf",nMuonStop*(1-c_Capture)*c_AccGeom*c_TrackQuality),0,c_DIOpmax); // Whole Range Scaled to 1/10 (per 100 keV/c)
 	ifile = new TFile("RMC_Al_bind.root");
 	TF1 * fRMC = (TF1*)ifile->Get("f1"); // >57MeV/c Part Scaled to 1
 
