@@ -2,26 +2,62 @@
 #include <math.h>
 
 #include "TStyle.h"
-#include "TCanvas.h"
 #include "TFile.h"
 #include "TLegend.h"
 #include "TH1D.h"
 #include "TF1.h"
 #include "TH1F.h"
 #include "TChain.h"
+#include "TGraph.h"
 
 int main(int argc, char ** argv){
-	double NmuStop = 1.02e16;
-	double eff_geom =  0.348*0.73*0.6641;
-	double eff_other = 0.9*0.8*0.8*0.4862;
 
-	TCanvas * canv = new TCanvas("c","c",1024,768);
-	gStyle->SetPalette(1);
-	gStyle->SetOptStat(0);
-	gPad->SetGridx(1);
-	gPad->SetGridy(1);
-	gPad->SetTickx(1);
-	gPad->SetTicky(1);
+	// =================================================
+	// constants about Detector
+	double c_EffiTime = 0.2998; // 700ns
+	//double c_EffiTime = 0.4862; // 500ns
+	double c_EffiDAQ = 0.9;
+	double c_EffiTrigger = 0.9;
+	double c_EffiRec = 0.8;
+	////_______TDR 2014________
+	//double c_AccGeom = 0.37;
+	//double c_TrackQuality = 0.66;
+	//double c_MomSel = 0.93;
+	//_______2016.01.04________
+	double c_AccGeom = 0.2368;
+	double c_TrackQuality = 0.6599;
+	double c_MomSel = 0.8905;
+	double c_MomLowEdge = 103.6;
+
+	// Physics constants
+	double c_Capture = 0.61;
+	double c_RMC = 1.83e-5; // Branching ratio from 57 MeV
+	double c_Mu2e = 3.1e-15;
+	double c_UpperLimit = 1e-2;
+	double c_RMCpmax = 101.855;
+	double c_DIOpmax = 104.973;
+
+	// Simulation constants
+	double c_Margin = 2;
+	double c_Nprocess = 100;
+	double c_TimePerRMC = c_Margin/c_Nprocess*0.7e-3/3600; // hour
+	double c_TimePerDIO = c_Margin/c_Nprocess*50e-3/3600; // hour
+
+	// =================================================
+	// How many stopped muons we need to get 1 signal
+	//double nMuonStop = 1/c_Mu2e/c_Capture/c_AccGeom/c_TrackQuality/c_MomSel/c_EffiTime/c_EffiDAQ/c_EffiTrigger/c_EffiRec;
+	double nMuonStop = 1/c_Mu2e/c_Capture/c_AccGeom/c_TrackQuality/c_MomSel; // Assuming efficiency (same for signal and background) is 100%
+	std::cout<<"nMuonStop = " << nMuonStop<<std::endl;
+
+	// =================================================
+	// Get Spectrum
+	TFile * ifile = new TFile("RMC_Al_bind.root");
+	TF1 * fRMC = (TF1*)ifile->Get("f1"); // >57MeV/c Part Scaled to 1
+	ifile = new TFile("DIO.root");
+	TF1 * fDIO = (TF1*)ifile->Get("f1"); // Whole Range Scaled to 105.6584
+	TF1 * fDIO_inRun = new TF1("fDIO_inRun",Form("f1/105.6584/10*%d",nMuonStop*(1-c_Capture)*c_AccGeom*c_TrackQuality),0,c_DIOpmax); // Whole Range Scaled to 1/10 (per 100 keV/c)
+
+	// Get RMC simulaiton result
 	TChain * c = new TChain("t","t");
 	double px,py,pz;
 	double ipx,ipy,ipz;
@@ -34,25 +70,56 @@ int main(int argc, char ** argv){
 	c->SetBranchAddress("ipx",&ipx);
 	c->SetBranchAddress("ipy",&ipy);
 	c->SetBranchAddress("ipz",&ipz);
-	TH1D * hrmce = new TH1D("hrmce","hrmce",1040,0.95,104.95);
-	double binwidth = hrmce->GetBinWidth(1);
-	TFile * infile2 = new TFile("../../../Simulate/comet/data/RMC_Al_bind.root");
-	TF1 * frmc = (TF1*)infile2->Get("f1");
-	TFile * infile3 = new TFile("../../../Simulate/comet/data/DIO.root");
-	TH1F * hdio = (TH1F*)infile3->Get("h1");
-	TF1 * fdio_raw = (TF1*)infile2->Get("f1");
-	TF1 * fdio = new TF1("fdio",Form("f1/1056.584*%d",NmuStop*0.39*eff_other*eff_geom),57,104.973);
 
-//	TFile * infile4 = new TFile("../../DIO/mom_p_63um_102MeV.root");
+	// =================================================
+	// For output
+	std::vector<double> vResolution;
+	std::vector<double> vTimeDIO;
+	std::vector<double> vTimeRMC;
+	std::vector<double> vNDIO;
+	std::vector<double> vNRMC;
+	TH1D * hrmce = new TH1D("hrmce","Electrons from Radiative Muon Capture",1040,0.95,104.95);
+	double binwidth = hrmce->GetBinWidth(1);
+	TH1D * hdio = new TH1D("hdio",  "Electrons from Muon Decay in Orbit",1040,0.95,104.95);
+	for (int ibin = 1; ibin<=1040; ibin++){
+		double mom = hdio->GetBinLowEdge(ibin)+binwidth/2.;
+		hdio->SetBinContent(ibin,fDIO_inRun->Eval(mom));
+	}
+	TH1D * hrmce_sm = new TH1D("hrmce_sm","Electrons from Radiative Muon Capture",1040,0.95,104.95);
+	TH1D * hdio_sm = new TH1D("hdio_sm",  "Electrons from Muon Decay in Orbit",1040,0.95,104.95);
+	TH1D * hrmcecon = new TH1D("hrmcecon","Electrons from Radiative Muon Capture",1040,0.95,104.95);
+	TH1D * hdiocon = new TH1D("hdiocon","Electrons from Muon Decay in Orbit",1040,0.95,104.95);
+
+	// =================================================
+	// Get Resolution
+//	TFile * infile4 = new TFile("mom_p_63um_102MeV.root");
 //	TH1D * hreso = (TH1D*)infile4->Get("hp_63um_102MeV");
 //	hreso->Scale(1./hreso->Integral());
-	TFile * infile4 = new TFile("../../DIO/histall_2225.root");
+//	TFile * infile4 = new TFile("hists_2221.root");
+	TFile * infile4 = new TFile("histall_2225.root");
 	TH1F * hreso = (TH1F*)infile4->Get("fit1_res_pa");
 	TH1F * hfit = (TH1F*)infile4->Get("fit1_fit_pa");
 	hreso->Scale(1./hreso->Integral());
 	hfit->Scale(1./hfit->Integral());
 
-	double Nperbin = 4.27867e9*binwidth/10;
+	// How many events to generate?
+	for (int i = 0; i<100; i++){
+		double lower_DIO = c_MomLowEdge-(100.-i)/100.*10;
+		double lower_RMC = lower_DIO-0.511/2; // Boost from Compton Scattering effect
+		vResolution.push_back((100.-i)/100.*10);
+		double nDIO = nMuonStop/c_UpperLimit*(1-c_Capture)*fDIO_inRun->Integral(lower_DIO,c_DIOpmax)/105.6584;
+		double nRMC = nMuonStop/c_UpperLimit*c_Capture*c_RMC*fRMC->Integral(lower_RMC,c_RMCpmax);
+		double tDIO = nDIO*c_TimePerDIO;
+		double tRMC = nRMC*c_TimePerRMC;
+		vTimeDIO.push_back(tDIO);
+		vTimeRMC.push_back(tRMC);
+		vNDIO.push_back(nDIO);
+		vNRMC.push_back(nRMC);
+	}
+
+	// =================================================
+	// Get RMCE and DIO spectrum
+	double Nperbin = 4.27867e9/10*binwidth; // Number of RMC photons generated within each energy bin
 	for (Long64_t i = 0; i<c->GetEntries(); i++){
 		if (i%10000==0) std::cout<<i<<std::endl;
 		c->GetEntry(i);
@@ -61,16 +128,14 @@ int main(int argc, char ** argv){
 		int ibin = hrmce->FindBin(ipa);
 		double pamin = hrmce->GetBinLowEdge(ibin);
 		double pamax = pamin+binwidth;
-		if (pamax>101.855) pamax = 101.855;
-		if (pamin>101.855) continue;
-		double weight = 1/Nperbin*frmc->Integral(pamin,pamax)*1.84e-5; // per moun capture
+		if (pamax>c_RMCpmax) pamax = c_RMCpmax;
+		if (pamin>c_RMCpmax) continue;
+		double weight = 1./Nperbin*nMuonStop*c_Capture*c_RMC*fRMC->Integral(pamin,pamax); // during whole run
 		hrmce->Fill(pa,weight);
 	}
-	hrmce->Scale(NmuStop*0.61*eff_other);
-	hdio->Scale(NmuStop*0.39*eff_other*eff_geom);
 
-	TH1D * hrmce_sm = new TH1D("hrmce_sm","hrmce_sm",1040,0.95,104.95);
-	TH1D * hdio_sm = new TH1D("hdio_sm","hdio_sm",1040,0.95,104.95);
+	// =================================================
+	// Smear with resolution
 	for (int ibin = 1; ibin<=1040; ibin++){
 		if (ibin%100==0) std::cout<<ibin<<std::endl;
 		for (int jbin = 1; jbin<=200; jbin++){
@@ -81,34 +146,52 @@ int main(int argc, char ** argv){
 		}
 	}
 
+	// Prepare Output
 	hrmce->GetXaxis()->SetTitle("Momentum [MeV/c]");
 	hrmce_sm->GetXaxis()->SetTitle("Momentum [MeV/c]");
-	hdio->GetXaxis()->SetTitle("Momentum [MeV/c]");
 	hdio_sm->GetXaxis()->SetTitle("Momentum [MeV/c]");
 	hrmce->GetYaxis()->SetTitle("Count/110 Days/100keV/c");
 	hrmce_sm->GetYaxis()->SetTitle("Count/110 Days/100keV/c");
-	hdio->GetYaxis()->SetTitle("Count/110 Days/100keV/c");
 	hdio_sm->GetYaxis()->SetTitle("Count/110 Days/100keV/c");
 	hrmce->SetTitle("Electrons Tracks Accepted by CyDet");
 	hrmce_sm->SetTitle("Electrons Tracks Accepted by CyDet");
-	hdio->SetTitle("Electrons Tracks Accepted by CyDet");
 	hdio_sm->SetTitle("Electrons Tracks Accepted by CyDet");
-	fdio->SetTitle("Electrons Tracks Accepted by CyDet per 100 keV/c");
 
-//	hrmce->Draw();
-//	TLegend * l =new TLegend(0.7,0.7,0.85,0.85);
-//	l->AddEntry(hrmce,"RMC");
-//	l->AddEntry(hdio,"DIO");
-//	l->Draw("SAME");
+	// Output
+	TGraph * gtRMC = new TGraph(vResolution.size(),&(vResolution[0]),&(vTimeRMC[0]));
+	TGraph * gtDIO = new TGraph(vResolution.size(),&(vResolution[0]),&(vTimeDIO[0]));
+	TGraph * gnRMC = new TGraph(vResolution.size(),&(vResolution[0]),&(vNRMC[0]));
+	TGraph * gnDIO = new TGraph(vResolution.size(),&(vResolution[0]),&(vNDIO[0]));
+	gtRMC->SetMarkerStyle(20);
+	gtDIO->SetMarkerStyle(20);
+	gnRMC->SetMarkerStyle(20);
+	gnDIO->SetMarkerStyle(20);
+	gtRMC->SetTitle("tRMC");
+	gtDIO->SetTitle("tDIO");
+	gnRMC->SetTitle("nRMC");
+	gnDIO->SetTitle("nDIO");
+	gtRMC->SetName("tRMC");
+	gtDIO->SetName("tDIO");
+	gnRMC->SetName("nRMC");
+	gnDIO->SetName("nDIO");
 
 	TFile * ofile = new TFile("output.root","RECREATE");
+
+	fDIO_inRun->Write();
+	fRMC->Write();
+
+	gtRMC->Write();
+	gtDIO->Write();
+	gnRMC->Write();
+	gnDIO->Write();
+
 	hrmce->Write();
-	hdio->Write();
 	hrmce_sm->Write();
 	hdio_sm->Write();
 	hreso->Write();
 	hfit->Write();
-	fdio->Write();
+
 	ofile->Close();
+
 	return 0;
 }
