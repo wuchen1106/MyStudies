@@ -82,7 +82,7 @@ int main(int argc, char ** argv){
 	double binwidth = hrmce->GetBinWidth(1);
 	TH1D * hdio = new TH1D("hdio",  "Electrons from Muon Decay in Orbit",1040,0.95,104.95);
 	for (int ibin = 1; ibin<=1040; ibin++){
-		double mom = hdio->GetBinLowEdge(ibin)+binwidth/2.;
+		double mom = hdio->GetBinCenter(ibin);
 		hdio->SetBinContent(ibin,fDIO_inRun->Eval(mom));
 	}
 	TH1D * hrmce_sm = new TH1D("hrmce_sm","Electrons from Radiative Muon Capture",1040,0.95,104.95);
@@ -99,8 +99,14 @@ int main(int argc, char ** argv){
 	TFile * infile4 = new TFile("histall_2225.root");
 	TH1F * hreso = (TH1F*)infile4->Get("fit1_res_pa");
 	TH1F * hfit = (TH1F*)infile4->Get("fit1_fit_pa");
+	TH1F * hresotot = new TH1F("fit1_restot_pa","fit1_restot_pa",200,-10,10);
+	for ( int ibin = 1; ibin<=200; ibin++){
+		double mom = hresotot->GetBinCenter(ibin)+104.973;
+		int jbin = hfit->FindBin(mom);
+		hresotot->SetBinContent(ibin,hfit->GetBinContent(jbin));
+	}
 	hreso->Scale(1./hreso->Integral());
-	hfit->Scale(1./hfit->Integral());
+	hresotot->Scale(1./hresotot->Integral());
 
 	// How many events to generate?
 	for (int i = 0; i<100; i++){
@@ -140,17 +146,16 @@ int main(int argc, char ** argv){
 		if (ibin%100==0) std::cout<<ibin<<std::endl;
 		for (int jbin = 1; jbin<=200; jbin++){
 			if (ibin-100+jbin>0&&ibin-100+jbin<1041){
-				double mom = hdio->GetBinLowEdge(ibin-100+jbin)+binwidth/2.;
+				double mom = hdio->GetBinCenter(ibin-100+jbin);
 				hrmce_sm->AddBinContent(ibin-100+jbin,hrmce->GetBinContent(ibin)*hreso->GetBinContent(jbin));
 				if(mom>103.6)
 					hrmcecon->AddBinContent(ibin,hrmce->GetBinContent(ibin)*hreso->GetBinContent(jbin));
 			}
-			if (ibin-150+jbin>0&&ibin-150+jbin<1041){
-				double mom = hdio->GetBinLowEdge(ibin-150+jbin)+binwidth/2.;
-				hdio_sm->AddBinContent(ibin-150+jbin,hdio->GetBinContent(ibin)*hfit->GetBinContent(jbin/2));
+			if (ibin-100+jbin>0&&ibin-100+jbin<1041){
+				double mom = hdio->GetBinCenter(ibin-100+jbin);
+				hdio_sm->AddBinContent(ibin-100+jbin,hdio->GetBinContent(ibin)*hresotot->GetBinContent(jbin));
 				if(mom>103.6){
-					hdiocon->AddBinContent(ibin,hdio->GetBinContent(ibin)*hfit->GetBinContent(jbin/2));
-					if (ibin == 1026) std::cout<<hdio->GetBinContent(ibin)<<"*"<<hfit->GetBinContent(jbin/2)<<"="<<hdio->GetBinContent(ibin)*hfit->GetBinContent(jbin/2)<<std::endl;
+					hdiocon->AddBinContent(ibin,hdio->GetBinContent(ibin)*hresotot->GetBinContent(jbin));
 				}
 			}
 		}
@@ -203,7 +208,7 @@ int main(int argc, char ** argv){
 	hdiocon->Write();
 
 	hreso->Write();
-	hfit->Write();
+	hresotot->Write();
 
 	ofile->Close();
 
