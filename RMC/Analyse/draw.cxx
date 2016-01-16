@@ -186,8 +186,12 @@ int main(int argc, char ** argv){
 	gnDIO->Write();
 
 	hrmce->Write();
+	hdio->Write();
 	hrmce_sm->Write();
 	hdio_sm->Write();
+	hrmcecon->Write();
+	hdiocon->Write();
+
 	hreso->Write();
 	hfit->Write();
 
