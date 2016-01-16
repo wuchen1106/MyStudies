@@ -148,8 +148,10 @@ int main(int argc, char ** argv){
 			if (ibin-150+jbin>0&&ibin-150+jbin<1041){
 				double mom = hdio->GetBinLowEdge(ibin-150+jbin)+binwidth/2.;
 				hdio_sm->AddBinContent(ibin-150+jbin,hdio->GetBinContent(ibin)*hfit->GetBinContent(jbin/2));
-				if(mom>103.6)
+				if(mom>103.6){
 					hdiocon->AddBinContent(ibin,hdio->GetBinContent(ibin)*hfit->GetBinContent(jbin/2));
+					if (ibin == 1026) std::cout<<hdio->GetBinContent(ibin)<<"*"<<hfit->GetBinContent(jbin/2)<<"="<<hdio->GetBinContent(ibin)*hfit->GetBinContent(jbin/2)<<std::endl;
+				}
 			}
 		}
 	}
