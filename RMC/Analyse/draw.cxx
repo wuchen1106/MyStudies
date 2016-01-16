@@ -140,12 +140,16 @@ int main(int argc, char ** argv){
 		if (ibin%100==0) std::cout<<ibin<<std::endl;
 		for (int jbin = 1; jbin<=200; jbin++){
 			if (ibin-100+jbin>0&&ibin-100+jbin<1041){
+				double mom = hdio->GetBinLowEdge(ibin-100+jbin)+binwidth/2.;
 				hrmce_sm->AddBinContent(ibin-100+jbin,hrmce->GetBinContent(ibin)*hreso->GetBinContent(jbin));
-				hrmcecon->AddBinContent(ibin,hrmce->GetBinContent(ibin)*hreso->GetBinContent(jbin));
+				if(mom>103.6)
+					hrmcecon->AddBinContent(ibin,hrmce->GetBinContent(ibin)*hreso->GetBinContent(jbin));
 			}
 			if (ibin-150+jbin>0&&ibin-150+jbin<1041){
+				double mom = hdio->GetBinLowEdge(ibin-150+jbin)+binwidth/2.;
 				hdio_sm->AddBinContent(ibin-150+jbin,hdio->GetBinContent(ibin)*hfit->GetBinContent(jbin/2));
-				hdiocon->AddBinContent(ibin,hdio->GetBinContent(ibin)*hfit->GetBinContent(jbin/2));
+				if(mom>103.6)
+					hdiocon->AddBinContent(ibin,hdio->GetBinContent(ibin)*hfit->GetBinContent(jbin/2));
 			}
 		}
 	}
