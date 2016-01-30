@@ -5,8 +5,6 @@
 #include <math.h>
 #include <string>
 
-#include "globals.hh"
-
 #include "TH1D.h"
 #include "TH2D.h"
 
@@ -98,9 +96,9 @@ int main(int argc, char** argv){
 	//=>About Constant
 	double PI = 3.141592653589793238;
 	double FSC = 1/137.03599911; //fine structure constant
-	double M_MUON = 105.6584*MeV; //mass of muon in MeV
-	double M_ELE = 0.510999*MeV; //mass of electron in MeV
-	double M_U = 931.494061*MeV; //atomic mass unit in MeV
+	double M_MUON = 105.6584; //mass of muon in MeV
+	double M_ELE = 0.510999; //mass of electron in MeV
+	double M_U = 931.494061; //atomic mass unit in MeV
 
 	//##########################Prepare histograms############################
 	if (verbose >= Verbose_SectorInfo ) std::cout<<prefix_SectorInfo<<"In SET HISTOGRAMS###"<<std::endl;

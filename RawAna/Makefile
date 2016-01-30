@@ -32,6 +32,7 @@ LIBS += -pthread -lm -ldl -rdynamic
 PROJECT1 = getNoise
 PROJECT2 = getSignal
 PROJECT3 = eventBuilder
+PROJECT4 = getTracks
 
 .PHONY: all
 all: $(PROJECT5) $(PROJECT4) $(PROJECT3) $(PROJECT2) $(PROJECT1) $(PROJECT6) $(PROJECT7) $(PROJECT8) $(PROJECT9) $(PROJECT10)

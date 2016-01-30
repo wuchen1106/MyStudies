@@ -211,6 +211,7 @@ int main(int argc, char *argv[]){
 	double zcl = 0;
 	double zs = 0;
 	double px,py,pz;
+	double x,y,z;
 	int dir = 0;
 	int cth = 0;
 	double O_t;
@@ -228,6 +229,9 @@ int main(int argc, char *argv[]){
 	otree->Branch("zc",&zc);
 	otree->Branch("zcl",&zcl);
 	otree->Branch("zs",&zs);
+	otree->Branch("x",&x);
+	otree->Branch("y",&y);
+	otree->Branch("z",&z);
 	otree->Branch("px",&px);
 	otree->Branch("py",&py);
 	otree->Branch("pz",&pz);
@@ -272,7 +276,6 @@ int main(int argc, char *argv[]){
 	otree->Branch("M_x",&M_x);
 	otree->Branch("M_y",&M_y);
 	otree->Branch("M_z",&M_z);
-	otree->Branch("McTruth_time",&McTruth_time);
 	// Statistics
 	double sci_time[128];
 	double che_time[128];
@@ -330,10 +333,22 @@ int main(int argc, char *argv[]){
 		int currentlayersIn = 0;
 		int currentlayersOut = 0;
 		int prelid = 0;
+		bool foundit = false;
 		for ( int ihit = 0; ihit<C_layerID->size(); ihit++){
+			(*C_t)[ihit]-=(*McTruth_time)[thimc];
 			if ((*C_tid)[ihit]!=thetid) continue;
-			if (((*C_t)[ihit]-(*McTruth_time)[thimc])/7+1>nturn) nturn = ((*C_t)[ihit]-(*McTruth_time)[thimc])/7+1;
-			if ((*C_t)[ihit]-(*McTruth_time)[thimc]>7) continue;
+			if (((*C_t)[ihit])/7+1>nturn) nturn = ((*C_t)[ihit])/7+1;
+			if ((*C_t)[ihit]>7) continue;
+			if ((*C_driftD)[ihit]>0.8) continue;
+			if (!foundit){
+				x = (*C_x)[ihit];
+				y = (*C_y)[ihit];
+				z = (*C_z)[ihit];
+				px = (*C_px)[ihit];
+				py = (*C_py)[ihit];
+				pz = (*C_pz)[ihit];
+				foundit = true;
+			}
 			if (maxlid<(*C_layerID)[ihit]) maxlid=(*C_layerID)[ihit];
 			if ((*C_layerID)[ihit]-prelid==1) currentlayersIn++;
 			else if ((*C_layerID)[ihit]-prelid==-1) currentlayersOut++;
